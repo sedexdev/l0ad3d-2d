@@ -8,3 +8,6 @@ Push = require 'lib/push'
 --
 -- https://github.com/vrld/hump/blob/master/class.lua
 Class = require 'lib/class'
+
+-- Lua game files
+require 'src/utils/constants'
