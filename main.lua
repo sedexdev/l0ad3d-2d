@@ -13,39 +13,94 @@
         HoMicIDE EFfeCt.ttf - https://www.fontsaddict.com/font/homicide-effect.html
 ]]
 
--- Dependencies are managed in a designated file
+-- dependencies are managed in a designated file
 require 'src/utils/dependencies'
 
-function love.load()
-    love.window.setTitle('L0ad3d-2D')
-    love.graphics.setDefaultFilter('nearest', 'nearest')
-    Push:setupScreen(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT, {
-        vsync = true,
-        fullscreen = false,
-        resizable = true
-    })
-    love.graphics.setBackgroundColor(10/255, 10/255, 10/255, 255/255)
-    BloodFont = love.graphics.newFont('fonts/HoMicIDE EFfeCt.ttf', 64)
+-- display the FPS at the top of the screen
+local function displayFPS()
+    -- simple FPS display across all states
+    love.graphics.setFont(GFonts['blood-small'])
+    love.graphics.setColor(0, 1, 0, 1)
+    love.graphics.print('FPS: ' .. tostring(love.timer.getFPS()), 5, 5)
 end
 
-function love.resize(w, h)
-    Push:resize(w, h)
+-- initialisation functions
+function InitialiseWindow()
+    love.window.setTitle('L0ad3d-2D')
+    love.window.setMode(WINDOW_WIDTH, WINDOW_HEIGHT, {
+        fullscreen = true,
+        vsync = true,
+        resizable = false
+    })
+    love.graphics.setBackgroundColor(10/255, 10/255, 10/255, 255/255)
+    love.graphics.setDefaultFilter('nearest', 'nearest')
+end
+
+function InitialiseFonts()
+    GFonts = {
+        ['blood-small'] = love.graphics.newFont('fonts/HoMicIDE EFfeCt.ttf', 32),
+        ['blood-menu'] = love.graphics.newFont('fonts/HoMicIDE EFfeCt.ttf', 64),
+        ['blood-title'] = love.graphics.newFont('fonts/HoMicIDE EFfeCt.ttf', 160),
+        ['blood-count'] = love.graphics.newFont('fonts/HoMicIDE EFfeCt.ttf', 192),
+    }
+end
+
+function InitialiseTextures()
+    GTextures = {
+
+    }
+end
+
+function InitialiseAudio()
+    GAudio = {
+        
+    }
+end
+
+function InitialiseQuads()
+    GQuads = {
+        
+    }
+end
+
+function InitialiseStateMachine()
+    GStateMachine = StateMachine{
+        ['menu'] = function() return MenuState() end,
+        ['countdown'] = function() return CountdownState() end
+    }
+    GStateMachine:change('menu')
+end
+
+-- LOVE2D functions
+function love.load()
+    InitialiseWindow()
+    InitialiseFonts()
+    InitialiseTextures()
+    InitialiseAudio()
+    InitialiseQuads()
+    InitialiseStateMachine()
+
+    love.keyboard.keysPressed = {}
 end
 
 function love.keypressed(key)
+    love.keyboard.keysPressed[key] = true
+
     if key == 'escape'then
         love.event.quit()
     end
 end
 
+function love.keyboard.wasPressed(key)
+    return love.keyboard.keysPressed[key]
+end
+
 function love.update(dt)
-    
+    GStateMachine:update(dt)
+    love.keyboard.keysPressed = {}
 end
 
 function love.draw()
-    Push:apply('start')
-    love.graphics.setFont(BloodFont)
-    love.graphics.setColor(255/255, 0/255, 0/255, 255/255)
-    love.graphics.printf('L0ad3d-2D', 0, 80, VIRTUAL_WIDTH, 'center')
-    Push:apply('end')
+    GStateMachine:render()
+    displayFPS()
 end
