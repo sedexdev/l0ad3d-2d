@@ -1,5 +1,6 @@
 StateMachine = Class{}
 
+-- initialises core state and class attributes
 function StateMachine:init(states)
     self.coreState = {
         render = function () end,
@@ -11,6 +12,7 @@ function StateMachine:init(states)
     self.current = self.coreState
 end
 
+-- changes state and passes in parameters
 function StateMachine:change(stateName, params)
     assert(self.states[stateName])
     self.current:exit()

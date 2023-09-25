@@ -49,19 +49,23 @@ function love.load()
     love.keyboard.keysPressed = {}
 end
 
+-- capture a keypress during gameplay
 function love.keypressed(key)
     love.keyboard.keysPressed[key] = true
 end
 
+-- return a boolean saying whether a specific key was pressed
 function love.keyboard.wasPressed(key)
     return love.keyboard.keysPressed[key]
 end
 
+-- update relative to delatime
 function love.update(dt)
     GStateMachine:update(dt)
     love.keyboard.keysPressed = {}
 end
 
+-- render game textures and text
 function love.draw()
     GStateMachine:render()
     displayFPS()
