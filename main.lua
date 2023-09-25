@@ -36,59 +36,21 @@ function InitialiseWindow()
     love.graphics.setDefaultFilter('nearest', 'nearest')
 end
 
-function InitialiseFonts()
-    GFonts = {
-        ['blood-small'] = love.graphics.newFont('fonts/HoMicIDE EFfeCt.ttf', 32),
-        ['blood-menu'] = love.graphics.newFont('fonts/HoMicIDE EFfeCt.ttf', 64),
-        ['blood-title'] = love.graphics.newFont('fonts/HoMicIDE EFfeCt.ttf', 160),
-        ['blood-count'] = love.graphics.newFont('fonts/HoMicIDE EFfeCt.ttf', 192),
-    }
-end
-
-function InitialiseTextures()
-    GTextures = {
-
-    }
-end
-
-function InitialiseAudio()
-    GAudio = {
-        
-    }
-end
-
-function InitialiseQuads()
-    GQuads = {
-        
-    }
-end
-
-function InitialiseStateMachine()
-    GStateMachine = StateMachine{
-        ['menu'] = function() return MenuState() end,
-        ['countdown'] = function() return CountdownState() end
-    }
-    GStateMachine:change('menu')
-end
-
 -- LOVE2D functions
 function love.load()
+    -- seed RNG
+    math.randomseed(os.time())
+
     InitialiseWindow()
-    InitialiseFonts()
-    InitialiseTextures()
-    InitialiseAudio()
-    InitialiseQuads()
-    InitialiseStateMachine()
+    GStateMachine:change('menu', {
+        highScores = LoadHighScores()
+    })
 
     love.keyboard.keysPressed = {}
 end
 
 function love.keypressed(key)
     love.keyboard.keysPressed[key] = true
-
-    if key == 'escape'then
-        love.event.quit()
-    end
 end
 
 function love.keyboard.wasPressed(key)

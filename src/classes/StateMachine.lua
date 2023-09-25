@@ -1,4 +1,4 @@
-StateMachine = Class{__includes = BaseState}
+StateMachine = Class{}
 
 function StateMachine:init(states)
     self.coreState = {
