@@ -27,5 +27,6 @@ GQuads = {
 GStateMachine = StateMachine {
     ['menu'] = function() return MenuState() end,
     ['countdown'] = function() return CountdownState() end,
+    ['playing'] = function() return PlayState() end,
     ['highscores'] = function() return HighScoreState() end
 }

@@ -2,6 +2,11 @@ CountdownState = Class{__includes = BaseState}
 
 function CountdownState:enter(params)
     self.highScores = params.highScores
+    Timer.after(3, function()
+        GStateMachine:change('playing', {
+            highScores = self.highScores
+        })
+    end)
 end
 
 function CountdownState:init()
@@ -22,6 +27,8 @@ function CountdownState:update(dt)
         self.count = self.count - 1
         self.timer = 0
     end
+
+    Timer.update(dt)
 end
 
 function CountdownState:render()

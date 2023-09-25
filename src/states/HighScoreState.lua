@@ -25,6 +25,7 @@ function HighScoreState:render()
         love.graphics.printf(self.highScores[i].score, 250, 225 + (i * 65), WINDOW_WIDTH, 'center')
     end
 
+    love.graphics.setColor(1, 0/255, 0/255, 1)
     love.graphics.setFont(GFonts['blood-smaller'])
     love.graphics.printf('Press escape to go back', 0, WINDOW_HEIGHT - 80, WINDOW_WIDTH, 'center')
 end
