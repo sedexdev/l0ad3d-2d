@@ -13,11 +13,11 @@ function HighScoreState:update(dt)
 end
 
 function HighScoreState:render()
-    love.graphics.setFont(GFonts['blood-highscores'])
+    love.graphics.setFont(GFonts['funkrocker-highscores'])
     love.graphics.setColor(1, 0/255, 0/255, 1)
-    love.graphics.printf('HIGH SCORES', 0, 100, WINDOW_WIDTH, 'center')
+    love.graphics.printf('HIGH SCORES', 0, 80, WINDOW_WIDTH, 'center')
 
-    love.graphics.setFont(GFonts['blood-small'])
+    love.graphics.setFont(GFonts['funkrocker-small'])
     love.graphics.setColor(1, 1, 1, 1)
     for i = 1, 10 do
         love.graphics.printf(tostring(i) .. '. ', -250, 225 + (i * 65), WINDOW_WIDTH, 'center')
@@ -26,6 +26,6 @@ function HighScoreState:render()
     end
 
     love.graphics.setColor(1, 0/255, 0/255, 1)
-    love.graphics.setFont(GFonts['blood-smaller'])
-    love.graphics.printf('Press escape to go back', 0, WINDOW_HEIGHT - 80, WINDOW_WIDTH, 'center')
+    love.graphics.setFont(GFonts['funkrocker-smaller'])
+    love.graphics.printf('Press escape to go back', 0, WINDOW_HEIGHT - 100, WINDOW_WIDTH, 'center')
 end

@@ -11,6 +11,7 @@
 
     Non-original sources:
         HoMicIDE EFfeCt.ttf - https://www.fontsaddict.com/font/homicide-effect.html
+        Funkrocker.ttf      - https://www.1001freefonts.com/funkrocker.font
 ]]
 
 -- dependencies are managed in a designated file
@@ -19,7 +20,7 @@ require 'src/utils/dependencies'
 -- display the FPS at the top of the screen
 local function displayFPS()
     -- simple FPS display across all states
-    love.graphics.setFont(GFonts['blood-small'])
+    love.graphics.setFont(GFonts['funkrocker-small'])
     love.graphics.setColor(0, 1, 0, 1)
     love.graphics.print('FPS: ' .. tostring(love.timer.getFPS()), 5, 5)
 end

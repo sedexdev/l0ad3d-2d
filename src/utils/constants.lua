@@ -4,12 +4,12 @@ WINDOW_HEIGHT = 1080
 
 -- global resources
 GFonts = {
-    ['blood-smaller'] = love.graphics.newFont('fonts/HoMicIDE EFfeCt.ttf', 32),
-    ['blood-small'] = love.graphics.newFont('fonts/HoMicIDE EFfeCt.ttf', 48),
-    ['blood-menu'] = love.graphics.newFont('fonts/HoMicIDE EFfeCt.ttf', 64),
-    ['blood-highscores'] = love.graphics.newFont('fonts/HoMicIDE EFfeCt.ttf', 108),
+    ['funkrocker-smaller'] = love.graphics.newFont('fonts/funkrocker.ttf', 32),
+    ['funkrocker-small'] = love.graphics.newFont('fonts/funkrocker.ttf', 48),
+    ['funkrocker-menu'] = love.graphics.newFont('fonts/funkrocker.ttf', 64),
+    ['funkrocker-highscores'] = love.graphics.newFont('fonts/Funkrocker.ttf', 108),
     ['blood-title'] = love.graphics.newFont('fonts/HoMicIDE EFfeCt.ttf', 160),
-    ['blood-count'] = love.graphics.newFont('fonts/HoMicIDE EFfeCt.ttf', 192)
+    ['blood-count'] = love.graphics.newFont('fonts/HoMicIDE EFfeCt.ttf', 192),
 }
 
 GTextures = {

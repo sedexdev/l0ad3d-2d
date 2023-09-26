@@ -36,7 +36,7 @@ function MenuState:render()
     love.graphics.setColor(1, 0/255, 0/255, 1)
     love.graphics.printf('L0ad3d-2D', 0, WINDOW_HEIGHT / 4, WINDOW_WIDTH, 'center')
 
-    love.graphics.setFont(GFonts['blood-menu'])
+    love.graphics.setFont(GFonts['funkrocker-menu'])
 
     if self.selected == 1 then
         love.graphics.setColor(1, 1, 1, 1)
