@@ -2,6 +2,10 @@
 WINDOW_WIDTH = 1920
 WINDOW_HEIGHT = 1080
 
+-- player
+PLAYER_SPEED = 200
+CAMERA_SCROLL = 200
+
 -- global resources
 GFonts = {
     ['funkrocker-smaller'] = love.graphics.newFont('fonts/funkrocker.ttf', 32),
@@ -26,6 +30,7 @@ GQuads = {
 
 GStateMachine = StateMachine {
     ['menu'] = function() return MenuState() end,
+    ['select'] = function() return SelectCharacterState() end,
     ['countdown'] = function() return CountdownState() end,
     ['playing'] = function() return PlayState() end,
     ['highscores'] = function() return HighScoreState() end
