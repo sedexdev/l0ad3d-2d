@@ -11,11 +11,13 @@ Class = require 'lib/class'
 Timer = require 'lib/timer'
 
 -- classes
+require 'src/classes/Player'
 require 'src/classes/StateMachine'
 
 -- states
 require 'src/states/BaseState'
 require 'src/states/MenuState'
+require 'src/states/SelectCharacterState'
 require 'src/states/CountdownState'
 require 'src/states/PlayState'
 require 'src/states/HighScoreState'

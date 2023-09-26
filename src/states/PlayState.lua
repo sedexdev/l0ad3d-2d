@@ -2,6 +2,7 @@ PlayState = Class{__includes = BaseState}
 
 function PlayState:enter(params)
     self.highScores = params.highScores
+    self.player = params.player
 end
 
 function PlayState:init()
@@ -14,10 +15,9 @@ function PlayState:update(dt)
             highScores = self.highScores
         })
     end
+    self.player:update(dt)
 end
 
 function PlayState:render()
-    love.graphics.setFont(GFonts['blood-title'])
-    love.graphics.setColor(1, 0/255, 0/255, 1)
-    love.graphics.printf('PLAYING!', 0, WINDOW_HEIGHT / 4, WINDOW_WIDTH, 'center')
+    self.player:render()
 end

@@ -18,7 +18,7 @@ function MenuState:update(dt)
 
     if love.keyboard.wasPressed('enter') or love.keyboard.wasPressed('return') then
         if self.selected == 1 then
-            GStateMachine:change('countdown', {
+            GStateMachine:change('select', {
                 highScores = self.highScores
             })
         elseif self.selected == 2 then
