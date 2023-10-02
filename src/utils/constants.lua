@@ -3,8 +3,7 @@ WINDOW_WIDTH = 1920
 WINDOW_HEIGHT = 1080
 
 -- player
-PLAYER_SPEED = 200
-CAMERA_SCROLL = 200
+PLAYER_SPEED = 600
 
 -- global resources
 GFonts = {

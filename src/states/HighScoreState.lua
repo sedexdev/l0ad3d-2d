@@ -20,9 +20,9 @@ function HighScoreState:render()
     love.graphics.setFont(GFonts['funkrocker-small'])
     love.graphics.setColor(1, 1, 1, 1)
     for i = 1, 10 do
-        love.graphics.printf(tostring(i) .. '. ', -250, 225 + (i * 65), WINDOW_WIDTH, 'center')
-        love.graphics.printf(self.highScores[i].name, -140, 225 + (i * 65), WINDOW_WIDTH, 'center')
-        love.graphics.printf(self.highScores[i].score, 250, 225 + (i * 65), WINDOW_WIDTH, 'center')
+        love.graphics.printf(tostring(i) .. '. ', -250, 215 + (i * 65), WINDOW_WIDTH, 'center')
+        love.graphics.printf(self.highScores[i].name, -140, 215 + (i * 65), WINDOW_WIDTH, 'center')
+        love.graphics.printf(self.highScores[i].score, 250, 215 + (i * 65), WINDOW_WIDTH, 'center')
     end
 
     love.graphics.setColor(1, 0/255, 0/255, 1)
