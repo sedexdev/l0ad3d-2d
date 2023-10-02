@@ -6,7 +6,7 @@ function PlayState:enter(params)
 end
 
 function PlayState:init()
-    
+
 end
 
 function PlayState:update(dt)

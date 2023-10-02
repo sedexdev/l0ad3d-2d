@@ -1,6 +1,10 @@
 -- globablly available constansts
 WINDOW_WIDTH, WINDOW_HEIGHT = love.window.getDesktopDimensions()
 
+-- character select
+AVATAR_WIDTH = 450
+AVATAR_HEIGHT = 650
+
 -- player
 PLAYER_SPEED = 600
 
@@ -15,7 +19,7 @@ GFonts = {
 }
 
 GTextures = {
-
+    ['player'] = love.graphics.newImage('graphics/character.png')
 }
 
 GAudio = {
@@ -32,4 +36,19 @@ GStateMachine = StateMachine {
     ['countdown'] = function() return CountdownState() end,
     ['playing'] = function() return PlayState() end,
     ['highscores'] = function() return HighScoreState() end
+}
+
+GEntityDefintions = {
+    ['player'] = {
+        texture = GTextures['player'],
+        animations = {},
+        health = 100,
+        ammo = 5000,
+        powerups = {}
+    },
+    ['enimies'] = {
+        ['grunt'] = {},
+        ['boss'] = {}
+    },
+    ['turret'] = {}
 }

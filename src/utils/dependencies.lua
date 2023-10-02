@@ -15,12 +15,12 @@ require 'src/classes/Player'
 require 'src/classes/StateMachine'
 
 -- states
-require 'src/states/BaseState'
-require 'src/states/MenuState'
-require 'src/states/SelectCharacterState'
-require 'src/states/CountdownState'
-require 'src/states/PlayState'
-require 'src/states/HighScoreState'
+require 'src/states/Game/BaseState'
+require 'src/states/Game/MenuState'
+require 'src/states/Game/SelectCharacterState'
+require 'src/states/Game/CountdownState'
+require 'src/states/Game/PlayState'
+require 'src/states/Game/HighScoreState'
 
 -- util files
 require 'src/utils/constants'

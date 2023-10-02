@@ -1,16 +1,14 @@
 Player = Class{}
 
-function Player:init(id)
+function Player:init(id, def)
     self.id = id
+    self.def = def
     self.width = 32
     self.height = 32
     self.x = WINDOW_WIDTH / 2 - (self.width / 2)
     self.y = WINDOW_HEIGHT / 2 - (self.height / 2)
     self.cameraScrollX = 0
     self.cameraScrollY = 0
-    self.powerups = {}
-    self.health = 1000
-    self.ammo = 5000
 end
 
 function Player:update(dt)
@@ -32,7 +30,11 @@ function Player:update(dt)
 end
 
 function Player:render()
-    love.graphics.setColor(0/255, 1, 0/255, 1)
+    if self.id == 1 then
+        love.graphics.setColor(0/255, 1, 0/255, 1)
+    else
+        love.graphics.setColor(0/255, 0/255, 1, 1)
+    end
     love.graphics.translate(-math.floor(self.cameraScrollX), -math.floor(self.cameraScrollY))
     love.graphics.circle("fill", self.x, self.y, 16)
 end
