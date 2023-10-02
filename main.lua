@@ -28,7 +28,7 @@ end
 -- initialisation functions
 function InitialiseWindow()
     love.window.setTitle('L0ad3d-2D')
-    love.window.setMode(WINDOW_WIDTH, WINDOW_HEIGHT, {
+    love.window.setMode(0, 0, {
         fullscreen = true,
         vsync = true,
         resizable = false

@@ -1,6 +1,5 @@
 -- globablly available constansts
-WINDOW_WIDTH = 1920
-WINDOW_HEIGHT = 1080
+WINDOW_WIDTH, WINDOW_HEIGHT = love.window.getDesktopDimensions()
 
 -- player
 PLAYER_SPEED = 600
