@@ -9,9 +9,19 @@
     Author: Andrew Macmillan
     Version: 1.0
 
-    Non-original sources:
-        HoMicIDE EFfeCt.ttf - https://www.fontsaddict.com/font/homicide-effect.html
-        Funkrocker.ttf      - https://www.1001freefonts.com/funkrocker.font
+    Non-original sources
+        Fonts:
+            HoMicIDE EFfeCt.ttf - https://www.fontsaddict.com/font/homicide-effect.html
+            Funkrocker.ttf      - https://www.1001freefonts.com/funkrocker.font
+        Music:
+            Heavy metal theme   - https://freemusicarchive.org/music/alex-productions/
+        Sounds:
+            Selection error     - https://freesound.org/people/Isaac200000/
+            Gun click select    - https://freesound.org/people/magnuswaker/
+            Selection gunshot   - https://freesound.org/people/Xenonn/
+        Graphics:
+            Menu background     - https://www.everwallpaper.co.uk/products/mottled-grey-wallpaper-mural
+            Bullet holes        - https://www.spriters-resource.com/submitter/MagicMaker/
 ]]
 
 -- dependencies are managed in a designated file
