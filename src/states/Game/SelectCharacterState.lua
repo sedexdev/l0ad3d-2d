@@ -17,19 +17,25 @@ function SelectCharacterState:update(dt)
 
     if love.keyboard.wasPressed('right') then
         if self.selected == 2 then
-            -- play error sound
+            GAudio['error']:play()
         else
+            GAudio['select']:stop()
+            GAudio['select']:play()
             self.selected = self.selected + 1
         end
     elseif love.keyboard.wasPressed('left') then
         if self.selected == 1 then
-            -- play error sound
+            GAudio['error']:play()
         else
+            GAudio['select']:stop()
+            GAudio['select']:play()
             self.selected = self.selected - 1
         end
     end
 
     if love.keyboard.wasPressed('enter') or love.keyboard.wasPressed('return') then
+        GAudio['select']:stop()
+        GAudio['gunshot']:play()
         GStateMachine:change('countdown', {
             highScores = self.highScores,
             player = Player(self.selected, GEntityDefintions['player'])
@@ -38,6 +44,15 @@ function SelectCharacterState:update(dt)
 end
 
 function SelectCharacterState:render()
+    -- draw background
+    love.graphics.setColor(1, 1, 1, 1)
+    love.graphics.draw(GTextures['grey-background'],
+        0, 0,
+        0,
+        WINDOW_WIDTH / GTextures['grey-background']:getWidth(),
+        WINDOW_WIDTH / GTextures['grey-background']:getHeight()
+    )
+
     -- use rectangles as characters for now
 
     -- render first character

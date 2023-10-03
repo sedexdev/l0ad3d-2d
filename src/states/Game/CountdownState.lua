@@ -34,7 +34,10 @@ function CountdownState:update(dt)
 end
 
 function CountdownState:render()
-    love.graphics.setFont(GFonts['blood-count'])
+    love.graphics.setFont(GFonts['funkrocker-count'])
+    love.graphics.setColor(1, 1, 1, 1)
+    love.graphics.printf(tostring(self.count), 2, (WINDOW_HEIGHT / 3) + 2, WINDOW_WIDTH, 'center')
+    love.graphics.printf(tostring(self.count), 2, (WINDOW_HEIGHT / 3) + 2, WINDOW_WIDTH, 'center')
     love.graphics.setColor(1, 0/255, 0/255, 1)
     love.graphics.printf(tostring(self.count), 0, WINDOW_HEIGHT / 3, WINDOW_WIDTH, 'center')
 end

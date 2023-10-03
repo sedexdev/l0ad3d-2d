@@ -23,5 +23,7 @@ require 'src/states/Game/PlayState'
 require 'src/states/Game/HighScoreState'
 
 -- util files
+require 'src/utils/utils'
 require 'src/utils/constants'
+require 'src/utils/definitions'
 require 'src/utils/scores'

@@ -14,20 +14,25 @@ GFonts = {
     ['funkrocker-small'] = love.graphics.newFont('fonts/funkrocker.ttf', 48),
     ['funkrocker-menu'] = love.graphics.newFont('fonts/funkrocker.ttf', 64),
     ['funkrocker-highscores'] = love.graphics.newFont('fonts/Funkrocker.ttf', 108),
-    ['blood-title'] = love.graphics.newFont('fonts/HoMicIDE EFfeCt.ttf', 160),
-    ['blood-count'] = love.graphics.newFont('fonts/HoMicIDE EFfeCt.ttf', 192),
+    ['funkrocker-count'] = love.graphics.newFont('fonts/Funkrocker.ttf', 192),
+    ['blood-title'] = love.graphics.newFont('fonts/HoMicIDE EFfeCt.ttf', 170),
 }
 
 GTextures = {
-    ['player'] = love.graphics.newImage('graphics/character.png')
+    ['grey-background'] = love.graphics.newImage('graphics/mottled-grey.png'),
+    ['bullet-hole'] = love.graphics.newImage('graphics/bullet_hole.png'),
+    ['player1-walking'] = love.graphics.newImage('graphics/character_walk.png')
 }
 
 GAudio = {
-
+    ['theme'] = love.audio.newSource('audio/theme.mp3', 'static'),
+    ['gunshot'] = love.audio.newSource('audio/gunshot.wav', 'static'),
+    ['select'] = love.audio.newSource('audio/select.wav', 'static'),
+    ['error'] = love.audio.newSource('audio/error.wav', 'static'),
 }
 
 GQuads = {
-
+    ['player1-walking'] = GenerateQuads(GTextures['player1-walking'], 16, 32)
 }
 
 GStateMachine = StateMachine {
@@ -36,19 +41,4 @@ GStateMachine = StateMachine {
     ['countdown'] = function() return CountdownState() end,
     ['playing'] = function() return PlayState() end,
     ['highscores'] = function() return HighScoreState() end
-}
-
-GEntityDefintions = {
-    ['player'] = {
-        texture = GTextures['player'],
-        animations = {},
-        health = 100,
-        ammo = 5000,
-        powerups = {}
-    },
-    ['enimies'] = {
-        ['grunt'] = {},
-        ['boss'] = {}
-    },
-    ['turret'] = {}
 }
