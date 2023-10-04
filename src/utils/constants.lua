@@ -21,6 +21,7 @@ GFonts = {
 GTextures = {
     ['grey-background'] = love.graphics.newImage('graphics/mottled-grey.png'),
     ['bullet-hole'] = love.graphics.newImage('graphics/bullet_hole.png'),
+    ['floor-tiles'] = love.graphics.newImage('graphics/floor_tiles/l0ad3d_tiles.png'),
     ['player1-walking'] = love.graphics.newImage('graphics/character_walk.png')
 }
 
@@ -32,6 +33,7 @@ GAudio = {
 }
 
 GQuads = {
+    ['floor-tiles'] = GenerateQuads(GTextures['floor-tiles'], 64, 32),
     ['player1-walking'] = GenerateQuads(GTextures['player1-walking'], 16, 32)
 }
 

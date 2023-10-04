@@ -7,8 +7,6 @@ function Player:init(id, def)
     self.height = 32
     self.x = WINDOW_WIDTH / 2 - (self.width / 2)
     self.y = WINDOW_HEIGHT / 2 - (self.height / 2)
-    self.cameraScrollX = 0
-    self.cameraScrollY = 0
 end
 
 function Player:update(dt)
@@ -24,9 +22,6 @@ function Player:update(dt)
     if love.keyboard.isDown('right') or love.keyboard.isDown('d') then
         self.x = self.x + PLAYER_SPEED * dt
     end
-
-    self.cameraScrollX = self.x - (WINDOW_WIDTH / 2) + (self.width / 2)
-    self.cameraScrollY = self.y - (WINDOW_HEIGHT / 2) + (self.height / 2)
 end
 
 function Player:render()
@@ -35,6 +30,6 @@ function Player:render()
     else
         love.graphics.setColor(0/255, 0/255, 1, 1)
     end
-    love.graphics.translate(-math.floor(self.cameraScrollX), -math.floor(self.cameraScrollY))
+    
     love.graphics.circle("fill", self.x, self.y, 16)
 end

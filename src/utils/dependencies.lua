@@ -11,6 +11,7 @@ Class = require 'lib/class'
 Timer = require 'lib/timer'
 
 -- classes
+require 'src/classes/Map'
 require 'src/classes/Player'
 require 'src/classes/StateMachine'
 

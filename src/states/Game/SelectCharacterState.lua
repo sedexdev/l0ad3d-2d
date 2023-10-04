@@ -38,7 +38,8 @@ function SelectCharacterState:update(dt)
         GAudio['gunshot']:play()
         GStateMachine:change('countdown', {
             highScores = self.highScores,
-            player = Player(self.selected, GEntityDefintions['player'])
+            player = Player(self.selected, GEntityDefintions['player']),
+            map = Map()
         })
     end
 end
