@@ -4,7 +4,8 @@
                  PS1 game 'Loaded'. It features a small demo environment
                  to emulate the original in a 2D plane using Lua and
                  the LOVE2D game engine for development. All textures
-                 were created by me using GIMP.
+                 were created by me using GIMP (excluding those mentioned
+                below)
 
     Author: Andrew Macmillan
     Version: 1.0
@@ -22,6 +23,7 @@
         Graphics:
             Menu background     - https://www.everwallpaper.co.uk/products/mottled-grey-wallpaper-mural
             Bullet holes        - https://www.spriters-resource.com/submitter/MagicMaker/
+            Blood splatter      - https://www.vecteezy.com/free-png/blood-png
 ]]
 
 -- dependencies are managed in a designated file
