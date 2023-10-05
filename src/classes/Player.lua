@@ -30,6 +30,5 @@ function Player:render()
     else
         love.graphics.setColor(0/255, 0/255, 1, 1)
     end
-    
     love.graphics.circle("fill", self.x, self.y, 16)
 end
