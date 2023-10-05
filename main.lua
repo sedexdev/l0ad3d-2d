@@ -9,24 +9,6 @@
 
     Author: Andrew Macmillan
     Version: 1.0
-
-    Non-original sources
-        Fonts:
-            HoMicIDE EFfeCt.ttf - https://www.fontsaddict.com/font/homicide-effect.html
-            Funkrocker.ttf      - https://www.1001freefonts.com/funkrocker.font
-        Music:
-            Heavy metal theme   - https://freemusicarchive.org/music/alex-productions/
-        Sounds:
-            Selection error     - https://freesound.org/people/Isaac200000/
-            Gun click select    - https://freesound.org/people/magnuswaker/
-            Gunshot   - https://freesound.org/people/Xenonn/
-        Graphics:
-            Menu background     - https://www.everwallpaper.co.uk/products/mottled-grey-wallpaper-mural
-            Bullet holes        - https://www.spriters-resource.com/submitter/MagicMaker/
-            Gunshot flash       - https://www.pngwing.com/en/free-png-mwnxf
-            Blood splatter      - https://www.vecteezy.com/free-png/blood-png
-        Character select:
-            Cap'n Hands         - https://www.giantbomb.com/cap-n-hands/3005-28408/
 ]]
 
 -- dependencies are managed in a designated file
