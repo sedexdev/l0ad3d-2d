@@ -6,7 +6,8 @@
 PS1 game 'Loaded'. It features a small demo environment
 to emulate the original in a 2D plane using Lua and
 the LOVE2D game engine for development. All textures
-were created by me using GIMP.</p>
+were created by me using GIMP (unless otherwise credited
+below)</p>
 <p>Author: Andrew Macmillan</p>
 <p>Version: 1.0</p>
 
