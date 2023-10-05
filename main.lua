@@ -19,11 +19,14 @@
         Sounds:
             Selection error     - https://freesound.org/people/Isaac200000/
             Gun click select    - https://freesound.org/people/magnuswaker/
-            Selection gunshot   - https://freesound.org/people/Xenonn/
+            Gunshot   - https://freesound.org/people/Xenonn/
         Graphics:
             Menu background     - https://www.everwallpaper.co.uk/products/mottled-grey-wallpaper-mural
             Bullet holes        - https://www.spriters-resource.com/submitter/MagicMaker/
+            Gunshot flash       - https://www.pngwing.com/en/free-png-mwnxf
             Blood splatter      - https://www.vecteezy.com/free-png/blood-png
+        Character select:
+            Cap'n Hands         - https://www.giantbomb.com/cap-n-hands/3005-28408/
 ]]
 
 -- dependencies are managed in a designated file
