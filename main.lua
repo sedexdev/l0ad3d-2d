@@ -11,16 +11,8 @@
     Version: 1.0
 ]]
 
--- dependencies are managed in a designated file
+-- dependencies are managed in dependencies.lua
 require 'src/utils/dependencies'
-
--- display the FPS at the top of the screen
-local function displayFPS()
-    -- simple FPS display across all states
-    love.graphics.setFont(GFonts['funkrocker-small'])
-    love.graphics.setColor(0, 1, 0, 1)
-    love.graphics.print('FPS: ' .. tostring(love.timer.getFPS()), 5, 5)
-end
 
 -- initialisation functions
 function InitialiseWindow()
@@ -70,5 +62,4 @@ end
 -- render game textures and text
 function love.draw()
     GStateMachine:render()
-    displayFPS()
 end

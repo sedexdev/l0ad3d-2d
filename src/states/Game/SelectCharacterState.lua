@@ -54,41 +54,73 @@ function SelectCharacterState:render()
         WINDOW_WIDTH / GTextures['grey-background']:getHeight()
     )
 
-    -- use rectangles as characters for now
-
     -- render first character
-    love.graphics.setColor(0/255, 1, 0/255, 1)
-    love.graphics.rectangle('fill',
-        (WINDOW_WIDTH / 4) - (AVATAR_WIDTH / 2),
-        (WINDOW_HEIGHT / 2) - (AVATAR_HEIGHT / 2),
-        AVATAR_WIDTH, AVATAR_HEIGHT
-    )
-
+    self:renderShadow(1, 25)
+    self:renderAvatar(GTextures['player1-avatar'], 1)
     if self.selected == 1 then
-        -- render opaque rectangle on top
-        love.graphics.setColor(1, 1, 1, 50/255)
-        love.graphics.rectangle('fill',
-            (WINDOW_WIDTH / 4) - (AVATAR_WIDTH / 2),
-            (WINDOW_HEIGHT / 2) - (AVATAR_HEIGHT / 2),
-            AVATAR_WIDTH, AVATAR_HEIGHT
-        )
+        self:renderHighlight(1)
     end
+    self:renderName('CAP\'N GUNS', (WINDOW_WIDTH / 4))
 
     -- render second character
+    self:renderShadow(3, 25)
+    -- temporary rectangle
     love.graphics.setColor(0/255, 0/255, 1, 1)
     love.graphics.rectangle('fill',
         (WINDOW_WIDTH / 4 * 3) - (AVATAR_WIDTH / 2),
         (WINDOW_HEIGHT / 2) - (AVATAR_HEIGHT / 2),
         AVATAR_WIDTH, AVATAR_HEIGHT
     )
-
     if self.selected == 2 then
-        -- render opaque rectangle on top
-        love.graphics.setColor(1, 1, 1, 50/255)
-        love.graphics.rectangle('fill',
-        (WINDOW_WIDTH / 4 * 3) - (AVATAR_WIDTH / 2),
+        self:renderHighlight(3)
+    end
+    self:renderName('PLANK', (WINDOW_WIDTH / 4 * 3))
+end
+
+function SelectCharacterState:renderShadow(xOffset, yOffset)
+    love.graphics.setColor(20/255, 20/255, 20/255, 1)
+    love.graphics.rectangle('fill',
+        ((WINDOW_WIDTH / 4 * xOffset ) - (AVATAR_WIDTH / 2)) + yOffset,
+        ((WINDOW_HEIGHT / 2) - (AVATAR_HEIGHT / 2)) + yOffset,
+        AVATAR_WIDTH, AVATAR_HEIGHT
+    )
+end
+
+function SelectCharacterState:renderHighlight(xOffset)
+    -- render opaque rectangle on top
+    love.graphics.setColor(1, 1, 1, 50/255)
+    love.graphics.rectangle('fill',
+        (WINDOW_WIDTH / 4 * xOffset) - (AVATAR_WIDTH / 2),
         (WINDOW_HEIGHT / 2) - (AVATAR_HEIGHT / 2),
         AVATAR_WIDTH, AVATAR_HEIGHT
     )
-    end
+end
+
+function SelectCharacterState:renderAvatar(texture, xOffset)
+    love.graphics.setColor(1, 1, 1, 1)
+    love.graphics.draw(texture,
+        (WINDOW_WIDTH / 4 * xOffset) - (AVATAR_WIDTH / 2),
+        (WINDOW_HEIGHT / 2) - (AVATAR_HEIGHT / 2)
+    )
+end
+
+function SelectCharacterState:renderName(name, x)
+    local fontWidth = GFonts['funkrocker-highscores']:getWidth(name)
+    love.graphics.setFont(GFonts['funkrocker-highscores'])
+    love.graphics.setColor(10/255, 10/255, 10/255, 1)
+    love.graphics.print(name,
+        x + 2, (WINDOW_HEIGHT / 3) + 2,
+        0,
+        1, 1,
+        fontWidth / 2, 0,
+        0, 0
+    )
+    love.graphics.setColor(1, 0/255, 0/255, 1)
+    love.graphics.print(name,
+        x, (WINDOW_HEIGHT / 3),
+        0,
+        1, 1,
+        fontWidth / 2, 0,
+        0, 0
+    )
 end

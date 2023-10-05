@@ -35,7 +35,7 @@ function MenuState:update(dt)
 
     if love.keyboard.wasPressed('enter') or love.keyboard.wasPressed('return') then
         GAudio['select']:stop()
-        GAudio['gunshot']:play()
+        -- GAudio['gunshot']:play()
         if self.selected == 1 then
             GStateMachine:change('select', {
                 highScores = self.highScores
@@ -84,36 +84,22 @@ function MenuState:render()
     -- draw menu
     love.graphics.setFont(GFonts['funkrocker-menu'])
 
-    love.graphics.setColor(10/255, 10/255, 10/255, 1)
-    love.graphics.printf('LOAD UP', 2, (WINDOW_HEIGHT / 3 + 200) + 2, WINDOW_WIDTH, 'center')
-    love.graphics.printf('LOAD UP', 2, (WINDOW_HEIGHT / 3 + 200) + 2, WINDOW_WIDTH, 'center')
-    -- reset the colour
-    love.graphics.setColor(1, 0/255, 0/255, 1)
-    if self.selected == 1 then
-        love.graphics.setColor(1, 1, 1, 1)
-    end
-    love.graphics.printf('LOAD UP', 0, WINDOW_HEIGHT / 3 + 200, WINDOW_WIDTH, 'center')
-
-    love.graphics.setColor(10/255, 10/255, 10/255, 1)
-    love.graphics.printf('HIGH SCORE', 2, (WINDOW_HEIGHT / 3 + 300) + 2, WINDOW_WIDTH, 'center')
-    love.graphics.printf('HIGH SCORE', 2, (WINDOW_HEIGHT / 3 + 300) + 2, WINDOW_WIDTH, 'center')
-    -- reset the colour
-    love.graphics.setColor(1, 0/255, 0/255, 1)
-    if self.selected == 2 then
-        love.graphics.setColor(1, 1, 1, 1)
-    end
-    love.graphics.printf('HIGH SCORE', 0, WINDOW_HEIGHT / 3 + 300, WINDOW_WIDTH, 'center')
-
-    love.graphics.setColor(10/255, 10/255, 10/255, 1)
-    love.graphics.printf('QUIT', 2, (WINDOW_HEIGHT / 3 + 400) + 2, WINDOW_WIDTH, 'center')
-    love.graphics.printf('QUIT', 2, (WINDOW_HEIGHT / 3 + 400) + 2, WINDOW_WIDTH, 'center')
-    -- reset the colour
-    love.graphics.setColor(1, 0/255, 0/255, 1)
-    if self.selected == 3 then
-        love.graphics.setColor(1, 1, 1, 1)
-    end
-    love.graphics.printf('QUIT', 0, WINDOW_HEIGHT / 3 + 400, WINDOW_WIDTH, 'center')
+    self:renderOption('LOAD UP', 1, 200)
+    self:renderOption('HIGH SCORE', 2, 300)
+    self:renderOption('QUIT', 3, 400)
 
     -- reset the colour
     love.graphics.setColor(1, 0/255, 0/255, 1)
+end
+
+function MenuState:renderOption(name, id, yOffset)
+    love.graphics.setColor(10/255, 10/255, 10/255, 1)
+    love.graphics.printf(name, 2, (WINDOW_HEIGHT / 3 + yOffset) + 2, WINDOW_WIDTH, 'center')
+    love.graphics.printf(name, 2, (WINDOW_HEIGHT / 3 + yOffset) + 2, WINDOW_WIDTH, 'center')
+    -- reset the colour
+    love.graphics.setColor(1, 0/255, 0/255, 1)
+    if self.selected == id then
+        love.graphics.setColor(1, 1, 1, 1)
+    end
+    love.graphics.printf(name, 0, WINDOW_HEIGHT / 3 + yOffset, WINDOW_WIDTH, 'center')
 end

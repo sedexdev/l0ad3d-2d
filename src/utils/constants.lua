@@ -21,7 +21,8 @@ GFonts = {
 GTextures = {
     ['grey-background'] = love.graphics.newImage('graphics/mottled-grey.png'),
     ['bullet-hole'] = love.graphics.newImage('graphics/bullet_hole.png'),
-    ['floor-tiles'] = love.graphics.newImage('graphics/floor_tiles.png')
+    ['floor-tiles'] = love.graphics.newImage('graphics/floor_tiles.png'),
+    ['player1-avatar'] = love.graphics.newImage('graphics/cap_n_hands.png')
 }
 
 GAudio = {
