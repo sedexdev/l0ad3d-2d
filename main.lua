@@ -32,6 +32,7 @@ function InitialiseWindow()
     })
     love.graphics.setBackgroundColor(10/255, 10/255, 10/255, 255/255)
     love.graphics.setDefaultFilter('nearest', 'nearest')
+    love.mouse.setVisible(false)
 end
 
 -- LOVE2D functions
