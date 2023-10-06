@@ -5,7 +5,9 @@ function PlayerIdleState:init(player)
 end
 
 function PlayerIdleState:update(dt)
+    -- update the player animations
     self.player.animations['idle-'..self.player.lastDirection]:update(dt)
+
     if not love.keyboard.anyDown(MOVEMENT_KEYS) then
         self.player.direction = self.player.lastDirection
     else

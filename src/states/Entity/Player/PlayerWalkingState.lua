@@ -5,6 +5,7 @@ function PlayerWalkingState:init(player)
 end
 
 function PlayerWalkingState:update(dt)
+    -- update the player animations
     self.player.animations['walking-'..self.player.direction]:update(dt)
 
     if love.keyboard.isDown('up') or love.keyboard.isDown('w') then
