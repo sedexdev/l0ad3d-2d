@@ -1,6 +1,7 @@
 GAnimationDefintions = {
     ['character1'] = {
         texture = GTextures['character1'],
+        fireShot = GTextures['gun-flash'],
         animations = {
             ['walking-north'] = Animation({1, 9}, CHARACTER_WALK_INTERVAL),
             ['walking-east'] = Animation({3, 11}, CHARACTER_WALK_INTERVAL),
@@ -65,6 +66,7 @@ GCharacterDefinition = {
     height = CHARACTER_HEIGHT,
     health = 100,
     ammo = 5000,
+    shotFired = false,
     direction = 'north',
     lastDirection = 'north',
     speed = 1000,
@@ -73,5 +75,13 @@ GCharacterDefinition = {
         infinite_ammo = false,
         one_shot_boss_kill = false
     },
-    stateMachine = nil
+    stateMachine = nil,
+    ['character1'] = {
+        weapons = 2,
+        currentWeapon = 'right'
+    },
+    ['character2'] = {
+        weapons = 1,
+        currentWeapon = 'right'
+    }
 }

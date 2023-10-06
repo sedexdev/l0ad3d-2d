@@ -24,6 +24,7 @@ GTextures = {
     ['grey-background'] = love.graphics.newImage('graphics/mottled-grey.png'),
     ['bullet-hole'] = love.graphics.newImage('graphics/bullet_hole.png'),
     ['floor-tiles'] = love.graphics.newImage('graphics/floor_tiles.png'),
+    ['gun-flash'] = love.graphics.newImage('graphics/gun_flash.png'),
     ['character1-avatar'] = love.graphics.newImage('graphics/cap_n_hands.png'),
     ['character1'] = love.graphics.newImage('graphics/character1.png')
 }
