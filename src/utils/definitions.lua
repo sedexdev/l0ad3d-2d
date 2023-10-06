@@ -1,85 +1,77 @@
-GEntityDefintions = {
-    ['player'] = {
-        health = 100,
-        ammo = 5000,
-        powerups = {},
-        movementSpeed = 600,
-        [1] = {
-            quads = GQuads['player1-walking'],
-            ['walking-up'] = {
-                animations = {
-                    frames = {9, 10, 11, 12},
-                    interval = 0.4
-                },
-            },
-            ['walking-right'] = {
-                animations = {
-                    frames = {5, 6, 7, 8},
-                    interval = 0.4
-                },
-            },
-            ['walking-down'] = {
-                animations = {
-                    frames = {1, 2, 3, 4},
-                    interval = 0.4
-                },
-            },
-            ['walking-left'] = {
-                animations = {
-                    frames = {13, 14, 15, 16},
-                    interval = 0.4
-                },
-            }
+GAnimationDefintions = {
+    ['character1'] = {
+        texture = GTextures['character1'],
+        animations = {
+            ['walking-north'] = Animation({1, 9}, CHARACTER_WALK_INTERVAL),
+            ['walking-east'] = Animation({3, 11}, CHARACTER_WALK_INTERVAL),
+            ['walking-south'] = Animation({5, 13}, CHARACTER_WALK_INTERVAL),
+            ['walking-west'] = Animation({7, 15}, CHARACTER_WALK_INTERVAL),
+            ['walking-north-east'] = Animation({2, 10}, CHARACTER_WALK_INTERVAL),
+            ['walking-south-east'] = Animation({4, 12}, CHARACTER_WALK_INTERVAL),
+            ['walking-south-west'] = Animation({6, 14}, CHARACTER_WALK_INTERVAL),
+            ['walking-north-west'] = Animation({8, 16}, CHARACTER_WALK_INTERVAL),
+            ['idle-north'] = Animation({17}, CHARACTER_WALK_INTERVAL),
+            ['idle-east'] = Animation({19}, CHARACTER_WALK_INTERVAL),
+            ['idle-south'] = Animation({21}, CHARACTER_WALK_INTERVAL),
+            ['idle-west'] = Animation({23}, CHARACTER_WALK_INTERVAL),
+            ['idle-north-east'] = Animation({18}, CHARACTER_WALK_INTERVAL),
+            ['idle-south-east'] = Animation({20}, CHARACTER_WALK_INTERVAL),
+            ['idle-south-west'] = Animation({22}, CHARACTER_WALK_INTERVAL),
+            ['idle-north-west'] = Animation({24}, CHARACTER_WALK_INTERVAL)
         },
-        [2] = {
-            walkingQuads = GQuads['player1-walking'],
-            ['walking-up'] = {
-                animations = {
-                    frames = {9, 10, 11, 12},
-                    interval = 0.4
-                },
-            },
-            ['walking-right'] = {
-                animations = {
-                    frames = {5, 6, 7, 8},
-                    interval = 0.4
-                },
-            },
-            ['walking-down'] = {
-                animations = {
-                    frames = {1, 2, 3, 4},
-                    interval = 0.4
-                },
-            },
-            ['walking-left'] = {
-                animations = {
-                    frames = {13, 14, 15, 16},
-                    interval = 0.4
-                },
-            }
-        }
     },
-    ['enemies'] = {
-        ['grunt'] = {
-            quads = nil,
-            animations = {},
-            health = 50,
-            movementSpeed = 500,
-            powerUpChance = 20
+    ['character2'] = {
+        texture = nil,
+        animations = {}
+    },
+    ['grunt'] = {
+        quads = nil,
+        animations = {
+            frames = nil,
+            interval = nil
         },
-        ['boss'] = {
-            quads = nil,
-            animations = {},
-            health = 500,
-            movementSpeed = 300,
-            specialAttackFrequency = 5
-        }
+        health = 50,
+        movementSpeed = 500,
+        powerUpChance = 20
+    },
+    ['boss'] = {
+        quads = nil,
+        animations = {
+            frames = nil,
+            interval = nil
+        },
+        health = 500,
+        movementSpeed = 300,
+        specialAttackFrequency = 5
     },
     ['turret'] = {
         quads = nil,
-        animations = {},
+        animations = {
+            frames = nil,
+            intervals = nil
+        },
         health = 100,
         fireRate = 2,
         rotateFrequency = 4
     }
+}
+
+GCharacterDefinition = {
+    x = (WINDOW_WIDTH / 2) - (CHARACTER_WIDTH / 2),
+    y = (WINDOW_HEIGHT / 2) - (CHARACTER_HEIGHT / 2),
+    dx = 0,
+    dy = 0,
+    width = CHARACTER_WIDTH,
+    height = CHARACTER_HEIGHT,
+    health = 100,
+    ammo = 5000,
+    direction = 'north',
+    lastDirection = 'north',
+    speed = 1000,
+    powerups = {
+        invicible = false,
+        infinite_ammo = false,
+        one_shot_boss_kill = false
+    },
+    stateMachine = nil
 }

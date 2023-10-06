@@ -38,9 +38,13 @@ function SelectCharacterState:update(dt)
         GAudio['gunshot']:play()
         GStateMachine:change('countdown', {
             highScores = self.highScores,
-            player = Player(self.selected, GEntityDefintions['player']),
-            map = Map()
-        })
+            player = Player(
+                self.selected,
+                GAnimationDefintions['character'..tostring(self.selected)],
+                GCharacterDefinition),
+                map = Map()
+            }
+        )
     end
 end
 
@@ -56,7 +60,7 @@ function SelectCharacterState:render()
 
     -- render first character
     self:renderShadow(1, 25)
-    self:renderAvatar(GTextures['player1-avatar'], 1)
+    self:renderAvatar(GTextures['character1-avatar'], 1)
     if self.selected == 1 then
         self:renderHighlight(1)
     end

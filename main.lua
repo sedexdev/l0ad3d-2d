@@ -53,6 +53,21 @@ function love.keyboard.wasPressed(key)
     return love.keyboard.keysPressed[key]
 end
 
+-- check if 2 keys are pressed at the same time
+function love.keyboard.multiplePressed(key1, key2)
+    return love.keyboard.isDown(key1) and love.keyboard.isDown(key2)
+end
+
+-- check if no keys are down
+function love.keyboard.anyDown(t)
+    for _, key in pairs(t) do
+        if love.keyboard.isDown(key) then
+            return true
+        end
+    end
+    return false
+end
+
 -- update relative to delatime
 function love.update(dt)
     GStateMachine:update(dt)

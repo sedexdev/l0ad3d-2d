@@ -3,6 +3,11 @@ PlayState = Class{__includes = BaseState}
 function PlayState:enter(params)
     self.highScores = params.highScores
     self.player = params.player
+    self.player.stateMachine = StateMachine {
+        ['idle'] = function () return PlayerIdleState(self.player) end,
+        ['walking'] = function () return PlayerWalkingState(self.player) end,
+    }
+    self.player.stateMachine:change('idle')
     self.map = params.map
     self.map:generateTiles()
 end
