@@ -19,12 +19,6 @@ function CountdownState:init()
 end
 
 function CountdownState:update(dt)
-    if love.keyboard.wasPressed('escape') then
-        GStateMachine:change('menu', {
-            highScores = self.highScores
-        })
-    end
-
     self.timer = self.timer + dt
 
     if self.timer >= 1 then

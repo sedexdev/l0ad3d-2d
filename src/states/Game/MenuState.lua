@@ -35,7 +35,8 @@ function MenuState:update(dt)
 
     if love.keyboard.wasPressed('enter') or love.keyboard.wasPressed('return') then
         GAudio['select']:stop()
-        -- GAudio['gunshot']:play()
+        GAudio['gunshot']:stop()
+        GAudio['gunshot']:play()
         if self.selected == 1 then
             GStateMachine:change('select', {
                 highScores = self.highScores
