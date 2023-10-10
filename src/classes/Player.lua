@@ -35,9 +35,6 @@ function Player:update(dt)
 end
 
 function Player:render()
-    local x = self.x
-    local y = self.y
-
     Entity.render(self)
 
     love.graphics.setColor(1, 1, 1, 1)
