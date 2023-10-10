@@ -24,10 +24,10 @@ function Map:render()
     for y, tiles in pairs(self.tiles) do
         for x, tile in pairs(tiles) do
             love.graphics.draw(GTextures['floor-tiles'],
-                tile,
-                (x - 1) * (64 * 5) + 1, (y - 1) * (32 * 5) + 1,
-                0,
-                5, 5)
+            tile,
+            (x - 1) * (64 * 5) + 1, (y - 1) * (32 * 5) + 1,
+            0,
+            5, 5)
         end
     end
 end
