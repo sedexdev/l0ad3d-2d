@@ -6,6 +6,10 @@ end
 
 function SelectCharacterState:init()
     self.selected = 1
+    self.bulletOffsets = {
+        [1] = {x = 3, y = -50},
+        [2] = {x = 4, y = 45},
+    }
 end
 
 function SelectCharacterState:update(dt)
@@ -58,6 +62,15 @@ function SelectCharacterState:render()
         WINDOW_WIDTH / GTextures['grey-background']:getHeight()
     )
 
+    --render bullet holes in the centre
+    for i = 1, #self.bulletOffsets do
+        love.graphics.draw(GTextures['bullet-hole'],
+            (WINDOW_WIDTH / 8) * self.bulletOffsets[i].x, (WINDOW_HEIGHT / 4) + self.bulletOffsets[i].y,
+            0,
+            0.25, 0.25
+        )
+    end
+
     -- render first character
     self:renderShadow(1, 25)
     self:renderAvatar(GTextures['character1-avatar'], 1)
@@ -68,13 +81,7 @@ function SelectCharacterState:render()
 
     -- render second character
     self:renderShadow(3, 25)
-    -- temporary rectangle
-    love.graphics.setColor(0/255, 0/255, 1, 1)
-    love.graphics.rectangle('fill',
-        (WINDOW_WIDTH / 4 * 3) - (AVATAR_WIDTH / 2),
-        (WINDOW_HEIGHT / 2) - (AVATAR_HEIGHT / 2),
-        AVATAR_WIDTH, AVATAR_HEIGHT
-    )
+    self:renderAvatar(GTextures['character2-avatar'], 3)
     if self.selected == 2 then
         self:renderHighlight(3)
     end
