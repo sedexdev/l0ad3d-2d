@@ -35,8 +35,18 @@ function Player:update(dt)
 end
 
 function Player:render()
+    local x = self.x
+    local y = self.y
+
+    love.graphics.setColor(1, 0/255, 0/255, 1)
+    love.graphics.rectangle('line',
+        x, y,
+        384, 384
+    )
+
     Entity.render(self)
 
+    love.graphics.setColor(1, 1, 1, 1)
     for _, shot in pairs(self.shots) do
         if shot.renderShot then
             shot:render()
@@ -51,38 +61,4 @@ function Player:fire()
     if self.weapons > 1 then
         self.currentWeapon = self.currentWeapon == 'right' and 'left' or 'right'
     end
-end
-
-Shot = Class{}
-
-function Shot:init(player)
-    self.player = player
-    self.shotGraphic = player.fireShot
-    self.x = player.x
-    self.y = player.y
-    self.shotTimer = 0
-    self.shotInterval = 0.1
-    self.renderShot = true
-end
-
-function Shot:update(dt)
-    self.shotTimer = self.shotTimer + dt
-    if self.shotTimer > self.shotInterval then
-        self.shotTimer = self.shotTimer % self.shotInterval
-        self.renderShot = false
-    end
-end
-
-function Shot:render()
-    love.graphics.draw(self.shotGraphic,
-        self.player.currentWeapon == 'right'
-            and ((self.x + self.player.width) - CHARACTER_WIDTH / 2)
-            or self.x,
-        self.y,
-        ANGLES[self.player.direction]
-    )
-end
-
-function Shot:setCoordinates()
-    
 end
