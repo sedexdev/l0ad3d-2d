@@ -3,8 +3,6 @@ Entity = Class{}
 function Entity:init(def)
     self.x = def.x
     self.y = def.y
-    self.dx = def.dx
-    self.dy = def.dy
     self.width = def.width
     self.height = def.height
     self.stateMachine = def.stateMachine
