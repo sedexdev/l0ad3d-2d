@@ -12,6 +12,7 @@ function MenuState:init()
         [3] = {x = 4, y = 45, rendered = false},
         [4] = {x = 6, y = -20, rendered = false},
     }
+    self.pauseInput = true
     for i = 1, 4 do
         Timer.after(i * 0.3, function ()
             self.bulletOffsets[i].rendered = true
@@ -19,34 +20,38 @@ function MenuState:init()
             GAudio['gunshot']:play()
         end)
     end
+    Timer.after(1.2, function ()
+        self.pauseInput = false
+    end)
 end
 
 function MenuState:update(dt)
-    if love.keyboard.wasPressed('up') then
-        GAudio['select']:stop()
-        GAudio['select']:play()
-        self.selected = self.selected <= 1 and 3 or self.selected - 1
-    end
-    if love.keyboard.wasPressed('down') then
-        GAudio['select']:stop()
-        GAudio['select']:play()
-        self.selected = self.selected >= 3 and 1 or self.selected + 1
-    end
-
-    if love.keyboard.wasPressed('enter') or love.keyboard.wasPressed('return') then
-        GAudio['select']:stop()
-        GAudio['gunshot']:stop()
-        GAudio['gunshot']:play()
-        if self.selected == 1 then
-            GStateMachine:change('select', {
-                highScores = self.highScores
-            })
-        elseif self.selected == 2 then
-            GStateMachine:change('highscores', {
-                highScores = self.highScores
-            })
-        else
-            love.event.quit()
+    if not self.pauseInput then
+        if love.keyboard.wasPressed('up') then
+            GAudio['select']:stop()
+            GAudio['select']:play()
+            self.selected = self.selected <= 1 and 3 or self.selected - 1
+        end
+        if love.keyboard.wasPressed('down') then
+            GAudio['select']:stop()
+            GAudio['select']:play()
+            self.selected = self.selected >= 3 and 1 or self.selected + 1
+        end
+    
+        if love.keyboard.wasPressed('enter') or love.keyboard.wasPressed('return') then
+            GAudio['select']:stop()
+            GAudio['gunshot']:play()
+            if self.selected == 1 then
+                GStateMachine:change('select', {
+                    highScores = self.highScores
+                })
+            elseif self.selected == 2 then
+                GStateMachine:change('highscores', {
+                    highScores = self.highScores
+                })
+            else
+                love.event.quit()
+            end
         end
     end
 
