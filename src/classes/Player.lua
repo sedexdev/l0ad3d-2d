@@ -38,12 +38,6 @@ function Player:render()
     local x = self.x
     local y = self.y
 
-    love.graphics.setColor(1, 0/255, 0/255, 1)
-    love.graphics.rectangle('line',
-        x, y,
-        384, 384
-    )
-
     Entity.render(self)
 
     love.graphics.setColor(1, 1, 1, 1)
