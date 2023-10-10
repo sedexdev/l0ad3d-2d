@@ -22,8 +22,26 @@ GAnimationDefintions = {
         },
     },
     ['character2'] = {
-        texture = nil,
-        animations = {}
+        texture = GTextures['character2'],
+        fireShot = GTextures['gun-flash'],
+        animations = {
+            ['walking-north'] = Animation({1, 9}, CHARACTER_WALK_INTERVAL),
+            ['walking-east'] = Animation({3, 11}, CHARACTER_WALK_INTERVAL),
+            ['walking-south'] = Animation({5, 13}, CHARACTER_WALK_INTERVAL),
+            ['walking-west'] = Animation({7, 15}, CHARACTER_WALK_INTERVAL),
+            ['walking-north-east'] = Animation({2, 10}, CHARACTER_WALK_INTERVAL),
+            ['walking-south-east'] = Animation({4, 12}, CHARACTER_WALK_INTERVAL),
+            ['walking-south-west'] = Animation({6, 14}, CHARACTER_WALK_INTERVAL),
+            ['walking-north-west'] = Animation({8, 16}, CHARACTER_WALK_INTERVAL),
+            ['idle-north'] = Animation({17}, CHARACTER_WALK_INTERVAL),
+            ['idle-east'] = Animation({19}, CHARACTER_WALK_INTERVAL),
+            ['idle-south'] = Animation({21}, CHARACTER_WALK_INTERVAL),
+            ['idle-west'] = Animation({23}, CHARACTER_WALK_INTERVAL),
+            ['idle-north-east'] = Animation({18}, CHARACTER_WALK_INTERVAL),
+            ['idle-south-east'] = Animation({20}, CHARACTER_WALK_INTERVAL),
+            ['idle-south-west'] = Animation({22}, CHARACTER_WALK_INTERVAL),
+            ['idle-north-west'] = Animation({24}, CHARACTER_WALK_INTERVAL)
+        }
     },
     ['grunt'] = {
         quads = nil,

@@ -27,7 +27,8 @@ GTextures = {
     ['gun-flash'] = love.graphics.newImage('graphics/gun_flash.png'),
     ['character1-avatar'] = love.graphics.newImage('graphics/cap_n_hands.png'),
     ['character2-avatar'] = love.graphics.newImage('graphics/fwank.png'),
-    ['character1'] = love.graphics.newImage('graphics/character1.png')
+    ['character1'] = love.graphics.newImage('graphics/character1.png'),
+    ['character2'] = love.graphics.newImage('graphics/character2.png')
 }
 
 GAudio = {
@@ -75,5 +76,6 @@ GStateMachine = StateMachine {
 -- quads
 GQuads = {
     ['floor-tiles'] = GenerateQuads(GTextures['floor-tiles'], 64, 32),
-    ['character1'] = GenerateQuads(GTextures['character1'], 384, 384)
+    ['character1'] = GenerateQuads(GTextures['character1'], 384, 384),
+    ['character2'] = GenerateQuads(GTextures['character2'], 384, 384)
 }
