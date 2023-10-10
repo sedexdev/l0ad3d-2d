@@ -38,5 +38,6 @@ below)</p>
     <li>Character select:</li>
         <ul>
             <li>Cap'n Hands         - https://www.giantbomb.com/cap-n-hands/3005-28408/</li>
+            <li>Fwank               - https://www.deviantart.com/tj-ryan/art/Fwank-from-Loaded-254964042</il>
         </ul>
 </ul>
