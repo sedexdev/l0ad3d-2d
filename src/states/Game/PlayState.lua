@@ -9,7 +9,7 @@ function PlayState:enter(params)
     }
     self.player.stateMachine:change('idle')
     self.map = params.map
-    self.map:generateTiles()
+    self.map:generateLevel()
 end
 
 function PlayState:init()

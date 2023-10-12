@@ -1,7 +1,15 @@
+local function quadSection(quads, first, last)
+    local t = {}
+    for i = first, last do
+        table.insert(t, quads[i])
+    end
+    return t
+end
+
 function GenerateQuads(atlas, tileWidth, tileHeight)
     local sheetWidth, sheetHeight = atlas:getDimensions()
     local cols = sheetWidth / tileWidth
-    local rows = sheetHeight / tileHeight
+    local rows = math.floor(sheetHeight / tileHeight)
     local quads = {}
     local counter = 1
 
