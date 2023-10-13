@@ -25,8 +25,8 @@ GTextures = {
     ['bullet-hole'] = love.graphics.newImage('graphics/bullet_hole.png'),
     ['floor-tiles'] = love.graphics.newImage('graphics/floor_tiles.png'),
     ['wall-topper'] = love.graphics.newImage('graphics/wall_topper.png'),
-    ['door-horizontal'] = love.graphics.newImage('graphics/door_horizontal.png'),
-    ['door-vertical'] = love.graphics.newImage('graphics/door_vertical.png'),
+    ['vertical-doors'] = love.graphics.newImage('graphics/vertical_doors.png'),
+    ['horizontal-doors'] = love.graphics.newImage('graphics/horizontal_doors.png'),
     ['gun-flash'] = love.graphics.newImage('graphics/gun_flash.png'),
     ['character1-avatar'] = love.graphics.newImage('graphics/cap_n_hands.png'),
     ['character2-avatar'] = love.graphics.newImage('graphics/fwank.png'),
@@ -49,6 +49,7 @@ require 'src/classes/Entity'
 require 'src/classes/Grunt'
 require 'src/classes/Map'
 require 'src/classes/MapArea'
+require 'src/classes/MapCorridor'
 require 'src/classes/Player'
 require 'src/classes/PowerUp'
 require 'src/classes/Shot'
@@ -85,8 +86,8 @@ GStateMachine = StateMachine {
 GQuads = {
     ['floor-tiles'] = GenerateQuads(GTextures['floor-tiles'], 64, 32),
     ['wall-topper'] = GenerateQuads(GTextures['wall-topper'], 16, 16),
-    ['door-horizontal'] = GenerateQuads(GTextures['door-horizontal'], 32, 16),
-    ['door-vertical'] = GenerateQuads(GTextures['door-vertical'], 16, 32),
+    ['vertical-doors'] = GenerateQuads(GTextures['vertical-doors'], 16, 32),
+    ['horizontal-doors'] = GenerateQuads(GTextures['horizontal-doors'], 32, 16),
     ['character1'] = GenerateQuads(GTextures['character1'], 384, 384),
     ['character2'] = GenerateQuads(GTextures['character2'], 384, 384),
     ['grunt'] = GenerateQuads(GTextures['grunt'], 384, 384),

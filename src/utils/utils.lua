@@ -1,11 +1,3 @@
-local function quadSection(quads, first, last)
-    local t = {}
-    for i = first, last do
-        table.insert(t, quads[i])
-    end
-    return t
-end
-
 function GenerateQuads(atlas, tileWidth, tileHeight)
     local sheetWidth, sheetHeight = atlas:getDimensions()
     local cols = sheetWidth / tileWidth
@@ -27,4 +19,13 @@ function GenerateQuads(atlas, tileWidth, tileHeight)
     end
 
     return quads
+end
+
+function table.contains(T, value)
+    for _, v in pairs(T) do
+        if v == value then
+            return true
+        end
+    end
+    return false
 end

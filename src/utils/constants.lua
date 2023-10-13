@@ -26,3 +26,13 @@ ANGLES = {
     ['west'] = 180 * DEGREES_TO_RADIANS,
     ['north-west'] = 225 * DEGREES_TO_RADIANS
 }
+-- wall offset scalled to x5
+WALL_OFFSET = 16 * 5
+
+DOOR_IDS = {
+    ['under'] = 1,
+    ['purple'] = 2,
+    ['blue'] = 3,
+    ['red'] = 4,
+    ['green'] = 5,
+}

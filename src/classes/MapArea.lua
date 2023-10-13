@@ -1,14 +1,12 @@
 MapArea = Class{}
 
-function MapArea:init(x, y, width, height, doorDef, numLamps, numGrills)
+function MapArea:init(x, y, width, height, corridors, adjacentAreas)
     self.x = x
     self.y = y
     self.width = width
     self.height = height
-    -- door location (top, bottom, left, right), locked, x, y
-    self.doorDef = doorDef
-    self.numLamps = numLamps
-    self.numGrills = numGrills
+    self.corridors = corridors
+    self.adjacentAreas = adjacentAreas
     self.floorTiles = {}
     self.wallTiles = {}
 end
@@ -24,7 +22,7 @@ function MapArea:drawFloorTiles()
         for x, tile in pairs(tiles) do
             love.graphics.draw(GTextures['floor-tiles'],
             tile,
-            (x - 1) * (64 * 5) + 1, (y - 1) * (32 * 5) + 1,
+            self.x + ((x - 1) * (64 * 5)), self.y + ((y - 1) * (32 * 5)),
             0,
             5, 5)
         end
@@ -33,30 +31,33 @@ end
 
 function MapArea:drawWallTiles()
     local tileScale = 16 * 5
-    local drawHorizontalWall = function (y)
-        for x, tile in pairs(self.wallTiles['horizontal']) do
-            love.graphics.draw(GTextures['wall-topper'],
-                tile,
-                (x - 1) * (tileScale) - (tileScale), y,
-                0,
-                5, 5
-            )
-        end
+    self:drawHorizontalWall(-tileScale, tileScale, tileScale)
+    self:drawHorizontalWall(self.height * (32 * 5), tileScale, tileScale)
+    self:drawVerticalWall(-tileScale, tileScale)
+    self:drawVerticalWall(self.width * (64 * 5), tileScale)
+end
+
+function MapArea:drawHorizontalWall(y, tileScale, offset)
+    for x, tile in pairs(self.wallTiles['horizontal']) do
+        -- -tilescale to pull the tiles back by 1 to fit in corners
+        love.graphics.draw(GTextures['wall-topper'],
+            tile,
+            self.x + ((x - 1) * (tileScale) - (offset)), self.y + y,
+            0,
+            5, 5
+        )
     end
-    local drawVerticalWall = function (x)
-        for y, tile in pairs(self.wallTiles['vertical']) do
-            love.graphics.draw(GTextures['wall-topper'],
-                tile,
-                x, (y - 1) * (tileScale),
-                0,
-                5, 5
-            )
-        end
+end
+
+function MapArea:drawVerticalWall(x, tileScale)
+    for y, tile in pairs(self.wallTiles['vertical']) do
+        love.graphics.draw(GTextures['wall-topper'],
+            tile,
+            self.x + x, self.y + ((y - 1) * (tileScale)),
+            0,
+            5, 5
+        )
     end
-    drawHorizontalWall(-tileScale)
-    drawHorizontalWall(self.height * (32 * 5))
-    drawVerticalWall(-tileScale)
-    drawVerticalWall(self.width * (64 * 5))
 end
 
 function MapArea:generateFloorTiles()
