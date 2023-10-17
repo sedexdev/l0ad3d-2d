@@ -36,3 +36,5 @@ DOOR_IDS = {
     ['red'] = 4,
     ['green'] = 5,
 }
+
+-- coordinates of starting wall to base other rooms off

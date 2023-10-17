@@ -28,11 +28,16 @@ GTextures = {
     ['vertical-doors'] = love.graphics.newImage('graphics/vertical_doors.png'),
     ['horizontal-doors'] = love.graphics.newImage('graphics/horizontal_doors.png'),
     ['gun-flash'] = love.graphics.newImage('graphics/gun_flash.png'),
+    ['boss-gun-flash'] = love.graphics.newImage('graphics/boss_gun_flash.png'),
     ['character1-avatar'] = love.graphics.newImage('graphics/cap_n_hands.png'),
     ['character2-avatar'] = love.graphics.newImage('graphics/fwank.png'),
     ['character1'] = love.graphics.newImage('graphics/character1.png'),
     ['character2'] = love.graphics.newImage('graphics/character2.png'),
-    ['grunt'] = love.graphics.newImage('graphics/grunt.png')
+    ['grunt'] = love.graphics.newImage('graphics/grunt.png'),
+    ['turret']= love.graphics.newImage('graphics/turret.png'),
+    ['boss']= love.graphics.newImage('graphics/boss.png'),
+    ['crate']= love.graphics.newImage('graphics/crate.png'),
+    ['powerups']= love.graphics.newImage('graphics/powerups.png'),
 }
 
 GAudio = {

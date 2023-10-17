@@ -37,23 +37,38 @@ function Map:generateLevel()
             GMapAreaDefinitions[i].corridors,
             GMapAreaDefinitions[i].adjacentAreas
         ))
-        if GMapAreaDefinitions[i].corridors then
-            for j = 1, #GMapCorridorDefinitions do
+        local corridors = GMapAreaDefinitions[i].corridors
+        if corridors then
+            for j = 1, #corridors do
+                -- sotre current corridor index
+                local corridorIndex = corridors[j][1]
                 -- check to see if we have already instantiated this corridor
-                if not table.contains(self.corridorTracker, GMapCorridorDefinitions[j]) then
+                if not table.contains(self.corridorTracker, corridorIndex) then
+                    local x, y
+                    -- set coordinates on left corridor
+                    if corridors[j][2] == 'L' then
+                        x, y = self:setLeftCorridorCoordinates(GMapAreaDefinitions[i], GMapCorridorDefinitions[corridorIndex])
+                    -- set coordinates on right corridor
+                    elseif corridors[j][2] == 'R' then
+                        x, y = self:setRightCorridorCoordinates(GMapAreaDefinitions[i])
+                    -- set coordinates on top corridor
+                    elseif corridors[j][2] == 'T' then
+                        x, y = self:setTopCorridorCoordinates(GMapAreaDefinitions[i], GMapCorridorDefinitions[corridorIndex])
+                    -- set coordinates on bottom corridor
+                    else
+                        x, y = self:setBottomCorridorCoordinates(GMapAreaDefinitions[i])
+                    end
                     table.insert(self.corridors, MapCorridor(
-                        GMapCorridorDefinitions[j].x,
-                        GMapCorridorDefinitions[j].y,
-                        GMapCorridorDefinitions[j].width,
-                        GMapCorridorDefinitions[j].height,
-                        GMapCorridorDefinitions[j].direction,
-                        GMapCorridorDefinitions[j].bend,
-                        GMapCorridorDefinitions[j].junction,
-                        GMapCorridorDefinitions[j].doorIDs
-    
+                        x, y,
+                        GMapCorridorDefinitions[corridorIndex].width,
+                        GMapCorridorDefinitions[corridorIndex].height,
+                        GMapCorridorDefinitions[corridorIndex].direction,
+                        GMapCorridorDefinitions[corridorIndex].bend,
+                        GMapCorridorDefinitions[corridorIndex].junction,
+                        GMapCorridorDefinitions[corridorIndex].doorIDs
                     ))
                     -- add the table index to the tracker
-                    table.insert(self.corridorTracker, j)
+                    table.insert(self.corridorTracker, corridorIndex)
                 end
             end
         end
@@ -69,4 +84,34 @@ function Map:generateLevel()
     end
     -- create powerups
     -- update powerups so more are spawned as the level goes on
+end
+
+function Map:setLeftCorridorCoordinates(area, corridor)
+    -- left edge of area minus the pixel width of the corridor
+    local x = area.x - (corridor.width * (64 * 5))
+    -- half the height of the area
+    local y = area.y + (area.height * (32 * 5) / 2) - (32 * 5)
+    return x, y
+end
+
+function Map:setRightCorridorCoordinates(area)
+    -- right edge of the area
+    local x = area.x + (area.width * (64 * 5))
+    -- half the height of the area
+    local y = area.y + (area.height * (32 * 5) / 2) - (32 * 5)
+    return x, y
+end
+
+function Map:setTopCorridorCoordinates(area, corridor)
+    -- center of the top edge of the area
+    local x = area.x + (area.width * (64 * 5) / 2) - (32 * 5)
+    local y = area.y - (corridor.height * (32 * 5))
+    return x, y
+end
+
+function Map:setBottomCorridorCoordinates(area)
+    -- center of the bottom edge of the area
+    local x = area.x + (area.width * (64 * 5) / 2) - (32 * 5)
+    local y = area.y + (area.height * (32 * 5))
+    return x, y
 end
