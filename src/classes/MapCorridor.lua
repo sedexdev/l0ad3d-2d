@@ -149,17 +149,20 @@ end
 function MapCorridor:generateWallTiles()
     -- check for bends
     if self.bend then
+        -- -5 to make the wall shorter on the bend side
         for x = 1, (self.width * 4) - 5 do
             table.insert(self.bendWall, GQuads['wall-topper'][1])
         end
     end
     if self.direction == 'horizontal' then
         self.wallTiles['horizontal'] = {}
+        -- *4 because wall tiles are 16px and floor are 64px wide
         for x = 1, (self.width * 4) do
             table.insert(self.wallTiles['horizontal'], GQuads['wall-topper'][1])
         end
     else
         self.wallTiles['vertical'] = {}
+        -- *2 because wall tiles are 16px and floor are 32px tall
         for x = 1, (self.height * 2) do
              table.insert(self.wallTiles['vertical'], GQuads['wall-topper'][1])
         end

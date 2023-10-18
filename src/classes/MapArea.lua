@@ -1,12 +1,12 @@
 MapArea = Class{}
 
-function MapArea:init(x, y, width, height, corridors, adjacentAreas)
+function MapArea:init(x, y, width, height, corridors, adjacentArea)
     self.x = x
     self.y = y
     self.width = width
     self.height = height
-    self.corridors = corridors
-    self.adjacentAreas = adjacentAreas
+    self.corridors = corridors -- use for collision detection
+    self.adjacentArea = adjacentArea -- use for collision detection and door placement
     self.floorTiles = {}
     self.wallTiles = {}
 end
@@ -15,6 +15,9 @@ function MapArea:render()
     love.graphics.setColor(1, 1, 1, 1)
     self:drawFloorTiles()
     self:drawWallTiles()
+    if self.adjacentArea then
+        self:drawAdjacentDoor()
+    end
 end
 
 function MapArea:drawFloorTiles()
@@ -57,6 +60,50 @@ function MapArea:drawVerticalWall(x, tileScale)
             0,
             5, 5
         )
+    end
+end
+
+function MapArea:drawAdjacentDoor()
+    local tileScale = 16 * 5
+    local rightXOffset = self.x + self.width * (64 * 5)
+    local bottomYOffset = self.y + self.height * (32 * 5)
+    local verticalTopDoorOffset = (self.height * (32 * 5) / 2) - (32 * 5)
+    local verticalBottomDoorOffset = self.height * (32 * 5) / 2
+    local horizontalLeftDoorOffset = (self.width * (64 * 5) / 2) - (32 * 5)
+    local horizontalRightDoorOffset = self.width * (64 * 5) / 2
+
+    local helper = function (doorID, x, y, orientation)
+        love.graphics.draw(GTextures[orientation..'-doors'], GQuads[orientation..'-doors'][DOOR_IDS[doorID]], x, y, 0, 5, 5)
+    end
+
+    if self.adjacentArea[2] == 'L' then
+        -- draw the under doors first
+        helper('under', self.x - tileScale, self.y + verticalBottomDoorOffset, 'vertical')
+        helper('under', self.x - tileScale, self.y + verticalTopDoorOffset, 'vertical')
+        -- draw door centre left
+        helper(self.adjacentArea[3], self.x - tileScale, self.y + verticalBottomDoorOffset, 'vertical')
+        helper(self.adjacentArea[3], self.x - tileScale, self.y + verticalTopDoorOffset, 'vertical')
+    elseif self.adjacentArea[2] == 'R' then
+        -- draw the under doors first
+        helper('under', rightXOffset, self.y + verticalBottomDoorOffset, 'vertical')
+        helper('under', rightXOffset, self.y + verticalTopDoorOffset, 'vertical')
+        -- draw door centre right
+        helper(self.adjacentArea[3], rightXOffset, self.y + verticalBottomDoorOffset, 'vertical')
+        helper(self.adjacentArea[3], rightXOffset, self.y + verticalTopDoorOffset, 'vertical')
+    elseif self.adjacentArea[2] == 'T' then
+        -- draw the under doors first
+        helper('under', self.x + horizontalLeftDoorOffset, self.y - tileScale, 'horizontal')
+        helper('under', self.x + horizontalRightDoorOffset, self.y - tileScale, 'horizontal')
+        -- draw door centre top
+        helper(self.adjacentArea[3], self.x + horizontalLeftDoorOffset, self.y - tileScale, 'horizontal')
+        helper(self.adjacentArea[3], self.x + horizontalRightDoorOffset, self.y - tileScale, 'horizontal')
+    else
+        -- draw the under doors first
+        helper('under', self.x + horizontalLeftDoorOffset, bottomYOffset, 'horizontal')
+        helper('under', self.x + horizontalRightDoorOffset, bottomYOffset, 'horizontal')
+        -- draw door centre bottom
+        helper(self.adjacentArea[3], self.x + horizontalLeftDoorOffset, bottomYOffset, 'horizontal')
+        helper(self.adjacentArea[3], self.x + horizontalRightDoorOffset, bottomYOffset, 'horizontal')
     end
 end
 
