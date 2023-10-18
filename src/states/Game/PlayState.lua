@@ -8,6 +8,12 @@ function PlayState:enter(params)
         ['walking'] = function () return PlayerWalkingState(self.player) end,
     }
     self.player.stateMachine:change('idle')
+    self.grunt = params.grunt
+    self.grunt.stateMachine = StateMachine {
+        ['walking'] = function () return GruntWalkingState(self.grunt, self.player) end,
+        ['attacking'] = function () return GruntAttackingState(self.grunt, self.player) end,
+    }
+    self.grunt.stateMachine:change('walking')
     self.map = params.map
     self.map:generateLevel()
 end
@@ -24,6 +30,7 @@ function PlayState:update(dt)
         })
     end
     self.player:update(dt)
+    self.grunt:update(dt)
     self:updateCamera()
 end
 
@@ -36,4 +43,5 @@ function PlayState:render()
     love.graphics.translate(-math.floor(self.cameraX), -math.floor(self.cameraY))
     self.map:render()
     self.player:render()
+    self.grunt:render()
 end

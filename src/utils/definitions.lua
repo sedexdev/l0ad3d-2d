@@ -44,10 +44,24 @@ GAnimationDefintions = {
         }
     },
     ['grunt'] = {
-        texture = nil,
+        texture = GTextures['grunt'],
         animations = {
-            frames = nil,
-            interval = nil
+            ['walking-north'] = Animation({1, 9}, GRUNT_WALK_INTERVAL),
+            ['walking-east'] = Animation({3, 11}, GRUNT_WALK_INTERVAL),
+            ['walking-south'] = Animation({5, 13}, GRUNT_WALK_INTERVAL),
+            ['walking-west'] = Animation({7, 15}, GRUNT_WALK_INTERVAL),
+            ['walking-north-east'] = Animation({2, 10}, GRUNT_WALK_INTERVAL),
+            ['walking-south-east'] = Animation({4, 12}, GRUNT_WALK_INTERVAL),
+            ['walking-south-west'] = Animation({6, 14}, GRUNT_WALK_INTERVAL),
+            ['walking-north-west'] = Animation({8, 16}, GRUNT_WALK_INTERVAL),
+            ['attacking-north'] = Animation({17, 25}, GRUNT_ATTACK_INTERVAL),
+            ['attacking-east'] = Animation({19, 27}, GRUNT_ATTACK_INTERVAL),
+            ['attacking-south'] = Animation({21, 28}, GRUNT_ATTACK_INTERVAL),
+            ['attacking-west'] = Animation({23, 31}, GRUNT_ATTACK_INTERVAL),
+            ['attacking-north-east'] = Animation({18, 26}, GRUNT_ATTACK_INTERVAL),
+            ['attacking-south-east'] = Animation({20, 28}, GRUNT_ATTACK_INTERVAL),
+            ['attacking-south-west'] = Animation({22, 30}, GRUNT_ATTACK_INTERVAL),
+            ['attacking-north-west'] = Animation({24, 32}, GRUNT_ATTACK_INTERVAL)
         }
     },
     ['boss'] = {
@@ -69,15 +83,14 @@ GAnimationDefintions = {
 }
 
 GGruntDefinition = {
-    x = nil,
-    y = nil,
-    width = nil,
-    height = nil,
-    direction = nil,
-    lastDirection = nil,
+    x = (WINDOW_WIDTH / 2) - (GRUNT_WIDTH / 2),
+    y = (WINDOW_HEIGHT / 2) - (GRUNT_HEIGHT / 2),
+    width = GRUNT_WIDTH,
+    height = GRUNT_HEIGHT,
     stateMachine = nil,
+    direction = 'north',
     health = 50,
-    movementSpeed = 500,
+    speed = 250,
     powerUpChance = 20
 }
 
@@ -86,11 +99,10 @@ GBossDefinition = {
     y = nil,
     width = nil,
     height = nil,
-    direction = nil,
-    lastDirection = nil,
     stateMachine = nil,
+    direction = nil,
     health = 500,
-    movementSpeed = 300,
+    speed = 300,
     specialAttackFrequency = 5
 }
 
@@ -100,7 +112,6 @@ GTurretDefinition = {
     width = nil,
     height = nil,
     direction = nil,
-    lastDirection = nil,
     stateMachine = nil,
     health = 200,
     fireRate = 2,
@@ -112,6 +123,7 @@ GCharacterDefinition = {
     y = (WINDOW_HEIGHT / 2) - (CHARACTER_HEIGHT / 2),
     width = CHARACTER_WIDTH,
     height = CHARACTER_HEIGHT,
+    stateMachine = nil,
     health = 100,
     ammo = 5000,
     shotFired = false,
@@ -120,10 +132,9 @@ GCharacterDefinition = {
     speed = 1200,
     powerups = {
         invicible = false,
-        infinite_ammo = false,
-        one_shot_boss_kill = false
+        doubleSpeed = false,
+        oneShotBossKill = false
     },
-    stateMachine = nil,
     ['character1'] = {
         weapons = 2,
         currentWeapon = 'right'

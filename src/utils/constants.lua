@@ -8,12 +8,17 @@ AVATAR_HEIGHT = 650
 -- character sprite dimensions
 CHARACTER_WIDTH = 384
 CHARACTER_HEIGHT = 384
+GRUNT_WIDTH = 384
+GRUNT_HEIGHT = 384
 
 -- keys
 MOVEMENT_KEYS = {'up', 'right', 'down', 'left', 'w', 'd', 's', 'a'}
 
 -- animations
 CHARACTER_WALK_INTERVAL = 0.2
+GRUNT_WALK_INTERVAL = 0.2
+GRUNT_ATTACK_INTERVAL = 0.1
+
 DEGREES_TO_RADIANS = 0.0174532925199432957
 -- for png image that is facing EAST
 ANGLES = {
@@ -36,5 +41,3 @@ DOOR_IDS = {
     ['red'] = 4,
     ['green'] = 5,
 }
-
--- coordinates of starting wall to base other rooms off

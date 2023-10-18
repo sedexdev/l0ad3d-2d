@@ -19,14 +19,11 @@ end
 function Shot:render()
     local x, y = self:setCoordinates(self.player.x, self.player.y)
     if self.player.id == 1 then
-        love .graphics.setColor(1, 1, 1, 200/255)
+        love.graphics.setColor(1, 1, 1, 200/255)
     else
-        love .graphics.setColor(30/255, 196/255, 195/255, 200/255)
+        love.graphics.setColor(30/255, 196/255, 195/255, 200/255)
     end
-    love.graphics.draw(self.shotGraphic,
-        x, y,
-        ANGLES[self.player.direction]
-    )
+    love.graphics.draw(self.shotGraphic, x, y, ANGLES[self.player.direction])
 end
 
 function Shot:setCoordinates(x, y)

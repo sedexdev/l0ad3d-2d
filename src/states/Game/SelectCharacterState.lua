@@ -45,8 +45,13 @@ function SelectCharacterState:update(dt)
             player = Player(
                 self.selected,
                 GAnimationDefintions['character'..tostring(self.selected)],
-                GCharacterDefinition),
-                map = Map()
+                GCharacterDefinition
+            ),
+            grunt = Grunt(
+                GAnimationDefintions['grunt'],
+                GGruntDefinition
+            ),
+            map = Map()
             }
         )
     end

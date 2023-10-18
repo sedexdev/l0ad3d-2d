@@ -38,6 +38,7 @@ GTextures = {
     ['boss']= love.graphics.newImage('graphics/boss.png'),
     ['crate']= love.graphics.newImage('graphics/crate.png'),
     ['powerups']= love.graphics.newImage('graphics/powerups.png'),
+    ['keys']= love.graphics.newImage('graphics/keys.png')
 }
 
 GAudio = {
@@ -71,6 +72,8 @@ require 'src/states/Game/HighScoreState'
 -- entity states
 require 'src/states/Entity/Player/PlayerIdleState'
 require 'src/states/Entity/Player/PlayerWalkingState'
+require 'src/states/Entity/Grunt/GruntWalkingState'
+require 'src/states/Entity/Grunt/GruntAttackingState'
 
 -- util files
 require 'src/utils/utils'
@@ -95,5 +98,5 @@ GQuads = {
     ['horizontal-doors'] = GenerateQuads(GTextures['horizontal-doors'], 32, 16),
     ['character1'] = GenerateQuads(GTextures['character1'], 384, 384),
     ['character2'] = GenerateQuads(GTextures['character2'], 384, 384),
-    ['grunt'] = GenerateQuads(GTextures['grunt'], 384, 384),
+    ['grunt'] = GenerateQuads(GTextures['grunt'], 128, 128),
 }
