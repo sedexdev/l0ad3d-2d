@@ -153,15 +153,15 @@ GMapAreaDefinitions = {
     [14] = {x = 5440, y = -2080, width = 4, height = 4, corridors = {{9, 'B'}}, adjacentAreas = nil},
     [15] = {x = 7520, y = 960, width = 20, height = 22, corridors = {{11, 'T'}, {13, 'B'}}, adjacentAreas = {16}},
     [16] = {x = 14000, y = 2080, width = 6, height = 8, corridors = nil, adjacentAreas = {15}},
-    [17] = {x = 9680, y = -2480, width = 16, height = 12, corridors = {{12, 'B'}, {15, 'R'}}, adjacentAreas = nil},
-    [18] = {x = 14320, y = 4560, width = 20, height = 20, corridors = {{14, 'L'}}, adjacentAreas = {19}},
+    [17] = {x = 9680, y = -2560, width = 16, height = 12, corridors = {{12, 'B'}, {15, 'R'}}, adjacentAreas = nil},
+    [18] = {x = 14400, y = 4560, width = 20, height = 20, corridors = {{14, 'L'}}, adjacentAreas = {19}},
     [19] = {x = 16240, y = 7840, width = 8, height = 8, corridors = nil, adjacentAreas = {18}},
     [20] = {x = 16480, y = -160, width = 24, height = 24, corridors = {{16, 'T'}}, adjacentAreas = {21}},
     [21] = {x = 21280, y = 3760, width = 8, height = 8, corridors = nil, adjacentAreas = {20}}
 }
 
 GMapCorridorDefinitions = {
-    -- bend: string - corner description (e.g LBC = left-bottom-corner, RTC = right-top-corner)
+    -- bend: string - corner description (e.g LB = left-bottom, RB = right-bottom, LT = left-top, RT = right-top)
     -- junction: integer - tile reference for collision detection
     -- direction: string - which orientation is it using (used to place doors correctly)
     [1] = {width = 5, height = 2, direction = 'horizontal', bend = nil, junction = nil, doorIDs = {left = 'purple', right = 'purple'}},
@@ -173,11 +173,11 @@ GMapCorridorDefinitions = {
     [7] = {width = 5, height = 2, direction = 'horizontal', bend = nil, junction = nil, doorIDs = {left = 'purple', right = 'purple'}},
     [8] = {width = 5, height = 2, direction = 'horizontal', bend = nil, junction = nil, doorIDs = {left = 'purple', right = 'purple'}},
     [9] = {width = 1, height = 5, direction = 'vertical', bend = nil, junction = nil, doorIDs = {top = 'purple', bottom = 'purple'}},
-    [10] = {width = 16, height = 2, direction = 'horizontal', bend = nil, junction = nil, doorIDs = {left = 'purple'}},
+    [10] = {width = 16, height = 2, direction = 'horizontal', bend = 'RT', junction = nil, doorIDs = {left = 'purple'}},
     [11] = {width = 1, height = 5, direction = 'vertical', bend = nil, junction = nil, doorIDs = {top = 'purple', bottom = 'purple'}},
-    [12] = {width = 1, height = 5, direction = 'vertical', bend = nil, junction = nil, doorIDs = {top = 'purple'}},
-    [13] = {width = 1, height = 12, direction = 'vertical', bend = nil, junction = nil, doorIDs = {top = 'purple'}},
-    [14] = {width = 12, height = 2, direction = 'horizontal', bend = nil, junction = nil, doorIDs = {right = 'purple'}},
-    [15] = {width = 18, height = 2, direction = 'horizontal', bend = nil, junction = nil, doorIDs = {left = 'purple'}},
-    [16] = {width = 1, height = 10, direction = 'vertical', bend = nil, junction = nil, doorIDs = {bottom = 'green'}}
+    [12] = {width = 1, height = 5, direction = 'vertical', bend = 'LB', junction = nil, doorIDs = {top = 'purple'}},
+    [13] = {width = 1, height = 12, direction = 'vertical', bend = 'RB', junction = nil, doorIDs = {top = 'purple'}},
+    [14] = {width = 12, height = 2, direction = 'horizontal', bend = 'LT', junction = nil, doorIDs = {right = 'purple'}},
+    [15] = {width = 18, height = 2, direction = 'horizontal', bend = 'RB', junction = nil, doorIDs = {left = 'purple'}},
+    [16] = {width = 1, height = 10, direction = 'vertical', bend = 'LT', junction = nil, doorIDs = {bottom = 'green'}}
 }
