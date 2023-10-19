@@ -51,6 +51,10 @@ function SelectCharacterState:update(dt)
                 GAnimationDefintions['grunt'],
                 GGruntDefinition
             ),
+            boss = Grunt(
+                GAnimationDefintions['boss'],
+                GBossDefinition
+            ),
             map = Map()
             }
         )

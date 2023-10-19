@@ -17,7 +17,7 @@ GFonts = {
     ['funkrocker-menu'] = love.graphics.newFont('fonts/funkrocker.ttf', 64),
     ['funkrocker-highscores'] = love.graphics.newFont('fonts/Funkrocker.ttf', 108),
     ['funkrocker-count'] = love.graphics.newFont('fonts/Funkrocker.ttf', 192),
-    ['blood-title'] = love.graphics.newFont('fonts/HoMicIDE EFfeCt.ttf', 170),
+    ['blood-title'] = love.graphics.newFont('fonts/HoMicIDE EFfeCt.ttf', 170)
 }
 
 GTextures = {
@@ -45,7 +45,7 @@ GAudio = {
     ['theme'] = love.audio.newSource('audio/theme.mp3', 'static'),
     ['gunshot'] = love.audio.newSource('audio/gunshot.wav', 'static'),
     ['select'] = love.audio.newSource('audio/select.wav', 'static'),
-    ['error'] = love.audio.newSource('audio/error.wav', 'static'),
+    ['error'] = love.audio.newSource('audio/error.wav', 'static')
 }
 
 -- classes
@@ -74,6 +74,7 @@ require 'src/states/Entity/Player/PlayerIdleState'
 require 'src/states/Entity/Player/PlayerWalkingState'
 require 'src/states/Entity/Grunt/GruntWalkingState'
 require 'src/states/Entity/Grunt/GruntAttackingState'
+require 'src/states/Entity/Boss/BossWalkingState'
 
 -- util files
 require 'src/utils/utils'
@@ -99,4 +100,5 @@ GQuads = {
     ['character1'] = GenerateQuads(GTextures['character1'], 384, 384),
     ['character2'] = GenerateQuads(GTextures['character2'], 384, 384),
     ['grunt'] = GenerateQuads(GTextures['grunt'], 128, 128),
+    ['boss'] = GenerateQuads(GTextures['boss'], 128, 128)
 }

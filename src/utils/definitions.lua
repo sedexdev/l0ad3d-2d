@@ -65,11 +65,17 @@ GAnimationDefintions = {
         }
     },
     ['boss'] = {
-        texture = nil,
-        fireShot = nil,
+        texture = GTextures['boss'],
+        fireShot = GTextures['boss-gun-flash'],
         animations = {
-            frames = nil,
-            interval = nil
+            ['walking-north'] = Animation({1, 9}, BOSS_WALK_INTERVAL),
+            ['walking-east'] = Animation({3, 11}, BOSS_WALK_INTERVAL),
+            ['walking-south'] = Animation({5, 13}, BOSS_WALK_INTERVAL),
+            ['walking-west'] = Animation({7, 15}, BOSS_WALK_INTERVAL),
+            ['walking-north-east'] = Animation({2, 10}, BOSS_WALK_INTERVAL),
+            ['walking-south-east'] = Animation({4, 12}, BOSS_WALK_INTERVAL),
+            ['walking-south-west'] = Animation({6, 14}, BOSS_WALK_INTERVAL),
+            ['walking-north-west'] = Animation({8, 16}, BOSS_WALK_INTERVAL),
         }
     },
     ['turret'] = {
@@ -95,15 +101,14 @@ GGruntDefinition = {
 }
 
 GBossDefinition = {
-    x = nil,
-    y = nil,
-    width = nil,
-    height = nil,
+    x = (WINDOW_WIDTH / 2) - (BOSS_WIDTH / 2),
+    y = (WINDOW_HEIGHT / 2) - (BOSS_HEIGHT / 2),
+    width = BOSS_WIDTH,
+    height = BOSS_HEIGHT,
     stateMachine = nil,
-    direction = nil,
-    health = 500,
-    speed = 300,
-    specialAttackFrequency = 5
+    direction = 'north',
+    health = 1000,
+    speed = 400
 }
 
 GTurretDefinition = {

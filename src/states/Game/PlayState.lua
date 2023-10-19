@@ -14,6 +14,11 @@ function PlayState:enter(params)
         ['attacking'] = function () return GruntAttackingState(self.grunt, self.player) end,
     }
     self.grunt.stateMachine:change('walking')
+    self.boss = params.boss
+    self.boss.stateMachine = StateMachine {
+        ['walking'] = function () return BossWalkingState(self.boss, self.player) end
+    }
+    self.boss.stateMachine:change('walking')
     self.map = params.map
     self.map:generateLevel()
 end
@@ -31,6 +36,7 @@ function PlayState:update(dt)
     end
     self.player:update(dt)
     self.grunt:update(dt)
+    self.boss:update(dt)
     self:updateCamera()
 end
 
@@ -44,4 +50,5 @@ function PlayState:render()
     self.map:render()
     self.player:render()
     self.grunt:render()
+    self.boss:render()
 end

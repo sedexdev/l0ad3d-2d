@@ -10,6 +10,8 @@ CHARACTER_WIDTH = 384
 CHARACTER_HEIGHT = 384
 GRUNT_WIDTH = 384
 GRUNT_HEIGHT = 384
+BOSS_WIDTH = 384
+BOSS_HEIGHT = 384
 
 -- keys
 MOVEMENT_KEYS = {'up', 'right', 'down', 'left', 'w', 'd', 's', 'a'}
@@ -18,6 +20,7 @@ MOVEMENT_KEYS = {'up', 'right', 'down', 'left', 'w', 'd', 's', 'a'}
 CHARACTER_WALK_INTERVAL = 0.2
 GRUNT_WALK_INTERVAL = 0.2
 GRUNT_ATTACK_INTERVAL = 0.1
+BOSS_WALK_INTERVAL = 0.1
 
 DEGREES_TO_RADIANS = 0.0174532925199432957
 -- for png image that is facing EAST
