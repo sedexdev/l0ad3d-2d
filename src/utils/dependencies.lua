@@ -53,6 +53,7 @@ require 'src/classes/Animation'
 require 'src/classes/Boss'
 require 'src/classes/Entity'
 require 'src/classes/Grunt'
+require 'src/classes/HUD'
 require 'src/classes/Map'
 require 'src/classes/MapArea'
 require 'src/classes/MapCorridor'
@@ -67,7 +68,11 @@ require 'src/states/Game/MenuState'
 require 'src/states/Game/SelectCharacterState'
 require 'src/states/Game/CountdownState'
 require 'src/states/Game/PlayState'
+require 'src/states/Game/PauseState'
+require 'src/states/Game/LevelCompleteState'
+require 'src/states/Game/GameOverState'
 require 'src/states/Game/HighScoreState'
+require 'src/states/Game/EnterHighScoreState'
 
 -- entity states
 require 'src/states/Entity/Player/PlayerIdleState'
@@ -88,7 +93,11 @@ GStateMachine = StateMachine {
     ['select'] = function() return SelectCharacterState() end,
     ['countdown'] = function() return CountdownState() end,
     ['playing'] = function() return PlayState() end,
-    ['highscores'] = function() return HighScoreState() end
+    ['paused'] = function() return PauseState() end,
+    ['gameover'] = function() return GameOverState() end,
+    ['complete'] = function() return LevelCompleteState() end,
+    ['highscores'] = function() return HighScoreState() end,
+    ['enter-highscores'] = function() return EnterHighScoreState() end,
 }
 
 -- quads

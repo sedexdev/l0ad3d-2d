@@ -1,9 +1,37 @@
+--[[
+    PlayerIdleState: class
+
+    Includes: BaseState - provides base functions for state classes
+
+    Description:
+        Implements the animations for the Player object when
+        in an idle state
+]]
+
 PlayerIdleState = Class{__includes = BaseState}
 
+--[[
+    PlayerIdleState constructor
+
+    Params:
+        player: table - Player object whose state is being updated
+    Returns:
+        nil
+]]
 function PlayerIdleState:init(player)
     self.player = player
 end
 
+--[[
+    PlayerIdleState update function. Checks for keyboard input
+    from the end user to determine if the player is moving, changes
+    state to walking if so
+
+    Params:
+        dt: number - deltatime counter for current frame rate
+    Returns:
+        nil
+]]
 function PlayerIdleState:update(dt)
     -- update the player animations
     self.player.animations['idle-'..self.player.lastDirection]:update(dt)
@@ -15,6 +43,15 @@ function PlayerIdleState:update(dt)
     end
 end
 
+--[[
+    PlayerIdleState render function. Uses the current frame of the
+    associated Animation instance as defined in GAnimationDefintions.character<1|2>.animations
+
+    Params:
+        none
+    Returns:
+        nil
+]]
 function PlayerIdleState:render()
     if self.player.id == 1 then
         -- render character 1

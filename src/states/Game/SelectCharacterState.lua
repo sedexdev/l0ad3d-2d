@@ -1,9 +1,40 @@
+--[[
+    SelectCharacterState: class
+
+    Includes: BaseState - provides base functions for state classes
+
+    Description:
+        Displays the 2 character avatars for the available playable
+        characters: Cap'n'Guns and Plank. The player then selects
+        the character they want to play as and the state changes
+        to the CountdownState 
+]]
+
 SelectCharacterState = Class{__includes = BaseState}
 
+--[[
+    SelectCharacterState enter function. Defined in the state machine and
+    BaseState this function is called whenever the GStateMachine
+    is called with 'select' as the stateName argument
+
+    Params:
+        params: table - list of state dependent values this state requires
+    Returns:
+        nil
+]]
 function SelectCharacterState:enter(params)
     self.highScores = params.highScores
 end
 
+--[[
+    SelectCharacterState constructor. Creates bullet
+    offsets that mirror the shots fired in the MenuState
+
+    Params:
+        none
+    Returns:
+        nil
+]]
 function SelectCharacterState:init()
     self.selected = 1
     self.bulletOffsets = {
@@ -12,6 +43,22 @@ function SelectCharacterState:init()
     }
 end
 
+--[[
+    SelectCharacterState update function. Lets the player move
+    between the 2 available characters and make a seclection
+    on which one to play as
+
+    TODO: review where Entity objects are created
+
+    Key bindings:
+        escape: goes back to the MenuState
+        right: selects the avatar to the right
+        left: selects the avatar to the left
+    Params:
+        dt: number - deltatime counter for current frame rate
+    Returns:
+        nil
+]]
 function SelectCharacterState:update(dt)
     if love.keyboard.wasPressed('escape') then
         GStateMachine:change('menu', {
@@ -20,6 +67,7 @@ function SelectCharacterState:update(dt)
     end
 
     if love.keyboard.wasPressed('right') then
+        -- play error if right avatar already selected
         if self.selected == 2 then
             GAudio['error']:play()
         else
@@ -28,6 +76,7 @@ function SelectCharacterState:update(dt)
             self.selected = self.selected + 1
         end
     elseif love.keyboard.wasPressed('left') then
+        -- play error if left avatar already selected
         if self.selected == 1 then
             GAudio['error']:play()
         else
@@ -51,16 +100,26 @@ function SelectCharacterState:update(dt)
                 GAnimationDefintions['grunt'],
                 GGruntDefinition
             ),
-            boss = Grunt(
+            boss = Boss(
                 GAnimationDefintions['boss'],
                 GBossDefinition
             ),
             map = Map()
-            }
-        )
+        })
     end
 end
 
+--[[
+    SelectCharacterState render function. Draws out the background
+    as well as the avatar images of each character. Multiple helper
+    functions are defined below to render out the shadow, name, 
+    highlighting, and avatar images
+
+    Params:
+        none
+    Returns;
+        nil
+]]
 function SelectCharacterState:render()
     -- draw background
     love.graphics.setColor(1, 1, 1, 1)
@@ -97,6 +156,16 @@ function SelectCharacterState:render()
     self:renderName('PLANK', (WINDOW_WIDTH / 4 * 3))
 end
 
+--[[
+    Draws the shadow behind the avatar image based on offsets
+    to the (x, y) of the image
+
+    Params:
+        xOffset: number - x coordinate offset to adjust the shadow by
+        yOffset: number - y coordinate offset to adjust the shadow by
+    Returns:
+        nil
+]]
 function SelectCharacterState:renderShadow(xOffset, yOffset)
     love.graphics.setColor(20/255, 20/255, 20/255, 1)
     love.graphics.rectangle('fill',
@@ -106,6 +175,15 @@ function SelectCharacterState:renderShadow(xOffset, yOffset)
     )
 end
 
+--[[
+    Draws the highlight over the selected avatar image based on
+    the (x, y) of the image
+
+    Params:
+        xOffset: number - x coordinate offset to adjust the highlight
+    Returns:
+        nil
+]]
 function SelectCharacterState:renderHighlight(xOffset)
     -- render opaque rectangle on top
     love.graphics.setColor(1, 1, 1, 50/255)
@@ -116,6 +194,16 @@ function SelectCharacterState:renderHighlight(xOffset)
     )
 end
 
+--[[
+    Draws the avatar image based on the image dimensions and
+    an x offset
+
+    Params:
+        texture: Image - avatar image defined in src/utils/dependencies.lua in GTextures
+        xOffset: number - x coordinate offset to adjust the highlight
+    Returns:
+        nil
+]]
 function SelectCharacterState:renderAvatar(texture, xOffset)
     love.graphics.setColor(1, 1, 1, 1)
     love.graphics.draw(texture,
@@ -124,12 +212,22 @@ function SelectCharacterState:renderAvatar(texture, xOffset)
     )
 end
 
-function SelectCharacterState:renderName(name, x)
+--[[
+    Draws the avatar name over the avatar image based on the 
+    window dimensions and an x offset
+
+    Params:
+        name: string - the name of the character
+        xOffset: number - x coordinate offset to adjust the highlight
+    Returns:
+        nil
+]]
+function SelectCharacterState:renderName(name, xOffset)
     local fontWidth = GFonts['funkrocker-highscores']:getWidth(name)
     love.graphics.setFont(GFonts['funkrocker-highscores'])
     love.graphics.setColor(10/255, 10/255, 10/255, 1)
     love.graphics.print(name,
-        x + 2, (WINDOW_HEIGHT / 3) + 2,
+        xOffset + 2, (WINDOW_HEIGHT / 3) + 2,
         0,
         1, 1,
         fontWidth / 2, 0,
@@ -137,7 +235,7 @@ function SelectCharacterState:renderName(name, x)
     )
     love.graphics.setColor(1, 0/255, 0/255, 1)
     love.graphics.print(name,
-        x, (WINDOW_HEIGHT / 3),
+        xOffset, (WINDOW_HEIGHT / 3),
         0,
         1, 1,
         fontWidth / 2, 0,
