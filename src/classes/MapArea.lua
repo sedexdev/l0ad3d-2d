@@ -123,7 +123,7 @@ end
 
 --[[
     Renders out a vertical length of wall on the area
-    appropriate area bondary as defined by the parameters
+    appropriate area boundary as defined by the parameters
 
     Params:
         xOffset: number - pixels to offset the x coordinate by
