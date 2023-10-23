@@ -1,3 +1,8 @@
+--[[
+    Creates a table of animations for each Entity object by
+    instantiating the Animation class with the relevant sprite
+    sheet and indices for the animation state of the Entity 
+]]
 GAnimationDefintions = {
     ['character1'] = {
         texture = GTextures['character1'],
@@ -88,43 +93,9 @@ GAnimationDefintions = {
     }
 }
 
-GGruntDefinition = {
-    x = (WINDOW_WIDTH / 2) - (GRUNT_WIDTH / 2),
-    y = (WINDOW_HEIGHT / 2) - (GRUNT_HEIGHT / 2),
-    dx = GRUNT_SPEED,
-    dy = GRUNT_SPEED,
-    width = GRUNT_WIDTH,
-    height = GRUNT_HEIGHT,
-    stateMachine = nil,
-    direction = 'north',
-    health = 50,
-    powerUpChance = 20
-}
-
-GBossDefinition = {
-    x = (WINDOW_WIDTH / 2) - (BOSS_WIDTH / 2),
-    y = (WINDOW_HEIGHT / 2) - (BOSS_HEIGHT / 2),
-    dx = BOSS_SPEED,
-    dy = BOSS_SPEED,
-    width = BOSS_WIDTH,
-    height = BOSS_HEIGHT,
-    stateMachine = nil,
-    direction = 'north',
-    health = 1000
-}
-
-GTurretDefinition = {
-    x = nil,
-    y = nil,
-    width = nil,
-    height = nil,
-    direction = nil,
-    stateMachine = nil,
-    health = 200,
-    fireRate = 2,
-    rotateFrequency = 4
-}
-
+--[[
+    Character attributes definition
+]]
 GCharacterDefinition = {
     x = (WINDOW_WIDTH / 2) - (CHARACTER_WIDTH / 2),
     y = (WINDOW_HEIGHT / 2) - (CHARACTER_HEIGHT / 2),
@@ -153,51 +124,108 @@ GCharacterDefinition = {
     }
 }
 
-GMapAreaDefinitions = {
-    -- corridor locations [2]: string - which edge of the area to place the corridor against 
-    -- (L = left, R = right, T = top, B = bottom)
-    -- same with adjacent areas but the contain a door colour as well
-    [1] = {x = -3200, y = -1600, width = 20, height = 20, corridors = {{1, 'L'}, {6, 'B'}, {8, 'R'}}, adjacentArea = nil},
-    [2] = {x = -9920, y = -1200, width = 16, height = 16, corridors = {{1, 'R'}, {2, 'L'}, {3, 'T'}, {5, 'B'}}, adjacentArea = nil},
-    [3] = {x = -1280, y = 3520, width = 8, height = 8, corridors = {{6, 'T'}}, adjacentArea = nil},
-    [4] = {x = 1760, y = 1920, width = 8, height = 8, corridors = {{7, 'L'}}, adjacentArea = nil},
-    [5] = {x = 4800, y = -640, width = 8, height = 8, corridors = {{8, 'L'}, {9, 'T'}, {10, 'R'}}, adjacentArea = nil},
-    [6] = {x = -8640, y = -3280, width = 8, height = 8, corridors = {{3, 'B'}}, adjacentArea = nil},
-    [7] = {x = -9920, y = 2160, width = 16, height = 8, corridors = {{5, 'T'}}, adjacentArea = nil},
-    [8] = {x = -15680, y = -1360, width = 8, height = 16, corridors = {{2, 'R'}, {4, 'B'}}, adjacentArea = nil},
-    [9] = {x = -17680, y = -1200, width = 6, height = 6, corridors = nil, adjacentArea = {8, 'R', 'purple'}},
-    [10] = {x = -18320, y = 80, width = 8, height = 8, corridors = nil, adjacentArea = {8, 'R', 'blue'}},
-    [11] = {x = -18880, y = 2480, width = 26, height = 22, corridors = {{4, 'T'}}, adjacentArea = nil},
-    [12] = {x = -18240, y = 6080, width = 8, height = 8, corridors = nil, adjacentArea = {11, 'T', 'purple'}},
-    [13] = {x = -14400, y = 6080, width = 8, height = 8, corridors = nil, adjacentArea = {11, 'T', 'purple'}},
-    [14] = {x = 5440, y = -2080, width = 4, height = 4, corridors = {{9, 'B'}}, adjacentArea = nil},
-    [15] = {x = 7520, y = 960, width = 20, height = 22, corridors = {{11, 'T'}, {13, 'B'}}, adjacentArea = nil},
-    [16] = {x = 14000, y = 2080, width = 6, height = 8, corridors = nil, adjacentArea = {15, 'L', 'purple'}},
-    [17] = {x = 9680, y = -2560, width = 16, height = 12, corridors = {{12, 'B'}, {15, 'R'}}, adjacentArea = nil},
-    [18] = {x = 14400, y = 4560, width = 20, height = 20, corridors = {{14, 'L'}}, adjacentArea = nil},
-    [19] = {x = 16240, y = 7840, width = 8, height = 8, corridors = nil, adjacentArea = {18, 'T', 'purple'}},
-    [20] = {x = 16480, y = -160, width = 24, height = 24, corridors = {{16, 'T'}}, adjacentArea = nil},
-    [21] = {x = 21280, y = 3760, width = 8, height = 8, corridors = nil, adjacentArea = {20, 'T', 'purple'}}
+--[[
+    Grunt attributes definition
+]]
+GGruntDefinition = {
+    x = (WINDOW_WIDTH / 2) - (GRUNT_WIDTH / 2),
+    y = (WINDOW_HEIGHT / 2) - (GRUNT_HEIGHT / 2),
+    dx = GRUNT_SPEED,
+    dy = GRUNT_SPEED,
+    width = GRUNT_WIDTH,
+    height = GRUNT_HEIGHT,
+    stateMachine = nil,
+    direction = 'north',
+    health = 50,
+    powerUpChance = 20
 }
 
-GMapCorridorDefinitions = {
-    -- bend: string - corner description (e.g LB = left-bottom, RB = right-bottom, LT = left-top, RT = right-top)
-    -- junction: integer table - tile references for collision detection (vertical counted from top, horizontal counted from left)
-    -- direction: string - which orientation is it using (used to place doors correctly)
-    [1] = {width = 5, height = 2, direction = 'horizontal', bend = nil, junction = nil, doorIDs = {left = 'purple', right = 'purple'}},
-    [2] = {width = 10, height = 2, direction = 'horizontal', bend = nil, junction = nil, doorIDs = {left = 'purple', right = 'purple'}},
-    [3] = {width = 1, height = 5, direction = 'vertical', bend = nil, junction = nil, doorIDs = {top = 'purple', bottom = 'purple'}},
-    [4] = {width = 1, height = 8, direction = 'vertical', bend = nil, junction = nil, doorIDs = {top = 'purple', bottom = 'red'}},
-    [5] = {width = 1, height = 5, direction = 'vertical', bend = nil, junction = nil, doorIDs = {top = 'purple', bottom = 'purple'}},
-    [6] = {width = 1, height = 12, direction = 'vertical', bend = nil, junction = {{6, 7}, 'R'}, doorIDs = {top = 'purple', bottom = 'purple'}},
-    [7] = {width = 5, height = 2, direction = 'horizontal', bend = nil, junction = nil, doorIDs = {left = 'purple', right = 'purple'}},
-    [8] = {width = 5, height = 2, direction = 'horizontal', bend = nil, junction = nil, doorIDs = {left = 'purple', right = 'purple'}},
-    [9] = {width = 1, height = 5, direction = 'vertical', bend = nil, junction = nil, doorIDs = {top = 'purple', bottom = 'purple'}},
-    [10] = {width = 16, height = 2, direction = 'horizontal', bend = 'RT', junction = {{11}, 'B'}, doorIDs = {left = 'purple'}},
-    [11] = {width = 1, height = 5, direction = 'vertical', bend = nil, junction = nil, doorIDs = {top = 'purple', bottom = 'purple'}},
-    [12] = {width = 1, height = 5, direction = 'vertical', bend = 'LB', junction = nil, doorIDs = {top = 'purple'}},
-    [13] = {width = 1, height = 12, direction = 'vertical', bend = 'RB', junction = nil, doorIDs = {top = 'purple'}},
-    [14] = {width = 12, height = 2, direction = 'horizontal', bend = 'LT', junction = nil, doorIDs = {right = 'purple'}},
-    [15] = {width = 18, height = 2, direction = 'horizontal', bend = 'RB', junction = nil, doorIDs = {left = 'purple'}},
-    [16] = {width = 1, height = 10, direction = 'vertical', bend = 'LT', junction = nil, doorIDs = {bottom = 'green'}}
+--[[
+    Boss attributes definition
+]]
+GBossDefinition = {
+    x = (WINDOW_WIDTH / 2) - (BOSS_WIDTH / 2),
+    y = (WINDOW_HEIGHT / 2) - (BOSS_HEIGHT / 2),
+    dx = BOSS_SPEED,
+    dy = BOSS_SPEED,
+    width = BOSS_WIDTH,
+    height = BOSS_HEIGHT,
+    stateMachine = nil,
+    direction = 'north',
+    health = 1000
+}
+
+--[[
+    Turret attributes definition
+]]
+GTurretDefinition = {
+    x = nil,
+    y = nil,
+    width = nil,
+    height = nil,
+    direction = nil,
+    stateMachine = nil,
+    health = 200,
+    fireRate = 2,
+    rotateFrequency = 4
+}
+
+--[[
+    Defines the parameters of each MapArea object that is combined to 
+    create the game Map. The game is comprised of 2 core Map elements;
+    an area, and joining areas between areas (corridors). These both
+    take different values for initialisation so not all value are defined
+    on each element in this table. MapArea attributes include:
+
+    x: number - x coordinate in px (set to nil for corridors)
+    y: number - y coordinate in px (set to nil for corridors)
+    width: number - width in tiles
+    height: number - height in tiles
+    type: string - area | corridor
+    (corridor) direction: string - which orientation is it using (used to place walls correctly)
+    (corridor) bends: table - corner descriptions (e.g LB = left-bottom, RT = right-top)
+    (corridor) joins: table - area index and location to base corridor (x, y) off of
+    (area | corridor) doors: table - lists the locations and colours of doors in the area
+    (area) adjacentAreas: table - contains area IDs for collision detection
+]]
+GMapAreaDefinitions = {
+    --========== JOINING AREAS ==========
+    [1] = {x = nil, y = nil, width = 5, height = 2, type = 'corridor', direction = 'horizontal', bends = nil, doors = nil, joins = {17, 'L'}},
+    [2] = {x = nil, y = nil, width = 10, height = 2, type = 'corridor', direction = 'horizontal', bends = nil, doors = nil, joins = {18, 'L'}},
+    [3] = {x = nil, y = nil, width = 1, height = 5, type = 'corridor', direction = 'vertical', bends = nil, doors = nil, joins = {18, 'T'}},
+    [4] = {x = nil, y = nil, width = 1, height = 8, type = 'corridor', direction = 'vertical', bends = nil, doors = nil, joins = {24, 'B'}},
+    [5] = {x = nil, y = nil, width = 1, height = 5, type = 'corridor', direction = 'vertical', bends = nil, doors = nil, joins = {18, 'B'}},
+    [6] = {x = nil, y = nil, width = 1, height = 12, type = 'corridor', direction = 'vertical', bends = nil, doors = {R = 'purple'}, joins = {17, 'B'}},
+    [7] = {x = nil, y = nil, width = 5, height = 2, type = 'corridor', direction = 'horizontal', bends = nil, doors = nil, joins = {20, 'L'}},
+    [8] = {x = nil, y = nil, width = 5, height = 2, type = 'corridor', direction = 'horizontal', bends = nil, doors = nil, joins = {17, 'R'}},
+    [9] = {x = nil, y = nil, width = 1, height = 5, type = 'corridor', direction = 'vertical', bends = nil, doors = nil, joins = {21, 'T'}},
+    [10] = {x = nil, y = nil, width = 16, height = 2, type = 'corridor', direction = 'horizontal', bends = {'RT'}, doors = {B = 'purple'}, joins = {21, 'R'}},
+    [11] = {x = nil, y = nil, width = 1, height = 5, type = 'corridor', direction = 'vertical', bends = nil, doors = nil, joins = {31, 'T'}},
+    [12] = {x = nil, y = nil, width = 1, height = 5, type = 'corridor', direction = 'vertical', bends = {'LB'}, doors = nil, joins = {33, 'B'}},
+    [13] = {x = nil, y = nil, width = 12, height = 2, type = 'corridor', direction = 'horizontal', bends = {'LT'}, doors = nil, joins = {34, 'L'}},
+    [14] = {x = nil, y = nil, width = 1, height = 12, type = 'corridor', direction = 'vertical', bends = {'RB'}, doors = nil, joins = {31, 'B'}},
+    [15] = {x = nil, y = nil, width = 18, height = 2, type = 'corridor', direction = 'horizontal', bends = {'RB'}, doors = nil, joins = {33, 'R'}},
+    [16] = {x = nil, y = nil, width = 1, height = 10, type = 'corridor', direction = 'vertical', bends = {'LT'}, doors = nil, joins = {36, 'T'}},
+    -- ========== MAIN AREAS ========== 
+    [17] = {x = -3200, y = -1600, width = 20, height = 20, type = 'area', adjacentAreas = nil, doors = {L = 'purple', B = 'purple', R = 'purple'}},
+    [18] = {x = -9920, y = -1280, width = 16, height = 16, type = 'area', adjacentAreas = nil, doors = {L = 'purple', B = 'purple', R = 'purple', T = 'purple'}},
+    [19] = {x = -1280, y = 3520, width = 8, height = 8, type = 'area', adjacentAreas = nil, doors = {T = 'purple'}},
+    [20] = {x = 1840, y = 1920, width = 8, height = 8, type = 'area', adjacentAreas = nil, doors = {L = 'purple'}},
+    [21] = {x = 4800, y = -640, width = 8, height = 8, type = 'area', adjacentAreas = nil, doors = {L = 'purple', R = 'purple', T = 'purple'}},
+    [22] = {x = -8640, y = -3360, width = 8, height = 8, type = 'area', adjacentAreas = nil, doors = {B = 'purple'}},
+    [23] = {x = -9920, y = 2080, width = 16, height = 8, type = 'area', adjacentAreas = nil, doors = {T = 'purple'}},
+    [24] = {x = -15680, y = -1280, width = 8, height = 16, type = 'area', adjacentAreas = {9, 10}, doors = {B = 'purple', R = 'purple'}},
+    [25] = {x = -17680, y = -1120, width = 6, height = 6, type = 'area', adjacentAreas = {8}, doors = {R = 'purple'}},
+    [26] = {x = -18320, y = 160, width = 8, height = 8, type = 'area', adjacentAreas = {8}, doors = {R = 'blue'}},
+    [27] = {x = -18560, y = 2560, width = 26, height = 22, type = 'area', adjacentAreas = {12, 13}, doors = {T = 'red'}},
+    [28] = {x = -18240, y = 6160, width = 8, height = 8, type = 'area', adjacentAreas = {11}, doors = {T = 'purple'}},
+    [29] = {x = -14400, y = 6160, width = 8, height = 8, type = 'area', adjacentAreas = {11}, doors = {T = 'purple'}},
+    [30] = {x = 5440, y = -2080, width = 4, height = 4, type = 'area', adjacentAreas = nil, doors = {B = 'purple'}},
+    [31] = {x = 6720, y = 1040, width = 20, height = 22, type = 'area', adjacentAreas = {16}, doors = {B = 'purple', T = 'purple'}},
+    [32] = {x = 13200, y = 2080, width = 6, height = 8, type = 'area', adjacentAreas = {15}, doors = {L = 'purple'}},
+    [33] = {x = 9680, y = -2560, width = 16, height = 12, type = 'area', adjacentAreas = nil, doors = {B = 'purple', R = 'purple'}},
+    [34] = {x = 13520, y = 4720, width = 20, height = 20, type = 'area', adjacentAreas = {19}, doors = {L = 'purple'}},
+    [35] = {x = 15360, y = 8000, width = 8, height = 8, type = 'area', adjacentAreas = {18}, doors = {T = 'purple'}},
+    [36] = {x = 16480, y = -160, width = 24, height = 24, type = 'area', adjacentAreas = {21}, doors = {T = 'green'}},
+    [37] = {x = 21280, y = 3760, width = 8, height = 8, type = 'area', adjacentAreas = {20}, doors = {T = 'purple'}}
 }

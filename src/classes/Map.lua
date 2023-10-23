@@ -16,7 +16,7 @@ Map = Class{}
 --[[
     Map constructor. Defines tables for storing area and corridor
     objects, as well as a corridor tracking table that stores the index
-    of a corridor as defined in src/utils/definitions.lua as GMapCorridorDefinitions.
+    of an area as defined in src/utils/definitions.lua as GMapAreaDefinitions.
     The indices are used to ensure that corridors are not rendered twice
     as they are connected to 2 different areas 
 
@@ -27,8 +27,6 @@ Map = Class{}
 ]]
 function Map:init()
     self.areas = {}
-    self.corridors = {}
-    self.corridorTracker = {}
 end
 
 --[[
@@ -44,19 +42,12 @@ function Map:render()
     for _, area in pairs(self.areas) do
         area:render()
     end
-    for _, corridor in pairs(self.corridors) do
-        corridor:render()
-    end
-    -- for _, powerup in pairs(self.rooms.powerups) do
-    --     powerup:render()
-    -- end
 end
 
 --[[
-    Generates the MapArea and MapCorridor objects that are composite
-    elements of the Map. Also responsible for generating interactive
-    game objects including Entity and PowerUp instances for the Player
-    object to interact with
+    Generates the MapArea objects that form the Map. Also responsible 
+    for generating interactive game objects including Entity and PowerUp 
+    instances for the Player object to interact with
 
     Params:
         none
@@ -66,36 +57,29 @@ end
 function Map:generateLevel()
     -- instantiate the area objects and add them to the areas table
     for i = 1, #GMapAreaDefinitions do
+        -- populate the (x, y) for corridors based off of joined areas
+        local x, y
+        if GMapAreaDefinitions[i].type == 'corridor' then
+            x, y = self:getCorridorCoordinates(GMapAreaDefinitions[i])
+        end
         table.insert(self.areas, MapArea(
             i, -- area id
-            GMapAreaDefinitions[i].x,
-            GMapAreaDefinitions[i].y,
+            GMapAreaDefinitions[i].x and GMapAreaDefinitions[i].x or x,
+            GMapAreaDefinitions[i].y and GMapAreaDefinitions[i].y or y,
             GMapAreaDefinitions[i].width,
             GMapAreaDefinitions[i].height,
-            GMapAreaDefinitions[i].corridors,
-            GMapAreaDefinitions[i].adjacentArea
+            GMapAreaDefinitions[i].type,
+            GMapAreaDefinitions[i].direction,
+            GMapAreaDefinitions[i].bends,
+            GMapAreaDefinitions[i].joins,
+            GMapAreaDefinitions[i].doors,
+            GMapAreaDefinitions[i].adjacentAreas
         ))
-        local corridors = GMapAreaDefinitions[i].corridors
-        if corridors then
-            for j = 1, #corridors do
-                -- sotre current corridor index
-                local corridorIndex = corridors[j][1]
-                -- check to see if we have already instantiated this corridor
-                if not table.contains(self.corridorTracker, corridorIndex) then
-                    self:instantiateCorridor(corridors[j], i)
-                end
-            end
-        end
     end
-    -- generate the tiles for each area
     for _, area in pairs(self.areas) do
+        -- generate the tiles for each area
         area:generateFloorTiles()
         area:generateWallTiles()
-    end
-    -- generate the tiles for each corridor
-    for _, corridor in pairs(self.corridors) do
-        MapArea.generateFloorTiles(corridor)
-        corridor:generateWallTiles()
     end
     -- create powerups
     -- update powerups so more are spawned as the level goes on
@@ -104,66 +88,47 @@ function Map:generateLevel()
 end
 
 --[[
-    Checks where the corridor is located (L, R, T, B) and creates 
-    a new MapCorridor object using the helper functions below for 
-    each location. Also updates the <self.corridorTracker> table 
-    to avoid rendering the same corridor twice
+    Checks where the corridor is located (L, R, T, B) and sets the corridor
+    area coordinates based off one of the areas it is joined to as defined
+    in GMapAreaDefinitions
 
     Params:
-        corridor: table - corridor definition with GMapAreaDefinitions.corridors 
-                          index and location
-        areaIndex: number - index of the area as defined in GMapAreaDefinitions
+        area: table - GMapAreaDefinitions definition of an area
     Returns:
         nil
 ]]
-function Map:instantiateCorridor(corridor, areaIndex)
-    -- corridor[1] = index in GMapAreaDefinitions.corridors[j] (see) MapArea:generateLevel() above
-    -- corridor[2] = location in GMapAreaDefinitions.corridors[j] (see) MapArea:generateLevel() above
-    local x, y
-    if corridor[2] == 'L' then
-        -- set coordinates on left corridor
-        x, y = self:setLeftCorridorCoordinates(GMapAreaDefinitions[areaIndex], GMapCorridorDefinitions[corridor[1]])
-    elseif corridor[2] == 'R' then
-        -- set coordinates on right corridor
-        x, y = self:setRightCorridorCoordinates(GMapAreaDefinitions[areaIndex])
-    elseif corridor[2] == 'T' then
-        -- set coordinates on top corridor
-        x, y = self:setTopCorridorCoordinates(GMapAreaDefinitions[areaIndex], GMapCorridorDefinitions[corridor[1]])
-    else
-        -- set coordinates on bottom corridor
-        x, y = self:setBottomCorridorCoordinates(GMapAreaDefinitions[areaIndex])
+function Map:getCorridorCoordinates(area)
+    if area.joins[2] == 'L' then
+        -- get coordinates of left corridor
+        return self:getLeftCorridorCoordinates(GMapAreaDefinitions[area.joins[1]], area)
+    elseif area.joins[2] == 'R' then
+        -- get coordinates of right corridor
+        return self:getRightCorridorCoordinates(GMapAreaDefinitions[area.joins[1]])
+    elseif area.joins[2] == 'T' then
+        -- get coordinates of top corridor
+        return self:getTopCorridorCoordinates(GMapAreaDefinitions[area.joins[1]], area)
+    elseif area.joins[2] == 'B' then
+        -- get coordinates of bottom corridor
+        return self:getBottomCorridorCoordinates(GMapAreaDefinitions[area.joins[1]])
     end
-    -- create the MapCorridor objects
-    table.insert(self.corridors, MapCorridor(
-        corridor[1], -- corridor id
-        x, y,
-        GMapCorridorDefinitions[corridor[1]].width,
-        GMapCorridorDefinitions[corridor[1]].height,
-        GMapCorridorDefinitions[corridor[1]].direction,
-        GMapCorridorDefinitions[corridor[1]].bend,
-        GMapCorridorDefinitions[corridor[1]].junction,
-        GMapCorridorDefinitions[corridor[1]].doorIDs
-    ))
-    -- add the table index to the tracker
-    table.insert(self.corridorTracker, corridor[1])
 end
 
 --[[
-    Sets the (x, y) coordinates for any MapCorridor object joined 
-    to the left wall of a MapArea object
+    Gets the (x, y) coordinates for a corridor MapArea object joined 
+    to the left wall of another MapArea object
 
     Params:
         area: table - GMapAreaDefinitions definition of the MapArea 
                       object whose corridors we need to calculate 
-                      (x, y) for 
-        corridor: table - GMapCorridorDefinitions definition of the
-                          MapCorridor object we are calculating 
-                          (x, y) for
+                      (x, y) for
+        corridor: table - GMapAreaDefinitions definition of the MapArea 
+                      corridor whose width is used to set the x coordinate 
+                      (x, y) for
     Returns
         number: x - the x coordeinate the corridor will be rendered at
         number: y - the y coordeinate the corridor will be rendered at
 ]]
-function Map:setLeftCorridorCoordinates(area, corridor)
+function Map:getLeftCorridorCoordinates(area, corridor)
     -- corridor definition required to calculate corridor width offset
     -- left edge of area minus the pixel width of the corridor
     local x = area.x - (corridor.width * (64 * 5))
@@ -173,8 +138,8 @@ function Map:setLeftCorridorCoordinates(area, corridor)
 end
 
 --[[
-    Sets the (x, y) coordinates for any MapCorridor object joined 
-    to the right wall of a MapArea object
+    Gets the (x, y) coordinates for a corridor MapArea object joined 
+    to the right wall of another MapArea object
 
     Params:
         area: table - GMapAreaDefinitions definition of the MapArea 
@@ -184,7 +149,7 @@ end
         number: x - the x coordeinate the corridor will be rendered at
         number: y - the y coordeinate the corridor will be rendered at
 ]]
-function Map:setRightCorridorCoordinates(area)
+function Map:getRightCorridorCoordinates(area)
     -- right edge of the area
     local x = area.x + (area.width * (64 * 5))
     -- half the height of the area
@@ -193,21 +158,21 @@ function Map:setRightCorridorCoordinates(area)
 end
 
 --[[
-    Sets the (x, y) coordinates for any MapCorridor object joined 
-    to the top wall of a MapArea object
+    Gets the (x, y) coordinates for a corridor MapArea object joined 
+    to the top wall of another MapArea object
 
     Params:
         area: table - GMapAreaDefinitions definition of the MapArea 
                       object whose corridors we need to calculate 
-                      (x, y) for 
-        corridor: table - GMapCorridorDefinitions definition of the
-                          MapCorridor object we are calculating 
-                          (x, y) for
+                      (x, y) for
+        corridor: table - GMapAreaDefinitions definition of the MapArea 
+                      corridor whose width is used to set the y coordinate 
+                      (x, y) for
     Returns
         number: x - the x coordeinate the corridor will be rendered at
         number: y - the y coordeinate the corridor will be rendered at
 ]]
-function Map:setTopCorridorCoordinates(area, corridor)
+function Map:getTopCorridorCoordinates(area, corridor)
     -- corridor definition required to calculate corridor height offset
     -- half the width of the area
     local x = area.x + (area.width * (64 * 5) / 2) - (32 * 5)
@@ -217,8 +182,8 @@ function Map:setTopCorridorCoordinates(area, corridor)
 end
 
 --[[
-    Sets the (x, y) coordinates for any MapCorridor object joined 
-    to the bottom wall of a MapArea object
+    Gets the (x, y) coordinates for a corridor MapArea object joined 
+    to the bottom wall of another MapArea object
 
     Params:
         area: table - GMapAreaDefinitions definition of the MapArea 
@@ -228,7 +193,7 @@ end
         number: x - the x coordeinate the corridor will be rendered at
         number: y - the y coordeinate the corridor will be rendered at
 ]]
-function Map:setBottomCorridorCoordinates(area)
+function Map:getBottomCorridorCoordinates(area)
     -- half the width of the area
     local x = area.x + (area.width * (64 * 5) / 2) - (32 * 5)
     -- bottom edge of the area

@@ -137,13 +137,13 @@ end
     TODO: review how this will be used
 
     Params:
-        areas: table - list of MapArea or MapCorridor objects to compare
+        areas: table - list of MapArea objects to compare
                        Players (x, y) coordinates to 
         type: string - 'area' | 'corridor' ; used to know how to handle doors
     Returns:
         table: value stored in <self.currentArea>
 ]]
-function Player:setCurrentArea(areas, type)
+function Player:setCurrentArea(areas)
     -- <areas> includes both areas and corridors
     for _, area in pairs(areas) do
         -- if player within area/corridor x coordinate boundary
@@ -152,7 +152,7 @@ function Player:setCurrentArea(areas, type)
             if (self.y > area.y) and (self.y + self.height < (area.y + area.height * (32 * 5))) then
                 -- player current area updated
                 self.currentArea.id = area.id
-                self.currentArea.type = type
+                self.currentArea.type = area.type
             end
         end
     end
