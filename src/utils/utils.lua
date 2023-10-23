@@ -20,12 +20,3 @@ function GenerateQuads(atlas, tileWidth, tileHeight)
 
     return quads
 end
-
-function table.contains(T, value)
-    for _, v in pairs(T) do
-        if v == value then
-            return true
-        end
-    end
-    return false
-end

@@ -2,15 +2,21 @@
     MapArea: class
 
     Description:
-        Creates and renders out an area of the game Map. An area
-        in this project is defined as a room the Player will have
-        Entity interactions in and collect powerups from.
+        Creates and renders out an area of the game Map. A MapArea
+        can either be an area or a corridor. An area in this project 
+        is defined as a room the Player will have Entity interactions 
+        in and collect powerups from. A corridor is an area the Player
+        can travel through to get to other areas
+
 ]]
 
 MapArea = Class{}
 
 --[[
-    MapArea constructor
+    MapArea constructor. The project defines 2 types of area depending on the
+    values defined in src/utils/definitions.lua:GMapAreaDefinitions. An area
+    can be an area (tile grid doors and other adjacent areas), or a corridor 
+    (tile grid join between 2 areas with an orientation and bends)
 
     Params:
         id: number - area ID relating to the GMapAreaDefinitions area index
@@ -18,22 +24,30 @@ MapArea = Class{}
         y: number - y coordinate of this area
         width: number - width of this area in tiles
         height: number - height of this area in tiles
-        corridors: table - corridors coming off this area
-        adjacentArea: table - adjacent areas connected to this area
+        type: string - area | corridor
+        direction: string - orientation of this area (corridors)
+        bends: table - location of any bends in this area (corridors)
+        joins: table -  area index and location to base corridor (x, y) off of (corridors)
+        doors: table - doors in this area
+        adjacentAreas: table - adjacent areas connected to this area
     Returns:
         nil
 ]]
-function MapArea:init(id, x, y, width, height, corridors, adjacentArea)
+function MapArea:init(id, x, y, width, height, type, direction, bends, joins, doors, adjacentAreas)
     self.id = id
     self.x = x
     self.y = y
     self.width = width
     self.height = height
-    self.corridors = corridors
-    self.adjacentArea = adjacentArea
+    self.type = type
+    self.direction = direction
+    self.bends = bends
+    self.joins = joins
+    self.doors = doors
+    self.adjacentAreas = adjacentAreas -- required for collision detection
     self.floorTiles = {}
     self.wallTiles = {}
-    self.collidingWall = nil
+    self.bendWall = {}
 end
 
 --[[
@@ -48,9 +62,16 @@ end
 function MapArea:render()
     love.graphics.setColor(1, 1, 1, 1)
     self:drawFloorTiles()
-    self:drawWallTiles()
-    if self.adjacentArea then
-        self:drawAdjacentDoor()
+    -- if this area has doors
+    if self.type == 'area' then
+        self:drawWallTiles()
+    end
+    if self.type == 'corridor' then
+        -- draw the walls
+        self:drawCorridorWalls()
+    end
+    if self.doors then
+        self:drawDoors()
     end
 end
 
@@ -99,6 +120,33 @@ function MapArea:drawWallTiles()
 end
 
 --[[
+    Calls all helper functions for rendering out the wall tiles
+    that line the boundary of this corridor. The horizontal and 
+    vertical helper functions are called twice to get an equal
+    length wall section for either side of the area, offset
+    appropriately for the side being rendered
+]]
+function MapArea:drawCorridorWalls()
+    if self.direction == 'horizontal' then
+        -- draw any bends in this corridor 
+        if self.bends then
+            self:drawBendWallTilesHorizontal()
+        else
+            self:drawHorizontalWall(WALL_OFFSET, -WALL_OFFSET)
+            self:drawHorizontalWall(WALL_OFFSET, self.height * (32 * 5))
+        end
+    else
+        -- draw any bends in this corridor 
+        if self.bends then
+            self:drawBendWallTilesVertical()
+        else
+            self:drawVerticalWall(-WALL_OFFSET)
+            self:drawVerticalWall(self.width * (64 * 5))
+        end
+    end
+end
+
+--[[
     Renders out a horizontal length of wall on the area
     appropriate area bondary as defined by the parameters
 
@@ -142,78 +190,219 @@ function MapArea:drawVerticalWall(xOffset)
 end
 
 --[[
-    Renders doors for adjacent areas that are not connected by
-    corridors. A door is comprised to 4 sections: left and right,
-    or top and bottom, under door sprites, with overlaying
-    coloured door sprites. This will have the effect of revealing
-    the under door when the coloured door tweens open. Doors have
-    an ID, a location, and an orientation
-    
+    For horizontal corridors this function draws a shorter wall 
+    on the side that has the bend then draws a normal wall on 
+    the opposite side
+
     Params:
         none
     Returns:
         nil
 ]]
-function MapArea:drawAdjacentDoor()
-    -- pixel dimensions
-    local areaWidth = self.width * (64 * 5)
-    local areaHeight = self.height * (32 * 5)
-    -- offsets for right and bottom walls as width/height needed for calculation
-    local rightXOffset = self.x + areaWidth
-    local bottomYOffset = self.y + areaHeight
-    -- offsets for doors, so they are rendered adjacently in the centre
-    local verticalTopDoorOffset = (areaHeight / 2) - (32 * 5)
-    local verticalBottomDoorOffset = areaHeight / 2
-    local horizontalLeftDoorOffset = (areaWidth / 2) - (32 * 5)
-    local horizontalRightDoorOffset = areaWidth / 2
+function MapArea:drawBendWallTilesHorizontal()
+    local wallTileCount = self.width * (64 * 5) / WALL_OFFSET
+    local yOffset = self.height * (32 * 5)
 
     --[[
-        Helper function for rendering the doors
+        Helper function for rendering out the wall tile segments
+        of a shorter section of wall (defined as 5 less tiles than
+        a normal wall)
 
         Params:
-            doorID: door colour used to find sprite sheet index using the DOOR_IDS constant
-            x: x coordinate to render the door at
-            y: y coordinate to render the door at
-            orientation: horizontal or vertical
+            start: number - defines the starting value of the for loop
+                            to ensure wall tiles are offset by the correct
+                            amount for the location of the bend
+            limit: number - defines the final value of the for loop
+                            to ensure wall tiles are offset by the correct
+                            amount for the location of the bend
+            y: number - offset value for the y coordinate
         Returns:
             nil
     ]]
-    local helper = function (doorID, x, y, orientation)
-        love.graphics.draw(GTextures[orientation..'-doors'], GQuads[orientation..'-doors'][DOOR_IDS[doorID]], x, y, 0, 5, 5)
+    local helper = function (start, limit, y)
+        for i = start, limit - 1 do
+            love.graphics.draw(GTextures['wall-topper'], GQuads['wall-topper'][1], self.x + (i * WALL_OFFSET), y, 0, 5, 5)
+        end
     end
 
-    -- adjacentArea[1] = GMapAreaDefinitions index for the adjacent area
-    -- adjacentArea[2] = location of the door (L, R, T, B)
-    -- adjacentArea[3] = door ID colour
-    if self.adjacentArea[2] == 'L' then
-        -- draw the under doors first
-        helper('under', self.x - WALL_OFFSET, self.y + verticalBottomDoorOffset, 'vertical')
-        helper('under', self.x - WALL_OFFSET, self.y + verticalTopDoorOffset, 'vertical')
-        -- draw door centre left
-        helper(self.adjacentArea[3], self.x - WALL_OFFSET, self.y + verticalBottomDoorOffset, 'vertical')
-        helper(self.adjacentArea[3], self.x - WALL_OFFSET, self.y + verticalTopDoorOffset, 'vertical')
-    elseif self.adjacentArea[2] == 'R' then
-        -- draw the under doors first
-        helper('under', rightXOffset, self.y + verticalBottomDoorOffset, 'vertical')
-        helper('under', rightXOffset, self.y + verticalTopDoorOffset, 'vertical')
-        -- draw door centre right
-        helper(self.adjacentArea[3], rightXOffset, self.y + verticalBottomDoorOffset, 'vertical')
-        helper(self.adjacentArea[3], rightXOffset, self.y + verticalTopDoorOffset, 'vertical')
-    elseif self.adjacentArea[2] == 'T' then
-        -- draw the under doors first
-        helper('under', self.x + horizontalLeftDoorOffset, self.y - WALL_OFFSET, 'horizontal')
-        helper('under', self.x + horizontalRightDoorOffset, self.y - WALL_OFFSET, 'horizontal')
-        -- draw door centre top
-        helper(self.adjacentArea[3], self.x + horizontalLeftDoorOffset, self.y - WALL_OFFSET, 'horizontal')
-        helper(self.adjacentArea[3], self.x + horizontalRightDoorOffset, self.y - WALL_OFFSET, 'horizontal')
-    else
-        -- draw the under doors first
-        helper('under', self.x + horizontalLeftDoorOffset, bottomYOffset, 'horizontal')
-        helper('under', self.x + horizontalRightDoorOffset, bottomYOffset, 'horizontal')
-        -- draw door centre bottom
-        helper(self.adjacentArea[3], self.x + horizontalLeftDoorOffset, bottomYOffset, 'horizontal')
-        helper(self.adjacentArea[3], self.x + horizontalRightDoorOffset, bottomYOffset, 'horizontal')
+    for i = 1, #self.bends do
+        -- check which corner has the bend (LT = left-top, RB = right-bottom etc)
+        if self.bends[i] == 'LT' then
+            helper(5, wallTileCount, self.y - WALL_OFFSET)
+            -- create a wall normally on the bottom side
+            self:drawHorizontalWall(0, yOffset)
+        elseif self.bends[i] == 'RT' then
+            helper(1, wallTileCount - 5, self.y - WALL_OFFSET)
+            -- create a wall normally on the bottom side
+            self:drawHorizontalWall(0, yOffset)
+        elseif self.bends[i] == 'LB' then
+            helper(5, wallTileCount, self.y + yOffset)
+            -- create a wall normally on the top side
+            self:drawHorizontalWall(0, -WALL_OFFSET)
+        else
+            helper(1, wallTileCount - 5, self.y + yOffset)
+            -- create a wall normally on the top side
+            self:drawHorizontalWall(0, -WALL_OFFSET)
+        end
     end
+end
+
+--[[
+    For verical corridors this function draws a shorter wall 
+    on the side that has the bend then draws a normal wall on 
+    the opposite side
+
+    Params:
+        none
+    Returns:
+        nil
+]]
+function MapArea:drawBendWallTilesVertical()
+    local wallTileCount = self.height * (32 * 5) / WALL_OFFSET
+    local xOffset = self.width * (64 * 5)
+
+    --[[
+        Helper function for rendering out the wall tile segments
+        of a shorter section of wall (defined as 5 less tiles than
+        a normal wall)
+
+        Params:
+            start: number - defines the starting value of the for loop
+                            to ensure wall tiles are offset by the correct
+                            amount for the location of the bend
+            limit: number - defines the final value of the for loop
+                            to ensure wall tiles are offset by the correct
+                            amount for the location of the bend
+            x: number - offset value for the x coordinate 
+        Returns:
+            nil
+    ]]
+    local helper = function (start, limit, x)
+        for i = start, limit - 1 do
+            love.graphics.draw(GTextures['wall-topper'], GQuads['wall-topper'][1], x, self.y + (i * WALL_OFFSET), 0, 5, 5)
+        end
+    end
+
+    for i = 1, #self.bends do
+        -- check which corner has the bend (LT = left-top, RB = right-bottom etc)
+        if self.bends[i] == 'LT' then
+            helper(5, wallTileCount, self.x - WALL_OFFSET)
+            -- create a wall normally on the right side
+            self:drawVerticalWall(xOffset)
+        elseif self.bends[i] == 'RT' then
+            helper(5, wallTileCount, self.x + xOffset)
+            -- create a wall normally on the right side
+            self:drawVerticalWall(-WALL_OFFSET)
+        elseif self.bends[i] == 'LB' then
+            helper(1, wallTileCount - 5, self.x - WALL_OFFSET)
+            -- create a wall normally on the left side
+            self:drawVerticalWall(xOffset)
+        else
+            helper(1, wallTileCount - 5, self.x + xOffset)
+            -- create a wall normally on the left side
+            self:drawVerticalWall(-WALL_OFFSET)
+        end
+    end
+end
+
+--[[
+    Calls helper functions for drawing doors on any edge of the area,
+    depending on the area definition in GMapAreaDefinitions
+
+    Params:
+        none
+    Returns:
+        nil
+]]
+function MapArea:drawDoors()
+    local areaWidth = self.width * (64 * 5)
+    local areaHeight = self.height * (32 * 5)
+    -- check for doors on the left and right edge
+    if self.doors.L or self.doors.R then
+        self:drawVerticalDoors(areaWidth, areaHeight)
+    end
+    -- check for doors on the top and bottom edge
+    if self.doors.T or self.doors.B then
+        self:drawHorizontalDoors(areaWidth, areaHeight)
+    end
+end
+
+--[[
+    Draws horizontally oriented doors in this area
+
+    Params:
+        areaWidth: number - width of this area in pixles
+        areaHeight: number - height of this area in pixels
+    Returns:
+        nil
+]]
+function MapArea:drawHorizontalDoors(areaWidth, areaHeight)
+    local horizontalLeftDoorOffset = (areaWidth / 2) - (32 * 5)
+    local horizontalRightDoorOffset = areaWidth / 2
+    if self.doors.T then
+        -- draw the under doors first
+        self:drawDoorsHelper('under', self.x + horizontalLeftDoorOffset, self.y - WALL_OFFSET, 'horizontal')
+        self:drawDoorsHelper('under', self.x + horizontalRightDoorOffset, self.y - WALL_OFFSET, 'horizontal')
+        -- draw door centre top
+        self:drawDoorsHelper(self.doors.T, self.x + horizontalLeftDoorOffset, self.y - WALL_OFFSET, 'horizontal')
+        self:drawDoorsHelper(self.doors.T, self.x + horizontalRightDoorOffset, self.y - WALL_OFFSET, 'horizontal')
+    else
+    end
+    if self.doors.B then
+        local bottomYOffset = self.y + areaHeight
+        -- draw the under doors first
+        self:drawDoorsHelper('under', self.x + horizontalLeftDoorOffset, bottomYOffset, 'horizontal')
+        self:drawDoorsHelper('under', self.x + horizontalRightDoorOffset, bottomYOffset, 'horizontal')
+        -- draw door centre bottom
+        self:drawDoorsHelper(self.doors.B, self.x + horizontalLeftDoorOffset, bottomYOffset, 'horizontal')
+        self:drawDoorsHelper(self.doors.B, self.x + horizontalRightDoorOffset, bottomYOffset, 'horizontal')
+    end
+end
+
+--[[
+    Draws vertically oriented doors in this area
+
+    Params:
+        areaWidth: number - width of this area in pixles
+        areaHeight: number - height of this area in pixels
+    Returns:
+        nil
+]]
+function MapArea:drawVerticalDoors(areaWidth, areaHeight)
+    local verticalTopDoorOffset = (areaHeight / 2) - (32 * 5)
+    local verticalBottomDoorOffset = areaHeight / 2
+    if self.doors.L then
+        -- draw the under doors first
+        self:drawDoorsHelper('under', self.x - WALL_OFFSET, self.y + verticalBottomDoorOffset, 'vertical')
+        self:drawDoorsHelper('under', self.x - WALL_OFFSET, self.y + verticalTopDoorOffset, 'vertical')
+        -- draw door centre left
+        self:drawDoorsHelper(self.doors.L, self.x - WALL_OFFSET, self.y + verticalBottomDoorOffset, 'vertical')
+        self:drawDoorsHelper(self.doors.L, self.x - WALL_OFFSET, self.y + verticalTopDoorOffset, 'vertical')
+    end
+    if self.doors.R then
+        local rightXOffset = self.x + areaWidth
+        -- draw the under doors first
+        self:drawDoorsHelper('under', rightXOffset, self.y + verticalBottomDoorOffset, 'vertical')
+        self:drawDoorsHelper('under', rightXOffset, self.y + verticalTopDoorOffset, 'vertical')
+        -- draw door centre right
+        self:drawDoorsHelper(self.doors.R, rightXOffset, self.y + verticalBottomDoorOffset, 'vertical')
+        self:drawDoorsHelper(self.doors.R, rightXOffset, self.y + verticalTopDoorOffset, 'vertical')
+    end
+end
+
+--[[
+    Helper function for rendering the doors
+
+    Params:
+        doorID: door colour used to find sprite sheet index using the DOOR_IDS constant
+        x: x coordinate to render the door at
+        y: y coordinate to render the door at
+        orientation: horizontal or vertical
+    Returns:
+        nil
+]]
+function MapArea:drawDoorsHelper(doorID, x, y, orientation)
+    love.graphics.draw(GTextures[orientation..'-doors'], GQuads[orientation..'-doors'][DOOR_IDS[doorID]], x, y, 0, 5, 5)
 end
 
 --[[
@@ -249,13 +438,25 @@ end
         nil
 ]]
 function MapArea:generateWallTiles()
-    self.wallTiles['horizontal'] = {}
-    self.wallTiles['vertical'] = {}
-    -- +2 to add the corner squares
-    for x = 1, (self.width * 4) + 2 do
-         table.insert(self.wallTiles['horizontal'], GQuads['wall-topper'][1])
+    if self.bend then
+        -- -5 to make the wall shorter on the bend side
+        for x = 1, (self.width * 4) - 5 do
+            table.insert(self.bendWall, GQuads['wall-topper'][1])
+        end
     end
+    self.wallTiles['horizontal'] = {}
+    if self.type == 'corridor' then
+        for x = 1, (self.width * 4) do
+            table.insert(self.wallTiles['horizontal'], GQuads['wall-topper'][1])
+        end
+    else
+        -- +2 to add the corner squares for an area
+        for x = 1, (self.width * 4) + 2 do
+            table.insert(self.wallTiles['horizontal'], GQuads['wall-topper'][1])
+        end
+    end
+    self.wallTiles['vertical'] = {}
     for x = 1, (self.height * 2) do
-         table.insert(self.wallTiles['vertical'], GQuads['wall-topper'][1])
+        table.insert(self.wallTiles['vertical'], GQuads['wall-topper'][1])
     end
 end

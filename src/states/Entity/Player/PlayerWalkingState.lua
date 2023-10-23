@@ -46,8 +46,7 @@ function PlayerWalkingState:update(dt)
 
     -- keep track of the players current area when moving
     if love.keyboard.anyDown(MOVEMENT_KEYS) then
-        self.player:setCurrentArea(self.map.areas, 'area')
-        self.player:setCurrentArea(self.map.corridors, 'corridor')
+        self.player:setCurrentArea(self.map.areas)
     end
 
     -- check for keyboard input by from the end user
