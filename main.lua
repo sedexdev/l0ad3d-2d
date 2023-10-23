@@ -37,8 +37,8 @@ function love.load()
         highScores = LoadHighScores()
     })
 
-    -- GAudio['theme']:play()
-    -- GAudio['theme']:setLooping(true)
+    GAudio['theme']:play()
+    GAudio['theme']:setLooping(true)
 
     love.keyboard.keysPressed = {}
 end
