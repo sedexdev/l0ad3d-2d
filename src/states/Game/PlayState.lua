@@ -27,6 +27,7 @@ PlayState = Class{__includes = BaseState}
 function PlayState:enter(params)
     self.highScores = params.highScores
     self.map = params.map
+    self.map:generateLevel()
     self.player = params.player
     self.player.stateMachine = StateMachine {
         ['idle'] = function () return PlayerIdleState(self.player) end,
@@ -44,7 +45,6 @@ function PlayState:enter(params)
         ['walking'] = function () return BossWalkingState(self.boss, self.player) end
     }
     self.boss.stateMachine:change('walking')
-    self.map:generateLevel()
 end
 
 --[[

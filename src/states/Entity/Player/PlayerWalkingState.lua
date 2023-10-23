@@ -47,6 +47,7 @@ function PlayerWalkingState:update(dt)
     -- keep track of the players current area when moving
     if love.keyboard.anyDown(MOVEMENT_KEYS) then
         self.player:setCurrentArea(self.map.areas)
+        io.write('Area ID '..tostring(self.player.currentArea.id)..'\n')
     end
 
     -- check for keyboard input by from the end user
@@ -90,6 +91,9 @@ end
         nil
 ]]
 function PlayerWalkingState:render()
+    love.graphics.setColor(1, 0/255, 0/255, 1)
+    love.graphics.rectangle('line', self.player.x, self.player.y, self.player.width, self.player.height)
+    love.graphics.setColor(1, 1, 1, 1)
     if self.player.id == 1 then
         -- render character 1
         local currentFrame = self.player.animations['walking-'..self.player.direction]:getCurrentFrame()

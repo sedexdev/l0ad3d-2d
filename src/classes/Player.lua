@@ -147,9 +147,9 @@ function Player:setCurrentArea(areas)
     -- <areas> includes both areas and corridors
     for _, area in pairs(areas) do
         -- if player within area/corridor x coordinate boundary
-        if (self.x > area.x) and (self.x + self.width < (area.x + area.width * (64 * 5))) then
+        if (self.x > area.x - WALL_OFFSET) and (self.x + self.width < (area.x + area.width * (64 * 5)) + WALL_OFFSET) then
             -- if player within area/corridor y coordinate boundary
-            if (self.y > area.y) and (self.y + self.height < (area.y + area.height * (32 * 5))) then
+            if (self.y > area.y - WALL_OFFSET) and (self.y + self.height < (area.y + area.height * (32 * 5)) + WALL_OFFSET) then
                 -- player current area updated
                 self.currentArea.id = area.id
                 self.currentArea.type = area.type
