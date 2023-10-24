@@ -30,8 +30,7 @@ end
     <self.boss> object to the location of the <self.player> object
     and forces the boss to track the Players movement
 
-    TODO:
-        make the boss circle the player, not run directly up to them
+    TODO: make the boss circle the player, not run directly up to them
 
     Params:
         dt: number - deltatime counter for current frame rate
