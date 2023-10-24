@@ -81,6 +81,43 @@ function PlayState:update(dt)
             highScores = self.highScores
         })
     end
+
+    -- check if the player has collided with the wall in this area
+    local wallCollision = self.player:checkWallCollision(self.player.currentArea.id)
+    if wallCollision.detected then
+        -- get the area definition for the current area
+        local area = self.map:getAreaDefinition(self.player.currentArea.id)
+        -- declare corrections for readability if the if/elseif statements below
+        local correctionOffset = 18
+        local leftCorrection = area.x - WALL_OFFSET + correctionOffset
+        local rightCorrection = area.x + (area.width * (64 * 5)) - CHARACTER_WIDTH + WALL_OFFSET - correctionOffset
+        local topCorrection = area.y - WALL_OFFSET + correctionOffset
+        local bottomCorrection = area.y + (area.height * (32 * 5)) - CHARACTER_HEIGHT + WALL_OFFSET - correctionOffset
+        -- for single wall collisions just update x or y
+        if wallCollision.edge == 'L' then
+            self.player.x = leftCorrection
+        elseif wallCollision.edge == 'R' then
+            self.player.x = rightCorrection
+        elseif wallCollision.edge == 'T' then
+            self.player.y = topCorrection
+        elseif wallCollision.edge == 'B' then
+            self.player.y = bottomCorrection
+        -- for multi-wall collisions update x and y
+        elseif wallCollision.edge == 'LT' then
+            self.player.x = leftCorrection
+            self.player.y = topCorrection
+        elseif wallCollision.edge == 'RT' then
+            self.player.x = rightCorrection
+            self.player.y = topCorrection
+        elseif wallCollision.edge == 'LB' then
+            self.player.x = leftCorrection
+            self.player.y = bottomCorrection
+        elseif wallCollision.edge == 'RB' then
+            self.player.x = rightCorrection
+            self.player.y = bottomCorrection
+        end
+    end
+
     self.player:update(dt)
     self.grunt:update(dt)
     self.boss:update(dt)

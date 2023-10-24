@@ -37,8 +37,8 @@ function Player:init(id, animations, def)
     self.lastDirection = def.lastDirection
     self.powerups = def.powerups
     -- defines the current area of the player: {id = areaID, type = 'area' | 'corridor'}
-    -- 1 is the starting area 
-    self.currentArea = {id = 1, type = 'area'}
+    -- 17 is the starting area 
+    self.currentArea = {id = 17, type = 'area'}
     -- shots table keeps track of Shot objects so they can be 
     -- instantiated and removed after the assigned interval
     self.shots = {}
@@ -96,6 +96,56 @@ function Player:render()
 end
 
 --[[
+    Check if the Player has hit the wall and detect a wall collision
+    if they have. A wall collision is defined as the (x, y) Player object
+    coordinates exceeding the boundary of the current area they are in
+
+    Params:
+        areaID: number - area ID to index GMapAreaDefinitions with
+    Returns:
+        table: true if a collision is detected, false if not, along with the edge
+]]
+function Player:checkWallCollision(areaID)
+    local area = GMapAreaDefinitions[areaID]
+    -- default values for detection - no collision
+    local collisionDef = {detected = false, edge = nil}
+    -- booleans for detecting pixel overlaps on each edge
+    local leftCollision = self.x < area.x - WALL_OFFSET
+    local rightCollision = self.x + self.width > area.x + (area.width * (64 * 5) + WALL_OFFSET)
+    local topCollision = self.y < area.y - WALL_OFFSET
+    local bottomCollision = self.y + self.height > area.y + (area.height * (32 * 5) + WALL_OFFSET)
+
+    -- check for single wall collisions first
+    if leftCollision then
+        collisionDef = {detected = true, edge = 'L'}
+    end
+    if rightCollision then
+        collisionDef = {detected = true, edge = 'R'}
+    end
+    if topCollision then
+        collisionDef = {detected = true, edge = 'T'}
+    end
+    if bottomCollision then
+        collisionDef = {detected = true, edge = 'B'}
+    end
+    -- then check for collisions with 2 walls at once to avoid corner escape bug
+    if leftCollision and topCollision then
+        collisionDef = {detected = true, edge = 'LT'}
+    end
+    if rightCollision and topCollision then
+        collisionDef = {detected = true, edge = 'RT'}
+    end
+    if leftCollision and bottomCollision then
+        collisionDef = {detected = true, edge = 'LB'}
+    end
+    if rightCollision and bottomCollision then
+        collisionDef = {detected = true, edge = 'RB'}
+    end
+
+    return collisionDef
+end
+
+--[[
     Called when an end user fires the Players weapon using
     the space key. A new instance of Shot is inserted into
     <self.shots> and the GAudio['gunshot'] is played. Also
@@ -115,19 +165,6 @@ function Player:fire()
     if self.weapons > 1 then
         self.currentWeapon = self.currentWeapon == 'right' and 'left' or 'right'
     end
-end
-
---[[
-    Returns the location of the player so proper collision detection
-    can be implemented in the area the Player is currently in
-
-    Params:
-        none
-    Returns:
-        table: value stored in <self.currentArea>
-]]
-function Player:getCurrentArea()
-    return self.currentArea
 end
 
 --[[

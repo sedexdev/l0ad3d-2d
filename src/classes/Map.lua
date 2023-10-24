@@ -45,6 +45,18 @@ function Map:render()
 end
 
 --[[
+    Returns the GMapAreaDefinitions definition of this area
+
+    Params:
+        areaID: number - area ID to index <self.areas>
+    Returns:
+        table: area definition as defined in GMapAreaDefinitions
+]]
+function Map:getAreaDefinition(areaID)
+    return self.areas[areaID]
+end
+
+--[[
     Generates the MapArea objects that form the Map. Also responsible 
     for generating interactive game objects including Entity and PowerUp 
     instances for the Player object to interact with
@@ -61,11 +73,13 @@ function Map:generateLevel()
         local x, y
         if GMapAreaDefinitions[i].type == 'corridor' then
             x, y = self:getCorridorCoordinates(GMapAreaDefinitions[i])
+            GMapAreaDefinitions[i].x = x
+            GMapAreaDefinitions[i].y = y
         end
         table.insert(self.areas, MapArea(
             i, -- area id
-            GMapAreaDefinitions[i].x and GMapAreaDefinitions[i].x or x,
-            GMapAreaDefinitions[i].y and GMapAreaDefinitions[i].y or y,
+            GMapAreaDefinitions[i].x,
+            GMapAreaDefinitions[i].y,
             GMapAreaDefinitions[i].width,
             GMapAreaDefinitions[i].height,
             GMapAreaDefinitions[i].type,
