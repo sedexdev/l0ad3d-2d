@@ -51,6 +51,7 @@ GAudio = {
 -- classes
 require 'src/classes/Animation'
 require 'src/classes/Boss'
+require 'src/classes/Doors'
 require 'src/classes/Entity'
 require 'src/classes/Grunt'
 require 'src/classes/HUD'

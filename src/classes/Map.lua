@@ -94,6 +94,9 @@ function Map:generateLevel()
         -- generate the tiles for each area
         area:generateFloorTiles()
         area:generateWallTiles()
+        if area.doors then
+            area:generateDoors()
+        end
     end
     -- create powerups
     -- update powerups so more are spawned as the level goes on
@@ -112,18 +115,19 @@ end
         nil
 ]]
 function Map:getCorridorCoordinates(area)
-    if area.joins[2] == 'L' then
+    -- just use frst table in self.joins to get the coordinates
+    if area.joins[1][2] == 'L' then
         -- get coordinates of left corridor
-        return self:getLeftCorridorCoordinates(GMapAreaDefinitions[area.joins[1]], area)
-    elseif area.joins[2] == 'R' then
+        return self:getLeftCorridorCoordinates(GMapAreaDefinitions[area.joins[1][1]], area)
+    elseif area.joins[1][2] == 'R' then
         -- get coordinates of right corridor
-        return self:getRightCorridorCoordinates(GMapAreaDefinitions[area.joins[1]])
-    elseif area.joins[2] == 'T' then
+        return self:getRightCorridorCoordinates(GMapAreaDefinitions[area.joins[1][1]])
+    elseif area.joins[1][2] == 'T' then
         -- get coordinates of top corridor
-        return self:getTopCorridorCoordinates(GMapAreaDefinitions[area.joins[1]], area)
-    elseif area.joins[2] == 'B' then
+        return self:getTopCorridorCoordinates(GMapAreaDefinitions[area.joins[1][1]], area)
+    elseif area.joins[1][2] == 'B' then
         -- get coordinates of bottom corridor
-        return self:getBottomCorridorCoordinates(GMapAreaDefinitions[area.joins[1]])
+        return self:getBottomCorridorCoordinates(GMapAreaDefinitions[area.joins[1][1]])
     end
 end
 
@@ -145,9 +149,9 @@ end
 function Map:getLeftCorridorCoordinates(area, corridor)
     -- corridor definition required to calculate corridor width offset
     -- left edge of area minus the pixel width of the corridor
-    local x = area.x - (corridor.width * (64 * 5))
+    local x = area.x - (corridor.width * FLOOR_TILE_WIDTH)
     -- half the height of the area
-    local y = area.y + (area.height * (32 * 5) / 2) - (32 * 5)
+    local y = area.y + (area.height * FLOOR_TILE_HEIGHT / 2) - FLOOR_TILE_HEIGHT
     return x, y
 end
 
@@ -165,9 +169,9 @@ end
 ]]
 function Map:getRightCorridorCoordinates(area)
     -- right edge of the area
-    local x = area.x + (area.width * (64 * 5))
+    local x = area.x + (area.width * FLOOR_TILE_WIDTH)
     -- half the height of the area
-    local y = area.y + (area.height * (32 * 5) / 2) - (32 * 5)
+    local y = area.y + (area.height * FLOOR_TILE_HEIGHT / 2) - FLOOR_TILE_HEIGHT
     return x, y
 end
 
@@ -189,9 +193,9 @@ end
 function Map:getTopCorridorCoordinates(area, corridor)
     -- corridor definition required to calculate corridor height offset
     -- half the width of the area
-    local x = area.x + (area.width * (64 * 5) / 2) - (32 * 5)
+    local x = area.x + (area.width * FLOOR_TILE_WIDTH / 2) - FLOOR_TILE_HEIGHT
     -- top edge of the area minus the pixel height of the corridor
-    local y = area.y - (corridor.height * (32 * 5))
+    local y = area.y - (corridor.height * FLOOR_TILE_HEIGHT)
     return x, y
 end
 
@@ -209,8 +213,8 @@ end
 ]]
 function Map:getBottomCorridorCoordinates(area)
     -- half the width of the area
-    local x = area.x + (area.width * (64 * 5) / 2) - (32 * 5)
+    local x = area.x + (area.width * FLOOR_TILE_WIDTH / 2) - FLOOR_TILE_HEIGHT
     -- bottom edge of the area
-    local y = area.y + (area.height * (32 * 5))
+    local y = area.y + (area.height * FLOOR_TILE_HEIGHT)
     return x, y
 end

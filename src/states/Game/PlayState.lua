@@ -82,17 +82,19 @@ function PlayState:update(dt)
         })
     end
 
+    -- get the Player's current area
+    local area = self.map:getAreaDefinition(self.player.currentArea.id)
+
     -- check if the player has collided with the wall in this area
-    local wallCollision = self.player:checkWallCollision(self.player.currentArea.id)
+    local wallCollision = self.player:checkWallCollision(area)
     if wallCollision.detected then
         -- get the area definition for the current area
-        local area = self.map:getAreaDefinition(self.player.currentArea.id)
         -- declare corrections for readability if the if/elseif statements below
         local correctionOffset = 18
         local leftCorrection = area.x - WALL_OFFSET + correctionOffset
-        local rightCorrection = area.x + (area.width * (64 * 5)) - CHARACTER_WIDTH + WALL_OFFSET - correctionOffset
+        local rightCorrection = area.x + (area.width * FLOOR_TILE_WIDTH) - CHARACTER_WIDTH + WALL_OFFSET - correctionOffset
         local topCorrection = area.y - WALL_OFFSET + correctionOffset
-        local bottomCorrection = area.y + (area.height * (32 * 5)) - CHARACTER_HEIGHT + WALL_OFFSET - correctionOffset
+        local bottomCorrection = area.y + (area.height * FLOOR_TILE_HEIGHT) - CHARACTER_HEIGHT + WALL_OFFSET - correctionOffset
         -- for single wall collisions just update x or y
         if wallCollision.edge == 'L' then
             self.player.x = leftCorrection
@@ -116,6 +118,16 @@ function PlayState:update(dt)
             self.player.x = rightCorrection
             self.player.y = bottomCorrection
         end
+    end
+
+    -- check the doors in the current area for Player proximity
+    for _, door in pairs(area.doorsTable) do
+        if self.player:doorCollision(door) then
+            door:open()
+        else
+            door:close()
+        end
+        door:update(dt)
     end
 
     self.player:update(dt)

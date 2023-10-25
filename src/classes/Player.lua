@@ -101,19 +101,28 @@ end
     coordinates exceeding the boundary of the current area they are in
 
     Params:
-        areaID: number - area ID to index GMapAreaDefinitions with
+        area: table - MapArea object
     Returns:
         table: true if a collision is detected, false if not, along with the edge
 ]]
-function Player:checkWallCollision(areaID)
-    local area = GMapAreaDefinitions[areaID]
+function Player:checkWallCollision(area)
     -- default values for detection - no collision
     local collisionDef = {detected = false, edge = nil}
+
+    -- check for door collision and return false so we can pass through the door
+    if area.doors then
+        for _, door in pairs(area.doorsTable) do
+            if self:doorCollision(door) then
+                return collisionDef
+            end
+        end
+    end
+
     -- booleans for detecting pixel overlaps on each edge
     local leftCollision = self.x < area.x - WALL_OFFSET
-    local rightCollision = self.x + self.width > area.x + (area.width * (64 * 5) + WALL_OFFSET)
+    local rightCollision = self.x + self.width > area.x + (area.width * FLOOR_TILE_WIDTH + WALL_OFFSET)
     local topCollision = self.y < area.y - WALL_OFFSET
-    local bottomCollision = self.y + self.height > area.y + (area.height * (32 * 5) + WALL_OFFSET)
+    local bottomCollision = self.y + self.height > area.y + (area.height * FLOOR_TILE_HEIGHT + WALL_OFFSET)
 
     -- check for single wall collisions first
     if leftCollision then
@@ -143,6 +152,66 @@ function Player:checkWallCollision(areaID)
     end
 
     return collisionDef
+end
+
+--[[
+    Check if the Player has hit a door in this area and detect a door collision
+    if they have. A door collision is defined as the (x, y) Player object
+    coordinates being in close proximity to the (x, y) of a door in the area
+
+    Params:
+        areaID: number - area ID to index GMapAreaDefinitions with
+    Returns:
+        table: true if a collision is detected, false if not, along with the edge
+]]
+function Player:doorCollision(door)
+    if AREA_DOOR_IDS[door.id] == 'L' then
+        -- set x offsets
+        local leftDoorXOffset = door.leftX + V_DOOR_WIDTH
+        local rightDoorXOffset = door.rightX + V_DOOR_WIDTH
+        -- set y offsets
+        local leftDoorYOffset = door.leftY + V_DOOR_HEIGHT
+        -- use player.x
+        if (self.x - leftDoorXOffset <= 100 or self.x - rightDoorXOffset <= 100) and
+           (self.y + 64 > door.rightY and self.y + self.height - 64 < leftDoorYOffset) then
+            return true
+        else
+            return false
+        end
+    elseif AREA_DOOR_IDS[door.id] == 'T' then
+        -- set y offsets
+        local leftDoorYOffset = door.leftY + H_DOOR_HEIGHT
+        local rightDoorYOffset = door.rightY + H_DOOR_HEIGHT
+        -- set x offsets
+        local rightDoorXOffset = door.rightX + H_DOOR_WIDTH
+        -- use player.y
+        if (self.y - leftDoorYOffset <= 100 or self.y - rightDoorYOffset <= 100) and
+           (self.x + 64 > door.leftX and (self.x + self.width) - 64 < rightDoorXOffset) then
+            return true
+        else
+            return false
+        end
+    elseif AREA_DOOR_IDS[door.id] == 'R' then
+        -- set y offsets
+        local leftDoorYOffset = door.leftY + V_DOOR_HEIGHT
+        -- use player.x + player.width
+        if (door.leftX - (self.x + self.width) <= 100 or door.rightX - (self.x + self.width) <= 100) and
+           (self.y + 64 > door.rightY and (self.y + self.height) - 64 < leftDoorYOffset) then
+            return true
+        else
+            return false
+        end
+    elseif AREA_DOOR_IDS[door.id] == 'B' then
+        -- set x offsets
+        local rightDoorXOffset = door.rightX + H_DOOR_WIDTH
+        -- use player.y + player.height
+        if (door.leftY - (self.y + self.height) <= 100 or door.rightY - (self.y + self.height) <= 100) and
+           (self.x + 64 > door.leftX and (self.x + self.width) - 64 < rightDoorXOffset) then
+            return true
+        else
+            return false
+        end
+    end
 end
 
 --[[
@@ -184,9 +253,9 @@ function Player:setCurrentArea(areas)
     -- <areas> includes both areas and corridors
     for _, area in pairs(areas) do
         -- if player within area/corridor x coordinate boundary
-        if (self.x > area.x - WALL_OFFSET) and (self.x + self.width < (area.x + area.width * (64 * 5)) + WALL_OFFSET) then
+        if (self.x > area.x - WALL_OFFSET) and (self.x + self.width < (area.x + area.width * FLOOR_TILE_WIDTH) + WALL_OFFSET) then
             -- if player within area/corridor y coordinate boundary
-            if (self.y > area.y - WALL_OFFSET) and (self.y + self.height < (area.y + area.height * (32 * 5)) + WALL_OFFSET) then
+            if (self.y > area.y - WALL_OFFSET) and (self.y + self.height < (area.y + area.height * FLOOR_TILE_HEIGHT) + WALL_OFFSET) then
                 -- player current area updated
                 self.currentArea.id = area.id
                 self.currentArea.type = area.type

@@ -90,8 +90,6 @@ end
         nil
 ]]
 function PlayerWalkingState:render()
-    love.graphics.setColor(1, 0/255, 0/255, 1)
-    love.graphics.rectangle('line', self.player.x, self.player.y, self.player.width, self.player.height)
     love.graphics.setColor(1, 1, 1, 1)
     if self.player.id == 1 then
         -- render character 1

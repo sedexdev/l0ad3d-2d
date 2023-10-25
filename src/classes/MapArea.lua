@@ -48,6 +48,7 @@ function MapArea:init(id, x, y, width, height, type, direction, bends, joins, do
     self.floorTiles = {}
     self.wallTiles = {}
     self.bendWall = {}
+    self.doorsTable = {} -- stores Doors objects for this area
 end
 
 --[[
@@ -93,7 +94,7 @@ function MapArea:drawFloorTiles()
         for x, tile in pairs(tiles) do
             love.graphics.draw(GTextures['floor-tiles'],
             tile,
-            self.x + ((x - 1) * (64 * 5)), self.y + ((y - 1) * (32 * 5)),
+            self.x + ((x - 1) * FLOOR_TILE_WIDTH), self.y + ((y - 1) * FLOOR_TILE_HEIGHT),
             0,
             5, 5)
         end
@@ -114,9 +115,9 @@ end
 ]]
 function MapArea:drawWallTiles()
     self:drawHorizontalWall(WALL_OFFSET, -WALL_OFFSET)
-    self:drawHorizontalWall(WALL_OFFSET, self.height * (32 * 5))
+    self:drawHorizontalWall(WALL_OFFSET, self.height * FLOOR_TILE_HEIGHT)
     self:drawVerticalWall(-WALL_OFFSET)
-    self:drawVerticalWall(self.width * (64 * 5))
+    self:drawVerticalWall(self.width * FLOOR_TILE_WIDTH)
 end
 
 --[[
@@ -133,7 +134,7 @@ function MapArea:drawCorridorWalls()
             self:drawBendWallTilesHorizontal()
         else
             self:drawHorizontalWall(WALL_OFFSET, -WALL_OFFSET)
-            self:drawHorizontalWall(WALL_OFFSET, self.height * (32 * 5))
+            self:drawHorizontalWall(WALL_OFFSET, self.height * FLOOR_TILE_HEIGHT)
         end
     else
         -- draw any bends in this corridor 
@@ -141,7 +142,7 @@ function MapArea:drawCorridorWalls()
             self:drawBendWallTilesVertical()
         else
             self:drawVerticalWall(-WALL_OFFSET)
-            self:drawVerticalWall(self.width * (64 * 5))
+            self:drawVerticalWall(self.width * FLOOR_TILE_WIDTH)
         end
     end
 end
@@ -200,8 +201,8 @@ end
         nil
 ]]
 function MapArea:drawBendWallTilesHorizontal()
-    local wallTileCount = self.width * (64 * 5) / WALL_OFFSET
-    local yOffset = self.height * (32 * 5)
+    local wallTileCount = self.width * FLOOR_TILE_WIDTH / WALL_OFFSET
+    local yOffset = self.height * FLOOR_TILE_HEIGHT
 
     --[[
         Helper function for rendering out the wall tile segments
@@ -258,8 +259,8 @@ end
         nil
 ]]
 function MapArea:drawBendWallTilesVertical()
-    local wallTileCount = self.height * (32 * 5) / WALL_OFFSET
-    local xOffset = self.width * (64 * 5)
+    local wallTileCount = self.height * FLOOR_TILE_HEIGHT / WALL_OFFSET
+    local xOffset = self.width * FLOOR_TILE_WIDTH
 
     --[[
         Helper function for rendering out the wall tile segments
@@ -306,7 +307,7 @@ function MapArea:drawBendWallTilesVertical()
 end
 
 --[[
-    Calls helper functions for drawing doors on any edge of the area,
+    Calls render function for Doors objects on any edge of the area,
     depending on the area definition in GMapAreaDefinitions
 
     Params:
@@ -315,78 +316,8 @@ end
         nil
 ]]
 function MapArea:drawDoors()
-    local areaWidth = self.width * (64 * 5)
-    local areaHeight = self.height * (32 * 5)
-    -- check for doors on the left and right edge
-    if self.doors.L or self.doors.R then
-        self:drawVerticalDoors(areaWidth, areaHeight)
-    end
-    -- check for doors on the top and bottom edge
-    if self.doors.T or self.doors.B then
-        self:drawHorizontalDoors(areaWidth, areaHeight)
-    end
-end
-
---[[
-    Draws horizontally oriented doors in this area
-
-    Params:
-        areaWidth: number - width of this area in pixles
-        areaHeight: number - height of this area in pixels
-    Returns:
-        nil
-]]
-function MapArea:drawHorizontalDoors(areaWidth, areaHeight)
-    local horizontalLeftDoorOffset = (areaWidth / 2) - (32 * 5)
-    local horizontalRightDoorOffset = areaWidth / 2
-    if self.doors.T then
-        -- draw the under doors first
-        self:drawDoorsHelper('under', self.x + horizontalLeftDoorOffset, self.y - WALL_OFFSET, 'horizontal')
-        self:drawDoorsHelper('under', self.x + horizontalRightDoorOffset, self.y - WALL_OFFSET, 'horizontal')
-        -- draw door centre top
-        self:drawDoorsHelper(self.doors.T, self.x + horizontalLeftDoorOffset, self.y - WALL_OFFSET, 'horizontal')
-        self:drawDoorsHelper(self.doors.T, self.x + horizontalRightDoorOffset, self.y - WALL_OFFSET, 'horizontal')
-    else
-    end
-    if self.doors.B then
-        local bottomYOffset = self.y + areaHeight
-        -- draw the under doors first
-        self:drawDoorsHelper('under', self.x + horizontalLeftDoorOffset, bottomYOffset, 'horizontal')
-        self:drawDoorsHelper('under', self.x + horizontalRightDoorOffset, bottomYOffset, 'horizontal')
-        -- draw door centre bottom
-        self:drawDoorsHelper(self.doors.B, self.x + horizontalLeftDoorOffset, bottomYOffset, 'horizontal')
-        self:drawDoorsHelper(self.doors.B, self.x + horizontalRightDoorOffset, bottomYOffset, 'horizontal')
-    end
-end
-
---[[
-    Draws vertically oriented doors in this area
-
-    Params:
-        areaWidth: number - width of this area in pixles
-        areaHeight: number - height of this area in pixels
-    Returns:
-        nil
-]]
-function MapArea:drawVerticalDoors(areaWidth, areaHeight)
-    local verticalTopDoorOffset = (areaHeight / 2) - (32 * 5)
-    local verticalBottomDoorOffset = areaHeight / 2
-    if self.doors.L then
-        -- draw the under doors first
-        self:drawDoorsHelper('under', self.x - WALL_OFFSET, self.y + verticalBottomDoorOffset, 'vertical')
-        self:drawDoorsHelper('under', self.x - WALL_OFFSET, self.y + verticalTopDoorOffset, 'vertical')
-        -- draw door centre left
-        self:drawDoorsHelper(self.doors.L, self.x - WALL_OFFSET, self.y + verticalBottomDoorOffset, 'vertical')
-        self:drawDoorsHelper(self.doors.L, self.x - WALL_OFFSET, self.y + verticalTopDoorOffset, 'vertical')
-    end
-    if self.doors.R then
-        local rightXOffset = self.x + areaWidth
-        -- draw the under doors first
-        self:drawDoorsHelper('under', rightXOffset, self.y + verticalBottomDoorOffset, 'vertical')
-        self:drawDoorsHelper('under', rightXOffset, self.y + verticalTopDoorOffset, 'vertical')
-        -- draw door centre right
-        self:drawDoorsHelper(self.doors.R, rightXOffset, self.y + verticalBottomDoorOffset, 'vertical')
-        self:drawDoorsHelper(self.doors.R, rightXOffset, self.y + verticalTopDoorOffset, 'vertical')
+    for _, door in pairs(self.doorsTable) do
+        door:render()
     end
 end
 
@@ -458,5 +389,59 @@ function MapArea:generateWallTiles()
     self.wallTiles['vertical'] = {}
     for x = 1, (self.height * 2) do
         table.insert(self.wallTiles['vertical'], GQuads['wall-topper'][1])
+    end
+end
+
+--[[
+    Populates the <self.doorsTable> table with Doors objects
+    for this area depending on their location as defined in
+    GMapAreaDefinitions
+
+    Params:
+        none
+    Returns:
+        nil
+]]
+function MapArea:generateDoors()
+    -- area dimensions in px
+    local areaWidth = self.width * FLOOR_TILE_WIDTH
+    local areaHeight = self.height * FLOOR_TILE_HEIGHT
+    -- offsets for vertical doors
+    local verticalTopDoorOffset = (areaHeight / 2) - V_DOOR_HEIGHT
+    local verticalBottomDoorOffset = areaHeight / 2
+    -- offsets for horizontal doors
+    local horizontalLeftDoorOffset = (areaWidth / 2) - H_DOOR_WIDTH
+    local horizontalRightDoorOffset = areaWidth / 2
+    -- create Doors objects based on location in area
+    if self.doors.L then
+        table.insert(self.doorsTable, Doors(
+            -- doors ID, area ID, door colour, orientation
+            1, self.id, self.doors.L, 'vertical',
+            -- leftX, rightX
+            self.x - WALL_OFFSET, self.x - WALL_OFFSET,
+            -- leftY, rightY
+            self.y + verticalBottomDoorOffset, self.y + verticalTopDoorOffset
+        ))
+    end
+    if self.doors.T then
+        table.insert(self.doorsTable, Doors(
+            2, self.id, self.doors.T, 'horizontal',
+            self.x + horizontalLeftDoorOffset, self.x + horizontalRightDoorOffset,
+            self.y - WALL_OFFSET, self.y - WALL_OFFSET
+        ))
+    end
+    if self.doors.R then
+        table.insert(self.doorsTable, Doors(
+            3, self.id, self.doors.R, 'vertical',
+            self.x + areaWidth, self.x + areaWidth,
+            self.y + verticalBottomDoorOffset, self.y + verticalTopDoorOffset
+        ))
+    end
+    if self.doors.B then
+        table.insert(self.doorsTable, Doors(
+            4, self.id, self.doors.B, 'horizontal',
+            self.x + horizontalLeftDoorOffset, self.x + horizontalRightDoorOffset,
+            self.y + areaHeight, self.y + areaHeight
+        ))
     end
 end

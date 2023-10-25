@@ -52,8 +52,14 @@ ANGLES = {
     ['north-west'] = 225 * DEGREES_TO_RADIANS
 }
 
--- wall offset scalled to x5
+-- map components scaled to x5
 WALL_OFFSET = 16 * 5
+FLOOR_TILE_WIDTH = 64 * 5
+FLOOR_TILE_HEIGHT = 32 * 5
+H_DOOR_WIDTH = 32 * 5
+H_DOOR_HEIGHT = 16 * 5
+V_DOOR_WIDTH = 16 * 5
+V_DOOR_HEIGHT = 32 * 5
 
 -- IDs for each door sprite based on colour
 DOOR_IDS = {
@@ -62,4 +68,12 @@ DOOR_IDS = {
     ['blue'] = 3,
     ['red'] = 4,
     ['green'] = 5,
+}
+
+-- IDs for the Doors objects in each area
+AREA_DOOR_IDS = {
+    [1] = 'L',
+    [2] = 'T',
+    [3] = 'R',
+    [4] = 'B',
 }
