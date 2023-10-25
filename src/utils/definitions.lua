@@ -114,6 +114,11 @@ GCharacterDefinition = {
         doubleSpeed = false,
         oneShotBossKill = false
     },
+    keys = {
+        red = false,
+        blue = false,
+        green = false
+    },
     ['character1'] = {
         weapons = 2,
         currentWeapon = 'right'

@@ -36,6 +36,7 @@ function Player:init(id, animations, def)
     self.direction = def.direction
     self.lastDirection = def.lastDirection
     self.powerups = def.powerups
+    self.keys = def.keys
     -- defines the current area of the player: {id = areaID, type = 'area' | 'corridor'}
     -- 17 is the starting area 
     self.currentArea = {id = 17, type = 'area'}
@@ -113,7 +114,12 @@ function Player:checkWallCollision(area)
     if area.doors then
         for _, door in pairs(area.doorsTable) do
             if self:doorCollision(door) then
-                return collisionDef
+                -- check if door is locked
+                if not door.isLocked then
+                    return collisionDef
+                else
+                    -- check if Player has key
+                end
             end
         end
     end

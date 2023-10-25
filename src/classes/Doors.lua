@@ -43,6 +43,7 @@ function Doors:init(id, area, colour, orientation, leftX, rightX, leftY, rightY)
     self.rightY = rightY
     -- boolean flag to check if the door is open
     self.isOpen = false
+    self.isLocked = DOOR_IDS[self.colour] > 2 and true or false
 end
 
 --[[
