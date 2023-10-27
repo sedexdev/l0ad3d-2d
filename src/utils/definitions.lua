@@ -204,7 +204,7 @@ GMapAreaDefinitions = {
     [7] = {x = nil, y = nil, width = 5, height = 2, type = 'corridor', orientation = 'horizontal', bends = nil, doors = nil, joins = {{20, 'L'}, {6, 'R'}}},
     [8] = {x = nil, y = nil, width = 5, height = 2, type = 'corridor', orientation = 'horizontal', bends = nil, doors = nil, joins = {{17, 'R'}, {21, 'L'}}},
     [9] = {x = nil, y = nil, width = 1, height = 5, type = 'corridor', orientation = 'vertical', bends = nil, doors = nil, joins = {{21, 'T'}, {30, 'B'}}},
-    [10] = {x = nil, y = nil, width = 16, height = 2, type = 'corridor', orientation = 'horizontal', bends = {'RT'}, doors = {B = 'purple'}, joins = {{21, 'R'}, {11, 'B'}}},
+    [10] = {x = nil, y = nil, width = 16, height = 2, type = 'corridor', orientation = 'horizontal', bends = {'RT'}, doors = {B = 'purple'}, joins = {{21, 'R'}}},
     [11] = {x = nil, y = nil, width = 1, height = 5, type = 'corridor', orientation = 'vertical', bends = nil, doors = nil, joins = {{31, 'T'}, {10, 'B'}}},
     [12] = {x = nil, y = nil, width = 1, height = 5, type = 'corridor', orientation = 'vertical', bends = {'LB'}, doors = nil, joins = {{33, 'B'}}},
     [13] = {x = nil, y = nil, width = 12, height = 2, type = 'corridor', orientation = 'horizontal', bends = {'LT'}, doors = nil, joins = {{34, 'L'}}},
