@@ -19,9 +19,9 @@ Event = require 'lib/event'
 
 -- global resources
 GFonts = {
-    ['funkrocker-smaller'] = love.graphics.newFont('fonts/funkrocker.ttf', 32),
-    ['funkrocker-small'] = love.graphics.newFont('fonts/funkrocker.ttf', 48),
-    ['funkrocker-menu'] = love.graphics.newFont('fonts/funkrocker.ttf', 64),
+    ['funkrocker-smaller'] = love.graphics.newFont('fonts/Funkrocker.ttf', 32),
+    ['funkrocker-small'] = love.graphics.newFont('fonts/Funkrocker.ttf', 48),
+    ['funkrocker-menu'] = love.graphics.newFont('fonts/Funkrocker.ttf', 64),
     ['funkrocker-highscores'] = love.graphics.newFont('fonts/Funkrocker.ttf', 108),
     ['funkrocker-count'] = love.graphics.newFont('fonts/Funkrocker.ttf', 192),
     ['blood-title'] = love.graphics.newFont('fonts/HoMicIDE EFfeCt.ttf', 170)
