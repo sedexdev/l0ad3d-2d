@@ -89,13 +89,14 @@ function SelectCharacterState:update(dt)
     if love.keyboard.wasPressed('enter') or love.keyboard.wasPressed('return') then
         GAudio['select']:stop()
         GAudio['gunshot']:play()
+        local player = Player(
+            self.selected,
+            GAnimationDefintions['character'..tostring(self.selected)],
+            GCharacterDefinition
+        )
         GStateMachine:change('countdown', {
             highScores = self.highScores,
-            player = Player(
-                self.selected,
-                GAnimationDefintions['character'..tostring(self.selected)],
-                GCharacterDefinition
-            ),
+            player = player,
             grunt = Grunt(
                 GAnimationDefintions['grunt'],
                 GGruntDefinition
@@ -104,7 +105,7 @@ function SelectCharacterState:update(dt)
                 GAnimationDefintions['boss'],
                 GBossDefinition
             ),
-            map = Map()
+            map = Map(player)
         })
     end
 end

@@ -28,18 +28,24 @@ function PlayState:enter(params)
     self.highScores = params.highScores
     self.map = params.map
     self.map:generateLevel()
+
+    -- Entity (Player) stateMachine
     self.player = params.player
     self.player.stateMachine = StateMachine {
         ['idle'] = function () return PlayerIdleState(self.player) end,
         ['walking'] = function () return PlayerWalkingState(self.player, self.map) end,
     }
     self.player.stateMachine:change('idle')
+
+    -- Entity (Grunt) stateMachine - TODO: move to EnemySystem
     self.grunt = params.grunt
     self.grunt.stateMachine = StateMachine {
         ['walking'] = function () return GruntWalkingState(self.grunt, self.player) end,
         ['attacking'] = function () return GruntAttackingState(self.grunt, self.player) end,
     }
     self.grunt.stateMachine:change('walking')
+
+    -- Entity (Boss) stateMachine - TODO: move to EnemySystem
     self.boss = params.boss
     self.boss.stateMachine = StateMachine {
         ['walking'] = function () return BossWalkingState(self.boss, self.player) end
@@ -86,53 +92,18 @@ function PlayState:update(dt)
     local area = self.map:getAreaDefinition(self.player.currentArea.id)
 
     -- check if the player has collided with the wall in this area
-    local wallCollision = self.player:checkWallCollision(area)
-    if wallCollision.detected then
-        -- get the area definition for the current area
-        -- declare corrections for readability if the if/elseif statements below
-        local correctionOffset = 18
-        local leftCorrection = area.x - WALL_OFFSET + correctionOffset
-        local rightCorrection = area.x + (area.width * FLOOR_TILE_WIDTH) - CHARACTER_WIDTH + WALL_OFFSET - correctionOffset
-        local topCorrection = area.y - WALL_OFFSET + correctionOffset
-        local bottomCorrection = area.y + (area.height * FLOOR_TILE_HEIGHT) - CHARACTER_HEIGHT + WALL_OFFSET - correctionOffset
-        -- for single wall collisions just update x or y
-        if wallCollision.edge == 'L' then
-            self.player.x = leftCorrection
-        elseif wallCollision.edge == 'R' then
-            self.player.x = rightCorrection
-        elseif wallCollision.edge == 'T' then
-            self.player.y = topCorrection
-        elseif wallCollision.edge == 'B' then
-            self.player.y = bottomCorrection
-        -- for multi-wall collisions update x and y
-        elseif wallCollision.edge == 'LT' then
-            self.player.x = leftCorrection
-            self.player.y = topCorrection
-        elseif wallCollision.edge == 'RT' then
-            self.player.x = rightCorrection
-            self.player.y = topCorrection
-        elseif wallCollision.edge == 'LB' then
-            self.player.x = leftCorrection
-            self.player.y = bottomCorrection
-        elseif wallCollision.edge == 'RB' then
-            self.player.x = rightCorrection
-            self.player.y = bottomCorrection
-        end
+    local playerWallCollision = self.map.collisionSystem:checkWallCollision(area, self.player)
+    if playerWallCollision.detected then
+        self.map.collisionSystem:handlePlayerWallCollision(area, playerWallCollision.edge, self.player)
     end
 
-    -- check the doors in the current area for Player proximity
-    for _, door in pairs(area.doorsTable) do
-        if self.player:doorCollision(door) then
-            door:open()
-        else
-            door:close()
-        end
-        door:update(dt)
-    end
-
+    -- update Map
+    self.map:update(dt)
+    -- update Entity objects
     self.player:update(dt)
     self.grunt:update(dt)
     self.boss:update(dt)
+    -- update the camera to track the Player
     self:updateCamera()
 end
 

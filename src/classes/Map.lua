@@ -21,17 +21,37 @@ Map = Class{}
     as they are connected to 2 different areas 
 
     Params:
-        none
+        player: table - Player object
     Returns:
         nil
 ]]
-function Map:init()
+function Map:init(player)
+    self.player = player
     self.areas = {}
+    -- create a DoorSystem
+    self.doorSystem = DoorSystem(self.player)
+    -- create a CollisionSystem
+    self.collisionSystem = CollisionSystem(self.player, self.doorSystem)
 end
 
 --[[
-    Map render function. Renders out the areas, corridors, powerup objects,
-    crates, and enemies that define this Map
+    Map update function. Updates the collision system to handle
+    collisions between Entity objects and the MapArea walls, as
+    well as Player/PowerUp collisions
+
+    Params:
+        dt: number - deltatime counter for current frame rate
+    Returns:
+        nil
+]]
+function Map:update(dt)
+    self.doorSystem:update(dt)
+    self.collisionSystem:update(dt)
+end
+
+--[[
+    Map render function. Renders out the areas, corridors, doors,
+    powerup objects, crates, and enemies that define this Map
 
     Params:
         none
@@ -39,9 +59,12 @@ end
         none
 ]]
 function Map:render()
+    -- render out each area
     for _, area in pairs(self.areas) do
         area:render()
     end
+    -- render out Door objects
+    self.doorSystem:render()
 end
 
 --[[
@@ -83,7 +106,7 @@ function Map:generateLevel()
             GMapAreaDefinitions[i].width,
             GMapAreaDefinitions[i].height,
             GMapAreaDefinitions[i].type,
-            GMapAreaDefinitions[i].direction,
+            GMapAreaDefinitions[i].orientation,
             GMapAreaDefinitions[i].bends,
             GMapAreaDefinitions[i].joins,
             GMapAreaDefinitions[i].doors,
@@ -94,10 +117,9 @@ function Map:generateLevel()
         -- generate the tiles for each area
         area:generateFloorTiles()
         area:generateWallTiles()
-        if area.doors then
-            area:generateDoors()
-        end
     end
+    -- create the Door objects in the DoorSystem
+    self.doorSystem:initialiseDoors(self.areas)
     -- create powerups
     -- update powerups so more are spawned as the level goes on
     -- create enemies

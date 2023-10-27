@@ -25,7 +25,7 @@ MapArea = Class{}
         width: number - width of this area in tiles
         height: number - height of this area in tiles
         type: string - area | corridor
-        direction: string - orientation of this area (corridors)
+        orientation: string - orientation of this area (corridors)
         bends: table - location of any bends in this area (corridors)
         joins: table -  area index and location to base corridor (x, y) off of (corridors)
         doors: table - doors in this area
@@ -33,14 +33,14 @@ MapArea = Class{}
     Returns:
         nil
 ]]
-function MapArea:init(id, x, y, width, height, type, direction, bends, joins, doors, adjacentAreas)
+function MapArea:init(id, x, y, width, height, type, orientation, bends, joins, doors, adjacentAreas)
     self.id = id
     self.x = x
     self.y = y
     self.width = width
     self.height = height
     self.type = type
-    self.direction = direction
+    self.orientation = orientation
     self.bends = bends
     self.joins = joins
     self.doors = doors
@@ -48,12 +48,11 @@ function MapArea:init(id, x, y, width, height, type, direction, bends, joins, do
     self.floorTiles = {}
     self.wallTiles = {}
     self.bendWall = {}
-    self.doorsTable = {} -- stores Doors objects for this area
 end
 
 --[[
-    MapArea render function. Renders out the floor and wall tiles
-    as well as any doors that connect this area to an adjacent area
+    MapArea render function. Renders out the floor and wall tiles for
+    areas and corridors. Accounts for bends in corridors
 
     Params:
         none
@@ -70,9 +69,6 @@ function MapArea:render()
     if self.type == 'corridor' then
         -- draw the walls
         self:drawCorridorWalls()
-    end
-    if self.doors then
-        self:drawDoors()
     end
 end
 
@@ -128,7 +124,7 @@ end
     appropriately for the side being rendered
 ]]
 function MapArea:drawCorridorWalls()
-    if self.direction == 'horizontal' then
+    if self.orientation == 'horizontal' then
         -- draw any bends in this corridor 
         if self.bends then
             self:drawBendWallTilesHorizontal()
@@ -307,36 +303,6 @@ function MapArea:drawBendWallTilesVertical()
 end
 
 --[[
-    Calls render function for Doors objects on any edge of the area,
-    depending on the area definition in GMapAreaDefinitions
-
-    Params:
-        none
-    Returns:
-        nil
-]]
-function MapArea:drawDoors()
-    for _, door in pairs(self.doorsTable) do
-        door:render()
-    end
-end
-
---[[
-    Helper function for rendering the doors
-
-    Params:
-        doorID: door colour used to find sprite sheet index using the DOOR_IDS constant
-        x: x coordinate to render the door at
-        y: y coordinate to render the door at
-        orientation: horizontal or vertical
-    Returns:
-        nil
-]]
-function MapArea:drawDoorsHelper(doorID, x, y, orientation)
-    love.graphics.draw(GTextures[orientation..'-doors'], GQuads[orientation..'-doors'][DOOR_IDS[doorID]], x, y, 0, 5, 5)
-end
-
---[[
     Updates the <self.floorTiles> table with floor tile quads.
     The number of tiles inserted is equal to the width * height
     of the area
@@ -389,59 +355,5 @@ function MapArea:generateWallTiles()
     self.wallTiles['vertical'] = {}
     for x = 1, (self.height * 2) do
         table.insert(self.wallTiles['vertical'], GQuads['wall-topper'][1])
-    end
-end
-
---[[
-    Populates the <self.doorsTable> table with Doors objects
-    for this area depending on their location as defined in
-    GMapAreaDefinitions
-
-    Params:
-        none
-    Returns:
-        nil
-]]
-function MapArea:generateDoors()
-    -- area dimensions in px
-    local areaWidth = self.width * FLOOR_TILE_WIDTH
-    local areaHeight = self.height * FLOOR_TILE_HEIGHT
-    -- offsets for vertical doors
-    local verticalTopDoorOffset = (areaHeight / 2) - V_DOOR_HEIGHT
-    local verticalBottomDoorOffset = areaHeight / 2
-    -- offsets for horizontal doors
-    local horizontalLeftDoorOffset = (areaWidth / 2) - H_DOOR_WIDTH
-    local horizontalRightDoorOffset = areaWidth / 2
-    -- create Doors objects based on location in area
-    if self.doors.L then
-        table.insert(self.doorsTable, Doors(
-            -- doors ID, area ID, door colour, orientation
-            1, self.id, self.doors.L, 'vertical',
-            -- leftX, rightX
-            self.x - WALL_OFFSET, self.x - WALL_OFFSET,
-            -- leftY, rightY
-            self.y + verticalBottomDoorOffset, self.y + verticalTopDoorOffset
-        ))
-    end
-    if self.doors.T then
-        table.insert(self.doorsTable, Doors(
-            2, self.id, self.doors.T, 'horizontal',
-            self.x + horizontalLeftDoorOffset, self.x + horizontalRightDoorOffset,
-            self.y - WALL_OFFSET, self.y - WALL_OFFSET
-        ))
-    end
-    if self.doors.R then
-        table.insert(self.doorsTable, Doors(
-            3, self.id, self.doors.R, 'vertical',
-            self.x + areaWidth, self.x + areaWidth,
-            self.y + verticalBottomDoorOffset, self.y + verticalTopDoorOffset
-        ))
-    end
-    if self.doors.B then
-        table.insert(self.doorsTable, Doors(
-            4, self.id, self.doors.B, 'horizontal',
-            self.x + horizontalLeftDoorOffset, self.x + horizontalRightDoorOffset,
-            self.y + areaHeight, self.y + areaHeight
-        ))
     end
 end

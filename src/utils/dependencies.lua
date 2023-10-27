@@ -3,12 +3,19 @@
 -- https://github.com/vrld/hump/blob/master/class.lua
 Class = require 'lib/class'
 
--- the Timer library is part of the Knife Lua module
+-- the "Timer" library is part of the Knife Lua module
 -- colletion and gives access to timer functions
 -- and tweening
 --
 -- https://github.com/airstruck/knife
 Timer = require 'lib/timer'
+
+-- the "Event" library is part of the Knife Lua module
+-- colletion and gives access to event handlers for
+-- creating and dispatching event
+--
+-- https://github.com/airstruck/knife
+Event = require 'lib/event'
 
 -- global resources
 GFonts = {
@@ -51,7 +58,10 @@ GAudio = {
 -- classes
 require 'src/classes/Animation'
 require 'src/classes/Boss'
-require 'src/classes/Doors'
+require 'src/classes/CollisionSystem'
+require 'src/classes/Door'
+require 'src/classes/DoorSystem'
+require 'src/classes/EnemySystem'
 require 'src/classes/Entity'
 require 'src/classes/Grunt'
 require 'src/classes/HUD'
@@ -59,6 +69,7 @@ require 'src/classes/Map'
 require 'src/classes/MapArea'
 require 'src/classes/Player'
 require 'src/classes/PowerUp'
+require 'src/classes/PowerUpSystem'
 require 'src/classes/Shot'
 require 'src/classes/StateMachine'
 

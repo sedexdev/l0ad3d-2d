@@ -1,5 +1,5 @@
 --[[
-    Doors: class
+    Door: class
 
     Description:
         Represents a pair of doors, a left and right, that have
@@ -9,16 +9,16 @@
         the effect of opening with the Player is in close proximity
 ]]
 
-Doors = Class{}
+Door = Class{}
 
 --[[
     Doors constructor
 
     Params:
         id: number - ID of this door pair
-        area: number - areaID the doors are located in
         colour: string - colour of the doors
         orientation: string - orientation of these doors
+        playerLocation: string - side of this door the Player is on
         leftX: number - x coordinate of the left door in the pair 
         rightX: number - x coordinate of the right door in the pair
         leftY: number - y coordinate of the left door in the pair
@@ -26,9 +26,9 @@ Doors = Class{}
     Returns:
         nil
 ]]
-function Doors:init(id, area, colour, orientation, leftX, rightX, leftY, rightY)
+function Door:init(id, areaID, colour, orientation, leftX, rightX, leftY, rightY)
     self.id = id
-    self.area = area
+    self.areaID = areaID
     self.colour = colour
     self.orientation = orientation
     -- set left and right (x, y) for under doors so they aren't effected by tweening
@@ -41,36 +41,22 @@ function Doors:init(id, area, colour, orientation, leftX, rightX, leftY, rightY)
     self.rightX = rightX
     self.leftY = leftY
     self.rightY = rightY
-    -- boolean flag to check if the door is open
-    self.isOpen = false
+    -- boolean flag to check if door is locked
     self.isLocked = DOOR_IDS[self.colour] > 2 and true or false
-end
-
---[[
-    Doors update function. Manages tweening the doors open and
-    closed as the Player object gets closer and further away
-
-    Params:
-        dt: number - deltatime counter for current frame rate
-    Returns:
-        nil
-]]
-function Doors:update(dt)
-    Timer.update(dt)
+    -- side of this door the player is on. Nil at initilasation and updated as Player enters a new area
+    self.playerLocation = nil
 end
 
 --[[
     Doors render function. Renders out the 2 doors that form this
     door pair
-    
-    TODO: fix under door (x, y) so they stay in place when doors open
 
     Params:
         none
     Returns:
         none
 ]]
-function Doors:render()
+function Door:render()
     -- draw out the under doors
     love.graphics.draw(GTextures[self.orientation..'-doors'], GQuads[self.orientation..'-doors'][DOOR_IDS['under']], self.underLeftX, self.underLeftY, 0, 5, 5)
     love.graphics.draw(GTextures[self.orientation..'-doors'], GQuads[self.orientation..'-doors'][DOOR_IDS['under']], self.underRightX, self.underRightY, 0, 5, 5)
@@ -80,55 +66,45 @@ function Doors:render()
 end
 
 --[[
-    Tweening function for reducing the pixel size of the doors
-    to 0 based on their orientation. This will give the effect
-    that the doors have opened
+    Checks the proximity of the Player object to the door
+    and calls Doors:open() or Doors:close() depending on
+    which side the Player is on defined by <self.playerLocation>
 
     Params:
-        none
+        player: table - the Player object
     Returns:
         nil
 ]]
-function Doors:open()
-    if not self.isOpen then
-        if self.orientation == 'horizontal' then
-            -- tween callback function for opening/closing doors
-            Timer.tween(0.2, {
-                [self] = {leftX = self.leftX - H_DOOR_WIDTH, rightX = self.rightX + H_DOOR_WIDTH}
-            })
-            self.isOpen = true
-        else
-            Timer.tween(0.2, {
-                [self] = {leftY = self.leftY + V_DOOR_HEIGHT, rightY = self.rightY - V_DOOR_HEIGHT}
-            })
-            self.isOpen = true
+function Door:proximity(player)
+    if self.orientation == 'horizontal' then
+        -- x proximity is the same no matter which side the Player object is on
+        local xProximity = player.x + 64 > self.leftX and (player.x + player.width) - 64 < self.rightX + H_DOOR_WIDTH
+        if self.playerLocation == 'above' then
+            if (self.leftY - (player.y + player.height) <= 200 or self.rightY - (player.y + player.height) <= 200) and xProximity then
+                return true
+            end
+            return false
         end
-    end
-end
-
---[[
-    Tweening function for increasing the pixel size of the doors
-    to 32 based on their orientation. This will give the effect
-    that the doors have closed
-
-    Params:
-        none
-    Returns:
-        nil
-]]
-function Doors:close()
-    if self.isOpen then
-        if self.orientation == 'horizontal' then
-            -- tween callback function for opening/closing doors
-            Timer.tween(0.2, {
-                [self] = {leftX = self.leftX + H_DOOR_WIDTH, rightX = self.rightX - H_DOOR_WIDTH}
-            })
-            self.isOpen = false
-        else
-            Timer.tween(0.2, {
-                [self] = {leftY = self.leftY - V_DOOR_HEIGHT, rightY = self.rightY + V_DOOR_HEIGHT}
-            })
-            self.isOpen = false
+        if self.playerLocation == 'below' then
+            if (player.y - (self.leftY + H_DOOR_HEIGHT) <= 200 or player.y - (self.rightY + H_DOOR_HEIGHT) <= 200) and xProximity then
+                return true
+            end
+            return false
+        end
+    else
+        -- y proximity is the same no matter which side the Player object is on
+        local yProximity = player.y + 64 > self.rightY and (player.y + player.height) - 64 < self.leftY + V_DOOR_HEIGHT
+        if self.playerLocation == 'left' then
+            if (self.leftX - (player.x + player.width) <= 200 or self.rightX - (player.x + player.width) <= 200) and yProximity then
+                return true
+            end
+            return false
+        end
+        if self.playerLocation == 'right' then
+            if (player.x - (self.leftX + H_DOOR_WIDTH) <= 200 or player.x - (self.rightX + H_DOOR_WIDTH) <= 200) and yProximity then
+                return true
+            end
+            return false
         end
     end
 end
