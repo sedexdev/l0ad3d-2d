@@ -122,8 +122,6 @@ end
     Updates the (x, y) location of <self.player> in relation to all 
     doors nearby as defined in GMapAreaDefinitions
 
-    TODO: update the location of the Player 
-
     Params:
         none
     Returns:
@@ -198,6 +196,10 @@ end
 ]]
 function DoorSystem:getAreaDoors(areaID)
     local areaDoors = {}
+    -- ensure this is an area, not a corridor
+    if not self.doors then
+        return areaDoors
+    end
     for _, door in pairs(self.doors) do
         if door.areaID == areaID then
             table.insert(areaDoors, door)
@@ -219,17 +221,15 @@ function DoorSystem:getCorridorDoors(areaID)
     local areaDoors = {}
     -- get the joins for this corridor
     local joins = GMapAreaDefinitions[areaID].joins
-    if joins then
-        -- for each joining area
-        for _, join in pairs(joins) do
-            -- join[1] == areaID to get doors from
-            local doors = self:getAreaDoors(join[1])
-            -- for each door in the joining area
-            for _, door in pairs(doors) do
-                -- join[2] == location to get door ID from
-                if AREA_DOOR_IDS[door.id] == join[2] then
-                    table.insert(areaDoors, door)
-                end
+    -- for each joining area
+    for _, join in pairs(joins) do
+        -- join[1] == areaID to get doors from
+        local doors = self:getAreaDoors(join[1])
+        -- for each door in the joining area
+        for _, door in pairs(doors) do
+            -- join[2] == location to get door ID from
+            if AREA_DOOR_IDS[door.id] == join[2] then
+                table.insert(areaDoors, door)
             end
         end
     end

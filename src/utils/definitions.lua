@@ -97,6 +97,7 @@ GAnimationDefintions = {
     Character attributes definition
 ]]
 GCharacterDefinition = {
+    type = 'character',
     x = (WINDOW_WIDTH / 2) - (CHARACTER_WIDTH / 2),
     y = (WINDOW_HEIGHT / 2) - (CHARACTER_HEIGHT / 2),
     dx = CHARACTER_SPEED,
@@ -133,6 +134,7 @@ GCharacterDefinition = {
     Grunt attributes definition
 ]]
 GGruntDefinition = {
+    type = 'enemy',
     x = (WINDOW_WIDTH / 2) - (GRUNT_WIDTH / 2),
     y = (WINDOW_HEIGHT / 2) - (GRUNT_HEIGHT / 2),
     dx = GRUNT_SPEED,
@@ -149,6 +151,7 @@ GGruntDefinition = {
     Boss attributes definition
 ]]
 GBossDefinition = {
+    type = 'enemy',
     x = (WINDOW_WIDTH / 2) - (BOSS_WIDTH / 2),
     y = (WINDOW_HEIGHT / 2) - (BOSS_HEIGHT / 2),
     dx = BOSS_SPEED,

@@ -21,6 +21,7 @@ Entity = Class{}
         nil
 ]]
 function Entity:init(def)
+    self.type = def.type
     self.x = def.x
     self.y = def.y
     self.dx = def.dx

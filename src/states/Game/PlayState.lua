@@ -94,7 +94,29 @@ function PlayState:update(dt)
     -- check if the player has collided with the wall in this area
     local playerWallCollision = self.map.collisionSystem:checkWallCollision(area, self.player)
     if playerWallCollision.detected then
-        self.map.collisionSystem:handlePlayerWallCollision(area, playerWallCollision.edge, self.player)
+        -- handle the wall collision
+        self.map.collisionSystem:handlePlayerWallCollision(area, playerWallCollision.edge)
+    end
+
+    -- check for any area door collisions
+    local doors = nil
+    -- local doors = self.map.doorSystem:getAreaDoors(area.id)
+    if area.type == 'area' then
+        doors = self.map.doorSystem:getAreaDoors(area.id)
+    else
+        doors = self.map.doorSystem:getCorridorDoors(area.id)
+    end
+    if doors then
+        for _, door in pairs(doors) do
+            -- first check proximity and open door if not locked
+            self.map.collisionSystem:checkDoorProximity(door)
+            -- then check collision with the Door object to avoid Player running over it
+            local playerDoorCollision = self.map.collisionSystem:checkDoorCollsion(door)
+            if playerDoorCollision.detected then
+                -- and handle the collision if so
+                self.map.collisionSystem:handlePlayerDoorCollision(door, playerDoorCollision.edge)
+            end
+        end
     end
 
     -- update Map
