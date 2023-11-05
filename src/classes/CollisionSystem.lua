@@ -142,6 +142,22 @@ function CollisionSystem:corridorBoundary(area, conditions)
 end
 
 --[[
+    Handles the collision detection for corridor type MapArea objects
+    that have bends. The Player should not be able to escape off the
+    end of the corridor the bend is locaated at, and they should be
+    able to move freely between the 2 corridor type MapArea objects
+    when the bend meets
+
+    Params:
+        TBC...
+    Returns:
+        TBC...
+]]
+function CollisionSystem:handleBend()
+    
+end
+
+--[[
     Detect a collision on the walls of an area type MapArea object.
     Collisions can occur on all 4 walls and on multiple walls at the
     same time when running into a corner
