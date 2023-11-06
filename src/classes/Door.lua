@@ -72,10 +72,6 @@ end
     and calls Doors:open() or Doors:close() depending on
     which side the Player is on defined by <self.playerLocation>
 
-    TODO: fix tweening bug that causes Player to able to pass over the door after its been tweened open
-            - use boolean flag to declare 'isOpen' status
-            - if the door is open change the proximity check by an offset of H_DOOR_WIDTH or V_DOOR_HEIGHT
-
     Params:
         player: table - the Player object
     Returns:

@@ -27,29 +27,12 @@ function CollisionSystem:init(player, doorSystem)
     self.doorSystem = doorSystem
 end
 
---[[
-    CollisionSystem update function. 
-
-    TODO - review if this is needed
-
-    Params:
-        dt: number - deltatime counter for current frame rate
-    Returns:
-        nil
-]]
-function CollisionSystem:update(dt)
-
-end
-
 -- ====================== WALL COLLISIONS ======================
 
 --[[
     Check if an Entity has hit the wall and detect a wall collision
     if they have. A wall collision is defined as the (x, y) Entity object
     coordinates exceeding the boundary of the current area they are in
-
-    TODO: only check for collisions with walls
-          if the area has doors, omit those (x, y) coordinates from the check
 
     Params:
         area: table - MapArea object
@@ -77,9 +60,6 @@ end
     Detect a collision on the walls of a corridor type MapArea object.
     If the Player runs off either end this does not count as a collision
     to allow the Player to pass between areas
-
-    TODO: handle allowing Player to move round corners on bends
-          move bend checks to separate functions
 
     Params:
         area: table - MapArea object for the corridor 
@@ -260,6 +240,13 @@ function CollisionSystem:areaBoundary(area, conditions)
     local verticalDoorway = self.player.y + playerCorrection > topVertical and (self.player.y + self.player.height) - playerCorrection < bottomVertical
     -- check for door proximity to allow the Player object to pass through the wall at that point
     for _, door in pairs(self.doorSystem:getAreaDoors(area.id)) do
+        -- check if this door is in an adjacent area
+        if door.areaID ~= area.id then
+            -- if Player is in the doorway and the door is not locked then allow through
+            if self:detectAdjacentDoorway(area, door.areaID) and not door.isLocked then
+                goto returnFalse
+            end
+        end
         if door.id == 1 and door:proximity(self.player) and verticalDoorway then
             goto returnFalse
         end
@@ -308,8 +295,43 @@ function CollisionSystem:areaBoundary(area, conditions)
 end
 
 --[[
-   Update the Player (x, y) based on the edge of the area they have
-   collided with so they cannot pass the area boundary
+    Helper fnuction for ascertaining if the Player is within a doorway
+    leading to an adjacent area. These doorways are not centered and are
+    not detected as part of the standard wal collision checks
+
+    Params:
+        area: table - MapArea object of the current area
+        adjacentAreaID: number - ID of the area adjacent to the currnt area
+    Returns:
+        boolean: true if Player is in the doorway, false if not
+]]
+function CollisionSystem:detectAdjacentDoorway(area, adjacentAreaID)
+    local playerCorrection = 120
+    for _, adjacentArea in pairs(area.adjacentAreas) do
+        if adjacentArea.doorID == 1 or adjacentArea.doorID == 3 then -- left or right
+            -- use area y coordinates to find doorway
+            local adjacentAreaDef = GMapAreaDefinitions[adjacentAreaID]
+            local yDiff = area.y - adjacentAreaDef.y
+            local adjacentAreaCenter = adjacentAreaDef.height * FLOOR_TILE_HEIGHT / 2
+            local topDoorOffset = area.y - yDiff + adjacentAreaCenter - V_DOOR_HEIGHT
+            local bottomDoorOffset = area.y - yDiff + adjacentAreaCenter + V_DOOR_HEIGHT
+            return self.player.y + playerCorrection > topDoorOffset and (self.player.y + self.player.height) - playerCorrection < bottomDoorOffset
+        end
+        if adjacentArea.doorID == 2 or adjacentArea.doorID == 4 then -- top or bottom
+            -- use area x coordinates to find doorway
+            local adjacentAreaDef = GMapAreaDefinitions[adjacentAreaID]
+            local xDiff = area.x - adjacentAreaDef.x
+            local adjacentAreaCenter = adjacentAreaDef.height * FLOOR_TILE_HEIGHT / 2
+            local leftDoorOffset = area.x - xDiff + adjacentAreaCenter - H_DOOR_WIDTH
+            local rightDoorOffset = area.x - xDiff + adjacentAreaCenter + H_DOOR_WIDTH
+            return self.player.x + playerCorrection > leftDoorOffset and (self.player.x + self.player.width) - playerCorrection < rightDoorOffset
+        end
+    end
+end
+
+--[[
+    Update the Player (x, y) based on the edge of the area they have
+    collided with so they cannot pass the area boundary
 
     Params:
         area: table - MapArea object

@@ -122,8 +122,6 @@ end
     Updates the location of the player so proper collision detection
     can be implemented in the location the Player is currently in
 
-    TODO: review how this will be used
-
     Params:
         areas: table - list of MapArea objects to compare
                        Players (x, y) coordinates to 

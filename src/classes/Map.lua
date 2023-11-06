@@ -46,7 +46,6 @@ end
 ]]
 function Map:update(dt)
     self.doorSystem:update(dt)
-    self.collisionSystem:update(dt)
 end
 
 --[[
