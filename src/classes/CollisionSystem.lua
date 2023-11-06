@@ -92,48 +92,86 @@ function CollisionSystem:corridorBoundary(area, conditions)
     local collisionDef = {detected = false, edge = nil}
     -- return collisions detections for the walls on each side of the corridor, not the ends
     if area.orientation == 'horizontal' then
-        if conditions.topCollision then
-            collisionDef =  {detected = true, edge = 'T'}
-        end
-        if conditions.bottomCollision then
-            collisionDef =  {detected = true, edge = 'B'}
-        end
         -- check for bends to stop Player running off the end of the corridor
         if area.bends then
             for _, bend in pairs(area.bends) do
-                if bend == 'RT' or bend == 'RB' then
-                    if conditions.rightCollision then
-                        collisionDef = {detected = true, edge = 'R'}
-                    end
+                if bend == 'RT' then
+                    collisionDef = self:handleBend(
+                        area.orientation, bend, area,
+                        conditions.rightCollision, conditions.bottomCollision, conditions.topCollision,
+                        {'R', 'B', 'RB', 'T'}
+                    )
                 end
-                if bend == 'LT' or bend == 'LB' then
-                    if conditions.leftCollision then
-                        collisionDef = {detected = true, edge = 'L'}
-                    end
+                if bend == 'RB' then
+                    collisionDef = self:handleBend(
+                        area.orientation, bend, area,
+                        conditions.rightCollision, conditions.topCollision, conditions.bottomCollision,
+                        {'R', 'T', 'RT', 'B'}
+                    )
                 end
+                if bend == 'LT' then
+                    collisionDef = self:handleBend(
+                        area.orientation, bend, area,
+                        conditions.leftCollision, conditions.bottomCollision, conditions.topCollision,
+                        {'L', 'B', 'RB', 'T'}
+                    )
+                end
+                if bend == 'LB' then
+                    collisionDef = self:handleBend(
+                        area.orientation, bend, area,
+                        conditions.leftCollision, conditions.topCollision, conditions.bottomCollision,
+                        {'L', 'T', 'RT', 'B'}
+                    )
+                end
+            end
+        else
+            if conditions.topCollision then
+                collisionDef =  {detected = true, edge = 'T'}
+            end
+            if conditions.bottomCollision then
+                collisionDef =  {detected = true, edge = 'B'}
             end
         end
         -- if left or right collision allow through
         return collisionDef
     else
-        if conditions.leftCollision then
-            collisionDef =  {detected = true, edge = 'L'}
-        end
-        if conditions.rightCollision then
-            collisionDef =  {detected = true, edge = 'R'}
-        end
         if area.bends then
             for _, bend in pairs(area.bends) do
-                if bend == 'RT' or bend == 'LT' then
-                    if conditions.topCollision then
-                        collisionDef = {detected = true, edge = 'T'}
-                    end
+                if bend == 'RT' then
+                    collisionDef = self:handleBend(
+                        area.orientation, bend, area,
+                        conditions.topCollision, conditions.leftCollision, conditions.rightCollision,
+                        {'T', 'L', 'LT', 'R'}
+                    )
                 end
-                if bend == 'RB' or bend == 'LB' then
-                    if conditions.bottomCollision then
-                        collisionDef = {detected = true, edge = 'B'}
-                    end
+                if bend == 'LT' then
+                    collisionDef = self:handleBend(
+                        area.orientation, bend, area,
+                        conditions.topCollision, conditions.rightCollision, conditions.leftCollision,
+                        {'T', 'R', 'RT', 'L'}
+                    )
                 end
+                if bend == 'RB' then
+                    collisionDef = self:handleBend(
+                        area.orientation, bend, area,
+                        conditions.bottomCollision, conditions.leftCollision, conditions.rightCollision,
+                        {'B', 'L', 'LB', 'R'}
+                    )
+                end
+                if bend == 'LB' then
+                    collisionDef = self:handleBend(
+                        area.orientation, bend, area,
+                        conditions.bottomCollision, conditions.rightCollision, conditions.leftCollision,
+                        {'B', 'R', 'RB', 'L'}
+                    )
+                end
+            end
+        else
+            if conditions.leftCollision then
+                collisionDef =  {detected = true, edge = 'L'}
+            end
+            if conditions.rightCollision then
+                collisionDef =  {detected = true, edge = 'R'}
             end
         end
         -- if top or bottom collision allow through
@@ -144,17 +182,53 @@ end
 --[[
     Handles the collision detection for corridor type MapArea objects
     that have bends. The Player should not be able to escape off the
-    end of the corridor the bend is locaated at, and they should be
+    end of the corridor the bend is located at, and they should be
     able to move freely between the 2 corridor type MapArea objects
     when the bend meets
 
     Params:
-        TBC...
+        orientation: string - corridor type mapArea orientation 
+        bendLabel: string - the location of the bend in the corridor
+        area: table - the current mapArea object the Player is within 
+        condition1: boolean - edge collision condition 
+        condition2: boolean - edge collision condition
+        condition3: boolean - edge collision condition
+        edgeTable: table - possible edge locations dependant on the conditions
     Returns:
-        TBC...
+        table: collision status and edge location
 ]]
-function CollisionSystem:handleBend()
-    
+function CollisionSystem:handleBend(orientation, bendLabel, area, condition1, condition2, condition3, edgeTable)
+    local collisionDef = {detected = false, edge = nil}
+    -- declare nil defined offset to be set below
+    local offset
+    -- set the offset based on the orientation and location of the bend
+    if orientation == 'horizontal' then
+        if bendLabel == 'RT' or bendLabel == 'RB' then
+            offset = self.player.x < area.x + (area.width * FLOOR_TILE_WIDTH) - WALL_OFFSET
+        else
+            offset = self.player.x < area.x + WALL_OFFSET
+        end
+    else
+        if bendLabel == 'LT' or bendLabel == 'RT' then
+            offset = self.player.y > area.y + WALL_OFFSET
+        else
+            offset = (self.player.y + self.player.height) < area.y + (area.height * FLOOR_TILE_HEIGHT) - WALL_OFFSET
+        end
+    end
+    -- check the conditions to match collisions with the corners of the bend
+    if condition1 then
+        collisionDef = {detected = true, edge = edgeTable[1]}
+    end
+    if condition2 then
+        collisionDef = {detected = true, edge = edgeTable[2]}
+    end
+    if condition1 and condition2 then
+        collisionDef = {detected = true, edge = edgeTable[3]}
+    end
+    if condition3 and offset then
+        collisionDef = {detected = true, edge = edgeTable[4]}
+    end
+    return collisionDef
 end
 
 --[[
