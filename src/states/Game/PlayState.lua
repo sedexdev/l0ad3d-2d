@@ -100,7 +100,6 @@ function PlayState:update(dt)
 
     -- check for any area door collisions
     local doors = nil
-    -- local doors = self.map.doorSystem:getAreaDoors(area.id)
     if area.type == 'area' then
         doors = self.map.doorSystem:getAreaDoors(area.id)
     else

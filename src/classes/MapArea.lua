@@ -44,7 +44,7 @@ function MapArea:init(id, x, y, width, height, type, orientation, bends, joins, 
     self.bends = bends
     self.joins = joins
     self.doors = doors
-    self.adjacentAreas = adjacentAreas -- required for collision detection
+    self.adjacentAreas = adjacentAreas
     self.floorTiles = {}
     self.wallTiles = {}
     self.bendWall = {}

@@ -16,11 +16,13 @@ DoorSystem = Class{}
 
     Params:
         player: table - Player object
+        map: table - Map object used to get door references for adjacent areas
     Returns:
         nil
 ]]
-function DoorSystem:init(player)
+function DoorSystem:init(player, map)
     self.player = player
+    self.map = map
     self.doors = {}
     self.currentDoor = nil
 end
@@ -134,14 +136,28 @@ function DoorSystem:setPlayerLocation()
     if type == 'area' then
         -- set Player location to the side WITHIN the area
         for _, door in pairs(self:getAreaDoors(areaID)) do
-            if door.id == 1 then --left
-                door.playerLocation = 'right'
-            elseif door.id == 2 then --top
-                door.playerLocation = 'below'
-            elseif door.id == 3 then --right
-                door.playerLocation = 'left'
-            elseif door.id == 4 then --bottom
-                door.playerLocation = 'above'
+            -- if the area IDs do not match then this door is in an adjacent area
+            if door.areaID ~= areaID then
+                -- set Player on the other side of the door in the current area
+                if door.id == 1 then
+                    door.playerLocation = 'left'
+                elseif door.id == 2 then
+                    door.playerLocation = 'above'
+                elseif door.id == 3 then
+                    door.playerLocation = 'right'
+                elseif door.id == 4 then
+                    door.playerLocation = 'below'
+                end
+            else
+                if door.id == 1 then --left
+                    door.playerLocation = 'right'
+                elseif door.id == 2 then --top
+                    door.playerLocation = 'below'
+                elseif door.id == 3 then --right
+                    door.playerLocation = 'left'
+                elseif door.id == 4 then --bottom
+                    door.playerLocation = 'above'
+                end
             end
         end
     else
@@ -165,6 +181,7 @@ function DoorSystem:setPlayerLocation()
                 door.playerLocation = 'below'
             end
         end
+        -- TODO: do the same if this corridor has doors defined
     end
 end
 
@@ -203,6 +220,20 @@ function DoorSystem:getAreaDoors(areaID)
     for _, door in pairs(self.doors) do
         if door.areaID == areaID then
             table.insert(areaDoors, door)
+        end
+    end
+    -- get MapArea definition o the current area
+    local areaDef = self.map:getAreaDefinition(areaID)
+    -- check if the area has adjacent areas
+    if areaDef.adjacentAreas then
+        -- check each adjacent area
+        for _, area in pairs(areaDef.adjacentAreas) do
+            -- and find the right door from the door system
+            for _, door in pairs(self.doors) do
+                if door.areaID == area.areaID and door.id == area.doorID then
+                    table.insert(areaDoors, door)
+                end
+            end
         end
     end
     return areaDoors

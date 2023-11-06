@@ -236,6 +236,9 @@ end
     Collisions can occur on all 4 walls and on multiple walls at the
     same time when running into a corner
 
+    TODO: check area adjacent areas to allow Player through non-centered doorways
+    
+
     Params:
     area: table - MapArea object for the corridor
         conditions: table - collision detection conditions
@@ -252,8 +255,9 @@ function CollisionSystem:areaBoundary(area, conditions)
     local topVertical = area.y + (area.height * FLOOR_TILE_HEIGHT / 2) - V_DOOR_HEIGHT
     local bottomVertical = area.y + (area.height * FLOOR_TILE_HEIGHT / 2) + V_DOOR_HEIGHT
     -- set Player (x, y) comparison
-    local horizontalDoorway = self.player.x + 120 > leftHorizontal and (self.player.x + self.player.width) - 120 < rightHorizontal
-    local verticalDoorway = self.player.y + 120 > topVertical and (self.player.y + self.player.height) - 120 < bottomVertical
+    local playerCorrection = 120
+    local horizontalDoorway = self.player.x + playerCorrection > leftHorizontal and (self.player.x + self.player.width) - playerCorrection < rightHorizontal
+    local verticalDoorway = self.player.y + playerCorrection > topVertical and (self.player.y + self.player.height) - playerCorrection < bottomVertical
     -- check for door proximity to allow the Player object to pass through the wall at that point
     for _, door in pairs(self.doorSystem:getAreaDoors(area.id)) do
         if door.id == 1 and door:proximity(self.player) and verticalDoorway then
@@ -386,16 +390,16 @@ end
 function CollisionSystem:checkDoorCollsion(door)
     local playerCorrection = 120
     -- AABB collision detection for the left and right doors
-    if (self.player.x + playerCorrection > door.leftX + H_DOOR_WIDTH) or (door.leftX > self.player.x + self.player.width + playerCorrection) then
+    if self.player.x + playerCorrection > door.leftX + H_DOOR_WIDTH or door.leftX > (self.player.x + self.player.width) - playerCorrection then
         return {detected = false, edge = AREA_DOOR_IDS[door.id]}
     end
-    if (self.player.y + playerCorrection > door.leftY + H_DOOR_HEIGHT) or (door.leftY > self.player.y + self.player.height + playerCorrection) then
+    if self.player.y + playerCorrection > door.leftY + H_DOOR_HEIGHT or door.leftY > (self.player.y + self.player.height) - playerCorrection then
         return {detected = false, edge = AREA_DOOR_IDS[door.id]}
     end
-    if (self.player.x + playerCorrection > door.rightX + H_DOOR_WIDTH) or (door.rightX > self.player.x + self.player.width + playerCorrection) then
+    if self.player.x + playerCorrection > door.rightX + H_DOOR_WIDTH or door.rightX > (self.player.x + self.player.width) - playerCorrection then
         return {detected = false, edge = AREA_DOOR_IDS[door.id]}
     end
-    if (self.player.y + playerCorrection > door.rightY + H_DOOR_HEIGHT) or (door.rightY > self.player.y + self.player.height + playerCorrection) then
+    if self.player.y + playerCorrection > door.rightY + H_DOOR_HEIGHT or door.rightY > (self.player.y + self.player.height) - playerCorrection then
         return {detected = false, edge = AREA_DOOR_IDS[door.id]}
     end
     -- return true detection if the Player is overlapping any part of any door
@@ -414,11 +418,11 @@ end
 ]]
 function CollisionSystem:handlePlayerDoorCollision(door, edge)
     -- set corrections to fix Player position after collision
-    local correctionOffset = 18
+    local correctionOffset = door.isLocked and 30 or 18
     -- check door location to apply appropriate correction
     if edge == 'L' or edge == 'R' then
         if door.playerLocation == 'left' then
-            self.player.x = door.leftX - CHARACTER_WIDTH + V_DOOR_WIDTH - correctionOffset
+            self.player.x = (door.leftX + V_DOOR_WIDTH) - CHARACTER_WIDTH + correctionOffset
         elseif door.playerLocation == 'right' then
             self.player.x = door.leftX + correctionOffset
         end
@@ -427,7 +431,7 @@ function CollisionSystem:handlePlayerDoorCollision(door, edge)
         if door.playerLocation == 'below' then
             self.player.y = door.leftY + correctionOffset
         elseif door.playerLocation == 'above' then
-            self.player.y = door.leftY - CHARACTER_HEIGHT + H_DOOR_HEIGHT - correctionOffset
+            self.player.y = (door.leftY + H_DOOR_HEIGHT) - CHARACTER_HEIGHT + correctionOffset
         end
     end
 end

@@ -29,7 +29,7 @@ function Map:init(player)
     self.player = player
     self.areas = {}
     -- create a DoorSystem
-    self.doorSystem = DoorSystem(self.player)
+    self.doorSystem = DoorSystem(self.player, self)
     -- create a CollisionSystem
     self.collisionSystem = CollisionSystem(self.player, self.doorSystem)
 end
