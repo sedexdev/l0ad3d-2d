@@ -321,7 +321,7 @@ function CollisionSystem:detectAdjacentDoorway(area, adjacentAreaID)
             -- use area x coordinates to find doorway
             local adjacentAreaDef = GMapAreaDefinitions[adjacentAreaID]
             local xDiff = area.x - adjacentAreaDef.x
-            local adjacentAreaCenter = adjacentAreaDef.height * FLOOR_TILE_HEIGHT / 2
+            local adjacentAreaCenter = adjacentAreaDef.width * FLOOR_TILE_WIDTH / 2
             local leftDoorOffset = area.x - xDiff + adjacentAreaCenter - H_DOOR_WIDTH
             local rightDoorOffset = area.x - xDiff + adjacentAreaCenter + H_DOOR_WIDTH
             return self.player.x + playerCorrection > leftDoorOffset and (self.player.x + self.player.width) - playerCorrection < rightDoorOffset
