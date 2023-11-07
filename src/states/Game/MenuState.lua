@@ -124,7 +124,7 @@ function MenuState:render()
         0, 0,
         0,
         WINDOW_WIDTH / GTextures['grey-background']:getWidth(),
-        WINDOW_WIDTH / GTextures['grey-background']:getHeight()
+        WINDOW_HEIGHT / GTextures['grey-background']:getHeight()
     )
 
     -- draw bullet holes
