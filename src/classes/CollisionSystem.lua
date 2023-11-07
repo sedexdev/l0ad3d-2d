@@ -68,7 +68,6 @@ end
         table: collision status update - collision detected and where 
 ]]
 function CollisionSystem:corridorBoundary(area, conditions)
-    local playerCorrection = 120
     -- default values for detection - no collision
     local collisionDef = {detected = false, edge = nil}
     -- return collisions detections for the walls on each side of the corridor, not the ends
@@ -80,8 +79,8 @@ function CollisionSystem:corridorBoundary(area, conditions)
         local topVertical = area.y + (area.height * FLOOR_TILE_HEIGHT / 2) - V_DOOR_HEIGHT
         local bottomVertical = area.y + (area.height * FLOOR_TILE_HEIGHT / 2) + V_DOOR_HEIGHT
         -- set Player (x, y) comparison
-        local horizontalDoorway = self.player.x + playerCorrection > leftHorizontal and (self.player.x + self.player.width) - playerCorrection < rightHorizontal
-        local verticalDoorway = self.player.y + playerCorrection > topVertical and (self.player.y + self.player.height) - playerCorrection < bottomVertical
+        local horizontalDoorway = self.player.x + PLAYER_CORRECTION > leftHorizontal and (self.player.x + self.player.width) - PLAYER_CORRECTION < rightHorizontal
+        local verticalDoorway = self.player.y + PLAYER_CORRECTION > topVertical and (self.player.y + self.player.height) - PLAYER_CORRECTION < bottomVertical
         -- check for door proximity to allow the Player object to pass through the wall at that point
         for _, door in pairs(self.doorSystem:getAreaDoors(area.id)) do
             if door.id == 1 and door:proximity(self.player) and verticalDoorway then
@@ -258,16 +257,14 @@ end
 function CollisionSystem:areaBoundary(area, conditions)
     -- default values for detection - no collision
     local collisionDef = {detected = false, edge = nil}
-
     -- set doorway cooridinates to allow Player to pass through a gap if there is a Door
     local leftHorizontal = area.x + (area.width * FLOOR_TILE_WIDTH / 2) - H_DOOR_WIDTH
     local rightHorizontal = area.x + (area.width * FLOOR_TILE_WIDTH / 2) + H_DOOR_WIDTH
     local topVertical = area.y + (area.height * FLOOR_TILE_HEIGHT / 2) - V_DOOR_HEIGHT
     local bottomVertical = area.y + (area.height * FLOOR_TILE_HEIGHT / 2) + V_DOOR_HEIGHT
     -- set Player (x, y) comparison
-    local playerCorrection = 120
-    local horizontalDoorway = self.player.x + playerCorrection > leftHorizontal and (self.player.x + self.player.width) - playerCorrection < rightHorizontal
-    local verticalDoorway = self.player.y + playerCorrection > topVertical and (self.player.y + self.player.height) - playerCorrection < bottomVertical
+    local horizontalDoorway = self.player.x + PLAYER_CORRECTION > leftHorizontal and (self.player.x + self.player.width) - PLAYER_CORRECTION < rightHorizontal
+    local verticalDoorway = self.player.y + PLAYER_CORRECTION > topVertical and (self.player.y + self.player.height) - PLAYER_CORRECTION < bottomVertical
     -- check for door proximity to allow the Player object to pass through the wall at that point
     for _, door in pairs(self.doorSystem:getAreaDoors(area.id)) do
         -- check if this door is in an adjacent area
@@ -336,7 +333,6 @@ end
         boolean: true if Player is in the doorway, false if not
 ]]
 function CollisionSystem:detectAdjacentDoorway(area, adjacentAreaID)
-    local playerCorrection = 120
     for _, adjacentArea in pairs(area.adjacentAreas) do
         if adjacentArea.doorID == 1 or adjacentArea.doorID == 3 then -- left or right
             -- use area y coordinates to find doorway
@@ -345,7 +341,7 @@ function CollisionSystem:detectAdjacentDoorway(area, adjacentAreaID)
             local adjacentAreaCenter = adjacentAreaDef.height * FLOOR_TILE_HEIGHT / 2
             local topDoorOffset = area.y - yDiff + adjacentAreaCenter - V_DOOR_HEIGHT
             local bottomDoorOffset = area.y - yDiff + adjacentAreaCenter + V_DOOR_HEIGHT
-            return self.player.y + playerCorrection > topDoorOffset and (self.player.y + self.player.height) - playerCorrection < bottomDoorOffset
+            return self.player.y + PLAYER_CORRECTION > topDoorOffset and (self.player.y + self.player.height) - PLAYER_CORRECTION < bottomDoorOffset
         end
         if adjacentArea.doorID == 2 or adjacentArea.doorID == 4 then -- top or bottom
             -- use area x coordinates to find doorway
@@ -354,7 +350,7 @@ function CollisionSystem:detectAdjacentDoorway(area, adjacentAreaID)
             local adjacentAreaCenter = adjacentAreaDef.width * FLOOR_TILE_WIDTH / 2
             local leftDoorOffset = area.x - xDiff + adjacentAreaCenter - H_DOOR_WIDTH
             local rightDoorOffset = area.x - xDiff + adjacentAreaCenter + H_DOOR_WIDTH
-            return self.player.x + playerCorrection > leftDoorOffset and (self.player.x + self.player.width) - playerCorrection < rightDoorOffset
+            return self.player.x + PLAYER_CORRECTION > leftDoorOffset and (self.player.x + self.player.width) - PLAYER_CORRECTION < rightDoorOffset
         end
     end
 end
@@ -440,18 +436,17 @@ end
         boolean: detection status and edge door is on
 ]]
 function CollisionSystem:checkDoorCollsion(door)
-    local playerCorrection = 120
     -- AABB collision detection for the left and right doors
-    if self.player.x + playerCorrection > door.leftX + H_DOOR_WIDTH or door.leftX > (self.player.x + self.player.width) - playerCorrection then
+    if self.player.x + PLAYER_CORRECTION > door.leftX + H_DOOR_WIDTH or door.leftX > (self.player.x + self.player.width) - PLAYER_CORRECTION then
         return {detected = false, edge = AREA_DOOR_IDS[door.id]}
     end
-    if self.player.y + playerCorrection > door.leftY + H_DOOR_HEIGHT or door.leftY > (self.player.y + self.player.height) - playerCorrection then
+    if self.player.y + PLAYER_CORRECTION > door.leftY + H_DOOR_HEIGHT or door.leftY > (self.player.y + self.player.height) - PLAYER_CORRECTION then
         return {detected = false, edge = AREA_DOOR_IDS[door.id]}
     end
-    if self.player.x + playerCorrection > door.rightX + H_DOOR_WIDTH or door.rightX > (self.player.x + self.player.width) - playerCorrection then
+    if self.player.x + PLAYER_CORRECTION > door.rightX + H_DOOR_WIDTH or door.rightX > (self.player.x + self.player.width) - PLAYER_CORRECTION then
         return {detected = false, edge = AREA_DOOR_IDS[door.id]}
     end
-    if self.player.y + playerCorrection > door.rightY + H_DOOR_HEIGHT or door.rightY > (self.player.y + self.player.height) - playerCorrection then
+    if self.player.y + PLAYER_CORRECTION > door.rightY + H_DOOR_HEIGHT or door.rightY > (self.player.y + self.player.height) - PLAYER_CORRECTION then
         return {detected = false, edge = AREA_DOOR_IDS[door.id]}
     end
     -- return true detection if the Player is overlapping any part of any door
