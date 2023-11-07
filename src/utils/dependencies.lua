@@ -79,7 +79,6 @@ require 'src/states/Game/MenuState'
 require 'src/states/Game/SelectCharacterState'
 require 'src/states/Game/CountdownState'
 require 'src/states/Game/PlayState'
-require 'src/states/Game/PauseState'
 require 'src/states/Game/LevelCompleteState'
 require 'src/states/Game/GameOverState'
 require 'src/states/Game/HighScoreState'
@@ -104,7 +103,6 @@ GStateMachine = StateMachine {
     ['select'] = function() return SelectCharacterState() end,
     ['countdown'] = function() return CountdownState() end,
     ['playing'] = function() return PlayState() end,
-    ['paused'] = function() return PauseState() end,
     ['gameover'] = function() return GameOverState() end,
     ['complete'] = function() return LevelCompleteState() end,
     ['highscores'] = function() return HighScoreState() end,

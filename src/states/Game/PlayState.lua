@@ -51,6 +51,9 @@ function PlayState:enter(params)
         ['walking'] = function () return BossWalkingState(self.boss, self.player) end
     }
     self.boss.stateMachine:change('walking')
+    -- pause gameplay
+    self.paused = false
+    self.selected = 1
 end
 
 --[[
@@ -83,49 +86,101 @@ end
 ]]
 function PlayState:update(dt)
     if love.keyboard.wasPressed('escape') then
-        GStateMachine:change('menu', {
-            highScores = self.highScores
-        })
+        self.paused = true
+        -- GStateMachine:change('paused', {
+        --     highScores = self.highScores,
+        --     map = self.map,
+        --     player = self.player,
+        --     grunt = self.grunt,
+        --     boss = self.boss
+        -- })
     end
 
-    -- get the Player's current area
-    local area = self.map:getAreaDefinition(self.player.currentArea.id)
+    if not self.paused then
+        -- get the Player's current area
+        local area = self.map:getAreaDefinition(self.player.currentArea.id)
 
-    -- check if the player has collided with the wall in this area
-    local playerWallCollision = self.map.collisionSystem:checkWallCollision(area, self.player)
-    if playerWallCollision.detected then
-        -- handle the wall collision
-        self.map.collisionSystem:handlePlayerWallCollision(area, playerWallCollision.edge)
-    end
+        -- check if the player has collided with the wall in this area
+        local playerWallCollision = self.map.collisionSystem:checkWallCollision(area, self.player)
+        if playerWallCollision.detected then
+            -- handle the wall collision
+            self.map.collisionSystem:handlePlayerWallCollision(area, playerWallCollision.edge)
+        end
 
-    -- check for any area door collisions
-    local doors = nil
-    if area.type == 'area' then
-        doors = self.map.doorSystem:getAreaDoors(area.id)
+        -- check for any area door collisions
+        local doors = nil
+        if area.type == 'area' then
+            doors = self.map.doorSystem:getAreaDoors(area.id)
+        else
+            doors = self.map.doorSystem:getCorridorDoors(area.id)
+        end
+        if doors then
+            for _, door in pairs(doors) do
+                -- first check proximity and open door if not locked
+                self.map.collisionSystem:checkDoorProximity(door)
+                -- then check collision with the Door object to avoid Player running over it
+                local playerDoorCollision = self.map.collisionSystem:checkDoorCollsion(door)
+                if playerDoorCollision.detected then
+                    -- and handle the collision if so
+                    self.map.collisionSystem:handlePlayerDoorCollision(door, playerDoorCollision.edge)
+                end
+            end
+        end
+
+        -- update Map
+        self.map:update(dt)
+        -- update Entity objects
+        self.player:update(dt)
+        self.grunt:update(dt)
+        self.boss:update(dt)
+        -- update the camera to track the Player
+        self:updateCamera()
     else
-        doors = self.map.doorSystem:getCorridorDoors(area.id)
-    end
-    if doors then
-        for _, door in pairs(doors) do
-            -- first check proximity and open door if not locked
-            self.map.collisionSystem:checkDoorProximity(door)
-            -- then check collision with the Door object to avoid Player running over it
-            local playerDoorCollision = self.map.collisionSystem:checkDoorCollsion(door)
-            if playerDoorCollision.detected then
-                -- and handle the collision if so
-                self.map.collisionSystem:handlePlayerDoorCollision(door, playerDoorCollision.edge)
+        if love.keyboard.wasPressed('up') then
+            GAudio['select']:stop()
+            GAudio['select']:play()
+            self.selected = self.selected <= 1 and 3 or self.selected - 1
+        end
+        if love.keyboard.wasPressed('down') then
+            GAudio['select']:stop()
+            GAudio['select']:play()
+            self.selected = self.selected >= 3 and 1 or self.selected + 1
+        end
+
+        if love.keyboard.wasPressed('enter') or love.keyboard.wasPressed('return') then
+            GAudio['select']:stop()
+            GAudio['gunshot']:play()
+            if self.selected == 1 then
+                -- continue game with all player data
+                self.paused = false
+            elseif self.selected == 2 then
+                -- restart game with fresh Player data
+                local player = Player(
+                    self.player.id,
+                    GAnimationDefintions['character'..tostring(self.player.id)],
+                    GCharacterDefinition
+                )
+                GStateMachine:change('countdown', {
+                    highScores = self.highScores,
+                    player = player,
+                    grunt = Grunt(
+                        GAnimationDefintions['grunt'],
+                        GGruntDefinition
+                    ),
+                    boss = Boss(
+                        GAnimationDefintions['boss'],
+                        GBossDefinition
+                    ),
+                    map = Map(player)
+                })
+            else
+                -- quit to MenuState
+                GStateMachine:change('menu', {
+                    highScores = self.highScores
+                })
             end
         end
     end
-
-    -- update Map
-    self.map:update(dt)
-    -- update Entity objects
-    self.player:update(dt)
-    self.grunt:update(dt)
-    self.boss:update(dt)
-    -- update the camera to track the Player
-    self:updateCamera()
 end
 
 --[[
@@ -159,4 +214,44 @@ function PlayState:render()
     self.player:render()
     self.grunt:render()
     self.boss:render()
+    -- show menu if paused
+    if self.paused then
+        -- draw dark background  
+        love.graphics.setColor(10/255, 10/255, 10/255, 150/255)
+        love.graphics.rectangle('fill', self.cameraX, self.cameraY, WINDOW_WIDTH, WINDOW_HEIGHT)
+        -- display Paused
+        love.graphics.setFont(GFonts['blood-title'])
+        love.graphics.setColor(10/255, 10/255, 10/255, 1)
+        love.graphics.printf('PAUSED', self.cameraX + 2, (self.cameraY + WINDOW_HEIGHT / 4) + 2, WINDOW_WIDTH, 'center')
+        love.graphics.printf('PAUSED', self.cameraX + 2, (self.cameraY + WINDOW_HEIGHT / 4) + 2, WINDOW_WIDTH, 'center')
+        love.graphics.setColor(1, 0/255, 0/255, 1)
+        love.graphics.printf('PAUSED', self.cameraX, (self.cameraY + WINDOW_HEIGHT / 4), WINDOW_WIDTH, 'center')
+        -- draw menu
+        love.graphics.setFont(GFonts['funkrocker-menu'])
+        self:renderOption('CONTINUE', 1, 200)
+        self:renderOption('RESTART', 2, 300)
+        self:renderOption('QUIT', 3, 400)
+    end
+end
+
+--[[
+    Renders the pause menu options using a provided y offset
+
+    Params:
+        name: string - name of the menu option
+        id: number - id used to verify what has been selected
+        yOffset: number - y offset used to render the menu options in a stack
+    Returns;
+        nil
+]]
+function PlayState:renderOption(name, id, yOffset)
+    love.graphics.setColor(10/255, 10/255, 10/255, 1)
+    love.graphics.printf(name, self.cameraX + 2, (self.cameraY + (WINDOW_HEIGHT / 3 + yOffset)) + 2, WINDOW_WIDTH, 'center')
+    love.graphics.printf(name, self.cameraX + 2, (self.cameraY + (WINDOW_HEIGHT / 3 + yOffset)) + 2, WINDOW_WIDTH, 'center')
+    -- reset the colour
+    love.graphics.setColor(1, 0/255, 0/255, 1)
+    if self.selected == id then
+        love.graphics.setColor(1, 1, 1, 1)
+    end
+    love.graphics.printf(name, self.cameraX, self.cameraY + (WINDOW_HEIGHT / 3 + yOffset), WINDOW_WIDTH, 'center')
 end
