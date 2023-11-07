@@ -98,9 +98,6 @@ require 'src/utils/constants'
 require 'src/utils/definitions'
 require 'src/utils/scores'
 
--- execution trace
--- require 'trace-calls'
-
 -- game state machine
 GStateMachine = StateMachine {
     ['menu'] = function() return MenuState() end,
