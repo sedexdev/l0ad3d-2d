@@ -150,7 +150,7 @@ function MenuState:render()
     love.graphics.setFont(GFonts['funkrocker-menu'])
 
     self:renderOption('LOAD UP', 1, 200)
-    self:renderOption('HIGH SCORE', 2, 300)
+    self:renderOption('HIGH SCORES', 2, 300)
     self:renderOption('QUIT', 3, 400)
 
     -- reset the colour
