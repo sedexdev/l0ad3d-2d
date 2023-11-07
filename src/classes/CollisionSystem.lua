@@ -68,9 +68,42 @@ end
         table: collision status update - collision detected and where 
 ]]
 function CollisionSystem:corridorBoundary(area, conditions)
+    local playerCorrection = 120
     -- default values for detection - no collision
     local collisionDef = {detected = false, edge = nil}
     -- return collisions detections for the walls on each side of the corridor, not the ends
+    -- check for any doors in the corridor
+    if area.doors then
+        -- set doorway cooridinates to allow Player to pass through a gap if there is a Door
+        local leftHorizontal = area.x + (area.width * FLOOR_TILE_WIDTH / 2) - H_DOOR_WIDTH
+        local rightHorizontal = area.x + (area.width * FLOOR_TILE_WIDTH / 2) + H_DOOR_WIDTH
+        local topVertical = area.y + (area.height * FLOOR_TILE_HEIGHT / 2) - V_DOOR_HEIGHT
+        local bottomVertical = area.y + (area.height * FLOOR_TILE_HEIGHT / 2) + V_DOOR_HEIGHT
+        -- set Player (x, y) comparison
+        local horizontalDoorway = self.player.x + playerCorrection > leftHorizontal and (self.player.x + self.player.width) - playerCorrection < rightHorizontal
+        local verticalDoorway = self.player.y + playerCorrection > topVertical and (self.player.y + self.player.height) - playerCorrection < bottomVertical
+        -- check for door proximity to allow the Player object to pass through the wall at that point
+        for _, door in pairs(self.doorSystem:getAreaDoors(area.id)) do
+            if door.id == 1 and door:proximity(self.player) and verticalDoorway then
+                if not conditions.rightCollision then
+                    return collisionDef
+                end
+            elseif door.id == 3 and door:proximity(self.player) and verticalDoorway then
+                if not conditions.leftCollision then
+                    return collisionDef
+                end
+            elseif door.id == 2 and door:proximity(self.player) and horizontalDoorway then
+                if not conditions.bottomCollision then
+                    return collisionDef
+                end
+            elseif door.id == 4 and door:proximity(self.player) and horizontalDoorway then
+                if not conditions.topCollision then
+                    return collisionDef
+                end
+            end
+        end
+    end
+    -- perform corridor specific checks
     if area.orientation == 'horizontal' then
         -- check for bends to stop Player running off the end of the corridor
         if area.bends then
@@ -93,14 +126,14 @@ function CollisionSystem:corridorBoundary(area, conditions)
                     collisionDef = self:handleBend(
                         area.orientation, bend, area,
                         conditions.leftCollision, conditions.bottomCollision, conditions.topCollision,
-                        {'L', 'B', 'RB', 'T'}
+                        {'L', 'B', 'LB', 'T'}
                     )
                 end
                 if bend == 'LB' then
                     collisionDef = self:handleBend(
                         area.orientation, bend, area,
                         conditions.leftCollision, conditions.topCollision, conditions.bottomCollision,
-                        {'L', 'T', 'RT', 'B'}
+                        {'L', 'T', 'LT', 'B'}
                     )
                 end
             end
@@ -184,15 +217,15 @@ function CollisionSystem:handleBend(orientation, bendLabel, area, condition1, co
     -- set the offset based on the orientation and location of the bend
     if orientation == 'horizontal' then
         if bendLabel == 'RT' or bendLabel == 'RB' then
-            offset = self.player.x < area.x + (area.width * FLOOR_TILE_WIDTH) - WALL_OFFSET
+            offset = (self.player.x + self.player.width) < area.x + (area.width * FLOOR_TILE_WIDTH) - WALL_OFFSET * 2
         else
-            offset = self.player.x < area.x + WALL_OFFSET
+            offset = self.player.x > area.x + WALL_OFFSET * 2
         end
     else
         if bendLabel == 'LT' or bendLabel == 'RT' then
-            offset = self.player.y > area.y + WALL_OFFSET
+            offset = self.player.y > area.y + WALL_OFFSET * 1
         else
-            offset = (self.player.y + self.player.height) < area.y + (area.height * FLOOR_TILE_HEIGHT) - WALL_OFFSET
+            offset = (self.player.y + self.player.height) < area.y + (area.height * FLOOR_TILE_HEIGHT) - WALL_OFFSET * 1
         end
     end
     -- check the conditions to match collisions with the corners of the bend
@@ -214,10 +247,7 @@ end
 --[[
     Detect a collision on the walls of an area type MapArea object.
     Collisions can occur on all 4 walls and on multiple walls at the
-    same time when running into a corner
-
-    TODO: check area adjacent areas to allow Player through non-centered doorways
-    
+    same time when running into a corner    
 
     Params:
     area: table - MapArea object for the corridor
