@@ -181,7 +181,7 @@ function DoorSystem:setPlayerLocation()
                 door.playerLocation = 'below'
             end
         end
-        -- TODO: do the same if this corridor has doors defined
+        -- check if this corridor has door defined
         local doors = GMapAreaDefinitions[areaID].doors
         if doors then
             for _, door in pairs(self:getAreaDoors(areaID)) do
