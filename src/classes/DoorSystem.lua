@@ -182,6 +182,20 @@ function DoorSystem:setPlayerLocation()
             end
         end
         -- TODO: do the same if this corridor has doors defined
+        local doors = GMapAreaDefinitions[areaID].doors
+        if doors then
+            for _, door in pairs(self:getAreaDoors(areaID)) do
+                if door.id == 1 then --left
+                    door.playerLocation = 'right'
+                elseif door.id == 2 then --top
+                    door.playerLocation = 'below'
+                elseif door.id == 3 then --right
+                    door.playerLocation = 'left'
+                elseif door.id == 4 then --bottom
+                    door.playerLocation = 'above'
+                end
+            end
+        end
     end
 end
 
@@ -260,6 +274,15 @@ function DoorSystem:getCorridorDoors(areaID)
         for _, door in pairs(doors) do
             -- join[2] == location to get door ID from
             if AREA_DOOR_IDS[door.id] == join[2] then
+                table.insert(areaDoors, door)
+            end
+        end
+    end
+    -- check if this corridor also has doors
+    local doors = GMapAreaDefinitions[areaID].doors
+    if doors then
+        for _, door in pairs(self.doors) do
+            if door.areaID == areaID then
                 table.insert(areaDoors, door)
             end
         end
