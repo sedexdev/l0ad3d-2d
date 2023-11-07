@@ -38,7 +38,7 @@ end
 ]]
 function DoorSystem:update(dt)
     Timer.update(dt)
-    -- update Player location relative to doors in the current vicinity
+    -- update Player location relative to doors in the current location
     self:setPlayerLocation()
     -- close any doors that the Player is no longer in proximity with
     for _, door in pairs(self.doors) do
@@ -138,26 +138,10 @@ function DoorSystem:setPlayerLocation()
         for _, door in pairs(self:getAreaDoors(areaID)) do
             -- if the area IDs do not match then this door is in an adjacent area
             if door.areaID ~= areaID then
-                -- set Player on the other side of the door in the current area
-                if door.id == 1 then
-                    door.playerLocation = 'left'
-                elseif door.id == 2 then
-                    door.playerLocation = 'above'
-                elseif door.id == 3 then
-                    door.playerLocation = 'right'
-                elseif door.id == 4 then
-                    door.playerLocation = 'below'
-                end
+                -- set Player on the current area side of the door
+                self:setMatchingLocation(door)
             else
-                if door.id == 1 then --left
-                    door.playerLocation = 'right'
-                elseif door.id == 2 then --top
-                    door.playerLocation = 'below'
-                elseif door.id == 3 then --right
-                    door.playerLocation = 'left'
-                elseif door.id == 4 then --bottom
-                    door.playerLocation = 'above'
-                end
+                self:setOppositeLocation(door)
             end
         end
     else
@@ -165,39 +149,94 @@ function DoorSystem:setPlayerLocation()
         local joins = GMapAreaDefinitions[areaID].joins
         -- set Player location to the side OUTSIDE the joined areas
         for _, join in pairs(joins) do
-            -- join[1] == areaID as defined in GMapAreaDefinitions
-            -- join[2] == location of this door in that area
-            if join[2] == 'L' then
-                local door = self:getAreaDoor(join[1], 1)
-                door.playerLocation = 'left'
-            elseif join[2] == 'T' then
-                local door = self:getAreaDoor(join[1], 2)
-                door.playerLocation = 'above'
-            elseif join[2] == 'R' then
-                local door = self:getAreaDoor(join[1], 3)
-                door.playerLocation = 'right'
-            elseif join[2] == 'B' then
-                local door = self:getAreaDoor(join[1], 4)
-                door.playerLocation = 'below'
-            end
+            self:setJoinLocation(join)
         end
         -- check if this corridor has door defined
         local doors = GMapAreaDefinitions[areaID].doors
         if doors then
             for _, door in pairs(self:getAreaDoors(areaID)) do
-                if door.id == 1 then --left
-                    door.playerLocation = 'right'
-                elseif door.id == 2 then --top
-                    door.playerLocation = 'below'
-                elseif door.id == 3 then --right
-                    door.playerLocation = 'left'
-                elseif door.id == 4 then --bottom
-                    door.playerLocation = 'above'
-                end
+                self:setOppositeLocation(door)
             end
         end
     end
 end
+
+-- ========================== SET PLAYER LOCATION HELPERS ==========================
+
+--[[
+    Sets the Player object on the side of the door matching
+    the door ID. E.g. door ID == 1 (L) so set the Player on
+    the left of this door
+
+    Params:
+        door: table - Door object we are setting <playerLocation> on
+    Returns:
+        nil 
+]]
+function DoorSystem:setMatchingLocation(door)
+    if door.id == 1 then
+        door.playerLocation = 'left'
+    elseif door.id == 2 then
+        door.playerLocation = 'above'
+    elseif door.id == 3 then
+        door.playerLocation = 'right'
+    elseif door.id == 4 then
+        door.playerLocation = 'below'
+    end
+end
+
+--[[
+    Sets the Player object on the side of the door opposite
+    the door ID. E.g. door ID == 1 (L) so set the Player on
+    the right of this door
+
+    Params:
+        door: table - Door object we are setting <playerLocation> on
+    Returns:
+        nil
+]]
+function DoorSystem:setOppositeLocation(door)
+    if door.id == 1 then --left
+        door.playerLocation = 'right'
+    elseif door.id == 2 then --top
+        door.playerLocation = 'below'
+    elseif door.id == 3 then --right
+        door.playerLocation = 'left'
+    elseif door.id == 4 then --bottom
+        door.playerLocation = 'above'
+    end
+end
+
+--[[
+    Sets the Player object on the side of the door matching
+    the door ID. E.g. door ID == 1 (L) so set the Player on
+    the left of this door. Must query the <self.doors> table
+    to find the correct door for the join being checked
+
+    Params:
+        join: table - corridor join definition door being updated 
+    Returns:
+        nil
+]]
+function DoorSystem:setJoinLocation(join)
+    -- join[1] == areaID as defined in GMapAreaDefinitions
+    -- join[2] == location of this door in that area
+    if join[2] == 'L' then
+        local door = self:getAreaDoor(join[1], 1)
+        door.playerLocation = 'left'
+    elseif join[2] == 'T' then
+        local door = self:getAreaDoor(join[1], 2)
+        door.playerLocation = 'above'
+    elseif join[2] == 'R' then
+        local door = self:getAreaDoor(join[1], 3)
+        door.playerLocation = 'right'
+    elseif join[2] == 'B' then
+        local door = self:getAreaDoor(join[1], 4)
+        door.playerLocation = 'below'
+    end
+end
+
+-- ========================== GET DOOR HELPERS ==========================
 
 --[[
     Returns the area door defined by the door ID
@@ -289,6 +328,8 @@ function DoorSystem:getCorridorDoors(areaID)
     end
     return areaDoors
 end
+
+-- ========================== TWEEN DOORS OPEN/CLOSED ==========================
 
 --[[
     Tweening function for reducing the pixel size of the doors
