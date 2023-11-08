@@ -103,7 +103,8 @@ end
 ]]
 function PlayState:runGameLoop(dt)
     -- get the Player's current area
-    local area = self.map:getAreaDefinition(self.player.currentArea.id)
+    local currentAreaID = self.player.currentArea.id
+    local area = self.map:getAreaDefinition(currentAreaID)
     -- check if the player has collided with the wall in this area
     local playerWallCollision = self.map.collisionSystem:checkWallCollision(area, self.player)
     if playerWallCollision.detected then
@@ -129,6 +130,14 @@ function PlayState:runGameLoop(dt)
             end
         end
     end
+    -- to check for key collisions make sure the Player is in an area with a key
+    for _, key in pairs(self.map.powerupSystem.keys) do
+        if currentAreaID == key.areaID then
+            if self.map.collisionSystem:keyCollision(key) then
+                self.map.powerupSystem:handleKeyCollision(key)
+            end
+        end
+    end  
     -- update Map
     self.map:update(dt)
     -- update Entity objects

@@ -343,6 +343,9 @@ function CollisionSystem:checkDoorProximity(door)
                 -- if locked and has key open the door
                 door.isLocked = false
                 self.doorSystem:open(door)
+                if door.id == 3 then self.player.keys['blue'] = false end
+                if door.id == 4 then self.player.keys['red'] = false end
+                if door.id == 5 then self.player.keys['green'] = false end
             end
         end
     end
@@ -508,4 +511,26 @@ function CollisionSystem:detectCorridorDoorways(area, conditions)
             end
         end
     end
+end
+
+-- ========================== CRATE/KEY/POWERUP COLLISIONS ==========================
+
+--[[
+    Detects a collision with a key type PowerUp object. Uses
+    AABB collision detection to see if the Player object is
+    overlapping the key
+
+    Params:
+        key: table - key type PowerUp object to detect
+    Returns:
+        boolean: true if collision detected
+]]
+function CollisionSystem:keyCollision(key)
+    if (self.player.x > key.x + KEY_WIDTH) or (key.x > self.player.x + CHARACTER_WIDTH) then
+        return false
+    end
+    if (self.player.y > key.y + KEY_HEIGHT) or (key.y > self.player.y + CHARACTER_HEIGHT) then
+        return false
+    end
+    return true
 end

@@ -80,3 +80,20 @@ AREA_DOOR_IDS = {
     [3] = 'R',
     [4] = 'B',
 }
+
+-- powerup object IDs - includs crates and keys
+POWERUP_IDS = {
+    ['doubleSpeed'] = 1,
+    ['health'] = 2,
+    ['ammo'] = 3,
+    ['invincible'] = 4,
+    ['oneShotBossKill'] = 5,
+}
+
+-- powerup width and height
+CRATE_WIDTH = 128 * 2.5
+CRATE_HEIGHT = 128 * 2.5
+POWERUP_WIDTH = 64 * 2.5
+POWERUP_HEIGHT = 64 * 2.5
+KEY_WIDTH = 64 * 2.5
+KEY_HEIGHT = 64 * 2.5

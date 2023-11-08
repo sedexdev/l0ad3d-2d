@@ -32,6 +32,8 @@ function Map:init(player)
     self.doorSystem = DoorSystem(self.player, self)
     -- create a CollisionSystem
     self.collisionSystem = CollisionSystem(self.player, self.doorSystem)
+    -- create a PowerUpSystem
+    self.powerupSystem = PowerUpSystem(self.player)
 end
 
 --[[
@@ -46,6 +48,7 @@ end
 ]]
 function Map:update(dt)
     self.doorSystem:update(dt)
+    self.powerupSystem:update(dt)
 end
 
 --[[
@@ -64,6 +67,7 @@ function Map:render()
     end
     -- render out Door objects
     self.doorSystem:render()
+    self.powerupSystem:render()
 end
 
 --[[
@@ -119,7 +123,8 @@ function Map:generateLevel()
     end
     -- create the Door objects in the DoorSystem
     self.doorSystem:initialiseDoors(self.areas)
-    -- create powerups
+    -- create powerups, crates, and keys
+    self.powerupSystem:initialiseAll()
     -- update powerups so more are spawned as the level goes on
     -- create enemies
     -- update enemies so more are spawned as the level goes on
