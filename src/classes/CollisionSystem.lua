@@ -363,16 +363,16 @@ end
 ]]
 function CollisionSystem:checkDoorCollsion(door)
     -- AABB collision detection for the left and right doors
-    if self.player.x + PLAYER_CORRECTION > door.leftX + H_DOOR_WIDTH or door.leftX > (self.player.x + self.player.width) - PLAYER_CORRECTION then
+    if self.player.x > door.leftX or door.leftX > (self.player.x + self.player.width) then
         return {detected = false, edge = AREA_DOOR_IDS[door.id]}
     end
-    if self.player.y + PLAYER_CORRECTION > door.leftY + H_DOOR_HEIGHT or door.leftY > (self.player.y + self.player.height) - PLAYER_CORRECTION then
+    if self.player.y > door.leftY or door.leftY > (self.player.y + self.player.height) then
         return {detected = false, edge = AREA_DOOR_IDS[door.id]}
     end
-    if self.player.x + PLAYER_CORRECTION > door.rightX + H_DOOR_WIDTH or door.rightX > (self.player.x + self.player.width) - PLAYER_CORRECTION then
+    if self.player.x > door.rightX or door.rightX > (self.player.x + self.player.width) then
         return {detected = false, edge = AREA_DOOR_IDS[door.id]}
     end
-    if self.player.y + PLAYER_CORRECTION > door.rightY + H_DOOR_HEIGHT or door.rightY > (self.player.y + self.player.height) - PLAYER_CORRECTION then
+    if self.player.y > door.rightY or door.rightY > (self.player.y + self.player.height) then
         return {detected = false, edge = AREA_DOOR_IDS[door.id]}
     end
     -- return true detection if the Player is overlapping any part of any door

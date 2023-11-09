@@ -79,9 +79,10 @@ end
 ]]
 function Door:proximity(player)
     local doorProximity = 250
+    local doorOffset = 42
     if self.orientation == 'horizontal' then
         -- x proximity is the same no matter which side the Player object is on
-        local xProximity = player.x + PLAYER_CORRECTION > self.leftX and (player.x + player.width) - PLAYER_CORRECTION < self.rightX + H_DOOR_WIDTH
+        local xProximity = player.x + PLAYER_CORRECTION > self.leftX + doorOffset and (player.x + player.width) - PLAYER_CORRECTION < self.rightX + (H_DOOR_WIDTH - doorOffset)
         if self.playerLocation == 'above' then
             if (self.leftY - (player.y + player.height) <= doorProximity or self.rightY - (player.y + player.height) <= doorProximity) and xProximity then
                 return true
@@ -96,7 +97,7 @@ function Door:proximity(player)
         end
     else
         -- y proximity is the same no matter which side the Player object is on
-        local yProximity = player.y + PLAYER_CORRECTION > self.rightY and (player.y + player.height) - PLAYER_CORRECTION < self.leftY + V_DOOR_HEIGHT
+        local yProximity = player.y + PLAYER_CORRECTION > self.rightY + doorOffset and (player.y + player.height) - PLAYER_CORRECTION < self.leftY + (V_DOOR_HEIGHT - doorOffset)
         if self.playerLocation == 'left' then
             if (self.leftX - (player.x + player.width) <= doorProximity or self.rightX - (player.x + player.width) <= doorProximity) and yProximity then
                 return true
