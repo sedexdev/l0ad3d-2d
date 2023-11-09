@@ -427,8 +427,21 @@ function CollisionSystem:detectAreaDoorway(area, conditions)
         -- check if this door is in an adjacent area
         if door.areaID ~= area.id then
             -- if Player is in the doorway and the door is not locked then allow through
-            if self:detectAdjacentDoorway(area, door.areaID) and not door.isLocked then
-                return true
+            local detectionCondition, doorID = self:detectAdjacentDoorway(area, door.areaID)
+            if detectionCondition and not door.isLocked then
+                -- door ID required to fix bug allowing Player to pass through wall opposite adjacent doorway 
+                if doorID == 1 then
+                    return self.player.x > area.x - WALL_OFFSET
+                end
+                if doorID == 2 then
+                    return self.player.y > area.y - WALL_OFFSET
+                end
+                if doorID == 3 then
+                    return (self.player.x + self.player.width) < area.x + (area.width * FLOOR_TILE_WIDTH) + WALL_OFFSET
+                end
+                if doorID == 4 then
+                    return (self.player.y + self.player.height) < area.y + (area.height * FLOOR_TILE_HEIGHT) + WALL_OFFSET
+                end
             end
         end
         if door.id == 1 and door:proximity(self.player) and conditions.verticalDoorway then
@@ -466,7 +479,10 @@ function CollisionSystem:detectAdjacentDoorway(area, adjacentAreaID)
             local adjacentAreaCenter = adjacentAreaDef.height * FLOOR_TILE_HEIGHT / 2
             local topDoorOffset = area.y - yDiff + adjacentAreaCenter - V_DOOR_HEIGHT
             local bottomDoorOffset = area.y - yDiff + adjacentAreaCenter + V_DOOR_HEIGHT
-            return self.player.y + PLAYER_CORRECTION > topDoorOffset and (self.player.y + self.player.height) - PLAYER_CORRECTION < bottomDoorOffset
+            -- doorway condition
+            local detectionCondition = self.player.y + PLAYER_CORRECTION > topDoorOffset and (self.player.y + self.player.height) - PLAYER_CORRECTION < bottomDoorOffset
+            -- return the detection status and the door ID for area wall collision detection
+            return detectionCondition, adjacentArea.doorID
         end
         if adjacentArea.doorID == 2 or adjacentArea.doorID == 4 then -- top or bottom
             -- use area x coordinates to find doorway
@@ -475,7 +491,9 @@ function CollisionSystem:detectAdjacentDoorway(area, adjacentAreaID)
             local adjacentAreaCenter = adjacentAreaDef.width * FLOOR_TILE_WIDTH / 2
             local leftDoorOffset = area.x - xDiff + adjacentAreaCenter - H_DOOR_WIDTH
             local rightDoorOffset = area.x - xDiff + adjacentAreaCenter + H_DOOR_WIDTH
-            return self.player.x + PLAYER_CORRECTION > leftDoorOffset and (self.player.x + self.player.width) - PLAYER_CORRECTION < rightDoorOffset
+            -- doorway condition
+            local detectionCondition = self.player.x + PLAYER_CORRECTION > leftDoorOffset and (self.player.x + self.player.width) - PLAYER_CORRECTION < rightDoorOffset
+            return detectionCondition, adjacentArea.doorID
         end
     end
 end
