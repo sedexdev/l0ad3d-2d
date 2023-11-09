@@ -79,33 +79,32 @@ end
 ]]
 function Door:proximity(player)
     local doorProximity = 250
-    local doorOffset = 42
     if self.orientation == 'horizontal' then
         -- x proximity is the same no matter which side the Player object is on
-        local xProximity = player.x + PLAYER_CORRECTION > self.leftX + doorOffset and (player.x + player.width) - PLAYER_CORRECTION < self.rightX + (H_DOOR_WIDTH - doorOffset)
+        local xProximity = player.x + PLAYER_CORRECTION > self.leftX + DOOR_OFFSET and (player.x + player.width) - PLAYER_CORRECTION < (self.rightX + H_DOOR_WIDTH) - DOOR_OFFSET
         if self.playerLocation == 'above' then
-            if (self.leftY - (player.y + player.height) <= doorProximity or self.rightY - (player.y + player.height) <= doorProximity) and xProximity then
+            if (self.leftY - (player.y + player.height) <= doorProximity and self.rightY - (player.y + player.height) <= doorProximity) and xProximity then
                 return true
             end
             return false
         end
         if self.playerLocation == 'below' then
-            if (player.y - (self.leftY + H_DOOR_HEIGHT) <= doorProximity or player.y - (self.rightY + H_DOOR_HEIGHT) <= doorProximity) and xProximity then
+            if (player.y - (self.leftY + H_DOOR_HEIGHT) <= doorProximity and player.y - (self.rightY + H_DOOR_HEIGHT) <= doorProximity) and xProximity then
                 return true
             end
             return false
         end
     else
         -- y proximity is the same no matter which side the Player object is on
-        local yProximity = player.y + PLAYER_CORRECTION > self.rightY + doorOffset and (player.y + player.height) - PLAYER_CORRECTION < self.leftY + (V_DOOR_HEIGHT - doorOffset)
+        local yProximity = player.y + PLAYER_CORRECTION > self.rightY + DOOR_OFFSET and (player.y + player.height) - PLAYER_CORRECTION < (self.leftY + V_DOOR_HEIGHT) - DOOR_OFFSET
         if self.playerLocation == 'left' then
-            if (self.leftX - (player.x + player.width) <= doorProximity or self.rightX - (player.x + player.width) <= doorProximity) and yProximity then
+            if (self.leftX - (player.x + player.width) <= doorProximity and self.rightX - (player.x + player.width) <= doorProximity) and yProximity then
                 return true
             end
             return false
         end
         if self.playerLocation == 'right' then
-            if (player.x - (self.leftX + H_DOOR_WIDTH) <= doorProximity or player.x - (self.rightX + H_DOOR_WIDTH) <= doorProximity) and yProximity then
+            if (player.x - (self.leftX + H_DOOR_WIDTH) <= doorProximity and player.x - (self.rightX + H_DOOR_WIDTH) <= doorProximity) and yProximity then
                 return true
             end
             return false
