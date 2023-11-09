@@ -60,10 +60,6 @@ end
 function Player:update(dt)
     Entity.update(self, dt)
 
-    for colour, owned in pairs(self.keys) do
-        io.write('Player owns ' .. tostring(colour) .. ' key: ' .. tostring(owned) .. '\n')
-    end
-
     if love.keyboard.wasPressed('space') then
         self:fire()
     end

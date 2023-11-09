@@ -32,8 +32,7 @@ function PowerUpSystem:init(player)
         ['health'] = {},
         ['invincible'] = {},
         ['doubleSpeed'] = {},
-        ['oneShotBossKill'] = {},
-        ['keys'] = {}
+        ['oneShotBossKill'] = {}
     }
     self.crates = {}
     self.keys = {}

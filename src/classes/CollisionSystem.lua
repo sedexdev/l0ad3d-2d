@@ -343,9 +343,9 @@ function CollisionSystem:checkDoorProximity(door)
                 -- if locked and has key open the door
                 door.isLocked = false
                 self.doorSystem:open(door)
-                if door.id == 3 then self.player.keys['blue'] = false end
-                if door.id == 4 then self.player.keys['red'] = false end
-                if door.id == 5 then self.player.keys['green'] = false end
+                if DOOR_IDS[door.colour] == 3 then self.player.keys['blue'] = false end
+                if DOOR_IDS[door.colour] == 4 then self.player.keys['red'] = false end
+                if DOOR_IDS[door.colour] == 5 then self.player.keys['green'] = false end
             end
         end
     end
