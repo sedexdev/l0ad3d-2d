@@ -85,7 +85,6 @@ function CollisionSystem:areaBoundary(area, conditions)
     end
     -- check for single wall collisions first
     if conditions.leftCollision then
-        -- check for doorways on single wall collisions only
         collisionDef = {detected = true, edge = 'L'}
     end
     if conditions.rightCollision then
@@ -381,6 +380,7 @@ function CollisionSystem:checkDoorCollsion(door)
         return {detected = false, edge = AREA_DOOR_IDS[door.id]}
     end
     ::returnTrue::
+    io.write('Collision detected: Area ID: ' ..tostring(door.areaID) .. ', door ID: ' .. tostring(door.id) .. '\n')
     -- return true detection if the Player is overlapping any part of any door
     return {detected = true, edge = AREA_DOOR_IDS[door.id]}
 end
@@ -436,7 +436,7 @@ function CollisionSystem:detectAreaDoorway(area, conditions)
             if detectionCondition and not door.isLocked then
                 -- door ID required to fix bug allowing Player to pass through wall opposite adjacent doorway 
                 if doorID == 1 then
-                    return self.player.x > area.x - H_DOOR_WIDTH
+                    return self.player.x > area.x - V_DOOR_WIDTH
                 end
                 if doorID == 2 then
                     return self.player.y > area.y - H_DOOR_HEIGHT
@@ -481,7 +481,7 @@ function CollisionSystem:detectAdjacentDoorway(area, adjacentAreaID)
             -- use area y coordinates to find doorway
             local adjacentAreaDef = GMapAreaDefinitions[adjacentAreaID]
             local yDiff = area.y - adjacentAreaDef.y
-            local adjacentAreaCenter = adjacentAreaDef.height * (FLOOR_TILE_HEIGHT / 2)
+            local adjacentAreaCenter = adjacentAreaDef.height * FLOOR_TILE_HEIGHT / 2
             local topDoorOffset = area.y - yDiff + adjacentAreaCenter - V_DOOR_HEIGHT
             local bottomDoorOffset = area.y - yDiff + adjacentAreaCenter + V_DOOR_HEIGHT
             -- doorway condition
@@ -492,7 +492,7 @@ function CollisionSystem:detectAdjacentDoorway(area, adjacentAreaID)
             -- use area x coordinates to find doorway
             local adjacentAreaDef = GMapAreaDefinitions[adjacentAreaID]
             local xDiff = area.x - adjacentAreaDef.x
-            local adjacentAreaCenter = adjacentAreaDef.width * (FLOOR_TILE_WIDTH / 2)
+            local adjacentAreaCenter = adjacentAreaDef.width * FLOOR_TILE_WIDTH / 2
             local leftDoorOffset = area.x - xDiff + adjacentAreaCenter - H_DOOR_WIDTH
             local rightDoorOffset = area.x - xDiff + adjacentAreaCenter + H_DOOR_WIDTH
             -- doorway condition
