@@ -79,32 +79,55 @@ end
 ]]
 function Door:proximity(player)
     local doorProximity = 250
+    -- locked door conditions
+    local aboveLocked = (player.y + player.height > self.leftY + H_DOOR_HEIGHT) and player.y + player.height > self.rightY + H_DOOR_HEIGHT
+    local belowLocked = (player.y < self.leftY - H_DOOR_HEIGHT) and player.y < self.rightY - H_DOOR_HEIGHT
+    local leftLocked = (player.x + player.width > self.leftX + V_DOOR_WIDTH) and player.x + player.width > self.rightX + V_DOOR_WIDTH
+    local rightLocked = (player.x < self.leftX - V_DOOR_WIDTH) and player.x < self.rightX - V_DOOR_WIDTH
     if self.orientation == 'horizontal' then
         -- x proximity is the same no matter which side the Player object is on
-        local xProximity = player.x + PLAYER_CORRECTION > self.leftX + DOOR_OFFSET and (player.x + player.width) - PLAYER_CORRECTION < (self.rightX + H_DOOR_WIDTH) - DOOR_OFFSET
+        local xProximity = player.x + PLAYER_CORRECTION > self.leftX and (player.x + player.width) - PLAYER_CORRECTION < (self.rightX + H_DOOR_WIDTH)
+        -- proximity conditions
+        local aboveYProximity = (self.leftY - (player.y + player.height) <= doorProximity and self.rightY - (player.y + player.height) <= doorProximity) and xProximity
+        local belowYProximity = (player.y - (self.leftY + H_DOOR_HEIGHT) <= doorProximity and player.y - (self.rightY + H_DOOR_HEIGHT) <= doorProximity) and xProximity
         if self.playerLocation == 'above' then
-            if (self.leftY - (player.y + player.height) <= doorProximity and self.rightY - (player.y + player.height) <= doorProximity) and xProximity then
+            if self.isLocked then
+                return aboveLocked
+            end
+            if aboveYProximity then
                 return true
             end
             return false
         end
         if self.playerLocation == 'below' then
-            if (player.y - (self.leftY + H_DOOR_HEIGHT) <= doorProximity and player.y - (self.rightY + H_DOOR_HEIGHT) <= doorProximity) and xProximity then
+            if self.isLocked then
+                return belowLocked
+            end
+            if belowYProximity then
                 return true
             end
             return false
         end
     else
         -- y proximity is the same no matter which side the Player object is on
-        local yProximity = player.y + PLAYER_CORRECTION > self.rightY + DOOR_OFFSET and (player.y + player.height) - PLAYER_CORRECTION < (self.leftY + V_DOOR_HEIGHT) - DOOR_OFFSET
+        local yProximity = player.y + PLAYER_CORRECTION > self.rightY and (player.y + player.height) - PLAYER_CORRECTION < (self.leftY + V_DOOR_HEIGHT)
+        -- proximity conditions
+        local leftXProximity = (self.leftX - (player.x + player.width) <= doorProximity and self.rightX - (player.x + player.width) <= doorProximity) and yProximity
+        local rightXProximity = (player.x - (self.leftX + H_DOOR_WIDTH) <= doorProximity and player.x - (self.rightX + H_DOOR_WIDTH) <= doorProximity) and yProximity
         if self.playerLocation == 'left' then
-            if (self.leftX - (player.x + player.width) <= doorProximity and self.rightX - (player.x + player.width) <= doorProximity) and yProximity then
+            if self.isLocked then
+                return leftLocked
+            end
+            if leftXProximity then
                 return true
             end
             return false
         end
         if self.playerLocation == 'right' then
-            if (player.x - (self.leftX + H_DOOR_WIDTH) <= doorProximity and player.x - (self.rightX + H_DOOR_WIDTH) <= doorProximity) and yProximity then
+            if self.isLocked then
+                return rightLocked
+            end
+            if rightXProximity then
                 return true
             end
             return false

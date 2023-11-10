@@ -121,12 +121,14 @@ function PlayState:runGameLoop(dt)
     if doors then
         for _, door in pairs(doors) do
             -- first check proximity and open door if not locked
-            self.map.collisionSystem:checkDoorProximity(door)
-            -- then check collision with the Door object to avoid Player running over it
-            local playerDoorCollision = self.map.collisionSystem:checkDoorCollsion(door)
-            if playerDoorCollision.detected then
-                -- and handle the collision if so
-                self.map.collisionSystem:handlePlayerDoorCollision(door, playerDoorCollision.edge)
+            local playerProximity = self.map.collisionSystem:checkDoorProximity(door)
+            if playerProximity then
+                -- then check collision with the Door object to avoid Player running over it
+                local playerDoorCollision = self.map.collisionSystem:checkDoorCollsion(door)
+                if playerDoorCollision.detected then
+                    -- and handle the collision if so
+                    self.map.collisionSystem:handlePlayerDoorCollision(door, playerDoorCollision.edge)
+                end
             end
         end
     end

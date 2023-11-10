@@ -132,13 +132,26 @@ end
 function Player:setCurrentArea(areas)
     -- <areas> includes both areas and corridors
     for _, area in pairs(areas) do
-        -- if player within area/corridor x coordinate boundary
-        if (self.x > area.x - WALL_OFFSET) and (self.x + self.width < (area.x + area.width * FLOOR_TILE_WIDTH) + WALL_OFFSET) then
-            -- if player within area/corridor y coordinate boundary
-            if (self.y > area.y - WALL_OFFSET) and (self.y + self.height < (area.y + area.height * FLOOR_TILE_HEIGHT) + WALL_OFFSET) then
-                -- player current area updated
-                self.currentArea.id = area.id
-                self.currentArea.type = area.type
+        local areaWidth = area.x + (area.width * FLOOR_TILE_WIDTH) + WALL_OFFSET
+        local areaHeight = area.y + (area.height * FLOOR_TILE_HEIGHT) + WALL_OFFSET
+        if area.type == 'area' then
+            -- if player within area/corridor x coordinate boundary
+            if (self.x > area.x - WALL_OFFSET) and (self.x + self.width) < areaWidth then
+                -- if player within area/corridor y coordinate boundary
+                if (self.y > area.y - WALL_OFFSET) and (self.y + self.height) < areaHeight then
+                    -- player current area updated
+                    self.currentArea.id = area.id
+                    self.currentArea.type = area.typeareaWidth                
+                end
+            end
+        else
+            if (self.x + PLAYER_CORRECTION > area.x - WALL_OFFSET) and (self.x + self.width - PLAYER_CORRECTION) < areaWidth then
+                -- if player within area/corridor y coordinate boundary
+                if (self.y + PLAYER_CORRECTION > area.y - WALL_OFFSET) and (self.y + self.height - PLAYER_CORRECTION) < areaHeight then
+                    -- player current area updated
+                    self.currentArea.id = area.id
+                    self.currentArea.type = area.type
+                end
             end
         end
     end

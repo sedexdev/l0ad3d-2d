@@ -62,8 +62,7 @@ V_DOOR_WIDTH = 16 * 5
 V_DOOR_HEIGHT = 32 * 5
 
 -- correction for Player object to fit through doorways
-PLAYER_CORRECTION = 124
-DOOR_OFFSET = 42
+PLAYER_CORRECTION = 120
 
 -- IDs for each door sprite based on colour
 DOOR_IDS = {
