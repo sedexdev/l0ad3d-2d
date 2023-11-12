@@ -222,9 +222,9 @@ GMapAreaDefinitions = {
     [21] = {x = 4800, y = -640, width = 8, height = 8, type = 'area', adjacentAreas = nil, doors = {L = 'purple', R = 'purple', T = 'purple'}, key = nil},
     [22] = {x = -8640, y = -3360, width = 8, height = 8, type = 'area', adjacentAreas = nil, doors = {B = 'purple'}, key = nil},
     [23] = {x = -9920, y = 2080, width = 16, height = 8, type = 'area', adjacentAreas = nil, doors = {T = 'purple'}, key = nil},
-    [24] = {x = -15680, y = -1280, width = 8, height = 16, type = 'area', adjacentAreas = {[1] = {areaID = 25, doorID = 3}, [2] = {areaID = 26, doorID = 3}}, doors = {B = 'purple', R = 'purple'}, key = nil},
-    [25] = {x = -17680, y = -1120, width = 6, height = 6, type = 'area', adjacentAreas = nil, doors = {R = 'purple'}, key = 'green'},
-    [26] = {x = -18320, y = 160, width = 8, height = 8, type = 'area', adjacentAreas = nil, doors = {R = 'blue'}, key = nil},
+    [24] = {x = -15680, y = -1280, width = 8, height = 16, type = 'area', adjacentAreas = {[1] = {areaID = 25, doorID = 4}, [2] = {areaID = 26, doorID = 3}}, doors = {B = 'purple', R = 'purple'}, key = nil},
+    [25] = {x = -15680, y = -2640, width = 8, height = 8, type = 'area', adjacentAreas = nil, doors = {B = 'purple'}, key = 'green'},
+    [26] = {x = -18320, y = -640, width = 8, height = 8, type = 'area', adjacentAreas = nil, doors = {R = 'blue'}, key = nil},
     [27] = {x = -18560, y = 2560, width = 26, height = 22, type = 'area', adjacentAreas = {[1] = {areaID = 28, doorID = 2}, [2] = {areaID = 29, doorID = 2}}, doors = {T = 'red'}, key = nil},
     [28] = {x = -18240, y = 6160, width = 8, height = 8, type = 'area', adjacentAreas = nil, doors = {T = 'purple'}, key = nil},
     [29] = {x = -14400, y = 6160, width = 8, height = 8, type = 'area', adjacentAreas = nil, doors = {T = 'purple'}, key = nil},
@@ -235,12 +235,12 @@ GMapAreaDefinitions = {
     [34] = {x = 13520, y = 4720, width = 20, height = 20, type = 'area', adjacentAreas = {[1] = {areaID = 35, doorID = 2}}, doors = {L = 'purple'}, key = nil},
     [35] = {x = 15360, y = 8000, width = 8, height = 8, type = 'area', adjacentAreas = nil, doors = {T = 'purple'}, key = 'blue'},
     [36] = {x = 16480, y = -160, width = 24, height = 24, type = 'area', adjacentAreas = {[1] = {areaID = 37, doorID = 2}}, doors = {T = 'green'}, key = nil},
-    [37] = {x = 21280, y = 3760, width = 8, height = 8, type = 'area', adjacentAreas = nil, doors = {T = 'purple'}, key = 'red'},
+    [37] = {x = 21280, y = 3760, width = 8, height = 8, type = 'area', adjacentAreas = nil, doors = {T = 'purple'}, key = 'red'}
 }
 
 -- (x, y) coordinates for each key
 GKeyDefinitions = {
     [1] = {id = 4, areaID = 37, x = 23580, y = 4780, quadID = 1},  -- red
     [2] = {id = 3, areaID = 35, x = 15460, y = 9038, quadID = 2},  -- blue
-    [3] = {id = 5, areaID = 25, x = -17580, y = -1020, quadID = 3} -- green
+    [3] = {id = 5, areaID = 25, x = -15580, y = -2560, quadID = 3} -- green
 }

@@ -266,7 +266,7 @@ end
 ]]
 function DoorSystem:getAreaDoors(areaID)
     local areaDoors = {}
-    -- ensure this is an area, not a corridor
+    -- check if the area has any doors to return
     if not self.doors then
         return areaDoors
     end
@@ -275,7 +275,7 @@ function DoorSystem:getAreaDoors(areaID)
             table.insert(areaDoors, door)
         end
     end
-    -- get MapArea definition o the current area
+    -- get MapArea definition of the current area
     local areaDef = self.map:getAreaDefinition(areaID)
     -- check if the area has adjacent areas
     if areaDef.adjacentAreas then

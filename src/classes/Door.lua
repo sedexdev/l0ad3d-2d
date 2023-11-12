@@ -78,7 +78,6 @@ end
         nil
 ]]
 function Door:proximity(player)
-    local doorProximity = 250
     -- locked door conditions
     local aboveLocked = (player.y + player.height) > self.leftY + H_DOOR_HEIGHT and (player.y + player.height) > (self.rightY + H_DOOR_HEIGHT)
     local belowLocked = player.y < (self.leftY - H_DOOR_HEIGHT) and player.y < (self.rightY - H_DOOR_HEIGHT)
@@ -88,8 +87,8 @@ function Door:proximity(player)
         -- x proximity is the same no matter which side the Player object is on
         local xProximity = (player.x + PLAYER_CORRECTION) > self.leftX and (player.x + player.width) - PLAYER_CORRECTION < (self.rightX + H_DOOR_WIDTH)
         -- proximity conditions
-        local aboveYProximity = (self.leftY - (player.y + player.height) <= doorProximity and self.rightY - (player.y + player.height) <= doorProximity) and xProximity
-        local belowYProximity = (player.y - (self.leftY + H_DOOR_HEIGHT) <= doorProximity and player.y - (self.rightY + H_DOOR_HEIGHT) <= doorProximity) and xProximity
+        local aboveYProximity = (self.leftY - (player.y + player.height) <= DOOR_PROXIMITY and self.rightY - (player.y + player.height) <= DOOR_PROXIMITY) and xProximity
+        local belowYProximity = (player.y - (self.leftY + H_DOOR_HEIGHT) <= DOOR_PROXIMITY and player.y - (self.rightY + H_DOOR_HEIGHT) <= DOOR_PROXIMITY) and xProximity
         if self.playerLocation == 'above' then
             return self:proximityHelper(aboveLocked, aboveYProximity)
         end
@@ -100,8 +99,8 @@ function Door:proximity(player)
         -- y proximity is the same no matter which side the Player object is on
         local yProximity = player.y + PLAYER_CORRECTION > self.rightY and (player.y + player.height) - PLAYER_CORRECTION < (self.leftY + V_DOOR_HEIGHT)
         -- proximity conditions
-        local leftXProximity = (self.leftX - (player.x + player.width) <= doorProximity and self.rightX - (player.x + player.width) <= doorProximity) and yProximity
-        local rightXProximity = (player.x - (self.leftX + H_DOOR_WIDTH) <= doorProximity and player.x - (self.rightX + H_DOOR_WIDTH) <= doorProximity) and yProximity
+        local leftXProximity = (self.leftX - (player.x + player.width) <= DOOR_PROXIMITY and self.rightX - (player.x + player.width) <= DOOR_PROXIMITY) and yProximity
+        local rightXProximity = (player.x - (self.leftX + H_DOOR_WIDTH) <= DOOR_PROXIMITY and player.x - (self.rightX + H_DOOR_WIDTH) <= DOOR_PROXIMITY) and yProximity
         if self.playerLocation == 'left' then
             return self:proximityHelper(leftLocked, leftXProximity)
         end

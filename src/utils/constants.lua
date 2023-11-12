@@ -63,6 +63,7 @@ V_DOOR_HEIGHT = 32 * 5
 
 -- correction for Player object to fit through doorways
 PLAYER_CORRECTION = 120
+DOOR_PROXIMITY = 250
 
 -- IDs for each door sprite based on colour
 DOOR_IDS = {
