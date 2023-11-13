@@ -85,14 +85,15 @@ end
     Returns:
         nil
 ]]
-function PowerUpSystem:initialiseAll()
+function PowerUpSystem:spawn()
     self:initialiseCrates()
     self:initialiseKeys()
     -- self:initialisePowerUps()
 end
 
 --[[
-    Spawns crates all over the map in random locations
+    Spawns crates all over the map in random locations. Crates
+    have a random chance of spawning a PowerUp underneath them
 
     Params:
         none
@@ -100,7 +101,189 @@ end
         nil
 ]]
 function PowerUpSystem:initialiseCrates()
+    local crateID = 1
+    local startAreaID = 17
+    for i = startAreaID, #GMapAreaDefinitions do
+        -- get the area of the area
+        local roomArea = GMapAreaDefinitions[i].x * GMapAreaDefinitions[i].y
+        -- generate a random number of crates dependent on room size
+        local startCount
+        local endCount
+        local numCrates
+        if roomArea < 64 then
+            startCount = 1
+            endCount = 3
+        elseif roomArea == 64 then
+            startCount = 4
+            endCount = 6
+        else
+            startCount = 6
+            endCount = 8
+        end
+        numCrates = math.random(startCount, endCount)
+        local prevLocation = {x = nil, y = nil}
+        for j = 1, numCrates do
+            -- determine an (x, y) for the crate based on room size
+            local x, y = self:setCrateXYCoordinates(i, roomArea, prevLocation)
+            -- create the crate type PowerUp objects and add to self.crates
+            local crate = PowerUp(
+                crateID,
+                i,
+                x, y,
+                'crate',
+                1 -- quadID of 1
+            )
+            table.insert(self.crates, crate)
+            crateID = crateID + 1
+        end
+
+        -- set a random chance of hiding a powerup under the crate
+
+        -- write a separate function to randomly spawn powerups and assign same (x, y) as the crate
+
+    end
+end
+
+--[[
+    Determines an (x, y) coordinate for a crate type PowerUp
+    object based on the area of a MapArea object and the location
+    of its doors
+
+    Params:
+        areaID: number - ID of the MapArea to get door information
+        roomArea: number - area of the MapArea object
+        prevLocation: table - (x, y) of the last generated crate
+    Returns:
+        table: (x, y) coordinates of crate
+]]
+function PowerUpSystem:setCrateXYCoordinates(areaID, roomArea, prevLocation)
+    local edgeOffset = 100
+    local x, y
+    local areaDef = GMapAreaDefinitions[areaID]
+    local doors = areaDef.doors
+    local edges = {'L', 'T', 'R', 'B'}
+    local edge = edges[math.random(1, 4)]
+    -- if this is the first crate
+    if not prevLocation.x and not prevLocation.y then
+        if edge == 'L' or edge == 'R' then
+            -- MapArea y conditions
+            local yTop = areaDef.y
+            local yCenter = areaDef.y + (areaDef.height * FLOOR_TILE_HEIGHT / 2)
+            local yBottom = areaDef.y + (areaDef.height * FLOOR_TILE_HEIGHT)
+            -- x will be constant for each crate dependent on edge
+            x = edge == 'L' and areaDef.x + edgeOffset or areaDef.x + (areaDef.wdth * FLOOR_TILE_WIDTH) - CRATE_WIDTH - edgeOffset
+            if edge == 'L' then
+                if doors.L then
+                    -- don't include door location in y coordinate
+                    local yLocations = {
+                        math.random(areaDef.y, yCenter - CRATE_HEIGHT - edgeOffset),
+                        math.random(yCenter + CRATE_HEIGHT + edgeOffset, yBottom - CRATE_HEIGHT - edgeOffset)
+                    }
+                    -- pick random locatio either above or below door
+                    y = yLocations[math.random(2)]
+                else
+                    y = math.random(yTop + edgeOffset, yBottom - CRATE_HEIGHT - edgeOffset)
+                end
+            elseif edge == 'R' then
+                if doors.R then
+                    -- don't include door location in y coordinate
+                    local yLocations = {
+                        math.random(areaDef.y, yCenter - CRATE_HEIGHT - edgeOffset),
+                        math.random(yCenter + CRATE_HEIGHT + edgeOffset, yBottom - CRATE_HEIGHT - edgeOffset)
+                    }
+                    -- pick random locatio either above or below door
+                    y = yLocations[math.random(2)]
+                else
+                    y = math.random(yTop + edgeOffset, yBottom - CRATE_HEIGHT - edgeOffset)
+                end
+            end
+        end
+        if edge == 'T' or edge == 'B' then
+            -- MapArea x conditions
+            local xTop = areaDef.x
+            local xCenter = areaDef.x + (areaDef.width * FLOOR_TILE_WIDTH / 2)
+            local xBottom = areaDef.x + (areaDef.width * FLOOR_TILE_WIDTH)
+            -- y will be constant for each crate dependent on edge
+            y = edge == 'T' and areaDef.y + edgeOffset or areaDef.y + (areaDef.width * FLOOR_TILE_HEIGHT) - CRATE_HEIGHT - edgeOffset
+            if edge == 'T' then
+                if doors.T then
+                    -- don't include door location in x coordinate
+                    local xLocations = {
+                        math.random(areaDef.x, xCenter - CRATE_WIDTH - edgeOffset),
+                        math.random(xCenter + CRATE_WIDTH + edgeOffset, xBottom - CRATE_WIDTH - edgeOffset)
+                    }
+                    -- pick random location either left or right of door
+                    x = xLocations[math.random(2)]
+                else
+                    x = math.random(xTop + edgeOffset, xBottom - CRATE_WIDTH - edgeOffset)
+                end
+            elseif edge == 'B' then
+                if doors.B then
+                    -- don't include door location in x coordinate
+                    local xLocations = {
+                        math.random(areaDef.x, xCenter - CRATE_WIDTH - edgeOffset),
+                        math.random(xCenter + CRATE_WIDTH + edgeOffset, xBottom - CRATE_WIDTH - edgeOffset)
+                    }
+                    -- pick random locatio either above or below door
+                    x = xLocations[math.random(2)]
+                else
+                    x = math.random(xTop + edgeOffset, xBottom - CRATE_WIDTH - edgeOffset)
+                end
+            end
+        end
+    else
+        -- if a crate location has already been spawned check random (x, y) don't overlap previous crate
+
+    end
+    prevLocation.x = x
+    prevLocation.y = y
+    return x, y
+end
+
+--[[
+    Helper function to set x crate coordinate to reduce
+    bulk in the function above
+        
+    Params:
+        TBC...
+    Returns:
+        TBC...
+]]
+function PowerUpSystem:setCrateXCoordinatesHelper()
     
+end
+
+--[[
+    Helper function to set y crate coordinate to reduce
+    bulk in the function above
+        
+    Params:
+        TBC...
+    Returns:
+        TBC...
+]]
+function PowerUpSystem:setCrateYCoordinatesHelper(areaDef, doorEdge)
+    -- define edge offset to stop crates touching walls
+    local edgeOffset = 100
+    -- define y boundarys
+    local yTop = areaDef.y
+    local yCenter = areaDef.y + (areaDef.height * FLOOR_TILE_HEIGHT / 2)
+    local yBottom = areaDef.y + (areaDef.height * FLOOR_TILE_HEIGHT)
+    -- declare y but don't initialise
+    local y
+    -- check if the edge has a door
+    if doorEdge then
+        -- don't include door location in y coordinate
+        local yLocations = {
+            math.random(areaDef.y, yCenter - CRATE_HEIGHT - edgeOffset),
+            math.random(yCenter + CRATE_HEIGHT + edgeOffset, yBottom - CRATE_HEIGHT - edgeOffset)
+        }
+        -- pick random location either side of the door
+        y = yLocations[math.random(2)]
+    else
+        y = math.random(yTop + edgeOffset, yBottom - CRATE_HEIGHT - edgeOffset)
+    end
+    return y
 end
 
 --[[

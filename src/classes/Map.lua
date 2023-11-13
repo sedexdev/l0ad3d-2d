@@ -124,7 +124,7 @@ function Map:generateLevel()
     -- create the Door objects in the DoorSystem
     self.doorSystem:initialiseDoors(self.areas)
     -- create powerups, crates, and keys
-    self.powerupSystem:initialiseAll()
+    self.powerupSystem:spawn()
     -- update powerups so more are spawned as the level goes on
     -- create enemies
     -- update enemies so more are spawned as the level goes on

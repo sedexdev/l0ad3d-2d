@@ -119,7 +119,7 @@ GQuads = {
     ['character2'] = GenerateQuads(GTextures['character2'], 384, 384),
     ['grunt'] = GenerateQuads(GTextures['grunt'], 128, 128),
     ['boss'] = GenerateQuads(GTextures['boss'], 128, 128),
-    ['crate'] = GenerateQuads(GTextures['crate'], 128, 128),
+    ['crates'] = GenerateQuads(GTextures['crate'], 128, 128),
     ['powerups'] = GenerateQuads(GTextures['powerups'], 64, 64),
     ['keys'] = GenerateQuads(GTextures['keys'], 64, 64)
 }
