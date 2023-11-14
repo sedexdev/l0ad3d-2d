@@ -43,7 +43,7 @@ GTextures = {
     ['grunt'] = love.graphics.newImage('graphics/grunt.png'),
     ['turret']= love.graphics.newImage('graphics/turret.png'),
     ['boss']= love.graphics.newImage('graphics/boss.png'),
-    ['crate']= love.graphics.newImage('graphics/crate.png'),
+    ['crates']= love.graphics.newImage('graphics/crate.png'),
     ['powerups']= love.graphics.newImage('graphics/powerups.png'),
     ['keys']= love.graphics.newImage('graphics/keys.png')
 }
@@ -119,7 +119,7 @@ GQuads = {
     ['character2'] = GenerateQuads(GTextures['character2'], 384, 384),
     ['grunt'] = GenerateQuads(GTextures['grunt'], 128, 128),
     ['boss'] = GenerateQuads(GTextures['boss'], 128, 128),
-    ['crates'] = GenerateQuads(GTextures['crate'], 128, 128),
+    ['crates'] = GenerateQuads(GTextures['crates'], 128, 128),
     ['powerups'] = GenerateQuads(GTextures['powerups'], 64, 64),
     ['keys'] = GenerateQuads(GTextures['keys'], 64, 64)
 }

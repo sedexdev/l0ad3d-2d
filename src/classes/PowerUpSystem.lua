@@ -65,13 +65,19 @@ end
         none
 ]]
 function PowerUpSystem:render()
+    -- keys
+    for _, key in pairs(self.keys) do
+        key:render()
+    end
+    -- crates
+    for _, crate in pairs(self.crates) do
+        crate:render()
+    end
+    -- powerups
     for _, category in pairs(self.powerups) do
         for _, powerup in pairs(category) do
             powerup:render()
         end
-    end
-    for _, key in pairs(self.keys) do
-        key:render()
     end
 end
 
@@ -122,7 +128,7 @@ function PowerUpSystem:initialiseCrates()
         end
         numCrates = math.random(startCount, endCount)
         local prevLocation = {x = nil, y = nil}
-        for j = 1, numCrates do
+        for _ = 1, numCrates do
             -- determine an (x, y) for the crate based on room size
             local x, y = self:setCrateXYCoordinates(i, prevLocation)
             -- create the crate type PowerUp objects and add to self.crates
@@ -149,6 +155,8 @@ end
     object based on the area of a MapArea object and the location
     of its doors
 
+    TODO: fix overlapping crate check
+
     Params:
         areaID: number - ID of the MapArea to get door information
         prevLocation: table - (x, y) of the last generated crate
@@ -156,35 +164,22 @@ end
         table: (x, y) coordinates of crate
 ]]
 function PowerUpSystem:setCrateXYCoordinates(areaID, prevLocation)
-    local edgeOffset = 100
+    local edgeOffset = 50
     local x, y
-    local areaDef = GMapAreaDefinitions[areaID]
-    local doors = areaDef.doors
     local edges = {'L', 'T', 'R', 'B'}
     local edge = edges[math.random(1, 4)]
     -- if this is the first crate
     if not prevLocation.x and not prevLocation.y then
-        if edge == 'L' or edge == 'R' then
-            -- x will be constant for each crate dependent on edge
-            x = edge == 'L' and areaDef.x + edgeOffset or areaDef.x + (areaDef.width * FLOOR_TILE_WIDTH) - CRATE_WIDTH - edgeOffset
-            if edge == 'L' then
-                y = self:setCrateYCoordinateHelper(areaDef, doors.L)
-            elseif edge == 'R' then
-                y = self:setCrateYCoordinateHelper(areaDef, doors.R)
-            end
-        end
-        if edge == 'T' or edge == 'B' then
-            -- y will be constant for each crate dependent on edge
-            y = edge == 'T' and areaDef.y + edgeOffset or areaDef.y + (areaDef.height * FLOOR_TILE_HEIGHT) - CRATE_HEIGHT - edgeOffset
-            if edge == 'T' then
-                x = self:setCrateXCoordinateHelper(areaDef, doors.T)
-            elseif edge == 'B' then
-                x = self:setCrateXCoordinateHelper(areaDef, doors.B)
-            end
-        end
+        x, y = self:getCrateXYCoordinates(edge, GMapAreaDefinitions[areaID], edgeOffset)
     else
         -- if a crate location has already been spawned check random (x, y) don't overlap previous crate
-
+        x, y = self:getCrateXYCoordinates(edge, GMapAreaDefinitions[areaID], edgeOffset)
+        -- check (x, y) do not overlap the previous crate
+        local xOverlap = (prevLocation.x < x and x < prevLocation.x + CRATE_WIDTH) or (x + CRATE_WIDTH > prevLocation.x and prevLocation.x + CRATE_WIDTH < x + CRATE_WIDTH)
+        local yOverlap = (prevLocation.y < y and y < prevLocation.y + CRATE_HEIGHT) or (y + CRATE_HEIGHT > prevLocation.y and prevLocation.y + CRATE_HEIGHT < y + CRATE_HEIGHT)
+        if xOverlap or yOverlap then
+            self:setCrateXYCoordinates(areaID, prevLocation)
+        end
     end
     prevLocation.x = x
     prevLocation.y = y
@@ -192,8 +187,43 @@ function PowerUpSystem:setCrateXYCoordinates(areaID, prevLocation)
 end
 
 --[[
-    Helper function to set x crate coordinate to reduce
-    bulk in the function above
+    Gets the (x, y) crate coordinates to return to the setCrateXYCoordinates 
+    function using the getCrateXCoordinateHelper and getCrateYCoordinateHelper
+    getter helper functions
+
+    Params:
+        edge: string - wall edge to place the crate against
+        areaDef: table - MapArea definition
+        edgeOffset: number - wall offset for palcing the crate
+    Returns:
+        table: (x, y) coordinates of the crate
+]]
+function PowerUpSystem:getCrateXYCoordinates(edge, areaDef, edgeOffset)
+    local x, y
+    if edge == 'L' or edge == 'R' then
+        -- x will be constant for each crate dependent on edge
+        x = edge == 'L' and areaDef.x + edgeOffset or areaDef.x + (areaDef.width * FLOOR_TILE_WIDTH) - CRATE_WIDTH - edgeOffset
+        if edge == 'L' then
+            y = self:getCrateYCoordinateHelper(areaDef, areaDef.doors.L)
+        elseif edge == 'R' then
+            y = self:getCrateYCoordinateHelper(areaDef, areaDef.doors.R)
+        end
+    end
+    if edge == 'T' or edge == 'B' then
+        -- y will be constant for each crate dependent on edge
+        y = edge == 'T' and areaDef.y + edgeOffset or areaDef.y + (areaDef.height * FLOOR_TILE_HEIGHT) - CRATE_HEIGHT - edgeOffset
+        if edge == 'T' then
+            x = self:getCrateXCoordinateHelper(areaDef, areaDef.doors.T)
+        elseif edge == 'B' then
+            x = self:getCrateXCoordinateHelper(areaDef, areaDef.doors.B)
+        end
+    end
+    return x, y
+end
+
+--[[
+    Helper function to get x crate coordinate to reduce
+    bulk in the getCrateXYCoordinates function
         
     Params:
         areaDef: table - definition of the MapArea object
@@ -201,7 +231,7 @@ end
     Returns:
         number: x coordinate of the crate
 ]]
-function PowerUpSystem:setCrateXCoordinateHelper(areaDef, doorEdge)
+function PowerUpSystem:getCrateXCoordinateHelper(areaDef, doorEdge)
     -- define edge offset to stop crates touching walls
     local edgeOffset = 100
     -- MapArea x conditions
@@ -226,8 +256,8 @@ function PowerUpSystem:setCrateXCoordinateHelper(areaDef, doorEdge)
 end
 
 --[[
-    Helper function to set y crate coordinate to reduce
-    bulk in the function above
+    Helper function to get y crate coordinate to reduce
+    bulk in the getCrateXYCoordinates function
         
         Params:
         areaDef: table - definition of the MapArea object
@@ -235,7 +265,7 @@ end
     Returns:
         number: y coordinate of the crate
 ]]
-function PowerUpSystem:setCrateYCoordinateHelper(areaDef, doorEdge)
+function PowerUpSystem:getCrateYCoordinateHelper(areaDef, doorEdge)
     -- define edge offset to stop crates touching walls
     local edgeOffset = 100
     -- define y boundarys

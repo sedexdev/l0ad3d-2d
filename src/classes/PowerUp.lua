@@ -50,7 +50,7 @@ end
 ]]
 function PowerUp:render()
     love.graphics.setColor(1, 1, 1, 1)
-    local quad = self.type == 'powerup' and GQuads[self.type..'s'][self.id] or GQuads[self.type..'s'][self.quadID]
+    local quad = self.type == 'powerup' and GQuads['powerups'][self.id] or GQuads[self.type..'s'][self.quadID]
     love.graphics.draw(GTextures[self.type..'s'],
         quad,
         self.x, self.y,

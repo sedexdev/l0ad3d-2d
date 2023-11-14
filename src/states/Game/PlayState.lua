@@ -124,10 +124,10 @@ function PlayState:runGameLoop(dt)
             local playerProximity = self.map.collisionSystem:checkDoorProximity(door)
             if playerProximity then
                 -- then check collision with the Door object to avoid Player running over it
-                local playerDoorCollision = self.map.collisionSystem:checkDoorCollsion(door)
-                if playerDoorCollision.detected then
+                local doorCollision = self.map.collisionSystem:checkDoorCollsion(door)
+                if doorCollision.detected then
                     -- and handle the collision if so
-                    self.map.collisionSystem:handlePlayerDoorCollision(door, playerDoorCollision.edge)
+                    self.map.collisionSystem:handleDoorCollision(door, doorCollision.edge)
                 end
             end
         end
@@ -137,6 +137,15 @@ function PlayState:runGameLoop(dt)
         if currentAreaID == key.areaID then
             if self.map.collisionSystem:keyCollision(key) then
                 self.map.powerupSystem:handleKeyCollision(key)
+            end
+        end
+    end
+    -- check for crate collisions in the current area
+    for _, crate in pairs(self.map.powerupSystem.crates) do
+        if currentAreaID == crate.areaID then
+            local crateCollision = self.map.collisionSystem:crateCollision(crate)
+            if crateCollision.detected then
+                self.map.collisionSystem:handleCrateCollision(crate, crateCollision.edge)
             end
         end
     end  

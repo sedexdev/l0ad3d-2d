@@ -23,7 +23,7 @@ function GenerateQuads(atlas, tileWidth, tileHeight)
                 (y - 1) * tileHeight,
                 tileWidth,
                 tileHeight,
-                atlas
+                atlas:getDimensions()
             )
             counter = counter + 1
         end

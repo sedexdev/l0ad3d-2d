@@ -98,3 +98,6 @@ POWERUP_WIDTH = 64 * 2.5
 POWERUP_HEIGHT = 64 * 2.5
 KEY_WIDTH = 64 * 2.5
 KEY_HEIGHT = 64 * 2.5
+
+-- correction for Player to collide with crates
+PLAYER_CRATE_CORRECTION = 160

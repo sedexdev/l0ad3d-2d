@@ -395,7 +395,7 @@ end
     Returns:
         nil
 ]]
-function CollisionSystem:handlePlayerDoorCollision(door, edge)
+function CollisionSystem:handleDoorCollision(door, edge)
     -- check door location to apply appropriate correction
     if edge == 'L' or edge == 'R' then
         if door.playerLocation == 'left' then
@@ -558,4 +558,63 @@ function CollisionSystem:keyCollision(key)
         return false
     end
     return true
+end
+
+--[[
+    Detects a collision with a crate type PowerUp object. Uses
+    AABB collision detection to see if the Player object is
+    overlapping the crate
+
+    Params:
+        key: table - key type PowerUp object to detect
+    Returns:
+        boolean: true if collision detected
+]]
+function CollisionSystem:crateCollision(crate)
+    -- false collision conditions
+    if (self.player.x > crate.x + CRATE_WIDTH) or (crate.x > self.player.x + CHARACTER_WIDTH) then
+        return {detected = false, edge = nil}
+    end
+    if (self.player.y > crate.y + CRATE_HEIGHT) or (crate.y > self.player.y + CHARACTER_HEIGHT) then
+        return {detected = false, edge = nil}
+    end
+    -- true collision conditions
+    local edge
+    local horizontalGap = (self.player.x + PLAYER_CRATE_CORRECTION > crate.x) and (self.player.x + CHARACTER_WIDTH - PLAYER_CRATE_CORRECTION) < crate.x + CRATE_WIDTH
+    local verticalGap = (self.player.y + PLAYER_CRATE_CORRECTION > crate.y) and (self.player.y + CHARACTER_HEIGHT - PLAYER_CRATE_CORRECTION) < crate.y + CRATE_HEIGHT
+    if (self.player.x + CHARACTER_WIDTH - PLAYER_CORRECTION > crate.x) and (self.player.x + CHARACTER_WIDTH < crate.x + CRATE_WIDTH) and verticalGap then
+        edge = 'L'
+    end
+    if (self.player.y + CHARACTER_HEIGHT - PLAYER_CORRECTION > crate.y) and (self.player.y + CHARACTER_HEIGHT < crate.y + CRATE_HEIGHT) and horizontalGap then
+        edge = 'T'
+    end
+    if (self.player.x + PLAYER_CORRECTION < crate.x + CRATE_WIDTH) and (self.player.x > crate.x) and verticalGap then
+        edge = 'R'
+    end
+    if (self.player.y + PLAYER_CORRECTION < crate.y + CRATE_HEIGHT) and (self.player.y > crate.y) and horizontalGap then
+        edge = 'B'
+    end
+    return {detected = true, edge = edge}
+end
+
+--[[
+    Handles the crate collision by setting the Player (x, y) so
+    they cannot run over the crate
+
+    Params:
+        crate: table - crate type PowerUp object the Player has collided with
+        egde: string - edge the collision was detected on
+    Returns:
+        nil
+]]
+function CollisionSystem:handleCrateCollision(crate, edge)
+    if edge == 'L' then
+        self.player.x = crate.x - CHARACTER_WIDTH + PLAYER_CORRECTION
+    elseif edge == 'T' then
+        self.player.y = crate.y - CHARACTER_HEIGHT + PLAYER_CORRECTION
+    elseif edge == 'R' then
+        self.player.x = crate.x + CRATE_WIDTH - PLAYER_CORRECTION
+    elseif edge == 'B' then
+        self.player.y = crate.y + CRATE_HEIGHT - PLAYER_CORRECTION
+    end
 end
