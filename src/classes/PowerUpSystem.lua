@@ -1,6 +1,8 @@
 --[[
     PowerUpSystem: class
 
+    TODO: crates and powerups need to be replaced as the level goes on
+
     Description:
         A powerup system is responsible for spawning powerups and
         handling collision detection with the Player so they can 

@@ -37,20 +37,6 @@ function PlayState:enter(params)
     }
     self.player.stateMachine:change('idle')
 
-    -- Entity (Grunt) stateMachine - TODO: move to EnemySystem
-    self.grunt = params.grunt
-    self.grunt.stateMachine = StateMachine {
-        ['walking'] = function () return GruntWalkingState(self.grunt, self.player) end,
-        ['attacking'] = function () return GruntAttackingState(self.grunt, self.player) end,
-    }
-    self.grunt.stateMachine:change('walking')
-
-    -- Entity (Boss) stateMachine - TODO: move to EnemySystem
-    self.boss = params.boss
-    self.boss.stateMachine = StateMachine {
-        ['walking'] = function () return BossWalkingState(self.boss, self.player) end
-    }
-    self.boss.stateMachine:change('walking')
     -- pause gameplay
     self.paused = false
     self.selected = 1
@@ -163,8 +149,6 @@ function PlayState:runGameLoop(dt)
     self.map:update(dt)
     -- update Entity objects
     self.player:update(dt)
-    self.grunt:update(dt)
-    self.boss:update(dt)
     -- update the camera to track the Player
     self:updateCamera()
 end
@@ -198,8 +182,6 @@ function PlayState:render()
     love.graphics.translate(-math.floor(self.cameraX), -math.floor(self.cameraY))
     self.map:render()
     self.player:render()
-    self.grunt:render()
-    self.boss:render()
     -- show menu if paused
     if self.paused then
         -- draw dark background  

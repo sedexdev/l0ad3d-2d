@@ -618,3 +618,5 @@ function CollisionSystem:handleCrateCollision(crate, edge)
         self.player.y = crate.y + CRATE_HEIGHT - PLAYER_CORRECTION
     end
 end
+
+-- ========================== ENEMY COLLISIONS ==========================

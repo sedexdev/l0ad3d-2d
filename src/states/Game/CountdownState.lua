@@ -24,15 +24,11 @@ CountdownState = Class{__includes = BaseState}
 function CountdownState:enter(params)
     self.highScores = params.highScores
     self.player = params.player
-    self.grunt = params.grunt
-    self.boss = params.boss
     self.map = params.map
     Timer.after(3, function()
         GStateMachine:change('playing', {
             highScores = self.highScores,
             player = self.player,
-            grunt = self.grunt,
-            boss = self.boss,
             map = self.map
         })
     end)
