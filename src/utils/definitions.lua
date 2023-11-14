@@ -235,12 +235,12 @@ GMapAreaDefinitions = {
     [34] = {x = 13520, y = 4720, width = 20, height = 20, type = 'area', adjacentAreas = {[1] = {areaID = 35, doorID = 2}}, doors = {L = 'purple'}, key = nil},
     [35] = {x = 15360, y = 8000, width = 8, height = 8, type = 'area', adjacentAreas = nil, doors = {T = 'purple'}, key = 'blue'},
     [36] = {x = 16480, y = -160, width = 24, height = 24, type = 'area', adjacentAreas = {[1] = {areaID = 37, doorID = 2}}, doors = {T = 'green'}, key = nil},
-    [37] = {x = 21280, y = 3760, width = 8, height = 8, type = 'area', adjacentAreas = nil, doors = {T = 'purple'}, key = 'red'}
+    [37] = {x = 19680, y = 3760, width = 4, height = 4, type = 'area', adjacentAreas = nil, doors = {T = 'purple'}, key = 'red'}
 }
 
 -- (x, y) coordinates for each key
 GKeyDefinitions = {
-    [1] = {id = 4, areaID = 37, x = 23580, y = 4780, quadID = 1},  -- red
+    [1] = {id = 4, areaID = 37, x = 20700, y = 4140, quadID = 1},  -- red
     [2] = {id = 3, areaID = 35, x = 15460, y = 9038, quadID = 2},  -- blue
     [3] = {id = 5, areaID = 25, x = -15580, y = -2560, quadID = 3} -- green
 }

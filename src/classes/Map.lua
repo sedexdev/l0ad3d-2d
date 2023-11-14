@@ -33,7 +33,7 @@ function Map:init(player)
     -- create a CollisionSystem
     self.collisionSystem = CollisionSystem(self.player, self.doorSystem)
     -- create a PowerUpSystem
-    self.powerupSystem = PowerUpSystem(self.player)
+    self.powerupSystem = PowerUpSystem(self.player, self.doorSystem)
 end
 
 --[[

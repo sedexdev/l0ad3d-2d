@@ -22,11 +22,13 @@ PowerUpSystem = Class{}
 
     Params:
         player: table - Player object
+        doorSystem: table - DoorSystem object
     Returns:
         nil
 ]]
-function PowerUpSystem:init(player)
+function PowerUpSystem:init(player, doorSystem)
     self.player = player
+    self.doorSystem = doorSystem
     self.powerups = {
         ['ammo'] = {},
         ['health'] = {},
@@ -36,6 +38,7 @@ function PowerUpSystem:init(player)
     }
     self.crates = {}
     self.keys = {}
+    self.locationCount = 1
 end
 
 --[[
@@ -111,11 +114,9 @@ function PowerUpSystem:initialiseCrates()
     local startAreaID = 17
     for i = startAreaID, #GMapAreaDefinitions do
         -- get the area of the area
-        local roomArea = GMapAreaDefinitions[i].x * GMapAreaDefinitions[i].y
+        local roomArea = GMapAreaDefinitions[i].width * GMapAreaDefinitions[i].height
         -- generate a random number of crates dependent on room size
-        local startCount
-        local endCount
-        local numCrates
+        local startCount, endCount, numCrates
         if roomArea < 64 then
             startCount = 1
             endCount = 3
@@ -127,10 +128,12 @@ function PowerUpSystem:initialiseCrates()
             endCount = 8
         end
         numCrates = math.random(startCount, endCount)
-        local prevLocation = {x = nil, y = nil}
+        local prevLocations = {[1] = {x = nil, y = nil}}
+        -- reset the number of spawned locations before setting the crate (x, y) 
+        self.locationCount = 1
         for _ = 1, numCrates do
             -- determine an (x, y) for the crate based on room size
-            local x, y = self:setCrateXYCoordinates(i, prevLocation)
+            local x, y = self:setCrateXYCoordinates(i, prevLocations)
             -- create the crate type PowerUp objects and add to self.crates
             local crate = PowerUp(
                 crateID,
@@ -159,30 +162,35 @@ end
 
     Params:
         areaID: number - ID of the MapArea to get door information
-        prevLocation: table - (x, y) of the last generated crate
+        prevLocations: table - (x, y) of the last generated crate
     Returns:
         table: (x, y) coordinates of crate
 ]]
-function PowerUpSystem:setCrateXYCoordinates(areaID, prevLocation)
+function PowerUpSystem:setCrateXYCoordinates(areaID, prevLocations)
     local edgeOffset = 50
     local x, y
     local edges = {'L', 'T', 'R', 'B'}
     local edge = edges[math.random(1, 4)]
     -- if this is the first crate
-    if not prevLocation.x and not prevLocation.y then
-        x, y = self:getCrateXYCoordinates(edge, GMapAreaDefinitions[areaID], edgeOffset)
+    if #prevLocations == 1 then
+        x, y = self:getCrateXYCoordinates(edge, areaID, GMapAreaDefinitions[areaID], edgeOffset)
+        self.locationCount = self.locationCount + 1
     else
         -- if a crate location has already been spawned check random (x, y) don't overlap previous crate
-        x, y = self:getCrateXYCoordinates(edge, GMapAreaDefinitions[areaID], edgeOffset)
-        -- check (x, y) do not overlap the previous crate
-        local xOverlap = (prevLocation.x < x and x < prevLocation.x + CRATE_WIDTH) or (x + CRATE_WIDTH > prevLocation.x and prevLocation.x + CRATE_WIDTH < x + CRATE_WIDTH)
-        local yOverlap = (prevLocation.y < y and y < prevLocation.y + CRATE_HEIGHT) or (y + CRATE_HEIGHT > prevLocation.y and prevLocation.y + CRATE_HEIGHT < y + CRATE_HEIGHT)
-        if xOverlap or yOverlap then
-            self:setCrateXYCoordinates(areaID, prevLocation)
+        x, y = self:getCrateXYCoordinates(edge, areaID, GMapAreaDefinitions[areaID], edgeOffset)
+        -- check (x, y) do not overlap any previous crates
+        for _, location in pairs(prevLocations) do
+            if not location.x or not location.y then goto continue end
+            local xOverlap = (location.x < x and x < location.x + CRATE_WIDTH) or (location.x < x + CRATE_WIDTH and x + CRATE_WIDTH < location.x + CRATE_WIDTH)
+            local yOverlap = (location.y < y and y < location.y + CRATE_HEIGHT) or (location.y < y + CRATE_HEIGHT and y + CRATE_HEIGHT < location.y + CRATE_HEIGHT)
+            if xOverlap or yOverlap then
+                return self:setCrateXYCoordinates(areaID, prevLocations)
+            end
+            ::continue::
         end
+        self.locationCount = self.locationCount + 1
     end
-    prevLocation.x = x
-    prevLocation.y = y
+    prevLocations[self.locationCount] = {x = x, y = y}
     return x, y
 end
 
@@ -193,32 +201,69 @@ end
 
     Params:
         edge: string - wall edge to place the crate against
+        areaID: number - ID of this MapArea definition
         areaDef: table - MapArea definition
         edgeOffset: number - wall offset for palcing the crate
     Returns:
         table: (x, y) coordinates of the crate
 ]]
-function PowerUpSystem:getCrateXYCoordinates(edge, areaDef, edgeOffset)
+function PowerUpSystem:getCrateXYCoordinates(edge, areaID, areaDef, edgeOffset)
+    -- get the doors for this MapArea
+    local doors = {
+        leftDoor = false,
+        topDoor = false,
+        rightDoor = false,
+        bottomDoor = false
+    }
+    local areaDoors = self.doorSystem:getAreaDoors(areaID)
+    -- update the boolean table
+    self:setDoorLocations(doors, areaDoors, areaID)
     local x, y
     if edge == 'L' or edge == 'R' then
         -- x will be constant for each crate dependent on edge
         x = edge == 'L' and areaDef.x + edgeOffset or areaDef.x + (areaDef.width * FLOOR_TILE_WIDTH) - CRATE_WIDTH - edgeOffset
         if edge == 'L' then
-            y = self:getCrateYCoordinateHelper(areaDef, areaDef.doors.L)
+            y = self:getCrateYCoordinateHelper(areaDef, doors.leftDoor)
         elseif edge == 'R' then
-            y = self:getCrateYCoordinateHelper(areaDef, areaDef.doors.R)
+            y = self:getCrateYCoordinateHelper(areaDef, doors.rightDoor)
         end
     end
     if edge == 'T' or edge == 'B' then
         -- y will be constant for each crate dependent on edge
         y = edge == 'T' and areaDef.y + edgeOffset or areaDef.y + (areaDef.height * FLOOR_TILE_HEIGHT) - CRATE_HEIGHT - edgeOffset
         if edge == 'T' then
-            x = self:getCrateXCoordinateHelper(areaDef, areaDef.doors.T)
+            x = self:getCrateXCoordinateHelper(areaDef, doors.topDoor)
         elseif edge == 'B' then
-            x = self:getCrateXCoordinateHelper(areaDef, areaDef.doors.B)
+            x = self:getCrateXCoordinateHelper(areaDef, doors.bottomDoor)
         end
     end
     return x, y
+end
+
+--[[
+    Updates a table of doors to help set area crates (x, y)
+
+    Params:
+        doors: table - booleans stating if door is present in area
+        areaDoors: table - all the Door objects in this MapArea
+        areaID: number - MapArea ID
+    Returns:
+        nil
+]]
+function PowerUpSystem:setDoorLocations(doors, areaDoors, areaID)
+    for _, door in pairs(areaDoors) do
+        if door.areaID ~= areaID then
+            if door.id == 1 then doors.rightDoor = true end
+            if door.id == 2 then doors.bottomDoor = true end
+            if door.id == 3 then doors.leftDoor = true end
+            if door.id == 4 then doors.topDoor = true end
+        else
+            if door.id == 1 then doors.leftDoor = true end
+            if door.id == 2 then doors.topDoor = true end
+            if door.id == 3 then doors.rightDoor = true end
+            if door.id == 4 then doors.bottomDoor = true end
+        end
+    end
 end
 
 --[[
@@ -235,22 +280,22 @@ function PowerUpSystem:getCrateXCoordinateHelper(areaDef, doorEdge)
     -- define edge offset to stop crates touching walls
     local edgeOffset = 100
     -- MapArea x conditions
-    local xTop = areaDef.x
+    local xLeft = areaDef.x + edgeOffset
     local xCenter = areaDef.x + (areaDef.width * FLOOR_TILE_WIDTH / 2)
-    local xBottom = areaDef.x + (areaDef.width * FLOOR_TILE_WIDTH)
+    local xRight = areaDef.x + (areaDef.width * FLOOR_TILE_WIDTH) - edgeOffset
     -- declare x but don't initialise
     local x
     -- check if edge has a door
     if doorEdge then
         -- don't include door location in x coordinate
         local xLocations = {
-            math.random(areaDef.x, xCenter - CRATE_WIDTH - edgeOffset),
-            math.random(xCenter + CRATE_WIDTH + edgeOffset, xBottom - CRATE_WIDTH - edgeOffset)
+            math.random(xLeft, xCenter - CRATE_WIDTH - edgeOffset),
+            math.random(xCenter + CRATE_WIDTH + edgeOffset, xRight - CRATE_WIDTH)
         }
         -- pick random location either left or right of door
         x = xLocations[math.random(2)]
     else
-        x = math.random(xTop + edgeOffset, xBottom - CRATE_WIDTH - edgeOffset)
+        x = math.random(xLeft, xRight - CRATE_WIDTH)
     end
     return x
 end
@@ -269,22 +314,22 @@ function PowerUpSystem:getCrateYCoordinateHelper(areaDef, doorEdge)
     -- define edge offset to stop crates touching walls
     local edgeOffset = 100
     -- define y boundarys
-    local yTop = areaDef.y
+    local yTop = areaDef.y + edgeOffset
     local yCenter = areaDef.y + (areaDef.height * FLOOR_TILE_HEIGHT / 2)
-    local yBottom = areaDef.y + (areaDef.height * FLOOR_TILE_HEIGHT)
+    local yBottom = areaDef.y + (areaDef.height * FLOOR_TILE_HEIGHT) - edgeOffset
     -- declare y but don't initialise
     local y
     -- check if the edge has a door
     if doorEdge then
         -- don't include door location in y coordinate
         local yLocations = {
-            math.random(areaDef.y, yCenter - CRATE_HEIGHT - edgeOffset),
-            math.random(yCenter + CRATE_HEIGHT + edgeOffset, yBottom - CRATE_HEIGHT - edgeOffset)
+            math.random(yTop, yCenter - CRATE_HEIGHT - edgeOffset),
+            math.random(yCenter + CRATE_HEIGHT + edgeOffset, yBottom - CRATE_HEIGHT)
         }
         -- pick random location either side of the door
         y = yLocations[math.random(2)]
     else
-        y = math.random(yTop + edgeOffset, yBottom - CRATE_HEIGHT - edgeOffset)
+        y = math.random(yTop, yBottom - CRATE_HEIGHT)
     end
     return y
 end
@@ -322,101 +367,26 @@ end
 ]]
 function PowerUpSystem:initialisePowerUps()
     -- set starting area ID - only add powerups to area type MapArea objects
-    local startAreaID = 17
-    for i = startAreaID, #GMapAreaDefinitions do
-        local areaDef = GMapAreaDefinitions[i]
-        local areaSize = areaDef.width * areaDef.height
-        -- only spawn powerups in the 9 small 8x8 areas (excluding area ID 21)
-        if areaSize == 64 and i ~= 21 then
-            local numPowerUps = math.random(0, 3)
-            local lastPowerUpLocation = {x = nil, y = nil}
-            local totalAreaPowerUps = 0
-            -- while the system has not populated all of the areas powerups 
-            while totalAreaPowerUps ~= numPowerUps do
-                local ammo = math.random(2) == 1 and true or false
-                local health = math.random(2) == 1 and true or false
-                local doubleSpeed = math.random(2) == 1 and true or false
-                local invincible = math.random(2) == 1 and true or false
-                local oneShotBossKill = math.random(2) == 1 and true or false
-                if ammo then
-                    self:PowerUpFactory(i, areaDef, lastPowerUpLocation, 'ammo', 'powerup')
-                    totalAreaPowerUps = totalAreaPowerUps + 1
-                    goto continue
-                end
-                if health then
-                    self:PowerUpFactory(i, areaDef, lastPowerUpLocation, 'health', 'powerup')
-                    totalAreaPowerUps = totalAreaPowerUps + 1
-                    goto continue
-                end
-                if doubleSpeed then
-                    self:PowerUpFactory(i, areaDef, lastPowerUpLocation, 'doubleSpeed', 'powerup')
-                    totalAreaPowerUps = totalAreaPowerUps + 1
-                    goto continue
-                end
-                if invincible then
-                    self:PowerUpFactory(i, areaDef, lastPowerUpLocation, 'invincible', 'powerup')
-                    totalAreaPowerUps = totalAreaPowerUps + 1
-                    goto continue
-                end
-                if oneShotBossKill then
-                    self:PowerUpFactory(i, areaDef, lastPowerUpLocation, 'oneShotBossKill', 'powerup')
-                    totalAreaPowerUps = totalAreaPowerUps + 1
-                    goto continue
-                end
-                ::continue::
-            end
-        end
+    local ammo = math.random(2) == 1 and true or false
+    local health = math.random(2) == 1 and true or false
+    local doubleSpeed = math.random(2) == 1 and true or false
+    local invincible = math.random(2) == 1 and true or false
+    local oneShotBossKill = math.random(2) == 1 and true or false
+    if ammo then
+
     end
-end
+    if health then
 
---[[
-    Inserts a PowerUp object into the correct powerup table within
-    <self.powerups>. Also updates the <lastPowerUpLocation> table
-
-    Params:
-        areaID: number - ID for the area type MapArea object 
-        areaDef: table - definition of the MapArea object
-        lastPowerUpLocation: table - (x, y) of the last PowerUp object
-        name: string - name of the PowerUp object
-    Returns:
-        nil
-]]
-function PowerUpSystem:PowerUpFactory(areaID, areaDef, lastPowerUpLocation, name, type)
-    local x, y = self:setPowerUpCoordinates(areaDef, lastPowerUpLocation)
-    table.insert(self.powerups[name], PowerUp(POWERUP_IDS[name], areaID, x, y, type))
-    lastPowerUpLocation.x = x
-    lastPowerUpLocation.y = y
-end
-
---[[
-    Set the (x, y) coordinates for a powerup. The powerups
-    cannot overlap each other and must not block doorways
-
-    Params:
-        areaDef: table - definition of the MapArea object
-        prevRef: table - contains the (x, y) of the last powerup for this area 
-    Returns:
-        table: (x, y) cooridinates of the powerup
-]]
-function PowerUpSystem:setPowerUpCoordinates(areaDef, prevRef)
-    local x, y
-    local edgeOffset = 100
-    -- set edge opposite door to place powerups against
-    local edge
-    if areaDef.doors.L then edge = 'R' end
-    if areaDef.doors.T then edge = 'B' end
-    if areaDef.doors.R then edge = 'L' end
-    if areaDef.doors.B then edge = 'T' end
-    -- set (x, y) for vertical wall edges
-    if edge == 'L' or edge == 'R' then
-        x = edge == 'L' and areaDef.x + edgeOffset or (areaDef.x + areaDef.width * FLOOR_TILE_WIDTH) - POWERUP_WIDTH - edgeOffset
-        y = prevRef.y and prevRef.y + CRATE_HEIGHT or areaDef.y + edgeOffset
-    else
-    -- set (x, y) for horizontal wall edges
-        y = edge == 'T' and areaDef.y + edgeOffset or (areaDef.y + areaDef.height * FLOOR_TILE_HEIGHT) - POWERUP_HEIGHT - edgeOffset
-        x = prevRef.x and prevRef.x + CRATE_WIDTH or areaDef.x + edgeOffset
     end
-    return x, y
+    if doubleSpeed then
+
+    end
+    if invincible then
+
+    end
+    if oneShotBossKill then
+
+    end
 end
 
 --[[
