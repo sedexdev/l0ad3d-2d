@@ -135,7 +135,7 @@ function PlayState:runGameLoop(dt)
     -- to check for key collisions make sure the Player is in an area with a key
     for _, key in pairs(self.map.powerupSystem.keys) do
         if currentAreaID == key.areaID then
-            if self.map.collisionSystem:keyCollision(key) then
+            if self.map.collisionSystem:objectCollision(key) then
                 self.map.powerupSystem:handleKeyCollision(key)
             end
         end
@@ -148,7 +148,17 @@ function PlayState:runGameLoop(dt)
                 self.map.collisionSystem:handleCrateCollision(crate, crateCollision.edge)
             end
         end
-    end  
+    end
+    -- check for powerup collisions in the current area
+    for _, category in pairs(self.map.powerupSystem.powerups) do
+        for _, powerup in pairs(category) do
+            if currentAreaID == powerup.areaID then
+                if self.map.collisionSystem:objectCollision(powerup) then
+                    self.map.powerupSystem:handlePowerUpCollision(powerup)
+                end
+            end
+        end
+    end
     -- update Map
     self.map:update(dt)
     -- update Entity objects

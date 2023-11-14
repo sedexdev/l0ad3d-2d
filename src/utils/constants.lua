@@ -27,6 +27,9 @@ CHARACTER_SPEED = 1200
 GRUNT_SPEED = 250
 BOSS_SPEED = 400
 
+-- character max health
+MAX_HEALTH = 100
+
 -- movement key bindings
 MOVEMENT_KEYS = {'up', 'right', 'down', 'left', 'w', 'd', 's', 'a'}
 

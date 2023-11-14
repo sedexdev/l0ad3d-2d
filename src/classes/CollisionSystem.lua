@@ -541,20 +541,20 @@ end
 -- ========================== CRATE/KEY/POWERUP COLLISIONS ==========================
 
 --[[
-    Detects a collision with a key type PowerUp object. Uses
+    Detects a collision with key/powerup type PowerUp object. Uses
     AABB collision detection to see if the Player object is
-    overlapping the key
+    overlapping the game object
 
     Params:
-        key: table - key type PowerUp object to detect
+        object: table - key/powerup type PowerUp object to detect
     Returns:
         boolean: true if collision detected
 ]]
-function CollisionSystem:keyCollision(key)
-    if (self.player.x > key.x + KEY_WIDTH) or (key.x > self.player.x + CHARACTER_WIDTH) then
+function CollisionSystem:objectCollision(object)
+    if (self.player.x > object.x + KEY_WIDTH) or (object.x > self.player.x + CHARACTER_WIDTH) then
         return false
     end
-    if (self.player.y > key.y + KEY_HEIGHT) or (key.y > self.player.y + CHARACTER_HEIGHT) then
+    if (self.player.y > object.y + KEY_HEIGHT) or (object.y > self.player.y + CHARACTER_HEIGHT) then
         return false
     end
     return true

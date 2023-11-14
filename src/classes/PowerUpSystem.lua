@@ -1,11 +1,6 @@
 --[[
     PowerUpSystem: class
 
-    TODO:
-        - Crates: spawn crates all over the map and have a chance
-          of finding a power up under one
-        - Initialise keys
-
     Description:
         A powerup system is responsible for spawning powerups and
         handling collision detection with the Player so they can 
@@ -95,9 +90,8 @@ end
         nil
 ]]
 function PowerUpSystem:spawn()
-    self:initialiseCrates()
-    self:initialiseKeys()
-    -- self:initialisePowerUps()
+    self:spawnCrates()
+    self:spawnKeys()
 end
 
 --[[
@@ -109,7 +103,7 @@ end
     Returns:
         nil
 ]]
-function PowerUpSystem:initialiseCrates()
+function PowerUpSystem:spawnCrates()
     local crateID = 1
     local startAreaID = 17
     for i = startAreaID, #GMapAreaDefinitions do
@@ -144,12 +138,13 @@ function PowerUpSystem:initialiseCrates()
             )
             table.insert(self.crates, crate)
             crateID = crateID + 1
+            -- set a random chance of hiding a powerup under the crate
+            local powerUpChance = math.random(1, 4) == 1 and true or false
+            -- assign same (x, y) as the crate
+            if powerUpChance then
+                self:spawnPowerUp(x, y, i)
+            end
         end
-
-        -- set a random chance of hiding a powerup under the crate
-
-        -- write a separate function to randomly spawn powerups and assign same (x, y) as the crate
-
     end
 end
 
@@ -157,8 +152,6 @@ end
     Determines an (x, y) coordinate for a crate type PowerUp
     object based on the area of a MapArea object and the location
     of its doors
-
-    TODO: fix overlapping crate check
 
     Params:
         areaID: number - ID of the MapArea to get door information
@@ -241,7 +234,8 @@ function PowerUpSystem:getCrateXYCoordinates(edge, areaID, areaDef, edgeOffset)
 end
 
 --[[
-    Updates a table of doors to help set area crates (x, y)
+    Updates a table of doors to help set area crates (x, y) so they
+    don't get in the way of doorways
 
     Params:
         doors: table - booleans stating if door is present in area
@@ -335,15 +329,14 @@ function PowerUpSystem:getCrateYCoordinateHelper(areaDef, doorEdge)
 end
 
 --[[
-    Spawns the 3 keys available in the Map in specific 
-    locations
+    Spawns the 3 keys available in the Map in specific locations
 
     Params:
         none
     Returns:
         nil
 ]]
-function PowerUpSystem:initialiseKeys()
+function PowerUpSystem:spawnKeys()
     for i = 1, #GKeyDefinitions do
         table.insert(self.keys, PowerUp(
             GKeyDefinitions[i].id,
@@ -361,32 +354,60 @@ end
     inserts them into the <self.powerups> table
 
     Params:
-        none
+        x: number - x coordinate of the crate covering the PowerUp object
+        y: number - y coordinate of the crate covering the PowerUp object
+        areaID: number - MapArea ID
     Returns:
         nil
 ]]
-function PowerUpSystem:initialisePowerUps()
+function PowerUpSystem:spawnPowerUp(x, y, areaID)
     -- set starting area ID - only add powerups to area type MapArea objects
-    local ammo = math.random(2) == 1 and true or false
-    local health = math.random(2) == 1 and true or false
-    local doubleSpeed = math.random(2) == 1 and true or false
-    local invincible = math.random(2) == 1 and true or false
-    local oneShotBossKill = math.random(2) == 1 and true or false
+    local ammo = math.random(5) == 1 and true or false
     if ammo then
-
+        self:powerUpFactory(POWERUP_IDS['ammo'], areaID, x, y)
     end
+    local health = math.random(5) == 1 and true or false
     if health then
-
+        self:powerUpFactory(POWERUP_IDS['health'], areaID, x, y)
     end
+    local doubleSpeed = math.random(15) == 1 and true or false
     if doubleSpeed then
-
+        self:powerUpFactory(POWERUP_IDS['doubleSpeed'], areaID, x, y)
     end
+    local invincible = math.random(15) == 1 and true or false
     if invincible then
-
+        self:powerUpFactory(POWERUP_IDS['invincible'], areaID, x, y)
     end
+    local oneShotBossKill = math.random(25) == 1 and true or false
     if oneShotBossKill then
-
+        self:powerUpFactory(POWERUP_IDS['oneShotBossKill'], areaID, x, y)
     end
+end
+
+--[[
+    Creates a powerup type PowerUp object and inserts it into
+    the correct sub-table in <self.tables>
+
+    Params:
+        id: number - PowerUp object ID 
+        areaID: number - MapArea ID
+        x: number - x coordinate of the crate covering the PowerUp object
+        y: number - y coordinate of the crate covering the PowerUp object
+    Returns:
+        nil
+]]
+function PowerUpSystem:powerUpFactory(id, areaID, x, y)
+    local powerup = PowerUp(
+        id, areaID,
+        -- center the powerup underneath the crate
+        x + (x / 2) -( POWERUP_WIDTH / 2), y + (y / 2) - (POWERUP_HEIGHT / 2),
+        'powerup'
+    )
+    if id == 1 then  table.insert(self.powerups['doubleSpeed'], powerup) end
+    if id == 2 then  table.insert(self.powerups['health'], powerup) end
+    if id == 3 then  table.insert(self.powerups['ammo'], powerup) end
+    if id == 4 then  table.insert(self.powerups['invincible'], powerup) end
+    if id == 5 then  table.insert(self.powerups['oneShotBossKill'], powerup) end
 end
 
 --[[
@@ -416,4 +437,62 @@ function PowerUpSystem:handleKeyCollision(key)
         end
     end
     table.remove(self.keys, keyIndex)
+end
+
+--[[
+    Handles a powerup collision by removing the powerup from memory 
+    and then adding the powerup to the Player objects powerups table
+
+    Params:
+        powerup: table - powerup type PowerUp object to detect
+    Returns:
+        nil
+]]
+function PowerUpSystem:handlePowerUpCollision(powerup)
+    if powerup.id == 1 then
+        self.player.powerups.doubleSpeed = true
+        self:removePowerUp(powerup, 'doubleSpeed')
+    end
+    if powerup.id == 2 then
+        if self.player.health < MAX_HEALTH then
+            local healthIncrease = 25
+            local currentHealthDiff = MAX_HEALTH - self.player.health
+            if currentHealthDiff < healthIncrease then
+                self.player.health = self.player.health + currentHealthDiff
+            else
+                self.player.health = self.player.health + healthIncrease
+            end
+        end
+    end
+    if powerup.id == 3 then
+        self.player.ammo = self.player.ammo + 1000
+    end
+    if powerup.id == 4 then
+        self.player.powerups.invincible = true
+        self:removePowerUp(powerup, 'invincible')
+    end
+    if powerup.id == 5 then
+        self.player.powerups.oneShotBossKill = true
+        self:removePowerUp(powerup, 'oneShotBossKill')
+    end
+end
+
+--[[
+    Removes a powerup type PowerUp object from memory after a 
+    Player collision
+
+    Params:
+        object: table - PowerUp object to remove
+        name: string - name of the PowerUp object
+    Returns:
+        nil
+]]
+function PowerUpSystem:removePowerUp(object, name)
+    for i, powerup in pairs(self.powerups[name]) do
+        -- if locations match
+        if object.x == powerup.x and object.y == powerup.y then
+            table.remove(self.powerups[name], i)
+            break
+        end
+    end
 end
