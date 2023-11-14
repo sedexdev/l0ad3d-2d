@@ -432,19 +432,23 @@ function CollisionSystem:detectAreaDoorway(area, door, conditions)
         -- if Player is in the doorway and the door is not locked then allow through
         local detectionCondition, doorID = self:detectAdjacentDoorway(area, door.areaID)
         if detectionCondition then
+            local leftCondition = self.player.x > area.x - V_DOOR_WIDTH
+            local rightCondition = (self.player.x + self.player.width) < area.x + (area.width * FLOOR_TILE_WIDTH) + V_DOOR_WIDTH
+            local topCondition = self.player.y > area.y - H_DOOR_HEIGHT
+            local bottomCondition = (self.player.y + self.player.height) < area.y + (area.height * FLOOR_TILE_HEIGHT) + H_DOOR_HEIGHT
             -- door ID required to fix bug allowing Player to pass through wall opposite adjacent doorway 
-            if doorID == 1 then
-                return self.player.x > area.x - V_DOOR_WIDTH
+            if doorID == 1 or doorID == 3 then
+                return leftCondition and rightCondition
             end
-            if doorID == 2 then
-                return self.player.y > area.y - H_DOOR_HEIGHT
+            if doorID == 2 or door == 4 then
+                return topCondition and bottomCondition
             end
-            if doorID == 3 then
-                return (self.player.x + self.player.width) < area.x + (area.width * FLOOR_TILE_WIDTH) + V_DOOR_WIDTH
-            end
-            if doorID == 4 then
-                return (self.player.y + self.player.height) < area.y + (area.height * FLOOR_TILE_HEIGHT) + H_DOOR_HEIGHT
-            end
+            -- if doorID == 3 then
+            --     return (self.player.x + self.player.width) < area.x + (area.width * FLOOR_TILE_WIDTH) + V_DOOR_WIDTH
+            -- end
+            -- if doorID == 4 then
+            --     return (self.player.y + self.player.height) < area.y + (area.height * FLOOR_TILE_HEIGHT) + H_DOOR_HEIGHT
+            -- end
         end
     end
     -- detect standard area doorways and Player object proximity
