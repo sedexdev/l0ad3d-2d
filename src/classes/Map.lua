@@ -34,8 +34,10 @@ function Map:init(player)
     self.collisionSystem = CollisionSystem(self.player, self.doorSystem)
     -- create a PowerUpSystem
     self.powerupSystem = PowerUpSystem(self.player, self.doorSystem)
+    -- create an instance of SpriteBatch for Grunt Entity objects
+    self.gruntSpriteBatch = SpriteBatcher(GTextures['grunt'])
     -- create an EnemySystem
-    self.enemySystem = EnemySystem(self.player)
+    self.enemySystem = EnemySystem(self.player, self.gruntSpriteBatch)
 end
 
 --[[

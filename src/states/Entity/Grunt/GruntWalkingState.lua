@@ -19,7 +19,8 @@ GruntWalkingState = Class{__includes = BaseState}
     Returns:
         nil
 ]]
-function GruntWalkingState:init(grunt, player)
+function GruntWalkingState:init(grunt, player, gruntSpriteBatch)
+    self.gruntSpriteBatch = gruntSpriteBatch
     self.grunt = grunt
     self.player = player
 end
@@ -103,11 +104,9 @@ end
 ]]
 function GruntWalkingState:render()
     local currentFrame = self.grunt.animations['walking-'..self.grunt.direction]:getCurrentFrame()
-    love.graphics.setColor(1, 1, 1, 1)
-    love.graphics.draw(self.grunt.texture,
-        GQuads['grunt'][currentFrame],
-        self.grunt.x, self.grunt.y,
-        0,
-        3, 3
-    )
+    -- add the Grunt current quad to the SpriteBatch
+    self.gruntSpriteBatch:clear()
+    self.gruntSpriteBatch:add(GQuads['grunt'][currentFrame], self.grunt.x, self.grunt.y, 3, 3)
+    -- render the Grunt quads
+    self.gruntSpriteBatch:draw()
 end

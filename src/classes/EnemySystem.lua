@@ -18,11 +18,13 @@ EnemySystem = Class{}
 
     Params:
         player: table - Player object
+        gruntSpriteBatch: SpriteBatch - collection of Grunt Entity quads
     Returns:
         nil
 ]]
-function EnemySystem:init(player)
+function EnemySystem:init(player, gruntSpriteBatch)
     self.player = player
+    self.gruntSpriteBatch = gruntSpriteBatch
     self.grunts = {}
     self.turrets = {}
     self.boss = nil
@@ -73,30 +75,36 @@ end
 ]]
 function EnemySystem:spawn(areas)
     for _, area in pairs(areas) do
-        local roomArea = area.width * area.height
-        local startCount, endCount, numGrunts
-        if roomArea < 64 then
-            startCount = 3
-            endCount = 5
-        elseif roomArea == 64 then
-            startCount = 6
-            endCount = 10
-        else
-            startCount = 11
-            endCount = 15
-        end
-        numGrunts = math.random(startCount, endCount)
-        for _ = 1, numGrunts do
-            local grunt = Grunt(GAnimationDefintions['grunt'], GGruntDefinition)
-            grunt.x = math.random(area.x + GRUNT_WIDTH, area.x + (area.width * FLOOR_TILE_WIDTH) - GRUNT_WIDTH)
-            grunt.y = math.random(area.y + GRUNT_HEIGHT, area.y + (area.height * FLOOR_TILE_HEIGHT) - GRUNT_HEIGHT)
-            grunt.areaID = area.id
-            grunt.stateMachine = StateMachine {
-                ['walking'] = function () return GruntWalkingState(grunt, self.player) end,
-                ['attacking'] = function () return GruntAttackingState(grunt, self.player) end,
-            }
-            grunt.stateMachine:change('walking')
-            table.insert(self.grunts, grunt)
+        -- only spawn Grunts in area type areas
+        if area.id >= 17 then
+            local roomArea = area.width * area.height
+            local startCount, endCount, numGrunts
+            if roomArea < 64 then
+                startCount = 2
+                endCount = 3
+            elseif roomArea == 64 then
+                startCount = 4
+                endCount = 8
+            else
+                startCount = 9
+                endCount = 12
+            end
+            numGrunts = math.random(startCount, endCount)
+            for _ = 1, numGrunts do
+                local grunt = Grunt(GAnimationDefintions['grunt'], GGruntDefinition)
+                grunt.x = math.random(area.x + GRUNT_WIDTH, area.x + (area.width * FLOOR_TILE_WIDTH) - GRUNT_WIDTH)
+                grunt.y = math.random(area.y + GRUNT_HEIGHT, area.y + (area.height * FLOOR_TILE_HEIGHT) - GRUNT_HEIGHT)
+                -- give Grunts different speeds
+                grunt.dx = math.random(150, 200)
+                grunt.dy = grunt.dx
+                grunt.areaID = area.id
+                grunt.stateMachine = StateMachine {
+                    ['walking'] = function () return GruntWalkingState(grunt, self.player, self.gruntSpriteBatch) end,
+                    ['attacking'] = function () return GruntAttackingState(grunt, self.player, self.gruntSpriteBatch) end,
+                }
+                grunt.stateMachine:change('walking')
+                table.insert(self.grunts, grunt)
+            end
         end
         -- spawn the boss in area 27
         if area.id == 27 then
