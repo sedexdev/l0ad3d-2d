@@ -2,6 +2,7 @@
     EnemySystem: class
 
     TODO: respawn enemies as the game goes on
+          implement enemy proximity to only move towards Player in a certain range
 
     Description:
         An enemy system is responsible for spawning and removing
@@ -20,15 +21,17 @@ EnemySystem = Class{}
 
     Params:
         player: table - Player object
-        collisionSystem: table - collisionSystem object
         gruntSpriteBatch: SpriteBatch - collection of Grunt Entity quads
+        collisionSystem: table - collisionSystem object
+        doorSystem: table - DoorSystem object
     Returns:
         nil
 ]]
-function EnemySystem:init(player, collisionSystem, gruntSpriteBatch)
+function EnemySystem:init(player, gruntSpriteBatch, collisionSystem, doorSystem)
     self.player = player
-    self.collisionSystem = collisionSystem
     self.gruntSpriteBatch = gruntSpriteBatch
+    self.collisionSystem = collisionSystem
+    self.doorSystem = doorSystem
     self.grunts = {}
     self.turrets = {}
     self.boss = nil
@@ -84,6 +87,29 @@ function EnemySystem:render()
         turret:render()
     end
     self.boss:render()
+end
+
+-- ========================== GET ENEMY OBJECTS ==========================
+
+--[[
+    Gets all Grunt Entity objects in the current and adjacent 
+    areas as defined in <definitions.lua:GAreaAdjacencyDefinitions>
+
+    Params:
+        areaID: number - ID of th current area
+    Returns:
+        table: Grunt Entity object list
+]]
+function EnemySystem:getGrunts(areaID)
+    local gruntObjects = {}
+    for _, adjacentID in pairs(GAreaAdjacencyDefinitions[areaID]) do
+        for _, grunt in pairs(self.grunts) do
+            if grunt.areaID == areaID or grunt.areaID == adjacentID then
+                table.insert(gruntObjects, grunt)
+            end
+        end
+    end
+    return gruntObjects
 end
 
 -- ========================== SPAWNING ==========================
@@ -333,5 +359,52 @@ function EnemySystem:updateGruntVelocity(grunt, player, dt)
         -- grunt is NORTH of player
         grunt.direction = 'south'
         grunt.y = grunt.y + grunt.dy * dt
+    end
+end
+
+--[[
+    Updates the (x, y) location of enamy type Entity objects in 
+    relation to all doors nearby as defined in GMapAreaDefinitions
+
+    Params:
+        none
+    Returns:
+        nil
+]]
+function EnemySystem:setEnemyLocation()
+    -- use self.player.currentArea.id for area ID
+    local areaID = self.player.currentArea.id
+    for _, adjacentID in pairs(GAreaAdjacencyDefinitions[areaID]) do
+        for _, grunt in pairs(self.grunts) do
+            if grunt.areaID == areaID or grunt.areaID == adjacentID then
+                local type = GMapAreaDefinitions[areaID].type
+                if type == 'area' then
+                    -- set Player location to the side WITHIN the area
+                    for _, door in pairs(self.doorSystem:getAreaDoors(areaID)) do
+                        -- if the area IDs do not match then this door is in an adjacent area
+                        if door.areaID ~= grunt.areaID then
+                            -- set Entity on the current area side of the door
+                            self.doorSystem:setMatchingLocation(door, grunt)
+                        else
+                            self.doorSystem:setOppositeLocation(door, grunt)
+                        end
+                    end
+                else
+                    -- use area.joins to get door adjacencies for corridors
+                    local joins = GMapAreaDefinitions[areaID].joins
+                    -- set Player location to the side OUTSIDE the joined areas
+                    for _, join in pairs(joins) do
+                        self.doorSystem:setJoinLocation(join, grunt)
+                    end
+                    -- check if this corridor has door defined
+                    local doors = GMapAreaDefinitions[areaID].doors
+                    if doors then
+                        for _, door in pairs(self.doorSystem:getAreaDoors(areaID)) do
+                            self.doorSystem:setOppositeLocation(door, grunt)
+                        end
+                    end
+                end
+            end
+        end
     end
 end

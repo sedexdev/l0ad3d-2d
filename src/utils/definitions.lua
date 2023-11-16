@@ -134,7 +134,7 @@ GCharacterDefinition = {
     Grunt attributes definition
 ]]
 GGruntDefinition = {
-    type = 'enemy',
+    type = 'grunt',
     x = nil,
     y = nil,
     dx = GRUNT_SPEED,
@@ -152,7 +152,7 @@ GGruntDefinition = {
     Boss attributes definition
 ]]
 GBossDefinition = {
-    type = 'enemy',
+    type = 'boss',
     x = -14592,
     y = 4128,
     dx = BOSS_SPEED,
