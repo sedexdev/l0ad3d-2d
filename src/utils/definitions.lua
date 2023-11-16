@@ -252,7 +252,7 @@ GKeyDefinitions = {
     function within EnemySystem:update(dt). Only Grunts in the current
     and nearby areas are updated to avoid render issues from mass updates
 ]]
-GAreaAdjacencies = {
+GAreaAdjacencyDefinitions = {
     [1] = {17, 18},
     [2] = {18, 24},
     [3] = {18, 22},
