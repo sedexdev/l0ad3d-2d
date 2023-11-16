@@ -1,6 +1,8 @@
 --[[
     EnemySystem: class
 
+    TODO: respawn enemies as the game goes on
+
     Description:
         An enemy system is responsible for spawning and removing
         enemy (Entity) objects from the Map. As enemies are killed
@@ -31,7 +33,11 @@ function EnemySystem:init(player, gruntSpriteBatch)
 end
 
 --[[
-    EnemySystem update function. 
+    EnemySystem update function
+
+    TODO: fix rendering issue when multiple Grunts update at once
+          think about only updating Grunts in the current and nearby rooms
+          adjacency matrix for nearby room relatoinships ???
 
     Params:
         dt: number - deltatime counter for current frame rate
@@ -90,21 +96,7 @@ function EnemySystem:spawn(areas)
                 endCount = 12
             end
             numGrunts = math.random(startCount, endCount)
-            for _ = 1, numGrunts do
-                local grunt = Grunt(GAnimationDefintions['grunt'], GGruntDefinition)
-                grunt.x = math.random(area.x + GRUNT_WIDTH, area.x + (area.width * FLOOR_TILE_WIDTH) - GRUNT_WIDTH)
-                grunt.y = math.random(area.y + GRUNT_HEIGHT, area.y + (area.height * FLOOR_TILE_HEIGHT) - GRUNT_HEIGHT)
-                -- give Grunts different speeds
-                grunt.dx = math.random(150, 200)
-                grunt.dy = grunt.dx
-                grunt.areaID = area.id
-                grunt.stateMachine = StateMachine {
-                    ['walking'] = function () return GruntWalkingState(grunt, self.player, self.gruntSpriteBatch) end,
-                    ['attacking'] = function () return GruntAttackingState(grunt, self.player, self.gruntSpriteBatch) end,
-                }
-                grunt.stateMachine:change('walking')
-                table.insert(self.grunts, grunt)
-            end
+            self:spawnGrunts(numGrunts, area)
         end
         -- spawn the boss in area 27
         if area.id == 27 then
@@ -118,7 +110,36 @@ function EnemySystem:spawn(areas)
 end
 
 --[[
-    Spawns new enemy objects across the Map as enemies are killed
+    Spawns Grunt Entity objects and inserts them into the 
+    <self.grunts> table
+
+    Params:
+        numGrunts: number - number of Grunt Entity objects to spawn
+        area: table - MapArea object the Grunts will be spawned in
+    Returns:
+        nil
+]]
+function EnemySystem:spawnGrunts(numGrunts, area)
+    for _ = 1, numGrunts do
+        local grunt = Grunt(GAnimationDefintions['grunt'], GGruntDefinition)
+        grunt.x = math.random(area.x + GRUNT_WIDTH, area.x + (area.width * FLOOR_TILE_WIDTH) - GRUNT_WIDTH)
+        grunt.y = math.random(area.y + GRUNT_HEIGHT, area.y + (area.height * FLOOR_TILE_HEIGHT) - GRUNT_HEIGHT)
+        -- give Grunts different speeds
+        grunt.dx = math.random(150, 200)
+        grunt.dy = grunt.dx
+        grunt.areaID = area.id
+        grunt.stateMachine = StateMachine {
+            ['walking'] = function () return GruntWalkingState(grunt, self.player, self.gruntSpriteBatch) end,
+            ['attacking'] = function () return GruntAttackingState(grunt, self.player, self.gruntSpriteBatch) end,
+        }
+        grunt.stateMachine:change('walking')
+        table.insert(self.grunts, grunt)
+    end
+end
+
+--[[
+    Spawns new enemy objects across the Map as enemies are 
+    killed
 
     Params:
         none
