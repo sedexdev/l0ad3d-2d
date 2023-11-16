@@ -80,6 +80,9 @@ end
         nil
 ]]
 function Door:proximity(entity)
+    local entityLocation
+    if entity.type == 'character' then entityLocation = self.playerLocation end
+    if entity.type == 'grunt' then entityLocation = self.gruntLocation  end
     -- locked door conditions
     local aboveLocked = (entity.y + entity.height) > self.leftY + H_DOOR_HEIGHT and (entity.y + entity.height) > (self.rightY + H_DOOR_HEIGHT)
     local belowLocked = entity.y < (self.leftY - H_DOOR_HEIGHT) and entity.y < (self.rightY - H_DOOR_HEIGHT)
@@ -91,10 +94,10 @@ function Door:proximity(entity)
         -- proximity conditions
         local aboveYProximity = (self.leftY - (entity.y + entity.height) <= DOOR_PROXIMITY and self.rightY - (entity.y + entity.height) <= DOOR_PROXIMITY) and xProximity
         local belowYProximity = (entity.y - (self.leftY + H_DOOR_HEIGHT) <= DOOR_PROXIMITY and entity.y - (self.rightY + H_DOOR_HEIGHT) <= DOOR_PROXIMITY) and xProximity
-        if self.entityLocation == 'above' then
+        if entityLocation == 'above' then
             return self:proximityHelper(aboveLocked, aboveYProximity)
         end
-        if self.entityLocation == 'below' then
+        if entityLocation == 'below' then
             return self:proximityHelper(belowLocked, belowYProximity)
         end
     else
@@ -103,10 +106,10 @@ function Door:proximity(entity)
         -- proximity conditions
         local leftXProximity = (self.leftX - (entity.x + entity.width) <= DOOR_PROXIMITY and self.rightX - (entity.x + entity.width) <= DOOR_PROXIMITY) and yProximity
         local rightXProximity = (entity.x - (self.leftX + H_DOOR_WIDTH) <= DOOR_PROXIMITY and entity.x - (self.rightX + H_DOOR_WIDTH) <= DOOR_PROXIMITY) and yProximity
-        if self.playerLocation == 'left' then
+        if entityLocation == 'left' then
             return self:proximityHelper(leftLocked, leftXProximity)
         end
-        if self.playerLocation == 'right' then
+        if entityLocation == 'right' then
             return self:proximityHelper(rightLocked, rightXProximity)
         end
     end
@@ -115,12 +118,12 @@ end
 --[[
     Reduces bulk in the <self:proximity> function by evaluating
     the arguments for doors in a locked state and then checking
-    the appropriate condition for which side of th door the 
-    Player object is currently on
+    the appropriate condition for which side of the door the 
+    Entity object is currently on
     
     Params:
         lockedCondition: boolean - condition to evaluate if the door is locked
-        locationCondition: boolean - Player location dependent condition 
+        locationCondition: boolean - Entity location dependent condition 
     Returns:
         boolean: true if either of the arguments are true, false otherwise 
 ]]

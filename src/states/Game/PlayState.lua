@@ -164,27 +164,32 @@ function PlayState:checkMapInteractions(area)
         local grunts = self.map.enemySystem:getGrunts(area.id)
         for _, door in pairs(doors) do
             -- first check Player proximity and open door if not locked
-            local playerProximity = self.map.collisionSystem:checkDoorProximity(door, self.player)
-            if playerProximity then
-                -- then check collision with the Door object to avoid Player running over it
-                local doorCollision = self.map.collisionSystem:checkDoorCollsion(door, self.player)
-                if doorCollision.detected then
-                    -- and handle the collision if so
-                    self.map.collisionSystem:handleDoorCollision(door, doorCollision.edge, self.player)
-                end
-            end
+            self:checkMapInteractionsHelper(door, self.player)
             -- then check Grunt interactions
             for _, grunt in pairs(grunts) do
-                local gruntProximity = self.map.collisionSystem:checkDoorProximity(door, grunt)
-                if gruntProximity then
-                    -- then check collision with the Door object to avoid Player running over it
-                    local doorCollision = self.map.collisionSystem:checkDoorCollsion(door, grunt)
-                    if doorCollision.detected then
-                        -- and handle the collision if so
-                        self.map.collisionSystem:handleDoorCollision(door, doorCollision.edge, grunt)
-                    end
-                end
+                self:checkMapInteractionsHelper(door, grunt)
             end
+        end
+    end
+end
+
+--[[
+    Door detection/collision helper
+
+    Params:
+        door: table - Door object
+        entity: table - Entity object
+    Returns:
+        nil
+]]
+function PlayState:checkMapInteractionsHelper(door, entity)
+    local proximity = self.map.collisionSystem:checkDoorProximity(door, entity)
+    if proximity then
+        -- then check collision with the Door object to avoid Player running over it
+        local doorCollision = self.map.collisionSystem:checkDoorCollsion(door, entity)
+        if doorCollision.detected then
+            -- and handle the collision if so
+            self.map.collisionSystem:handleDoorCollision(door, doorCollision.edge, entity)
         end
     end
 end

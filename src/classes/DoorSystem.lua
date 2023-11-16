@@ -164,75 +164,90 @@ end
 -- ========================== SET PLAYER LOCATION HELPERS ==========================
 
 --[[
-    Sets the Player object on the side of the door matching
-    the door ID. E.g. door ID == 1 (L) so set the Player on
+    Sets the Entity object on the side of the door matching
+    the door ID. E.g. door ID == 1 (L) so set the Entity on
     the left of this door
 
     Params:
-        door: table - Door object we are setting <playerLocation> on
+        door: table - Door object we are setting entity location on
+        entity: table - Entity object to set location for
     Returns:
         nil 
 ]]
-function DoorSystem:setMatchingLocation(door)
+function DoorSystem:setMatchingLocation(door, entity)
     if door.id == 1 then
-        door.playerLocation = 'left'
+        if entity.type == 'character' then door.playerLocation = 'left' end
+        if entity.type == 'grunt' then door.gruntLocation = 'left' end
     elseif door.id == 2 then
-        door.playerLocation = 'above'
+        if entity.type == 'character' then door.playerLocation = 'above' end
+        if entity.type == 'grunt' then door.gruntLocation = 'above' end
     elseif door.id == 3 then
-        door.playerLocation = 'right'
+        if entity.type == 'character' then door.playerLocation = 'right' end
+        if entity.type == 'grunt' then door.gruntLocation = 'right' end
     elseif door.id == 4 then
-        door.playerLocation = 'below'
+        if entity.type == 'character' then door.playerLocation = 'below' end
+        if entity.type == 'grunt' then door.gruntLocation = 'below' end
     end
 end
 
 --[[
-    Sets the Player object on the side of the door opposite
-    the door ID. E.g. door ID == 1 (L) so set the Player on
+    Sets the Entity object on the side of the door opposite
+    the door ID. E.g. door ID == 1 (L) so set the Entity on
     the right of this door
 
     Params:
-        door: table - Door object we are setting <playerLocation> on
+        door: table - Door object we are setting entity location on
+        entity: table - Entity object to set location for
     Returns:
         nil
 ]]
-function DoorSystem:setOppositeLocation(door)
+function DoorSystem:setOppositeLocation(door, entity)
     if door.id == 1 then --left
-        door.playerLocation = 'right'
+        if entity.type == 'character' then door.playerLocation = 'right' end
+        if entity.type == 'grunt' then door.gruntLocation = 'right' end
     elseif door.id == 2 then --top
-        door.playerLocation = 'below'
+        if entity.type == 'character' then door.playerLocation = 'below' end
+        if entity.type == 'grunt' then door.gruntLocation = 'below' end
     elseif door.id == 3 then --right
-        door.playerLocation = 'left'
+        if entity.type == 'character' then door.playerLocation = 'left' end
+        if entity.type == 'grunt' then door.gruntLocation = 'left' end
     elseif door.id == 4 then --bottom
-        door.playerLocation = 'above'
+        if entity.type == 'character' then door.playerLocation = 'above' end
+        if entity.type == 'grunt' then door.gruntLocation = 'above' end
     end
 end
 
 --[[
-    Sets the Player object on the side of the door matching
-    the door ID. E.g. door ID == 1 (L) so set the Player on
+    Sets the Entity object on the side of the door matching
+    the door ID. E.g. door ID == 1 (L) so set the Entity on
     the left of this door. Must query the <self.doors> table
     to find the correct door for the join being checked
 
     Params:
         join: table - corridor join definition door being updated 
+        entity: table - Entity object to set location for
     Returns:
         nil
 ]]
-function DoorSystem:setJoinLocation(join)
+function DoorSystem:setJoinLocation(join, entity)
     -- join[1] == areaID as defined in GMapAreaDefinitions
     -- join[2] == location of this door in that area
     if join[2] == 'L' then
         local door = self:getAreaDoor(join[1], 1)
-        door.playerLocation = 'left'
+        if entity.type == 'character' then door.playerLocation = 'left' end
+        if entity.type == 'grunt' then door.gruntLocation = 'left' end
     elseif join[2] == 'T' then
         local door = self:getAreaDoor(join[1], 2)
-        door.playerLocation = 'above'
+        if entity.type == 'character' then door.playerLocation = 'above' end
+        if entity.type == 'grunt' then door.gruntLocation = 'above' end
     elseif join[2] == 'R' then
         local door = self:getAreaDoor(join[1], 3)
-        door.playerLocation = 'right'
+        if entity.type == 'character' then door.playerLocation = 'right' end
+        if entity.type == 'grunt' then door.gruntLocation = 'right' end
     elseif join[2] == 'B' then
         local door = self:getAreaDoor(join[1], 4)
-        door.playerLocation = 'below'
+        if entity.type == 'character' then door.playerLocation = 'below' end
+        if entity.type == 'grunt' then door.gruntLocation = 'below' end
     end
 end
 
@@ -343,6 +358,7 @@ end
 ]]
 function DoorSystem:open(door)
     if not door.isOpen then
+        io.write('Area ID: ' .. tostring(door.areaID) .. ', door ID: ' .. tostring(door.id) .. ' opening!\n')
         if door.orientation == 'horizontal' then
             -- tween callback function for opening/closing doors
             Timer.tween(0.2, {
@@ -370,6 +386,7 @@ end
 ]]
 function DoorSystem:close(door)
     if door.isOpen then
+        io.write('Area ID: ' .. tostring(door.areaID) .. ', door ID: ' .. tostring(door.id) .. ' closing!\n')
         if door.orientation == 'horizontal' then
             -- tween callback function for opening/closing doors
             Timer.tween(0.2, {

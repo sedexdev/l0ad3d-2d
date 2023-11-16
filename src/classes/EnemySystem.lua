@@ -55,6 +55,12 @@ function EnemySystem:update(dt)
         for _, grunt in pairs(self.grunts) do
             if grunt.areaID == areaID or grunt.areaID == adjacentID then
                 grunt:update(dt)
+                -- close doors behind enemies
+                for _, door in pairs(self.doorSystem.doors) do
+                    if not door:proximity(grunt) then
+                        self.doorSystem:close(door)
+                    end
+                end
             end
         end
     end
@@ -62,6 +68,8 @@ function EnemySystem:update(dt)
         turret:update(dt)
     end
     self.boss:update(dt)
+    -- set enemy door locations
+    self:setGruntLocation()
 end
 
 --[[
@@ -363,7 +371,7 @@ function EnemySystem:updateGruntVelocity(grunt, player, dt)
 end
 
 --[[
-    Updates the (x, y) location of enamy type Entity objects in 
+    Updates the (x, y) location of grunt type Entity objects in 
     relation to all doors nearby as defined in GMapAreaDefinitions
 
     Params:
@@ -371,7 +379,7 @@ end
     Returns:
         nil
 ]]
-function EnemySystem:setEnemyLocation()
+function EnemySystem:setGruntLocation()
     -- use self.player.currentArea.id for area ID
     local areaID = self.player.currentArea.id
     for _, adjacentID in pairs(GAreaAdjacencyDefinitions[areaID]) do
