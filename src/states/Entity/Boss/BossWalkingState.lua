@@ -50,7 +50,7 @@ function BossWalkingState:update(dt)
         self.collisionSystem:handleEnemyWallCollision(self.boss, wallCollision.edge)
     end
 
-    for _, adjacenyID in pairs(GAreaAdjacencies[self.area.id]) do
+    for _, adjacenyID in pairs(GAreaAdjacencyDefinitions[self.area.id]) do
         -- if Player enters the area the Boss is in then update Boss (dx, dy)
         if self.player.currentArea.id == self.area.id or self.player.currentArea.id == adjacenyID then
             self.enemySystem:updateBossVelocity(self.boss, self.player, dt)

@@ -35,7 +35,9 @@ function EnemySystem:init(player, collisionSystem, gruntSpriteBatch)
 end
 
 --[[
-    EnemySystem update function
+    EnemySystem update function. Only updates Grunt Entity
+    objects in the current and adjacent areas as defined in
+    <definitions.lua:GAreaAdjacencyDefinitions>
 
     TODO: fix rendering issue when multiple Grunts update at once
 
@@ -46,18 +48,23 @@ end
 ]]
 function EnemySystem:update(dt)
     local areaID = self.player.currentArea.id
-    for _, adjacentID in pairs(GAreaAdjacencies[areaID]) do
+    for _, adjacentID in pairs(GAreaAdjacencyDefinitions[areaID]) do
         for _, grunt in pairs(self.grunts) do
             if grunt.areaID == areaID or grunt.areaID == adjacentID then
                 grunt:update(dt)
             end
         end
     end
+    for _, turret in pairs(self.turrets) do
+        turret:update(dt)
+    end
     self.boss:update(dt)
 end
 
 --[[
-    EnemySystem render function.
+    EnemySystem render function. Only renders Grunt Entity
+    objects in the current and adjacent areas as defined in
+    <definitions.lua:GAreaAdjacencyDefinitions>
 
     Params:
         none
@@ -66,7 +73,7 @@ end
 ]]
 function EnemySystem:render()
     local areaID = self.player.currentArea.id
-    for _, adjacentID in pairs(GAreaAdjacencies[areaID]) do
+    for _, adjacentID in pairs(GAreaAdjacencyDefinitions[areaID]) do
         for _, grunt in pairs(self.grunts) do
             if grunt.areaID == areaID or grunt.areaID == adjacentID then
                 grunt:render()
