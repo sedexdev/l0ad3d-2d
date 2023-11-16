@@ -19,7 +19,8 @@ GruntAttackingState = Class{__includes = BaseState}
     Returns:
         nil
 ]]
-function GruntAttackingState:init(grunt, player)
+function GruntAttackingState:init(grunt, player, gruntSpriteBatch)
+    self.gruntSpriteBatch = gruntSpriteBatch
     self.grunt = grunt
     self.player = player
 end
@@ -55,11 +56,9 @@ end
 ]]
 function GruntAttackingState:render()
     local currentFrame = self.grunt.animations['attacking-'..self.grunt.direction]:getCurrentFrame()
-    love.graphics.setColor(1, 1, 1, 1)
-    love.graphics.draw(self.grunt.texture,
-        GQuads['grunt'][currentFrame],
-        self.grunt.x, self.grunt.y,
-        0,
-        3, 3
-    )
+    -- add the Grunt current quad to the SpriteBatch
+    self.gruntSpriteBatch:clear()
+    self.gruntSpriteBatch:add(GQuads['grunt'][currentFrame], self.grunt.x, self.grunt.y, 3, 3)
+    -- render the Grunt quads
+    self.gruntSpriteBatch:draw()
 end

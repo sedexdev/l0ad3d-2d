@@ -22,13 +22,12 @@ GRUNT_WALK_INTERVAL = 0.2
 GRUNT_ATTACK_INTERVAL = 0.1
 BOSS_WALK_INTERVAL = 0.1
 
--- entity speeds
+-- entity data
 CHARACTER_SPEED = 1200
-GRUNT_SPEED = 250
-BOSS_SPEED = 400
-
--- character max health
+GRUNT_SPEED = 20
+BOSS_SPEED = 1000
 MAX_HEALTH = 100
+ENTITY_PROXIMITY = 10
 
 -- movement key bindings
 MOVEMENT_KEYS = {'up', 'right', 'down', 'left', 'w', 'd', 's', 'a'}
@@ -55,6 +54,12 @@ ANGLES = {
     ['north-west'] = 225 * DEGREES_TO_RADIANS
 }
 
+-- directions
+DIRECTIONS = {'north', 'east', 'south', 'west', 'north-east', 'south-east', 'south-west', 'north-west'}
+
+-- placeholder deltatime
+TEMP_DT = 1/60
+
 -- map components scaled to x5
 WALL_OFFSET = 16 * 5
 FLOOR_TILE_WIDTH = 64 * 5
@@ -65,7 +70,7 @@ V_DOOR_WIDTH = 16 * 5
 V_DOOR_HEIGHT = 32 * 5
 
 -- correction for Player object to fit through doorways
-PLAYER_CORRECTION = 120
+ENTITY_CORRECTION = 120
 DOOR_PROXIMITY = 250
 
 -- IDs for each door sprite based on colour

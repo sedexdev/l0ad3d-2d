@@ -16,8 +16,6 @@ PlayState = Class{__includes = BaseState}
     BaseState this function is called whenever the GStateMachine
     is called with 'playing' as the stateName argument. Initialises 
     the Map and the state machines for the other game Entity objects
-    
-    TODO: review where Entitys are spawned and tracked
 
     Params:
         params: table - list of state dependent values this state requires
@@ -91,33 +89,26 @@ function PlayState:runGameLoop(dt)
     -- get the Player's current area
     local currentAreaID = self.player.currentArea.id
     local area = self.map:getAreaDefinition(currentAreaID)
-    -- check if the player has collided with the wall in this area
-    local playerWallCollision = self.map.collisionSystem:checkWallCollision(area, self.player)
-    if playerWallCollision.detected then
-        -- handle the wall collision
-        self.map.collisionSystem:handlePlayerWallCollision(area, playerWallCollision.edge)
-    end
-    -- check for any area door collisions
-    local doors = nil
-    if area.type == 'area' then
-        doors = self.map.doorSystem:getAreaDoors(area.id)
-    else
-        doors = self.map.doorSystem:getCorridorDoors(area.id)
-    end
-    if doors then
-        for _, door in pairs(doors) do
-            -- first check proximity and open door if not locked
-            local playerProximity = self.map.collisionSystem:checkDoorProximity(door)
-            if playerProximity then
-                -- then check collision with the Door object to avoid Player running over it
-                local doorCollision = self.map.collisionSystem:checkDoorCollsion(door)
-                if doorCollision.detected then
-                    -- and handle the collision if so
-                    self.map.collisionSystem:handleDoorCollision(door, doorCollision.edge)
-                end
-            end
-        end
-    end
+    -- check for an handle Player/Entity interactions in the Map
+    self:checkMapInteractions(area)
+    self:checkObjectInteractions(currentAreaID)
+    -- update Map
+    self.map:update(dt)
+    -- update Entity objects
+    self.player:update(dt)
+    -- update the camera to track the Player
+    self:updateCamera()
+end
+
+--[[
+    Check for and handle interactions with game objects
+
+    Params:
+        currentAreaID: number - ID of the Players current area
+    Returns:
+        nil
+]]
+function PlayState:checkObjectInteractions(currentAreaID)
     -- to check for key collisions make sure the Player is in an area with a key
     for _, key in pairs(self.map.powerupSystem.keys) do
         if currentAreaID == key.areaID then
@@ -145,12 +136,57 @@ function PlayState:runGameLoop(dt)
             end
         end
     end
-    -- update Map
-    self.map:update(dt)
-    -- update Entity objects
-    self.player:update(dt)
-    -- update the camera to track the Player
-    self:updateCamera()
+end
+
+--[[
+    Check for and handle interactions with game objects
+
+    Params:
+        area: number - Current MapArea object
+    Returns:
+        nil
+]]
+function PlayState:checkMapInteractions(area)
+    -- check if the player has collided with the wall in this area
+    local wallCollision = self.map.collisionSystem:checkWallCollision(area, self.player)
+    if wallCollision.detected then
+        -- handle the wall collision
+        self.map.collisionSystem:handlePlayerWallCollision(area, wallCollision.edge)
+    end
+    -- check for any area door collisions
+    local doors = nil
+    if area.type == 'area' then
+        doors = self.map.doorSystem:getAreaDoors(area.id)
+    else
+        doors = self.map.doorSystem:getCorridorDoors(area.id)
+    end
+    if doors then
+        local grunts = self.map.enemySystem:getGrunts(area.id)
+        for _, door in pairs(doors) do
+            -- first check Player proximity and open door if not locked
+            local playerProximity = self.map.collisionSystem:checkDoorProximity(door, self.player)
+            if playerProximity then
+                -- then check collision with the Door object to avoid Player running over it
+                local doorCollision = self.map.collisionSystem:checkDoorCollsion(door, self.player)
+                if doorCollision.detected then
+                    -- and handle the collision if so
+                    self.map.collisionSystem:handleDoorCollision(door, doorCollision.edge, self.player)
+                end
+            end
+            -- then check Grunt interactions
+            for _, grunt in pairs(grunts) do
+                local gruntProximity = self.map.collisionSystem:checkDoorProximity(door, grunt)
+                if gruntProximity then
+                    -- then check collision with the Door object to avoid Player running over it
+                    local doorCollision = self.map.collisionSystem:checkDoorCollsion(door, grunt)
+                    if doorCollision.detected then
+                        -- and handle the collision if so
+                        self.map.collisionSystem:handleDoorCollision(door, doorCollision.edge, grunt)
+                    end
+                end
+            end
+        end
+    end
 end
 
 --[[

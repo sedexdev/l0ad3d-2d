@@ -71,6 +71,7 @@ require 'src/classes/Player'
 require 'src/classes/PowerUp'
 require 'src/classes/PowerUpSystem'
 require 'src/classes/Shot'
+require 'src/classes/SpriteBatcher'
 require 'src/classes/StateMachine'
 
 -- game states

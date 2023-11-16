@@ -412,6 +412,8 @@ function PowerUpSystem:powerUpFactory(id, areaID, x, y)
     if id == 5 then  table.insert(self.powerups['oneShotBossKill'], powerup) end
 end
 
+-- =========================== COLLISIONS HANDLERS ===========================
+
 --[[
     Handles a key collision by removing the key from memory 
     and then adding the key to the Player objects keys table

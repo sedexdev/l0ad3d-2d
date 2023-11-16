@@ -139,9 +139,9 @@ function DoorSystem:setPlayerLocation()
             -- if the area IDs do not match then this door is in an adjacent area
             if door.areaID ~= areaID then
                 -- set Player on the current area side of the door
-                self:setMatchingLocation(door)
+                self:setMatchingLocation(door, self.player)
             else
-                self:setOppositeLocation(door)
+                self:setOppositeLocation(door, self.player)
             end
         end
     else
@@ -149,13 +149,13 @@ function DoorSystem:setPlayerLocation()
         local joins = GMapAreaDefinitions[areaID].joins
         -- set Player location to the side OUTSIDE the joined areas
         for _, join in pairs(joins) do
-            self:setJoinLocation(join)
+            self:setJoinLocation(join, self.player)
         end
         -- check if this corridor has door defined
         local doors = GMapAreaDefinitions[areaID].doors
         if doors then
             for _, door in pairs(self:getAreaDoors(areaID)) do
-                self:setOppositeLocation(door)
+                self:setOppositeLocation(door, self.player)
             end
         end
     end
