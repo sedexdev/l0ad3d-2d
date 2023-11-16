@@ -260,14 +260,6 @@ function PlayState:processPauseMenuInput()
             GStateMachine:change('countdown', {
                 highScores = self.highScores,
                 player = player,
-                grunt = Grunt(
-                    GAnimationDefintions['grunt'],
-                    GGruntDefinition
-                ),
-                boss = Boss(
-                    GAnimationDefintions['boss'],
-                    GBossDefinition
-                ),
                 map = Map(player)
             })
         else
