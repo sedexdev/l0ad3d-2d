@@ -16,8 +16,6 @@ PlayState = Class{__includes = BaseState}
     BaseState this function is called whenever the GStateMachine
     is called with 'playing' as the stateName argument. Initialises 
     the Map and the state machines for the other game Entity objects
-    
-    TODO: review where Entitys are spawned and tracked
 
     Params:
         params: table - list of state dependent values this state requires

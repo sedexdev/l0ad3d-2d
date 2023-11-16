@@ -48,8 +48,6 @@ end
     between the 2 available characters and make a seclection
     on which one to play as
 
-    TODO: review where Entity objects are created
-
     Key bindings:
         escape: goes back to the MenuState
         right: selects the avatar to the right
