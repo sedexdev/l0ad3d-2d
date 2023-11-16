@@ -8,7 +8,8 @@
         the center of the area wall depending on the location of the
         corridor (left, right, top, bottom). The (x, y) of any corridors
         connected to an area is determined based on the (x, y) of the 
-        area
+        area. The various game control systems are also initialised
+        in this class
 ]]
 
 Map = Class{}
@@ -127,13 +128,12 @@ function Map:generateLevel()
         area:generateFloorTiles()
         area:generateWallTiles()
     end
-    -- create the Door objects in the DoorSystem
+    -- initialise the Door objects in the DoorSystem
     self.doorSystem:initialiseDoors(self.areas)
-    -- create powerups, crates, and keys
+    -- spawn powerups, crates, and keys
     self.powerupSystem:spawn()
-    -- create enemies
+    -- spawn enemies
     self.enemySystem:spawn(self.areas)
-    -- update enemies so more are spawned as the level goes on
 end
 
 --[[
