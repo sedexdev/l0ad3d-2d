@@ -182,6 +182,7 @@ function PlayState:render()
     love.graphics.translate(-math.floor(self.cameraX), -math.floor(self.cameraY))
     self.map:render()
     self.player:render()
+    self:displayFPS()
     -- show menu if paused
     if self.paused then
         -- draw dark background  
@@ -262,14 +263,6 @@ function PlayState:processPauseMenuInput()
             GStateMachine:change('countdown', {
                 highScores = self.highScores,
                 player = player,
-                grunt = Grunt(
-                    GAnimationDefintions['grunt'],
-                    GGruntDefinition
-                ),
-                boss = Boss(
-                    GAnimationDefintions['boss'],
-                    GBossDefinition
-                ),
                 map = Map(player)
             })
         else
@@ -279,4 +272,20 @@ function PlayState:processPauseMenuInput()
             })
         end
     end
+end
+
+--[[
+    Renders the current FPS
+
+    Params:
+        none
+    Returns:
+        nil
+]]
+function PlayState:displayFPS()
+    -- simple FPS display across all states
+    love.graphics.setFont(GFonts['funkrocker-small'])
+    love.graphics.setColor(1, 0/255, 0/255, 255/255)
+    love.graphics.print('FPS: ' .. tostring(love.timer.getFPS()), self.cameraX + 50, self.cameraY + 50)
+    love.graphics.setColor(1, 1, 1, 1)
 end

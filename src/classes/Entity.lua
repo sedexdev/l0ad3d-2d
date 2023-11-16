@@ -28,6 +28,7 @@ function Entity:init(def)
     self.dy = def.dy
     self.width = def.width
     self.height = def.height
+    self.areaID = def.areaID
     self.stateMachine = def.stateMachine
 end
 
