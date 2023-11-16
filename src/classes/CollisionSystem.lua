@@ -59,7 +59,7 @@ function CollisionSystem:checkWallCollision(area, entity)
     if area.type == 'corridor' then
         return self:corridorBoundary(area, conditions)
     else
-        return self:areaBoundary(area, conditions)
+        return self:areaBoundary(area, conditions, entity)
     end
 end
 
@@ -73,16 +73,19 @@ end
     Params:
     area: table - MapArea object for the corridor
         conditions: table - collision detection conditions
+        entity: table - Entity object to check collision on
     Returns:
         table: collision status update - collision detected and where 
 ]]
-function CollisionSystem:areaBoundary(area, conditions)
+function CollisionSystem:areaBoundary(area, conditions, entity)
     -- default values for detection - no collision
     local collisionDef = {detected = false, edge = nil}
     -- check if the player is going to pass through an area doorway
-    for _, door in pairs(self.doorSystem:getAreaDoors(area.id)) do
-        if self:detectAreaDoorway(area, door, conditions) then
-            goto returnFalse
+    if entity.type == 'character' then
+        for _, door in pairs(self.doorSystem:getAreaDoors(area.id)) do
+            if self:detectAreaDoorway(area, door, conditions) then
+                goto returnFalse
+            end
         end
     end
     -- check for single wall collisions first
@@ -320,6 +323,54 @@ function CollisionSystem:handlePlayerWallCollision(area, edge)
     end
 end
 
+
+--[[
+    Handles enemy collisions with an area boundary. This needs to
+    be separated from the HandlePlayerWallCollision function as the 
+    corrections are different from how the Player correction is 
+    implmented
+
+    Params:
+        entity: table - Entity object to correct
+        edge: string - edge location of the area
+    Returns:
+        nil
+]]
+function CollisionSystem:handleEnemyWallCollision(entity, edge)
+    -- for single wall collisions just update x or y
+    if edge == 'L' or edge == 'R' then
+        entity.dx = -entity.dx
+    elseif edge == 'T' or edge == 'B' then
+        entity.dy = -entity.dy
+    -- for multi-wall collisions update dx and dy
+    elseif edge == 'LT' or edge == 'RT' or edge == 'LB' or edge == 'RB' then
+        entity.dx = -entity.dx
+        entity.dy = -entity.dy
+    end
+    self:updateEntityDirection(entity)
+end
+
+--[[
+    Changes the direction the entity is facing after a 
+    wall collision
+
+    Params:
+        entity: table - Entity object to update
+    Returns:
+        nil
+]]
+function CollisionSystem:updateEntityDirection(entity)
+    if entity.direction == 'north' then entity.direction = 'south'
+    elseif entity.direction == 'east' then entity.direction = 'west'
+    elseif entity.direction == 'south' then entity.direction = 'north'
+    elseif entity.direction == 'west' then entity.direction = 'east'
+    elseif entity.direction == 'north-east' then entity.direction = 'south-east'
+    elseif entity.direction == 'south-east' then entity.direction = 'north-east'
+    elseif entity.direction == 'south-west' then entity.direction = 'north-west'
+    elseif entity.direction == 'north-west' then entity.direction = 'south-west' 
+    end
+end
+
 -- ========================== DOOR COLLISIONS ==========================
 
 --[[
@@ -551,10 +602,10 @@ end
         boolean: true if collision detected
 ]]
 function CollisionSystem:objectCollision(object)
-    if (self.player.x > object.x + KEY_WIDTH) or (object.x > self.player.x + CHARACTER_WIDTH) then
+    if (self.player.x > object.x + object.width) or (object.x > self.player.x + CHARACTER_WIDTH) then
         return false
     end
-    if (self.player.y > object.y + KEY_HEIGHT) or (object.y > self.player.y + CHARACTER_HEIGHT) then
+    if (self.player.y > object.y + object.height) or (object.y > self.player.y + CHARACTER_HEIGHT) then
         return false
     end
     return true

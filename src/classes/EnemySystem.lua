@@ -20,12 +20,14 @@ EnemySystem = Class{}
 
     Params:
         player: table - Player object
+        collisionSystem: table - collisionSystem object
         gruntSpriteBatch: SpriteBatch - collection of Grunt Entity quads
     Returns:
         nil
 ]]
-function EnemySystem:init(player, gruntSpriteBatch)
+function EnemySystem:init(player, collisionSystem, gruntSpriteBatch)
     self.player = player
+    self.collisionSystem = collisionSystem
     self.gruntSpriteBatch = gruntSpriteBatch
     self.grunts = {}
     self.turrets = {}
@@ -36,8 +38,6 @@ end
     EnemySystem update function
 
     TODO: fix rendering issue when multiple Grunts update at once
-          think about only updating Grunts in the current and nearby rooms
-          adjacency matrix for nearby room relatoinships ???
 
     Params:
         dt: number - deltatime counter for current frame rate
@@ -45,8 +45,13 @@ end
         nil
 ]]
 function EnemySystem:update(dt)
-    for _, grunt in pairs(self.grunts) do
-        grunt:update(dt)
+    local areaID = self.player.currentArea.id
+    for _, adjacentID in pairs(GAreaAdjacencies[areaID]) do
+        for _, grunt in pairs(self.grunts) do
+            if grunt.areaID == areaID or grunt.areaID == adjacentID then
+                grunt:update(dt)
+            end
+        end
     end
     self.boss:update(dt)
 end
@@ -60,14 +65,21 @@ end
         none
 ]]
 function EnemySystem:render()
-    for _, grunt in pairs(self.grunts) do
-        grunt:render()
+    local areaID = self.player.currentArea.id
+    for _, adjacentID in pairs(GAreaAdjacencies[areaID]) do
+        for _, grunt in pairs(self.grunts) do
+            if grunt.areaID == areaID or grunt.areaID == adjacentID then
+                grunt:render()
+            end
+        end
     end
     for _, turret in pairs(self.turrets) do
         turret:render()
     end
     self.boss:render()
 end
+
+-- ========================== SPAWNING ==========================
 
 --[[
     Spawns all enemy objects that are present at the beginning
@@ -81,10 +93,12 @@ end
 ]]
 function EnemySystem:spawn(areas)
     for _, area in pairs(areas) do
-        -- only spawn Grunts in area type areas
-        if area.id >= 17 then
+        local startCount, endCount, numGrunts
+        if area.type == 'corridor' then
+            startCount = 0
+            endCount = 1
+        else
             local roomArea = area.width * area.height
-            local startCount, endCount, numGrunts
             if roomArea < 64 then
                 startCount = 2
                 endCount = 3
@@ -95,14 +109,17 @@ function EnemySystem:spawn(areas)
                 startCount = 9
                 endCount = 12
             end
-            numGrunts = math.random(startCount, endCount)
-            self:spawnGrunts(numGrunts, area)
         end
+        numGrunts = math.random(startCount, endCount)
+        self:spawnGrunts(numGrunts, area)
         -- spawn the boss in area 27
         if area.id == 27 then
             self.boss = Boss(GAnimationDefintions['boss'], GBossDefinition)
+            -- set random starting direction
+            self.boss.direction = DIRECTIONS[math.random(1, 8)]
+            self:setInitialVelocity(self.boss)
             self.boss.stateMachine = StateMachine {
-                ['walking'] = function () return BossWalkingState(self.boss, self.player) end
+                ['walking'] = function () return BossWalkingState(area, self.boss, self.player, self.collisionSystem, self) end
             }
             self.boss.stateMachine:change('walking')
         end
@@ -122,14 +139,18 @@ end
 function EnemySystem:spawnGrunts(numGrunts, area)
     for _ = 1, numGrunts do
         local grunt = Grunt(GAnimationDefintions['grunt'], GGruntDefinition)
-        grunt.x = math.random(area.x + GRUNT_WIDTH, area.x + (area.width * FLOOR_TILE_WIDTH) - GRUNT_WIDTH)
-        grunt.y = math.random(area.y + GRUNT_HEIGHT, area.y + (area.height * FLOOR_TILE_HEIGHT) - GRUNT_HEIGHT)
+        -- set random (x, y) within the area
+        grunt.x = math.random(area.x, area.x + (area.width * FLOOR_TILE_WIDTH) - GRUNT_WIDTH)
+        grunt.y = math.random(area.y, area.y + (area.height * FLOOR_TILE_HEIGHT) - GRUNT_HEIGHT)
         -- give Grunts different speeds
-        grunt.dx = math.random(150, 200)
+        grunt.dx = math.random(15, 25)
         grunt.dy = grunt.dx
+        -- set random starting direction
+        grunt.direction = DIRECTIONS[math.random(1, 8)]
+        self:setInitialVelocity(grunt)
         grunt.areaID = area.id
         grunt.stateMachine = StateMachine {
-            ['walking'] = function () return GruntWalkingState(grunt, self.player, self.gruntSpriteBatch) end,
+            ['walking'] = function () return GruntWalkingState(area, grunt, self.player, self.gruntSpriteBatch, self.collisionSystem, self) end,
             ['attacking'] = function () return GruntAttackingState(grunt, self.player, self.gruntSpriteBatch) end,
         }
         grunt.stateMachine:change('walking')
@@ -148,4 +169,162 @@ end
 ]]
 function EnemySystem:respawn()
     
+end
+
+-- ========================== ENEMY VELOCITY ==========================
+
+--[[
+    Moves any Entity in a random direction while the Player
+    is not in the same area
+
+    Params:
+        entity: table - Entity object to update
+    Returns:
+        nil
+]]
+function EnemySystem:setInitialVelocity(entity)
+    if entity.direction == 'north' then
+        entity.y = entity.y - entity.dy * TEMP_DT
+    elseif entity.direction == 'east' then
+        entity.x = entity.x + entity.dx * TEMP_DT
+    elseif entity.direction == 'south' then
+        entity.y = entity.y + entity.dy * TEMP_DT
+    elseif entity.direction == 'west' then
+        entity.x = entity.x - entity.dx * TEMP_DT
+    elseif entity.direction == 'north-east' then
+        entity.y = entity.y - entity.dy * TEMP_DT
+        entity.x = entity.x + entity.dx * TEMP_DT
+    elseif entity.direction == 'south-east' then
+        entity.y = entity.y + entity.dy * TEMP_DT
+        entity.x = entity.x + entity.dx * TEMP_DT
+    elseif entity.direction == 'south-west' then
+        entity.y = entity.y + entity.dy * TEMP_DT
+        entity.x = entity.x - entity.dx * TEMP_DT
+    elseif entity.direction == 'north-west' then
+        entity.y = entity.y - entity.dy * TEMP_DT
+        entity.x = entity.x - entity.dx * TEMP_DT
+    end
+end
+
+--[[
+    Updates the velocity and direction of the Boss
+    Entity object
+
+    TODO: make the boss circle the player, not run directly up to them
+
+    Params:
+        boss: table - Boss Entity object 
+        player: table - Player Entity object
+        dt: number - deltatime counter for current frame rate
+    Returns:
+        nil
+]]
+function EnemySystem:updateBossVelocity(boss, player, dt)
+    -- determine the direction the player is relative to the boss
+    -- make boss walk towards the player
+    if (player.x < boss.x) and (player.y < boss.y) then
+        -- boss is SOUTH-EAST of player
+        boss.direction = 'north-west'
+        boss.x = boss.x - boss.dx * dt
+        boss.y = boss.y - boss.dy * dt
+    end
+    if (player.x < boss.x) and (player.y > boss.y) then
+        -- boss is NORTH-EAST of player
+        boss.direction = 'south-west'
+        boss.x = boss.x - boss.dx * dt
+        boss.y = boss.y + boss.dy * dt
+    end
+    if (player.x > boss.x) and (player.y < boss.y) then
+        -- boss is SOUTH-WEST of player
+        boss.direction = 'north-east'
+        boss.x = boss.x + boss.dx * dt
+        boss.y = boss.y - boss.dy * dt
+    end
+    if (player.x > boss.x) and (player.y > boss.y) then
+        -- boss is NORTH-WEST of player
+        boss.direction = 'south-east'
+        boss.x = boss.x + boss.dx * dt
+        boss.y = boss.y + boss.dy * dt
+    end
+    -- abs the value to find if the player is on the same vertical or horizontal axis
+    if (player.x < boss.x) and (math.abs(boss.y - player.y) <= ENTITY_PROXIMITY) then
+        -- boss is EAST of player
+        boss.direction = 'west'
+        boss.x = boss.x - boss.dx * dt
+    end
+    if (player.x > boss.x) and (math.abs(boss.y - player.y) <= ENTITY_PROXIMITY) then
+        -- boss is WEST of player
+        boss.direction = 'east'
+        boss.x = boss.x + boss.dx * dt
+    end
+    if (math.abs(boss.x - player.x) <= ENTITY_PROXIMITY) and (player.y < boss.y) then
+        -- boss is SOUTH of player
+        boss.direction = 'north'
+        boss.y = boss.y - boss.dy * dt
+    end
+    if (math.abs(boss.x - player.x) <= ENTITY_PROXIMITY) and (player.y > boss.y) then
+        -- boss is NORTH of player
+        boss.direction = 'south'
+        boss.y = boss.y + boss.dy * dt
+    end
+end
+
+--[[
+    Updates the velocity and direction of a Grunt
+    Entity object
+
+    Params:
+        grunt: table - Grunt Entity object 
+        player: table - Player Entity object
+        dt: number - deltatime counter for current frame rate
+    Returns:
+        nil
+]]
+function EnemySystem:updateGruntVelocity(grunt, player, dt)
+    -- determine the direction the player is relative to the grunt
+    if (player.x < grunt.x) and (player.y < grunt.y) then
+        -- grunt is SOUTH-EAST of player
+        grunt.direction = 'north-west'
+        grunt.x = grunt.x - grunt.dx * dt
+        grunt.y = grunt.y - grunt.dy * dt
+    end
+    if (player.x < grunt.x) and (player.y > grunt.y) then
+        -- grunt is NORTH-EAST of player
+        grunt.direction = 'south-west'
+        grunt.x = grunt.x - grunt.dx * dt
+        grunt.y = grunt.y + grunt.dy * dt
+    end
+    if (player.x > grunt.x) and (player.y < grunt.y) then
+        -- grunt is SOUTH-WEST of player
+        grunt.direction = 'north-east'
+        grunt.x = grunt.x + grunt.dx * dt
+        grunt.y = grunt.y - grunt.dy * dt
+    end
+    if (player.x > grunt.x) and (player.y > grunt.y) then
+        -- grunt is NORTH-WEST of player
+        grunt.direction = 'south-east'
+        grunt.x = grunt.x + grunt.dx * dt
+        grunt.y = grunt.y + grunt.dy * dt
+    end
+    -- abs the value to find if the player is on the same vertical or horizontal axis
+    if (player.x < grunt.x) and (math.abs(grunt.y - player.y) <= ENTITY_PROXIMITY) then
+        -- grunt is EAST of player
+        grunt.direction = 'west'
+        grunt.x = grunt.x - grunt.dx * dt
+    end
+    if (player.x > grunt.x) and (math.abs(grunt.y - player.y) <= ENTITY_PROXIMITY) then
+        -- grunt is WEST of player
+        grunt.direction = 'east'
+        grunt.x = grunt.x + grunt.dx * dt
+    end
+    if (math.abs(grunt.x - player.x) <= ENTITY_PROXIMITY) and (player.y < grunt.y) then
+        -- grunt is SOUTH of player
+        grunt.direction = 'north'
+        grunt.y = grunt.y - grunt.dy * dt
+    end
+    if (math.abs(grunt.x - player.x) <= ENTITY_PROXIMITY) and (player.y > grunt.y) then
+        -- grunt is NORTH of player
+        grunt.direction = 'south'
+        grunt.y = grunt.y + grunt.dy * dt
+    end
 end

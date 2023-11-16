@@ -137,13 +137,13 @@ GGruntDefinition = {
     type = 'enemy',
     x = nil,
     y = nil,
-    dx = nil,
-    dy = nil,
+    dx = GRUNT_SPEED,
+    dy = GRUNT_SPEED,
     width = GRUNT_WIDTH,
     height = GRUNT_HEIGHT,
     areaID = nil,
     stateMachine = nil,
-    direction = 'north',
+    direction = nil,
     health = 50,
     powerUpChance = 20
 }
@@ -161,7 +161,7 @@ GBossDefinition = {
     height = BOSS_HEIGHT,
     areaID = 27,
     stateMachine = nil,
-    direction = 'north',
+    direction = nil,
     health = 1000
 }
 
@@ -245,4 +245,49 @@ GKeyDefinitions = {
     [1] = {id = 4, areaID = 37, x = 20700, y = 4140, quadID = 1},  -- red
     [2] = {id = 3, areaID = 35, x = 15460, y = 9038, quadID = 2},  -- blue
     [3] = {id = 5, areaID = 25, x = -15580, y = -2560, quadID = 3} -- green
+}
+
+--[[
+    adjacency matrix used for reducing calls to the Grunt update(dt)
+    function within EnemySystem:update(dt). Only Grunts in the current
+    and nearby areas are updated to avoid render issues from mass updates
+]]
+GAreaAdjacencies = {
+    [1] = {17, 18},
+    [2] = {18, 24},
+    [3] = {18, 22},
+    [4] = {24, 26, 27},
+    [5] = {18, 23},
+    [6] = {7, 17, 19, 20},
+    [7] = {6, 19, 20},
+    [8] = {17, 21},
+    [9] = {21, 30},
+    [10] = {11, 21},
+    [11] = {10, 31},
+    [12] = {10, 33},
+    [13] = {14, 34},
+    [14] = {13, 31},
+    [15] = {16, 33},
+    [16] = {15, 36},
+    [17] = {1, 6, 8, 18, 19, 20, 21},
+    [18] = {1, 2, 3, 5, 17, 22, 23, 24},
+    [19] = {6, 7, 17, 20},
+    [20] = {6, 7, 17, 19},
+    [21] = {8, 9, 10, 17, 30},
+    [22] = {3, 18},
+    [23] = {5, 18},
+    [24] = {2, 4, 18, 25, 26, 27},
+    [25] = {24, 26},
+    [26] = {4, 24, 25},
+    [27] = {4, 24, 28, 29},
+    [28] = {27, 29},
+    [29] = {27, 28},
+    [30] = {9, 21},
+    [31] = {11, 14, 32},
+    [32] = {31},
+    [33] = {12, 15},
+    [34] = {13, 35, 37},
+    [35] = {34},
+    [36] = {16, 37},
+    [37] = {34, 36},
 }

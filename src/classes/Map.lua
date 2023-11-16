@@ -38,7 +38,7 @@ function Map:init(player)
     -- create an instance of SpriteBatch for Grunt Entity objects
     self.gruntSpriteBatch = SpriteBatcher(GTextures['grunt'])
     -- create an EnemySystem
-    self.enemySystem = EnemySystem(self.player, self.gruntSpriteBatch)
+    self.enemySystem = EnemySystem(self.player, self.collisionSystem, self.gruntSpriteBatch)
 end
 
 --[[
