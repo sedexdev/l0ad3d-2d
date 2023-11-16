@@ -35,6 +35,7 @@ function EnemySystem:init(player, gruntSpriteBatch, collisionSystem, doorSystem)
     self.grunts = {}
     self.turrets = {}
     self.boss = nil
+    self.gruntID = 1
 end
 
 --[[
@@ -55,12 +56,6 @@ function EnemySystem:update(dt)
         for _, grunt in pairs(self.grunts) do
             if grunt.areaID == areaID or grunt.areaID == adjacentID then
                 grunt:update(dt)
-                -- close doors behind enemies
-                for _, door in pairs(self.doorSystem.doors) do
-                    if not door:proximity(grunt) then
-                        self.doorSystem:close(door)
-                    end
-                end
             end
         end
     end
@@ -152,7 +147,7 @@ function EnemySystem:spawn(areas)
             end
         end
         numGrunts = math.random(startCount, endCount)
-        self:spawnGrunts(numGrunts, area)
+        -- self:spawnGrunts(numGrunts, area)
         -- spawn the boss in area 27
         if area.id == 27 then
             self.boss = Boss(GAnimationDefintions['boss'], GBossDefinition)
@@ -179,7 +174,8 @@ end
 ]]
 function EnemySystem:spawnGrunts(numGrunts, area)
     for _ = 1, numGrunts do
-        local grunt = Grunt(GAnimationDefintions['grunt'], GGruntDefinition)
+        local grunt = Grunt(self.gruntID, GAnimationDefintions['grunt'], GGruntDefinition)
+        -- set ID
         -- set random (x, y) within the area
         grunt.x = math.random(area.x, area.x + (area.width * FLOOR_TILE_WIDTH) - GRUNT_WIDTH)
         grunt.y = math.random(area.y, area.y + (area.height * FLOOR_TILE_HEIGHT) - GRUNT_HEIGHT)
@@ -196,6 +192,7 @@ function EnemySystem:spawnGrunts(numGrunts, area)
         }
         grunt.stateMachine:change('walking')
         table.insert(self.grunts, grunt)
+        self.gruntID = self.gruntID + 1
     end
 end
 

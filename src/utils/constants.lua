@@ -58,7 +58,7 @@ ANGLES = {
 DIRECTIONS = {'north', 'east', 'south', 'west', 'north-east', 'south-east', 'south-west', 'north-west'}
 
 -- placeholder deltatime
-TEMP_DT = 1/60
+TEMP_DT = 30/60
 
 -- map components scaled to x5
 WALL_OFFSET = 16 * 5

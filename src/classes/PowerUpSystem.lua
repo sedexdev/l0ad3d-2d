@@ -402,7 +402,7 @@ function PowerUpSystem:powerUpFactory(id, areaID, x, y)
     local powerup = PowerUp(
         id, areaID,
         -- center the powerup underneath the crate
-        x + (x / 2) -( POWERUP_WIDTH / 2), y + (y / 2) - (POWERUP_HEIGHT / 2),
+        x + (CRATE_WIDTH / 2) - (POWERUP_WIDTH / 2), y + (CRATE_WIDTH / 2) - (POWERUP_HEIGHT / 2),
         'powerup'
     )
     if id == 1 then  table.insert(self.powerups['doubleSpeed'], powerup) end
@@ -466,10 +466,12 @@ function PowerUpSystem:handlePowerUpCollision(powerup)
             else
                 self.player.health = self.player.health + healthIncrease
             end
+            self:removePowerUp(powerup, 'health')
         end
     end
     if powerup.id == 3 then
         self.player.ammo = self.player.ammo + 1000
+        self:removePowerUp(powerup, 'ammo')
     end
     if powerup.id == 4 then
         self.player.powerups.invincible = true

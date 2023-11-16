@@ -14,6 +14,7 @@ Grunt = Class{__includes = Entity}
     Grunt constructor
 
     Params:
+        id: number - ID of this Grunt Entity object
         animations: table - the grunt sprite sheet indices for drawing
                             this Entity
         def: table - the definition of a Grunt object as defined in 
@@ -21,8 +22,9 @@ Grunt = Class{__includes = Entity}
     Returns:
         nil
 ]]
-function Grunt:init(animations, def)
+function Grunt:init(id, animations, def)
     Entity.init(self, def)
+    self.id = id
     self.texture = animations.texture
     self.animations = animations.animations
     self.direction = def.direction
