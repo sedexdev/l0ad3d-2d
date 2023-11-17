@@ -39,7 +39,7 @@ end
     enter function
 
     Params:
-        stateName: string - name of the state to chang to
+        stateName: string - name of the state to change to
         params: table - list of parameters to pass into the state being entered into
 ]]
 function StateMachine:change(stateName, params)
