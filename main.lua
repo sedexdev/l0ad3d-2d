@@ -108,13 +108,28 @@ function love.keyboard.anyDown(t)
     return false
 end
 
--- update relative to delatime
+--[[
+    LOVE2D update function. Updates the games state machine and
+    resets the <love.keyboard.keysPressed> table
+
+    Params:
+        dt: number - deltatime counter for current frame rate
+    Returns:
+        nil
+]]
 function love.update(dt)
     GStateMachine:update(dt)
     love.keyboard.keysPressed = {}
 end
 
--- render game textures and text
+--[[
+    LOVE2D render function. Renders the game state
+
+    Params:
+        none
+    Returns:
+        nil
+]]
 function love.draw()
     GStateMachine:render()
 end
