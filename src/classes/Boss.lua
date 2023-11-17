@@ -14,10 +14,8 @@ Boss = Class{__includes = Entity}
     Boss constructor
 
     Params:
-        animations: table - the boss sprite sheet indices for drawing
-                            this Entity
-        def: table - the definition of a Boss object as defined in 
-                     src/utils/definitions.lua as GBossDefinition
+        animations: table - Boss animation defnitions
+        def:        table - Boss object definition
     Returns:
         nil
 ]]

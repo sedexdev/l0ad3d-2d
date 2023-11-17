@@ -27,6 +27,7 @@ BOSS_SPEED = 30
 MAX_HEALTH = 100
 ENTITY_PROXIMITY = 100
 ENTITY_AXIS_PROXIMITY = 10
+START_AREA_ID = 17
 
 -- movement key bindings
 MOVEMENT_KEYS = {'up', 'right', 'down', 'left', 'w', 'd', 's', 'a'}

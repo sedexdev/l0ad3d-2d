@@ -15,21 +15,21 @@ MapArea = Class{}
 --[[
     MapArea constructor. The project defines 2 types of area depending on the
     values defined in src/utils/definitions.lua:GMapAreaDefinitions. An area
-    can be an area (tile grid doors and other adjacent areas), or a corridor 
-    (tile grid join between 2 areas with an orientation and bends)
+    can be an area (tile grid, doors, and other adjacent areas), or a corridor 
+    (tile grid, join between 2 areas with an orientation and bends)
 
     Params:
-        id: number - area ID relating to the GMapAreaDefinitions area index
-        x: number - x coordinate of this area
-        y: number - y coordinate of this area
-        width: number - width of this area in tiles
-        height: number - height of this area in tiles
-        type: string - area | corridor
-        orientation: string - orientation of this area (corridors)
-        bends: table - location of any bends in this area (corridors)
-        joins: table -  area index and location to base corridor (x, y) off of (corridors)
-        doors: table - doors in this area
-        adjacentAreas: table - adjacent areas connected to this area
+        id:            number - area ID relating to the GMapAreaDefinitions area index
+        x:             number - x coordinate of this area
+        y:             number - y coordinate of this area
+        width:         number - width of this area in tiles
+        height:        number - height of this area in tiles
+        type:          string - area | corridor
+        orientation:   string - orientation of this area (corridors)
+        bends:         table  - location of any bends in this area (corridors)
+        joins:         table  -  area index and location to base corridor (x, y) off of (corridors)
+        doors:         table  - doors in this area
+        adjacentAreas: table  - adjacent areas connected to this area
     Returns:
         nil
 ]]
@@ -77,8 +77,8 @@ end
     table that is populated by the MapArea:generateFloorTiles() function.
     Offsets for vertical and horizonatal rendering are defnied as follows:
 
-        x = x + (x - n) * (64 * 5) => 64 * 5 is the floor tile width scaled x5 
-        y = y + (y - n) * (32 * 5) => 32 * 5 is the floor tile height scaled x5 
+    x = x + (x - n) * (64 * 5) => 64 * 5 is the floor tile width scaled x5 
+    y = y + (y - n) * (32 * 5) => 32 * 5 is the floor tile height scaled x5 
 
     Params:
         none
@@ -122,6 +122,11 @@ end
     vertical helper functions are called twice to get an equal
     length wall section for either side of the area, offset
     appropriately for the side being rendered
+
+    Params:
+        none
+    Returns:
+        nil
 ]]
 function MapArea:drawCorridorWalls()
     if self.orientation == 'horizontal' then
@@ -148,8 +153,7 @@ end
     appropriate area bondary as defined by the parameters
 
     Params:
-        xOffset: number - pixels to offset the x coordinate by 
-                          (used for corners and corridors)
+        xOffset: number - pixels to offset the x coordinate by
         yOffset: number - pixels to offset the y coordinate by
     Returns:
         nil
@@ -207,12 +211,8 @@ function MapArea:drawBendWallTilesHorizontal()
 
         Params:
             start: number - defines the starting value of the for loop
-                            to ensure wall tiles are offset by the correct
-                            amount for the location of the bend
             limit: number - defines the final value of the for loop
-                            to ensure wall tiles are offset by the correct
-                            amount for the location of the bend
-            y: number - offset value for the y coordinate
+            y:     number - offset value for the y coordinate
         Returns:
             nil
     ]]
@@ -265,12 +265,8 @@ function MapArea:drawBendWallTilesVertical()
 
         Params:
             start: number - defines the starting value of the for loop
-                            to ensure wall tiles are offset by the correct
-                            amount for the location of the bend
             limit: number - defines the final value of the for loop
-                            to ensure wall tiles are offset by the correct
-                            amount for the location of the bend
-            x: number - offset value for the x coordinate 
+            x:     number - offset value for the x coordinate 
         Returns:
             nil
     ]]
@@ -324,10 +320,8 @@ end
 --[[
     Updates the <self.wallTiles> table with wall tile quads. 2
     additional tables are inserted into <self.wallTiles> for
-    horizontal and vertical walls. The number of tiles inserted 
-    into the respective sub-tables is equal to the width or height
-    of the area. Horizontal walls have +2 extra tiles to account
-    for the corners of the area
+    horizontal and vertical walls. Horizontal walls have +2 
+    extra tiles to account for the corners of the area
 
     Params:
         none
@@ -337,23 +331,23 @@ end
 function MapArea:generateWallTiles()
     if self.bend then
         -- -5 to make the wall shorter on the bend side
-        for x = 1, (self.width * 4) - 5 do
+        for _ = 1, (self.width * 4) - 5 do
             table.insert(self.bendWall, GQuads['wall-topper'][1])
         end
     end
     self.wallTiles['horizontal'] = {}
     if self.type == 'corridor' then
-        for x = 1, (self.width * 4) do
+        for _ = 1, (self.width * 4) do
             table.insert(self.wallTiles['horizontal'], GQuads['wall-topper'][1])
         end
     else
         -- +2 to add the corner squares for an area
-        for x = 1, (self.width * 4) + 2 do
+        for _ = 1, (self.width * 4) + 2 do
             table.insert(self.wallTiles['horizontal'], GQuads['wall-topper'][1])
         end
     end
     self.wallTiles['vertical'] = {}
-    for x = 1, (self.height * 2) do
+    for _ = 1, (self.height * 2) do
         table.insert(self.wallTiles['vertical'], GQuads['wall-topper'][1])
     end
 end

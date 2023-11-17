@@ -15,8 +15,7 @@ Entity = Class{}
     Boss constructor
 
     Params:
-        def: table - the definition of a subclass object as defined 
-                     in src/utils/definitions.lua
+        def: table - tEntity definition defined in src/utils/definitions.lua
     Returns:
         nil
 ]]
@@ -30,27 +29,6 @@ function Entity:init(def)
     self.height = def.height
     self.areaID = def.areaID
     self.stateMachine = def.stateMachine
-end
-
---[[
-    Collision detectio algorithm to detect collisions with other
-    Entity objects. The function uses Axis-Aligned Bounding Boxes
-    (AABB) to detect overlaps between sprites
-
-    Params:
-        entity: table - an Entity object to compare location with
-    Returns:
-        boolean: true of collision detected, false if not
-]]
-function Entity:collides(entity)
-    -- AABB collision detection algorithm
-    if (self.x > entity.x + entity.width) or (entity.x > self.x + self.width) then
-        return false
-    end
-    if (self.y > entity.y + entity.height) or (entity.height > self.y + self.height) then
-        return false
-    end
-    return true
 end
 
 --[[

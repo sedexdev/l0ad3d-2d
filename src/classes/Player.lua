@@ -11,14 +11,12 @@
 Player = Class{__includes = Entity}
 
 --[[
-    Boss constructor
+    Player constructor
 
     Params:
-        id: number - defines which character animations will be used
-        animations: table - the character sprite sheet indices for drawing
-                            this Entity
-        def: table - the definition of a Player object as defined in 
-                     src/utils/definitions.lua as GCharacterDefinition
+        id:         number - defines which character animations will be used
+        animations: table  - Player animations
+        def:        table  - Player object definition
     Returns:
         nil
 ]]
@@ -38,8 +36,7 @@ function Player:init(id, animations, def)
     self.powerups = def.powerups
     self.keys = def.keys
     -- defines the current area of the player: {id = areaID, type = 'area' | 'corridor'}
-    -- 17 is the starting area 
-    self.currentArea = {id = 17, type = 'area'}
+    self.currentArea = {id = START_AREA_ID, type = 'area'}
     -- shots table keeps track of Shot objects so they can be 
     -- instantiated and removed after the assigned interval
     self.shots = {}

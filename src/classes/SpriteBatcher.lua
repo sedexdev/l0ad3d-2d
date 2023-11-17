@@ -3,7 +3,7 @@
 
     Description:
         Creates a customisable instance of LOVE2D's SpriteBatch class
-        for rendering out multiple version of the same quad while 
+        for rendering out multiple versions of the same quad while 
         limiting costly calls to love.graphics.draw() for each quad
 ]]
 
@@ -22,15 +22,17 @@ function SpriteBatcher:init(texture)
 end
 
 --[[
-    Adds a new quad to <self.spriteBatch> at the given
-    (x, y) coordinates
+    Adds a new quad to <self.spriteBatch> using the given
+    (x, y) coordinates and scale
 
     Params:
-        quad: Quad - the quad to send to the Spritebatch draw function
-        x: number - x coordinate of quad
-        y: number - y coordinate of quad
+        quad: Quad   - the quad to send to the Spritebatch draw function
+        x:    number - x coordinate of quad
+        y:    number - y coordinate of quad
+        s1:   number - scale factor 1
+        s2:   number - scale factor 2
     Returns:
-            nil
+        nil
 ]]
 function SpriteBatcher:add(quad, x, y, s1, s2)
     self.spriteBatch:add(quad, x, y, 0, s1, s2)
@@ -40,8 +42,7 @@ end
     Draws the contents of <self.spriteBatch>
 
     Params:
-        s1: number - scale factor 1
-        s2: number - scale factor 2
+        none
     Returns:
         nil
 ]]

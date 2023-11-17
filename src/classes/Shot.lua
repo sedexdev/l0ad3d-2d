@@ -10,11 +10,11 @@
 Shot = Class{}
 
 --[[
-    Shot constructor. Defines a timer, interval, and boolea
-    used to determin if the shot should still be rendered
+    Shot constructor. Defines a timer, interval, and boolean
+    used to determine if the shot should still be rendered
 
     Params:
-        player: table - Player object who fired the shot
+        player: table - Player object
     Returns:
         nil
 ]]
@@ -29,8 +29,8 @@ end
 --[[
     Shot update function. Increments the <self.timer> attribute by
     <dt> on every frame update of the engine and checks if <self.timer>
-    has passed <self.interval>. If it has we set <self.renderShot> to
-    false and reset <self.timer>
+    has passed <self.interval>. If it has <self.renderShot> is set to
+    false and <self.timer> is reset
 
     Params:
         dt: number - deltatime counter for current frame rate
@@ -69,19 +69,17 @@ end
 
 --[[
     Set's the (x, y) coordinate of the shot graphic so it
-    renders correctly by appearing to enimate from the Players
-    weapon. This function handles shot rendering at multiples
-    of 90 degrees. Angles with multiples of 45 degrees are
-    handled in the helper function below
+    renders correctly by appearing to eminate from the Players
+    weapon. This function handles shot rendering at right angles. 
+    Angles with multiples of 45 degrees are handled in the helper 
+    function below
 
     Params:
-        x: <self.player> current x coordinate
-        y: <self.player> current y coordinate
+        x: table - current x coordinate
+        y: table - current y coordinate
     Returns:
-        number: value representing the x offset required based on 
-                the <self.player.direction> and <self.player.currentWeapon>
-        number: value representing the y offset required based on 
-                the <self.player.direction> and <self.player.currentWeapon>
+        number: value representing the x offset required
+        number: value representing the y offset required
 ]]
 function Shot:setCoordinates(x, y)
     -- get offsets for adjusting the shot graphic
@@ -124,13 +122,11 @@ end
     of 45 degrees
 
     Params:
-        x: <self.player> current x coordinate
-        y: <self.player> current y coordinate
+        x: table - current x coordinate
+        y: table - current y coordinate
     Returns:
-        number: value representing the x offset required based on 
-                the <self.player.direction> and <self.player.currentWeapon>
-        number: value representing the y offset required based on 
-                the <self.player.direction> and <self.player.currentWeapon>
+        number: value representing the x offset required
+        number: value representing the y offset required
 ]]
 function Shot:set45DegreeCoordinates(x, y)
     -- get offsets for adjusting the shot graphic

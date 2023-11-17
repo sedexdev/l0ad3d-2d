@@ -40,7 +40,7 @@ end
 
     Params:
         stateName: string - name of the state to change to
-        params: table - list of parameters to pass into the state being entered into
+        params:    table  - list of parameters to pass into the new state
 ]]
 function StateMachine:change(stateName, params)
     assert(self.states[stateName])

@@ -13,7 +13,7 @@ Animation = Class{}
     Animation constructor
 
     Params:
-        frames: table - the indices of the sprite sheet to execute the animation
+        frames:   table  - the indices of the sprite sheet to execute the animation
         interval: number - period elapsed before changing frames
     Returns:
         nil

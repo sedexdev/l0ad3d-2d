@@ -14,11 +14,9 @@ Grunt = Class{__includes = Entity}
     Grunt constructor
 
     Params:
-        id: number - ID of this Grunt Entity object
-        animations: table - the grunt sprite sheet indices for drawing
-                            this Entity
-        def: table - the definition of a Grunt object as defined in 
-                     src/utils/definitions.lua as GGruntDefinition
+        id:         number - ID of this Grunt Entity object
+        animations: table  - Grunt object animation definitions
+        def:        table  - Grunt object definition as defined in src/utils/definitions.lua
     Returns:
         nil
 ]]

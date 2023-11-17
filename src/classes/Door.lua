@@ -15,14 +15,14 @@ Door = Class{}
     Doors constructor
 
     Params:
-        id: number - ID of this door pair
-        colour: string - colour of the doors
-        orientation: string - orientation of these doors
+        id:             number - ID of this door pair
+        colour:         string - colour of the doors
+        orientation:    string - orientation of these doors
         playerLocation: string - side of this door the Player is on
-        leftX: number - x coordinate of the left door in the pair 
-        rightX: number - x coordinate of the right door in the pair
-        leftY: number - y coordinate of the left door in the pair
-        rightY: number - y coordinate of the right door in the pair
+        leftX:          number - x coordinate of the left door in the pair 
+        rightX:         number - x coordinate of the right door in the pair
+        leftY:          number - y coordinate of the left door in the pair
+        rightY:         number - y coordinate of the right door in the pair
     Returns:
         nil
 ]]
@@ -47,8 +47,6 @@ function Door:init(id, areaID, colour, orientation, leftX, rightX, leftY, rightY
     self.isLocked = DOOR_IDS[self.colour] > 2 and true or false
     -- side of this door the player is on. Nil at initilasation and updated as Player enters a new area
     self.playerLocation = nil
-    self.gruntLocation = nil
-    self.bossLocation = nil
 end
 
 --[[
@@ -75,41 +73,38 @@ end
     which side the Player is on defined by <self.playerLocation>
 
     Params:
-        entity: table - an Entity object
+        player: table - Player object
     Returns:
         nil
 ]]
-function Door:proximity(entity)
-    local entityLocation
-    if entity.type == 'character' then entityLocation = self.playerLocation end
-    if entity.type == 'grunt' then entityLocation = self.gruntLocation  end
+function Door:proximity(player)
     -- locked door conditions
-    local aboveLocked = (entity.y + entity.height) > self.leftY + H_DOOR_HEIGHT and (entity.y + entity.height) > (self.rightY + H_DOOR_HEIGHT)
-    local belowLocked = entity.y < (self.leftY - H_DOOR_HEIGHT) and entity.y < (self.rightY - H_DOOR_HEIGHT)
-    local leftLocked = (entity.x + entity.width) > self.leftX + V_DOOR_WIDTH and (entity.x + entity.width) > (self.rightX + V_DOOR_WIDTH)
-    local rightLocked = entity.x < (self.leftX - V_DOOR_WIDTH) and entity.x < (self.rightX - V_DOOR_WIDTH)
+    local aboveLocked = (player.y + player.height) > self.leftY + H_DOOR_HEIGHT and (player.y + player.height) > (self.rightY + H_DOOR_HEIGHT)
+    local belowLocked = player.y < (self.leftY - H_DOOR_HEIGHT) and player.y < (self.rightY - H_DOOR_HEIGHT)
+    local leftLocked = (player.x + player.width) > self.leftX + V_DOOR_WIDTH and (player.x + player.width) > (self.rightX + V_DOOR_WIDTH)
+    local rightLocked = player.x < (self.leftX - V_DOOR_WIDTH) and player.x < (self.rightX - V_DOOR_WIDTH)
     if self.orientation == 'horizontal' then
-        -- x proximity is the same no matter which side the entity object is on
-        local xProximity = (entity.x + ENTITY_CORRECTION) > self.leftX and (entity.x + entity.width) - ENTITY_CORRECTION < (self.rightX + H_DOOR_WIDTH)
+        -- x proximity is the same no matter which side the Player object is on
+        local xProximity = (player.x + ENTITY_CORRECTION) > self.leftX and (player.x + player.width) - ENTITY_CORRECTION < (self.rightX + H_DOOR_WIDTH)
         -- proximity conditions
-        local aboveYProximity = (self.leftY - (entity.y + entity.height) <= DOOR_PROXIMITY and self.rightY - (entity.y + entity.height) <= DOOR_PROXIMITY) and xProximity
-        local belowYProximity = (entity.y - (self.leftY + H_DOOR_HEIGHT) <= DOOR_PROXIMITY and entity.y - (self.rightY + H_DOOR_HEIGHT) <= DOOR_PROXIMITY) and xProximity
-        if entityLocation == 'above' then
+        local aboveYProximity = (self.leftY - (player.y + player.height) <= DOOR_PROXIMITY and self.rightY - (player.y + player.height) <= DOOR_PROXIMITY) and xProximity
+        local belowYProximity = (player.y - (self.leftY + H_DOOR_HEIGHT) <= DOOR_PROXIMITY and player.y - (self.rightY + H_DOOR_HEIGHT) <= DOOR_PROXIMITY) and xProximity
+        if self.playerLocation == 'above' then
             return self:proximityHelper(aboveLocked, aboveYProximity)
         end
-        if entityLocation == 'below' then
+        if self.playerLocation == 'below' then
             return self:proximityHelper(belowLocked, belowYProximity)
         end
     else
-        -- y proximity is the same no matter which side the entity object is on
-        local yProximity = entity.y + ENTITY_CORRECTION > self.rightY and (entity.y + entity.height) - ENTITY_CORRECTION < (self.leftY + V_DOOR_HEIGHT)
+        -- y proximity is the same no matter which side the Player object is on
+        local yProximity = player.y + ENTITY_CORRECTION > self.rightY and (player.y + player.height) - ENTITY_CORRECTION < (self.leftY + V_DOOR_HEIGHT)
         -- proximity conditions
-        local leftXProximity = (self.leftX - (entity.x + entity.width) <= DOOR_PROXIMITY and self.rightX - (entity.x + entity.width) <= DOOR_PROXIMITY) and yProximity
-        local rightXProximity = (entity.x - (self.leftX + H_DOOR_WIDTH) <= DOOR_PROXIMITY and entity.x - (self.rightX + H_DOOR_WIDTH) <= DOOR_PROXIMITY) and yProximity
-        if entityLocation == 'left' then
+        local leftXProximity = (self.leftX - (player.x + player.width) <= DOOR_PROXIMITY and self.rightX - (player.x + player.width) <= DOOR_PROXIMITY) and yProximity
+        local rightXProximity = (player.x - (self.leftX + H_DOOR_WIDTH) <= DOOR_PROXIMITY and player.x - (self.rightX + H_DOOR_WIDTH) <= DOOR_PROXIMITY) and yProximity
+        if self.playerLocation == 'left' then
             return self:proximityHelper(leftLocked, leftXProximity)
         end
-        if entityLocation == 'right' then
+        if self.playerLocation == 'right' then
             return self:proximityHelper(rightLocked, rightXProximity)
         end
     end
@@ -122,7 +117,7 @@ end
     Entity object is currently on
     
     Params:
-        lockedCondition: boolean - condition to evaluate if the door is locked
+        lockedCondition:   boolean - condition to evaluate if the door is locked
         locationCondition: boolean - Entity location dependent condition 
     Returns:
         boolean: true if either of the arguments are true, false otherwise 

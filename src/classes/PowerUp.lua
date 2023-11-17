@@ -13,7 +13,12 @@ PowerUp = Class{}
     PowerUp constructor
 
     Params:
-        none
+        id:     number - ID number of thsi PowerUp object
+        areaID: number - area ID the powerup will spawn in
+        x:      number - x coordinate
+        y:      number - y coordinate
+        type:   string - type ( powerup | crate | key )
+        quadID: number - ID to index GQuads with
     Returns:
         nil
 ]]

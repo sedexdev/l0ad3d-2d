@@ -8,18 +8,14 @@
         the center of the area wall depending on the location of the
         corridor (left, right, top, bottom). The (x, y) of any corridors
         connected to an area is determined based on the (x, y) of the 
-        area. The various game control systems are also initialised
-        in this class
+        area
 ]]
 
 Map = Class{}
 
 --[[
     Map constructor. Defines tables for storing area and corridor
-    objects, as well as a corridor tracking table that stores the index
-    of an area as defined in src/utils/definitions.lua as GMapAreaDefinitions.
-    The indices are used to ensure that corridors are not rendered twice
-    as they are connected to 2 different areas 
+    objects, as well as defining the starting area
 
     Params:
         player: table - Player object
@@ -29,12 +25,11 @@ Map = Class{}
 function Map:init(player)
     self.player = player
     self.areas = {}
-    self.startingAreaID = 17
 end
 
 --[[
-    Map render function. Renders out the areas, corridors, doors,
-    powerup objects, crates, and enemies that define this Map
+    Map render function. Renders out the MapArea objects stored 
+    in <self.areas>
 
     Params:
         none
@@ -49,12 +44,13 @@ function Map:render()
 end
 
 --[[
-    Returns the GMapAreaDefinitions definition of this area
+    Returns the MapArea object of the area with the corresponding
+    area ID
 
     Params:
         areaID: number - area ID to index <self.areas>
     Returns:
-        table: area definition as defined in GMapAreaDefinitions
+        table: MapArea object
 ]]
 function Map:getAreaDefinition(areaID)
     return self.areas[areaID]
@@ -63,7 +59,9 @@ end
 --[[
     Generates the MapArea objects that form the Map. Also responsible 
     for generating interactive game objects including Entity and PowerUp 
-    instances for the Player object to interact with
+    instances for the Player object to interact with, as well the games
+    door system
+
 
     Params:
         systemManager: table - SystemManager object
@@ -109,7 +107,7 @@ end
 
 --[[
     Gets the starting MapArea objects that Grunt Entity objects will
-    be spawned in when the Map first generates
+    be spawned in when the Map generates
 
     Params:
         none
@@ -118,9 +116,9 @@ end
 ]]
 function Map:getStartingAreas()
     local startingAreas = {}
-    table.insert(startingAreas, self.areas[self.startingAreaID])
-    for _, areaID in pairs(GAreaAdjacencyDefinitions[self.startingAreaID]) do
-        if areaID >= self.startingAreaID then
+    table.insert(startingAreas, self.areas[START_AREA_ID])
+    for _, areaID in pairs(GAreaAdjacencyDefinitions[START_AREA_ID]) do
+        if areaID >= START_AREA_ID then
             table.insert(startingAreas, self.areas[areaID])
         end
     end
@@ -159,12 +157,8 @@ end
     to the left wall of another MapArea object
 
     Params:
-        area: table - GMapAreaDefinitions definition of the MapArea 
-                      object whose corridors we need to calculate 
-                      (x, y) for
-        corridor: table - GMapAreaDefinitions definition of the MapArea 
-                      corridor whose width is used to set the x coordinate 
-                      (x, y) for
+        area:     table - GMapAreaDefinitions definition
+        corridor: table - GMapAreaDefinitions definition
     Returns
         number: x - the x coordeinate the corridor will be rendered at
         number: y - the y coordeinate the corridor will be rendered at
@@ -183,9 +177,7 @@ end
     to the right wall of another MapArea object
 
     Params:
-        area: table - GMapAreaDefinitions definition of the MapArea 
-                      object whose corridors we need to calculate 
-                      (x, y) for
+        area: table - GMapAreaDefinitions definition
     Returns
         number: x - the x coordeinate the corridor will be rendered at
         number: y - the y coordeinate the corridor will be rendered at
@@ -203,12 +195,8 @@ end
     to the top wall of another MapArea object
 
     Params:
-        area: table - GMapAreaDefinitions definition of the MapArea 
-                      object whose corridors we need to calculate 
-                      (x, y) for
-        corridor: table - GMapAreaDefinitions definition of the MapArea 
-                      corridor whose width is used to set the y coordinate 
-                      (x, y) for
+        area:     table - GMapAreaDefinitions definition
+        corridor: table - GMapAreaDefinitions definition
     Returns
         number: x - the x coordeinate the corridor will be rendered at
         number: y - the y coordeinate the corridor will be rendered at
@@ -227,9 +215,7 @@ end
     to the bottom wall of another MapArea object
 
     Params:
-        area: table - GMapAreaDefinitions definition of the MapArea 
-                      object whose corridors we need to calculate 
-                      (x, y) for
+        area: table - GMapAreaDefinitions definition
     Returns
         number: x - the x coordeinate the corridor will be rendered at
         number: y - the y coordeinate the corridor will be rendered at
