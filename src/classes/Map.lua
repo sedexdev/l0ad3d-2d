@@ -29,32 +29,7 @@ Map = Class{}
 function Map:init(player)
     self.player = player
     self.areas = {}
-    -- create a DoorSystem
-    self.doorSystem = DoorSystem(self.player, self)
-    -- create a CollisionSystem
-    self.collisionSystem = CollisionSystem(self.player, self.doorSystem)
-    -- create a PowerUpSystem
-    self.powerupSystem = PowerUpSystem(self.player, self.doorSystem)
-    -- create an instance of SpriteBatch for Grunt Entity objects
-    self.gruntSpriteBatch = SpriteBatcher(GTextures['grunt'])
-    -- create an EnemySystem
-    self.enemySystem = EnemySystem(self.player, self.gruntSpriteBatch, self.collisionSystem, self.doorSystem)
-end
-
---[[
-    Map update function. Updates the collision system to handle
-    collisions between Entity objects and the MapArea walls, as
-    well as Player/PowerUp collisions
-
-    Params:
-        dt: number - deltatime counter for current frame rate
-    Returns:
-        nil
-]]
-function Map:update(dt)
-    self.doorSystem:update(dt)
-    self.powerupSystem:update(dt)
-    self.enemySystem:update(dt)
+    self.startingAreaID = 17
 end
 
 --[[
@@ -71,10 +46,6 @@ function Map:render()
     for _, area in pairs(self.areas) do
         area:render()
     end
-    -- render out Door objects
-    self.doorSystem:render()
-    self.powerupSystem:render()
-    self.enemySystem:render()
 end
 
 --[[
@@ -95,11 +66,11 @@ end
     instances for the Player object to interact with
 
     Params:
-        none
+        systemManager: table - SystemManager object
     Returns:
         nil
 ]]
-function Map:generateLevel()
+function Map:generateLevel(systemManager)
     -- instantiate the area objects and add them to the areas table
     for i = 1, #GMapAreaDefinitions do
         -- populate the (x, y) for corridors based off of joined areas
@@ -129,11 +100,31 @@ function Map:generateLevel()
         area:generateWallTiles()
     end
     -- initialise the Door objects in the DoorSystem
-    self.doorSystem:initialiseDoors(self.areas)
+    systemManager.doorSystem:initialiseDoors(self.areas)
     -- spawn powerups, crates, and keys
-    self.powerupSystem:spawn()
-    -- spawn enemies
-    self.enemySystem:spawn(self.areas)
+    systemManager.powerupSystem:spawn()
+    -- spawn enemies in area 17 and it's adjacent areas at the start
+    systemManager.enemySystem:spawn(self:getStartingAreas())
+end
+
+--[[
+    Gets the starting MapArea objects that Grunt Entity objects will
+    be spawned in when the Map first generates
+
+    Params:
+        none
+    Returns:
+        table: list of MapArea objects
+]]
+function Map:getStartingAreas()
+    local startingAreas = {}
+    table.insert(startingAreas, self.areas[self.startingAreaID])
+    for _, areaID in pairs(GAreaAdjacencyDefinitions[self.startingAreaID]) do
+        if areaID >= self.startingAreaID then
+            table.insert(startingAreas, self.areas[areaID])
+        end
+    end
+    return startingAreas
 end
 
 --[[

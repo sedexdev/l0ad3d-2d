@@ -53,8 +53,8 @@ function CollisionSystem:checkWallCollision(area, entity)
         bottomVertical = area.y + (area.height * FLOOR_TILE_HEIGHT / 2) + V_DOOR_HEIGHT
     }
     -- set Player (x, y) comparison
-    conditions['horizontalDoorway'] = entity.x + ENTITY_CORRECTION > conditions.leftHorizontal and (entity.x + entity.width) - ENTITY_CORRECTION < conditions.rightHorizontal
-    conditions['verticalDoorway'] = entity.y + ENTITY_CORRECTION > conditions.topVertical and (entity.y + entity.height) - ENTITY_CORRECTION < conditions.bottomVertical
+    conditions['horizontalDoorway'] = self.player.x + ENTITY_CORRECTION > conditions.leftHorizontal and (self.player.x + CHARACTER_WIDTH) - ENTITY_CORRECTION < conditions.rightHorizontal
+    conditions['verticalDoorway'] = self.player.y + ENTITY_CORRECTION > conditions.topVertical and (self.player.y + CHARACTER_HEIGHT) - ENTITY_CORRECTION < conditions.bottomVertical
     -- if the area is a corridor then allow the player to pass through each end
     if area.type == 'corridor'then
         return self:corridorBoundary(area, conditions)
@@ -337,37 +337,14 @@ end
         nil
 ]]
 function CollisionSystem:handleEnemyWallCollision(entity, edge)
-    -- for single wall collisions just update x or y
-    if edge == 'L' or edge == 'R' then
-        entity.dx = -entity.dx
-    elseif edge == 'T' or edge == 'B' then
-        entity.dy = -entity.dy
-    -- for multi-wall collisions update dx and dy
-    elseif edge == 'LT' or edge == 'RT' or edge == 'LB' or edge == 'RB' then
-        entity.dx = -entity.dx
-        entity.dy = -entity.dy
-    end
-    self:updateEntityDirection(entity)
-end
-
---[[
-    Changes the direction the entity is facing after a 
-    wall collision
-
-    Params:
-        entity: table - Entity object to update
-    Returns:
-        nil
-]]
-function CollisionSystem:updateEntityDirection(entity)
-    if entity.direction == 'north' then entity.direction = 'south'
-    elseif entity.direction == 'east' then entity.direction = 'west'
-    elseif entity.direction == 'south' then entity.direction = 'north'
-    elseif entity.direction == 'west' then entity.direction = 'east'
-    elseif entity.direction == 'north-east' then entity.direction = 'south-east'
-    elseif entity.direction == 'south-east' then entity.direction = 'north-east'
-    elseif entity.direction == 'south-west' then entity.direction = 'north-west'
-    elseif entity.direction == 'north-west' then entity.direction = 'south-west' 
+    if edge == 'T' then entity.direction = 'south'
+    elseif edge == 'R' then entity.direction = 'west'
+    elseif edge == 'B' then entity.direction = 'north'
+    elseif edge == 'L' then entity.direction = 'east'
+    elseif edge == 'TL' then entity.direction = 'south-east'
+    elseif edge == 'BL' then entity.direction = 'north-east'
+    elseif edge == 'TR' then entity.direction = 'south-west'
+    elseif edge == 'BR' then entity.direction = 'north-west'
     end
 end
 
@@ -619,31 +596,32 @@ end
 
     Params:
         key: table - key type PowerUp object to detect
+        entity: table - Entity object to collisio for
     Returns:
         boolean: true if collision detected
 ]]
-function CollisionSystem:crateCollision(crate)
+function CollisionSystem:crateCollision(crate, entity)
     -- false collision conditions
-    if (self.player.x > crate.x + CRATE_WIDTH) or (crate.x > self.player.x + CHARACTER_WIDTH) then
+    if (entity.x > crate.x + CRATE_WIDTH) or (crate.x > entity.x + ENTITY_WIDTH) then
         return {detected = false, edge = nil}
     end
-    if (self.player.y > crate.y + CRATE_HEIGHT) or (crate.y > self.player.y + CHARACTER_HEIGHT) then
+    if (entity.y > crate.y + CRATE_HEIGHT) or (crate.y > entity.y + ENTITY_HEIGHT) then
         return {detected = false, edge = nil}
     end
     -- true collision conditions
     local edge
-    local horizontalGap = (self.player.x + PLAYER_CRATE_CORRECTION > crate.x) and (self.player.x + CHARACTER_WIDTH - PLAYER_CRATE_CORRECTION) < crate.x + CRATE_WIDTH
-    local verticalGap = (self.player.y + PLAYER_CRATE_CORRECTION > crate.y) and (self.player.y + CHARACTER_HEIGHT - PLAYER_CRATE_CORRECTION) < crate.y + CRATE_HEIGHT
-    if (self.player.x + CHARACTER_WIDTH - ENTITY_CORRECTION > crate.x) and (self.player.x + CHARACTER_WIDTH < crate.x + CRATE_WIDTH) and verticalGap then
+    local horizontalGap = (entity.x + CRATE_CORRECTION > crate.x) and (entity.x + ENTITY_WIDTH - CRATE_CORRECTION) < crate.x + CRATE_WIDTH
+    local verticalGap = (entity.y + CRATE_CORRECTION > crate.y) and (entity.y + ENTITY_HEIGHT - CRATE_CORRECTION) < crate.y + CRATE_HEIGHT
+    if (entity.x + ENTITY_WIDTH - ENTITY_CORRECTION > crate.x) and (entity.x + ENTITY_WIDTH < crate.x + CRATE_WIDTH) and verticalGap then
         edge = 'L'
     end
-    if (self.player.y + CHARACTER_HEIGHT - ENTITY_CORRECTION > crate.y) and (self.player.y + CHARACTER_HEIGHT < crate.y + CRATE_HEIGHT) and horizontalGap then
+    if (entity.y + ENTITY_HEIGHT - ENTITY_CORRECTION > crate.y) and (entity.y + ENTITY_HEIGHT < crate.y + CRATE_HEIGHT) and horizontalGap then
         edge = 'T'
     end
-    if (self.player.x + ENTITY_CORRECTION < crate.x + CRATE_WIDTH) and (self.player.x > crate.x) and verticalGap then
+    if (entity.x + ENTITY_CORRECTION < crate.x + CRATE_WIDTH) and (entity.x > crate.x) and verticalGap then
         edge = 'R'
     end
-    if (self.player.y + ENTITY_CORRECTION < crate.y + CRATE_HEIGHT) and (self.player.y > crate.y) and horizontalGap then
+    if (entity.y + ENTITY_CORRECTION < crate.y + CRATE_HEIGHT) and (entity.y > crate.y) and horizontalGap then
         edge = 'B'
     end
     return {detected = true, edge = edge}
@@ -659,7 +637,7 @@ end
     Returns:
         nil
 ]]
-function CollisionSystem:handleCrateCollision(crate, edge)
+function CollisionSystem:handlePlayerCrateCollision(crate, edge)
     if edge == 'L' then
         self.player.x = crate.x - CHARACTER_WIDTH + ENTITY_CORRECTION
     elseif edge == 'T' then
@@ -672,3 +650,25 @@ function CollisionSystem:handleCrateCollision(crate, edge)
 end
 
 -- ========================== ENEMY COLLISIONS ==========================
+
+--[[
+    Handles the crate collision by changing the direction of
+    the Entity so they cannot run over the crate
+
+    Params:
+        entity: table - Entity object to update
+        egde: string - edge the collision was detected on
+    Returns:
+        nil
+]]
+function CollisionSystem:handleEnemyCrateCollision(entity, edge)
+    if edge == 'L' then
+        entity.direction = 'west'
+    elseif edge == 'T' then
+        entity.direction = 'north'
+    elseif edge == 'R' then
+        entity.direction = 'east'
+    elseif edge == 'B' then
+        entity.direction = 'south'
+    end
+end

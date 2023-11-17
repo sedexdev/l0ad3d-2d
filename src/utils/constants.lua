@@ -11,23 +11,22 @@ WINDOW_WIDTH, WINDOW_HEIGHT = love.window.getDesktopDimensions()
 -- character sprite dimensions
 CHARACTER_WIDTH = 384
 CHARACTER_HEIGHT = 384
-GRUNT_WIDTH = 384
-GRUNT_HEIGHT = 384
-BOSS_WIDTH = 384
-BOSS_HEIGHT = 384
+ENTITY_WIDTH = 384
+ENTITY_HEIGHT = 384
 
 -- animations
 CHARACTER_WALK_INTERVAL = 0.2
-GRUNT_WALK_INTERVAL = 0.2
-GRUNT_ATTACK_INTERVAL = 0.1
+GRUNT_WALK_INTERVAL = 5
+GRUNT_ATTACK_INTERVAL = 0.8
 BOSS_WALK_INTERVAL = 0.1
 
 -- entity data
 CHARACTER_SPEED = 1200
-GRUNT_SPEED = 20
+GRUNT_SPEED = 25
 BOSS_SPEED = 30
 MAX_HEALTH = 100
-ENTITY_PROXIMITY = 10
+ENTITY_PROXIMITY = 100
+ENTITY_AXIS_PROXIMITY = 10
 
 -- movement key bindings
 MOVEMENT_KEYS = {'up', 'right', 'down', 'left', 'w', 'd', 's', 'a'}
@@ -56,9 +55,6 @@ ANGLES = {
 
 -- directions
 DIRECTIONS = {'north', 'east', 'south', 'west', 'north-east', 'south-east', 'south-west', 'north-west'}
-
--- placeholder deltatime
-TEMP_DT = 30/60
 
 -- map components scaled to x5
 WALL_OFFSET = 16 * 5
@@ -108,4 +104,4 @@ KEY_WIDTH = 64 * 2.5
 KEY_HEIGHT = 64 * 2.5
 
 -- correction for Player to collide with crates
-PLAYER_CRATE_CORRECTION = 160
+CRATE_CORRECTION = 160

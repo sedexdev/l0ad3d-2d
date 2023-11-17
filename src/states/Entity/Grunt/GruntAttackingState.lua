@@ -28,7 +28,7 @@ end
 --[[
     GruntAttackingState update function. Checks to see if the <self.player>
     object has moved away from the <self.grunt> by 100px and changes the 
-    grunts state to walking if so
+    grunts state to rushing if so
 
     Params:
         dt: number - deltatime counter for current frame rate
@@ -41,7 +41,7 @@ function GruntAttackingState:update(dt)
 
     -- change state if we get further away from the player (change to use hitboxes later)
     if math.abs(self.player.x - self.grunt.x) > 100 or math.abs(self.player.y - self.grunt.y) > 100 then
-        self.grunt.stateMachine:change('walking')
+        self.grunt.stateMachine:change('rushing')
     end
 end
 

@@ -131,7 +131,6 @@ end
 ]]
 function DoorSystem:setPlayerLocation()
     local areaID = self.player.currentArea.id
-    -- use self.player.currentArea.id for area ID
     local type = GMapAreaDefinitions[areaID].type
     if type == 'area' then
         -- set Player location to the side WITHIN the area

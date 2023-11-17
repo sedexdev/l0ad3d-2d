@@ -25,7 +25,8 @@ PlayState = Class{__includes = BaseState}
 function PlayState:enter(params)
     self.highScores = params.highScores
     self.map = params.map
-    self.map:generateLevel()
+    self.systemManager = params.systemManager
+    self.map:generateLevel(self.systemManager)
 
     -- Entity (Player) stateMachine
     self.player = params.player
@@ -93,7 +94,7 @@ function PlayState:runGameLoop(dt)
     self:checkMapInteractions(area)
     self:checkObjectInteractions(currentAreaID)
     -- update Map
-    self.map:update(dt)
+    self.systemManager:update(dt)
     -- update Entity objects
     self.player:update(dt)
     -- update the camera to track the Player
@@ -110,28 +111,44 @@ end
 ]]
 function PlayState:checkObjectInteractions(currentAreaID)
     -- to check for key collisions make sure the Player is in an area with a key
-    for _, key in pairs(self.map.powerupSystem.keys) do
+    for _, key in pairs(self.systemManager.powerupSystem.keys) do
         if currentAreaID == key.areaID then
-            if self.map.collisionSystem:objectCollision(key) then
-                self.map.powerupSystem:handleKeyCollision(key)
+            if self.systemManager.collisionSystem:objectCollision(key) then
+                self.systemManager.powerupSystem:handleKeyCollision(key)
             end
         end
     end
     -- check for crate collisions in the current area
-    for _, crate in pairs(self.map.powerupSystem.crates) do
+    for _, crate in pairs(self.systemManager.powerupSystem.crates) do
         if currentAreaID == crate.areaID then
-            local crateCollision = self.map.collisionSystem:crateCollision(crate)
-            if crateCollision.detected then
-                self.map.collisionSystem:handleCrateCollision(crate, crateCollision.edge)
+            local playerCollision = self.systemManager.collisionSystem:crateCollision(crate, self.player)
+            if playerCollision.detected then
+                self.systemManager.collisionSystem:handlePlayerCrateCollision(crate, playerCollision.edge)
+            end
+            -- check for grunt collisions
+            for _, grunt in pairs(self.systemManager.enemySystem.grunts) do
+                if grunt.areaID == currentAreaID then
+                    local gruntCollision = self.systemManager.collisionSystem:crateCollision(crate, grunt)
+                    if gruntCollision.detected then
+                        self.systemManager.collisionSystem:handleEnemyCrateCollision(grunt, gruntCollision.edge)
+                    end
+                end
+            end
+            -- check for boss collisions
+            if self.systemManager.enemySystem.boss then
+                local bossCollision = self.systemManager.collisionSystem:crateCollision(crate, self.systemManager.enemySystem.boss)
+                if bossCollision.detected then
+                    self.systemManager.collisionSystem:handleEnemyCrateCollision(self.systemManager.enemySystem.boss, bossCollision.edge)
+                end
             end
         end
     end
     -- check for powerup collisions in the current area
-    for _, category in pairs(self.map.powerupSystem.powerups) do
+    for _, category in pairs(self.systemManager.powerupSystem.powerups) do
         for _, powerup in pairs(category) do
             if currentAreaID == powerup.areaID then
-                if self.map.collisionSystem:objectCollision(powerup) then
-                    self.map.powerupSystem:handlePowerUpCollision(powerup)
+                if self.systemManager.collisionSystem:objectCollision(powerup) then
+                    self.systemManager.powerupSystem:handlePowerUpCollision(powerup)
                 end
             end
         end
@@ -148,28 +165,28 @@ end
 ]]
 function PlayState:checkMapInteractions(area)
     -- check if the player has collided with the wall in this area
-    local wallCollision = self.map.collisionSystem:checkWallCollision(area, self.player)
+    local wallCollision = self.systemManager.collisionSystem:checkWallCollision(area, self.player)
     if wallCollision.detected then
         -- handle the wall collision
-        self.map.collisionSystem:handlePlayerWallCollision(area, wallCollision.edge)
+        self.systemManager.collisionSystem:handlePlayerWallCollision(area, wallCollision.edge)
     end
     -- check for any area door collisions
     local doors = nil
     if area.type == 'area' then
-        doors = self.map.doorSystem:getAreaDoors(area.id)
+        doors = self.systemManager.doorSystem:getAreaDoors(area.id)
     else
-        doors = self.map.doorSystem:getCorridorDoors(area.id)
+        doors = self.systemManager.doorSystem:getCorridorDoors(area.id)
     end
     if doors then
         for _, door in pairs(doors) do
             -- first check Player proximity and open door if not locked
-            local proximity = self.map.collisionSystem:checkDoorProximity(door)
+            local proximity = self.systemManager.collisionSystem:checkDoorProximity(door)
             if proximity then
                 -- then check collision with the Door object to avoid Player running over it
-                local doorCollision = self.map.collisionSystem:checkDoorCollsion(door)
+                local doorCollision = self.systemManager.collisionSystem:checkDoorCollsion(door)
                 if doorCollision.detected then
                     -- and handle the collision if so
-                    self.map.collisionSystem:handleDoorCollision(door, doorCollision.edge)
+                    self.systemManager.collisionSystem:handleDoorCollision(door, doorCollision.edge)
                 end
             end
         end
@@ -204,6 +221,7 @@ end
 function PlayState:render()
     love.graphics.translate(-math.floor(self.cameraX), -math.floor(self.cameraY))
     self.map:render()
+    self.systemManager:render()
     self.player:render()
     self:displayFPS()
     -- show menu if paused
@@ -283,10 +301,12 @@ function PlayState:processPauseMenuInput()
                 GAnimationDefintions['character'..tostring(self.player.id)],
                 GCharacterDefinition
             )
+            local map = Map(player)
             GStateMachine:change('countdown', {
                 highScores = self.highScores,
                 player = player,
-                map = Map(player)
+                map = map,
+                systemManager = SystemManager(player, map)
             })
         else
             -- quit to MenuState
