@@ -57,6 +57,10 @@ function GruntIdleState:update(dt)
         self.collisionSystem:handleEnemyWallCollision(self.grunt, wallCollision.edge)
     end
 
+    if self.enemySystem:checkProximity(self.grunt) then
+        self.grunt.stateMachine:change('rushing')
+    end
+
     -- update grunt (x, y) based on current direction
     if self.grunt.direction == 'north' then
         self.grunt.y = self.grunt.y - self.grunt.dy * dt
@@ -83,11 +87,8 @@ function GruntIdleState:update(dt)
     self.interval = self.interval + dt
     if self.interval > self.duration then
         self.grunt.direction = DIRECTIONS[math.random(1, 8)]
-        self.duration = math.random(15, 20)
+        self.duration = math.random(8, 10)
         self.interval = 0
-    end
-    if self.enemySystem:checkProximity(self.grunt) then
-        self.grunt.stateMachine:change('rushing')
     end
 end
 

@@ -56,8 +56,10 @@ function EnemySystem:update(dt)
         for _, adjacentID in pairs(GAreaAdjacencyDefinitions[areaID]) do
             if grunt.areaID == areaID or grunt.areaID == adjacentID then
                 grunt:update(dt)
+                goto continue
             end
         end
+        ::continue::
     end
     for _, turret in pairs(self.turrets) do
         turret:update(dt)
@@ -83,8 +85,10 @@ function EnemySystem:render()
         for _, adjacentID in pairs(GAreaAdjacencyDefinitions[areaID]) do
             if grunt.areaID == areaID or grunt.areaID == adjacentID then
                 grunt:render()
+                goto continue
             end
         end
+        ::continue::
     end
     for _, turret in pairs(self.turrets) do
         turret:render()
@@ -166,7 +170,7 @@ function EnemySystem:spawnGrunts(numGrunts, area)
         grunt.x = math.random(area.x, area.x + (area.width * FLOOR_TILE_WIDTH) - ENTITY_WIDTH)
         grunt.y = math.random(area.y, area.y + (area.height * FLOOR_TILE_HEIGHT) - ENTITY_HEIGHT)
         -- give Grunts different speeds
-        grunt.dx = math.random(20, 30)
+        grunt.dx = math.random(200, 300)
         grunt.dy = grunt.dx
         -- set random starting direction
         grunt.direction = DIRECTIONS[math.random(1, 8)]
@@ -215,7 +219,7 @@ function EnemySystem:respawn()
     
 end
 
--- ========================== ENEMY VELOCITY ==========================
+-- ========================== ENEMY PROXIMITY ==========================
 
 --[[
     Checks the Player's proximity to an enemy Entity object.
@@ -228,24 +232,11 @@ end
         boolean: true if in proximity
 ]]
 function EnemySystem:checkProximity(entity)
-    local offset = 50
-    local xRange = (self.player.x - CHARACTER_WIDTH) > (entity.x - ENTITY_WIDTH - offset) and (self.player.x + CHARACTER_WIDTH * 2) < (entity.x + (ENTITY_WIDTH * 2) + offset)
-    local yRange = (self.player.y - CHARACTER_HEIGHT) > (entity.y - ENTITY_HEIGHT - offset) and (self.player.y + CHARACTER_HEIGHT * 2) < (entity.y + (ENTITY_HEIGHT * 2) + offset)
-    -- x proximity from left
-    if entity.x - (self.player.x + CHARACTER_WIDTH) <= ENTITY_PROXIMITY and yRange then
-        return true
+    if (self.player.x > entity.x + entity.width + ENTITY_PROXIMITY) or (entity.x - ENTITY_PROXIMITY > self.player.x + CHARACTER_WIDTH) then
+        return false
     end
-    -- x proximity from right
-    if self.player.x - (entity.x + ENTITY_WIDTH) <= ENTITY_PROXIMITY and yRange then
-        return true
+    if (self.player.y > entity.y + entity.height + ENTITY_PROXIMITY) or (entity.y - ENTITY_PROXIMITY > self.player.y + CHARACTER_HEIGHT) then
+        return false
     end
-    -- y proximity from top
-    if entity.y - (self.player.y + CHARACTER_HEIGHT) <= ENTITY_PROXIMITY and xRange then
-        return true
-    end
-    -- y proximity from bottom
-    if self.player.y - (entity.y + ENTITY_HEIGHT) <= ENTITY_PROXIMITY and xRange then
-        return true
-    end
-    return false
+    return true
 end

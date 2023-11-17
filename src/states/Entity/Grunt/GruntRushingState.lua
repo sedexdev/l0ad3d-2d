@@ -47,7 +47,7 @@ function GruntRushingState:update(dt)
     self.grunt.animations['walking-'..self.grunt.direction]:update(dt)
 
     -- change state if we are close to the player (change to use hitboxes later)
-    if math.abs(self.player.x - self.grunt.x) <= 100 and math.abs(self.player.y - self.grunt.y) <= 100 then
+    if math.abs(self.player.x - self.grunt.x) <= 150 and math.abs(self.player.y - self.grunt.y) <= 150 then
         self.grunt.stateMachine:change('attacking')
     end
 

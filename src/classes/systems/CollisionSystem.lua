@@ -672,3 +672,35 @@ function CollisionSystem:handleEnemyCrateCollision(entity, edge)
         entity.direction = 'south'
     end
 end
+
+--[[
+    Detects collisions between entity objects so they do not pass
+    through each other
+
+    Params:
+        entity1: table - Entity object
+        entity2: table - Entity object
+    Returns:
+        boolean: true if collision detected
+]]
+function CollisionSystem:entityCollision(entity1, entity2)
+    if (entity1.x > entity2.x + entity2.width + ENTITY_PROXIMITY) or (entity2.x - ENTITY_PROXIMITY > entity1.x + ENTITY_WIDTH) then
+        return false
+    end
+    if (entity1.y > entity2.y + entity2.height + ENTITY_PROXIMITY) or (entity2.y - ENTITY_PROXIMITY > entity1.y + ENTITY_HEIGHT) then
+        return false
+    end
+    return true
+end
+
+--[[
+    Handles a collision between 2 Entity objects
+
+    Params:
+        entity: table - Entity object
+    Returns:
+        nil
+]]
+function CollisionSystem:handleEntityCollision(entity)
+
+end
