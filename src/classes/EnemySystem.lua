@@ -63,8 +63,6 @@ function EnemySystem:update(dt)
         turret:update(dt)
     end
     self.boss:update(dt)
-    -- set enemy door locations
-    self:setGruntLocation()
 end
 
 --[[
@@ -129,12 +127,11 @@ end
 ]]
 function EnemySystem:spawn(areas)
     for _, area in pairs(areas) do
-        local startCount, endCount, numGrunts
         if area.type == 'corridor' then
-            startCount = 0
-            endCount = 1
+            goto continue
         else
             local roomArea = area.width * area.height
+            local startCount, endCount, numGrunts
             if roomArea < 64 then
                 startCount = 2
                 endCount = 3
@@ -145,20 +142,21 @@ function EnemySystem:spawn(areas)
                 startCount = 9
                 endCount = 12
             end
+            numGrunts = math.random(startCount, endCount)
+            self:spawnGrunts(numGrunts, area)
+            -- spawn the boss in area 27
+            if area.id == 27 then
+                self.boss = Boss(GAnimationDefintions['boss'], GBossDefinition)
+                -- set random starting direction
+                self.boss.direction = DIRECTIONS[math.random(1, 8)]
+                self:setInitialVelocity(self.boss)
+                self.boss.stateMachine = StateMachine {
+                    ['walking'] = function () return BossWalkingState(area, self.boss, self.player, self.collisionSystem, self) end
+                }
+                self.boss.stateMachine:change('walking')
+            end
         end
-        numGrunts = math.random(startCount, endCount)
-        -- self:spawnGrunts(numGrunts, area)
-        -- spawn the boss in area 27
-        if area.id == 27 then
-            self.boss = Boss(GAnimationDefintions['boss'], GBossDefinition)
-            -- set random starting direction
-            self.boss.direction = DIRECTIONS[math.random(1, 8)]
-            self:setInitialVelocity(self.boss)
-            self.boss.stateMachine = StateMachine {
-                ['walking'] = function () return BossWalkingState(area, self.boss, self.player, self.collisionSystem, self) end
-            }
-            self.boss.stateMachine:change('walking')
-        end
+        ::continue::
     end
 end
 
@@ -364,52 +362,5 @@ function EnemySystem:updateGruntVelocity(grunt, player, dt)
         -- grunt is NORTH of player
         grunt.direction = 'south'
         grunt.y = grunt.y + grunt.dy * dt
-    end
-end
-
---[[
-    Updates the (x, y) location of grunt type Entity objects in 
-    relation to all doors nearby as defined in GMapAreaDefinitions
-
-    Params:
-        none
-    Returns:
-        nil
-]]
-function EnemySystem:setGruntLocation()
-    -- use self.player.currentArea.id for area ID
-    local areaID = self.player.currentArea.id
-    for _, adjacentID in pairs(GAreaAdjacencyDefinitions[areaID]) do
-        for _, grunt in pairs(self.grunts) do
-            if grunt.areaID == areaID or grunt.areaID == adjacentID then
-                local type = GMapAreaDefinitions[areaID].type
-                if type == 'area' then
-                    -- set Player location to the side WITHIN the area
-                    for _, door in pairs(self.doorSystem:getAreaDoors(areaID)) do
-                        -- if the area IDs do not match then this door is in an adjacent area
-                        if door.areaID ~= grunt.areaID then
-                            -- set Entity on the current area side of the door
-                            self.doorSystem:setMatchingLocation(door, grunt)
-                        else
-                            self.doorSystem:setOppositeLocation(door, grunt)
-                        end
-                    end
-                else
-                    -- use area.joins to get door adjacencies for corridors
-                    local joins = GMapAreaDefinitions[areaID].joins
-                    -- set Player location to the side OUTSIDE the joined areas
-                    for _, join in pairs(joins) do
-                        self.doorSystem:setJoinLocation(join, grunt)
-                    end
-                    -- check if this corridor has door defined
-                    local doors = GMapAreaDefinitions[areaID].doors
-                    if doors then
-                        for _, door in pairs(self.doorSystem:getAreaDoors(areaID)) do
-                            self.doorSystem:setOppositeLocation(door, grunt)
-                        end
-                    end
-                end
-            end
-        end
     end
 end

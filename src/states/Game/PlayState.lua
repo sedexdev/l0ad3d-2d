@@ -161,35 +161,17 @@ function PlayState:checkMapInteractions(area)
         doors = self.map.doorSystem:getCorridorDoors(area.id)
     end
     if doors then
-        local grunts = self.map.enemySystem:getGrunts(area.id)
         for _, door in pairs(doors) do
             -- first check Player proximity and open door if not locked
-            self:checkMapInteractionsHelper(door, self.player)
-            -- then check Grunt interactions
-            for _, grunt in pairs(grunts) do
-                self:checkMapInteractionsHelper(door, grunt)
+            local proximity = self.map.collisionSystem:checkDoorProximity(door)
+            if proximity then
+                -- then check collision with the Door object to avoid Player running over it
+                local doorCollision = self.map.collisionSystem:checkDoorCollsion(door)
+                if doorCollision.detected then
+                    -- and handle the collision if so
+                    self.map.collisionSystem:handleDoorCollision(door, doorCollision.edge)
+                end
             end
-        end
-    end
-end
-
---[[
-    Door detection/collision helper
-
-    Params:
-        door: table - Door object
-        entity: table - Entity object
-    Returns:
-        nil
-]]
-function PlayState:checkMapInteractionsHelper(door, entity)
-    local proximity = self.map.collisionSystem:checkDoorProximity(door, entity)
-    if proximity then
-        -- then check collision with the Door object to avoid Player running over it
-        local doorCollision = self.map.collisionSystem:checkDoorCollsion(door, entity)
-        if doorCollision.detected then
-            -- and handle the collision if so
-            self.map.collisionSystem:handleDoorCollision(door, doorCollision.edge, entity)
         end
     end
 end

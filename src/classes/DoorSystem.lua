@@ -358,7 +358,6 @@ end
 ]]
 function DoorSystem:open(door)
     if not door.isOpen then
-        io.write('Area ID: ' .. tostring(door.areaID) .. ', door ID: ' .. tostring(door.id) .. ' opening!\n')
         if door.orientation == 'horizontal' then
             -- tween callback function for opening/closing doors
             Timer.tween(0.2, {
@@ -386,7 +385,6 @@ end
 ]]
 function DoorSystem:close(door)
     if door.isOpen then
-        io.write('Area ID: ' .. tostring(door.areaID) .. ', door ID: ' .. tostring(door.id) .. ' closing!\n')
         if door.orientation == 'horizontal' then
             -- tween callback function for opening/closing doors
             Timer.tween(0.2, {
