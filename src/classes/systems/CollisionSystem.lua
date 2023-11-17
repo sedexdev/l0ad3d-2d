@@ -17,7 +17,7 @@ CollisionSystem = Class{}
     to pass through wall segments in areas with doors defined 
 
     Params:
-        player: table - Player object
+        player:     table - Player object
         doorSystem: table - DoorSystem object
     Returns:
         nil
@@ -35,7 +35,7 @@ end
     coordinates exceeding the boundary of the current area they are in
 
     Params:
-        area: table - MapArea object
+        area:   table - MapArea object
         entity: table - Entity object (Player | Grunt | Boss)
     Returns:
         table: true if a collision is detected, false if not, along with the edge
@@ -71,9 +71,9 @@ end
     same time when running into a corner    
 
     Params:
-        area: table - MapArea object for the corridor
+        area:       table - MapArea object for the corridor
         conditions: table - collision detection conditions
-        entity: table - Entity object to check collision for
+        entity:     table - Entity object to check collision for
     Returns:
         table: collision status update - collision detected and where 
 ]]
@@ -126,7 +126,7 @@ end
     to allow the Player to pass between areas
 
     Params:
-        area: table - MapArea object for the corridor 
+        area:       table - MapArea object for the corridor 
         conditions: table - collision detection conditions
     Returns:
         table: collision status update - collision detected and where 
@@ -237,19 +237,18 @@ end
     when the bend meets
 
     Params:
-        orientation: string - corridor type mapArea orientation 
-        bendLabel: string - the location of the bend in the corridor
-        area: table - the current mapArea object the Player is within 
-        condition1: boolean - edge collision condition 
-        condition2: boolean - edge collision condition
-        condition3: boolean - edge collision condition
-        edgeTable: table - possible edge locations dependant on the conditions
+        orientation: string  - corridor type mapArea orientation 
+        bendLabel:   string  - the location of the bend in the corridor
+        area:        table   - the current mapArea object the Player is within 
+        condition1:  boolean - edge collision condition 
+        condition2:  boolean - edge collision condition
+        condition3:  boolean - edge collision condition
+        edgeTable:   table   - possible edge locations dependant on the conditions
     Returns:
         table: collision status and edge location
 ]]
 function CollisionSystem:detectBend(orientation, bendLabel, area, condition1, condition2, condition3, edgeTable)
     local collisionDef = {detected = false, edge = nil}
-    -- declare nil defined offset to be set below
     local offset
     -- set the offset based on the orientation and location of the bend
     if orientation == 'horizontal' then
@@ -286,7 +285,7 @@ end
     collided with so they cannot pass the area boundary
 
     Params:
-        area: table - MapArea object
+        area: table  - MapArea object
         edge: string - edge location of the area
     Returns:
         table: true if a collision is detected, false if not, along with the edge
@@ -297,7 +296,6 @@ function CollisionSystem:handlePlayerWallCollision(area, edge)
     local rightCorrection = area.x + (area.width * FLOOR_TILE_WIDTH) - CHARACTER_WIDTH + WALL_OFFSET
     local topCorrection = area.y - WALL_OFFSET
     local bottomCorrection = area.y + (area.height * FLOOR_TILE_HEIGHT) - CHARACTER_HEIGHT + WALL_OFFSET
-
     -- for single wall collisions just update x or y
     if edge == 'L' then
         self.player.x = leftCorrection
@@ -331,8 +329,8 @@ end
     implmented
 
     Params:
-        entity: table - Entity object to correct
-        edge: string - edge location of the area
+        entity: table  - Entity object to correct
+        edge:   string - edge location of the area
     Returns:
         nil
 ]]
@@ -419,7 +417,7 @@ end
     door
 
     Params:
-        door: table - Door object Player is interacting with
+        door: table  - Door object Player is interacting with
         edge: string - edge the Player has collisded with
     Returns:
         nil
@@ -449,8 +447,8 @@ end
     leading to a corridor type MapArea object from an area
 
     Params:
-        area: table - the current area type MapArea object
-        door: table - Door object in area definition
+        area:       table - the current area type MapArea object
+        door:       table - Door object in area definition
         conditions: table - collision detection conditions
     Returns:
         boolean: true if doorway detected
@@ -502,7 +500,7 @@ end
     not detected as part of the standard wall collision checks
 
     Params:
-        area: table - MapArea object of the current area
+        area:           table  - MapArea object of the current area
         adjacentAreaID: number - ID of the area adjacent to the currnt area
     Returns:
         boolean: true if Player is in the doorway, false if not
@@ -539,7 +537,7 @@ end
     leading to an area type MapArea object from a corridor
 
     Params:
-        area: table - the current area type MapArea object
+        area:       table - the current area type MapArea object
         conditions: table - collision detection conditions
     Returns:
         boolean: true if doorway detected
@@ -595,7 +593,7 @@ end
     overlapping the crate
 
     Params:
-        key: table - key type PowerUp object to detect
+        key:    table - key type PowerUp object to detect
         entity: table - Entity object to collisio for
     Returns:
         boolean: true if collision detected
@@ -632,8 +630,8 @@ end
     they cannot run over the crate
 
     Params:
-        crate: table - crate type PowerUp object the Player has collided with
-        egde: string - edge the collision was detected on
+        crate: table  - crate type PowerUp object the Player has collided with
+        egde:  string - edge the collision was detected on
     Returns:
         nil
 ]]
@@ -656,8 +654,8 @@ end
     the Entity so they cannot run over the crate
 
     Params:
-        entity: table - Entity object to update
-        egde: string - edge the collision was detected on
+        entity: table  - Entity object to update
+        egde:   string - edge the collision was detected on
     Returns:
         nil
 ]]
@@ -695,6 +693,8 @@ end
 
 --[[
     Handles a collision between 2 Entity objects
+
+    TODO
 
     Params:
         entity: table - Entity object

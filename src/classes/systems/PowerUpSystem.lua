@@ -5,7 +5,7 @@
 
     Description:
         A powerup system is responsible for spawning powerups and
-        handling collision detection with the Player so they can 
+        handling collisions after detection with the Player so they can 
         be collected
 ]]
 
@@ -18,7 +18,7 @@ PowerUpSystem = Class{}
     and also manages keys
 
     Params:
-        player: table - Player object
+        player:     table - Player object
         doorSystem: table - DoorSystem object
     Returns:
         nil
@@ -83,8 +83,7 @@ end
 
 --[[
     Calls all the initialisation functions below for
-    inistialising PowerUp objects including crates and
-    keys
+    inistialising PowerUp objects
 
     Params:
         none
@@ -130,7 +129,6 @@ function PowerUpSystem:spawnCrates()
         for _ = 1, numCrates do
             -- determine an (x, y) for the crate based on room size
             local x, y = self:setCrateXYCoordinates(i, prevLocations)
-            -- create the crate type PowerUp objects and add to self.crates
             local crate = PowerUp(
                 crateID,
                 i,
@@ -156,8 +154,8 @@ end
     of its doors
 
     Params:
-        areaID: number - ID of the MapArea to get door information
-        prevLocations: table - (x, y) of the last generated crate
+        areaID:        number - ID of the MapArea to get door information
+        prevLocations: table  - (x, y) of the last generated crate
     Returns:
         table: (x, y) coordinates of crate
 ]]
@@ -171,9 +169,8 @@ function PowerUpSystem:setCrateXYCoordinates(areaID, prevLocations)
         x, y = self:getCrateXYCoordinates(edge, areaID, GMapAreaDefinitions[areaID], edgeOffset)
         self.locationCount = self.locationCount + 1
     else
-        -- if a crate location has already been spawned check random (x, y) don't overlap previous crate
         x, y = self:getCrateXYCoordinates(edge, areaID, GMapAreaDefinitions[areaID], edgeOffset)
-        -- check (x, y) do not overlap any previous crates
+        -- if a crate location has already been spawned check random (x, y) doesn't overlap previous crate
         for _, location in pairs(prevLocations) do
             if not location.x or not location.y then goto continue end
             local xOverlap = (location.x < x and x < location.x + CRATE_WIDTH) or (location.x < x + CRATE_WIDTH and x + CRATE_WIDTH < location.x + CRATE_WIDTH)
@@ -195,15 +192,15 @@ end
     getter helper functions
 
     Params:
-        edge: string - wall edge to place the crate against
-        areaID: number - ID of this MapArea definition
-        areaDef: table - MapArea definition
+        edge:       string - wall edge to place the crate against
+        areaID:     number - ID of this MapArea definition
+        areaDef:    table  - MapArea definition
         edgeOffset: number - wall offset for palcing the crate
     Returns:
         table: (x, y) coordinates of the crate
 ]]
 function PowerUpSystem:getCrateXYCoordinates(edge, areaID, areaDef, edgeOffset)
-    -- get the doors for this MapArea
+    -- set door table for checking if a wall has a door
     local doors = {
         leftDoor = false,
         topDoor = false,
@@ -240,9 +237,9 @@ end
     don't get in the way of doorways
 
     Params:
-        doors: table - booleans stating if door is present in area
-        areaDoors: table - all the Door objects in this MapArea
-        areaID: number - MapArea ID
+        doors:     table  - booleans stating if door is present in area
+        areaDoors: table  - all the Door objects in this MapArea
+        areaID:    number - MapArea ID
     Returns:
         nil
 ]]
@@ -267,7 +264,7 @@ end
     bulk in the getCrateXYCoordinates function
         
     Params:
-        areaDef: table - definition of the MapArea object
+        areaDef:  table  - definition of the MapArea object
         doorEdge: string - area edge the crate will be spawned against
     Returns:
         number: x coordinate of the crate
@@ -300,8 +297,8 @@ end
     Helper function to get y crate coordinate to reduce
     bulk in the getCrateXYCoordinates function
         
-        Params:
-        areaDef: table - definition of the MapArea object
+    Params:
+        areaDef:  table  - definition of the MapArea object
         doorEdge: string - area edge the crate will be spawned against
     Returns:
         number: y coordinate of the crate
@@ -363,7 +360,7 @@ end
         nil
 ]]
 function PowerUpSystem:spawnPowerUp(x, y, areaID)
-    -- set starting area ID - only add powerups to area type MapArea objects
+    -- set random chance of finding each powerup
     local ammo = math.random(5) == 1 and true or false
     if ammo then
         self:powerUpFactory(POWERUP_IDS['ammo'], areaID, x, y)
@@ -391,10 +388,10 @@ end
     the correct sub-table in <self.tables>
 
     Params:
-        id: number - PowerUp object ID 
+        id:     number - PowerUp object ID 
         areaID: number - MapArea ID
-        x: number - x coordinate of the crate covering the PowerUp object
-        y: number - y coordinate of the crate covering the PowerUp object
+        x:      number - x coordinate of the crate covering the PowerUp object
+        y:      number - y coordinate of the crate covering the PowerUp object
     Returns:
         nil
 ]]
@@ -405,11 +402,11 @@ function PowerUpSystem:powerUpFactory(id, areaID, x, y)
         x + (CRATE_WIDTH / 2) - (POWERUP_WIDTH / 2), y + (CRATE_WIDTH / 2) - (POWERUP_HEIGHT / 2),
         'powerup'
     )
-    if id == 1 then  table.insert(self.powerups['doubleSpeed'], powerup) end
-    if id == 2 then  table.insert(self.powerups['health'], powerup) end
-    if id == 3 then  table.insert(self.powerups['ammo'], powerup) end
-    if id == 4 then  table.insert(self.powerups['invincible'], powerup) end
-    if id == 5 then  table.insert(self.powerups['oneShotBossKill'], powerup) end
+    if id == 1 then table.insert(self.powerups['doubleSpeed'], powerup) end
+    if id == 2 then table.insert(self.powerups['health'], powerup) end
+    if id == 3 then table.insert(self.powerups['ammo'], powerup) end
+    if id == 4 then table.insert(self.powerups['invincible'], powerup) end
+    if id == 5 then table.insert(self.powerups['oneShotBossKill'], powerup) end
 end
 
 -- =========================== COLLISIONS HANDLERS ===========================
@@ -488,8 +485,8 @@ end
     Player collision
 
     Params:
-        object: table - PowerUp object to remove
-        name: string - name of the PowerUp object
+        object: table  - PowerUp object to remove
+        name:   string - name of the PowerUp object
     Returns:
         nil
 ]]

@@ -2,7 +2,6 @@
     EnemySystem: class
 
     TODO: respawn enemies as the game goes on
-          implement enemy proximity to only move towards Player in a certain range
 
     Description:
         An enemy system is responsible for spawning and removing
@@ -20,10 +19,10 @@ EnemySystem = Class{}
     is currently interacting with 
 
     Params:
-        player: table - Player object
+        player:           table       - Player object
         gruntSpriteBatch: SpriteBatch - collection of Grunt Entity quads
-        collisionSystem: table - collisionSystem object
-        doorSystem: table - DoorSystem object
+        collisionSystem:  table       - collisionSystem object
+        doorSystem:       table       - DoorSystem object
     Returns:
         nil
 ]]
@@ -43,8 +42,6 @@ end
     objects in the current and adjacent areas as defined in
     <definitions.lua:GAreaAdjacencyDefinitions>
 
-    TODO: fix rendering issue when multiple Grunts update at once
-
     Params:
         dt: number - deltatime counter for current frame rate
     Returns:
@@ -56,6 +53,7 @@ function EnemySystem:update(dt)
         for _, adjacentID in pairs(GAreaAdjacencyDefinitions[areaID]) do
             if grunt.areaID == areaID or grunt.areaID == adjacentID then
                 grunt:update(dt)
+                -- jump out of loop to save processing further areas
                 goto continue
             end
         end
@@ -125,8 +123,7 @@ end
 
 --[[
     Spawns all enemy objects that are present at the beginning
-    of the game. Enemy objects include Grunt and Boss Entity
-    objects and gun turrets
+    of the game
 
     Params:
         areas: table - MapArea objects table
@@ -158,7 +155,7 @@ end
 
     Params:
         numGrunts: number - number of Grunt Entity objects to spawn
-        area: table - MapArea object the Grunts will be spawned in
+        area:      table  - MapArea object the Grunts will be spawned in
     Returns:
         nil
 ]]
@@ -210,13 +207,15 @@ end
     Spawns new enemy objects across the Map as enemies are 
     killed
 
+    TODO
+
     Params:
         none
     Returns:
         nil
 ]]
 function EnemySystem:respawn()
-    
+
 end
 
 -- ========================== ENEMY PROXIMITY ==========================
