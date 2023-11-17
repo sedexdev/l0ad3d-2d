@@ -5,7 +5,7 @@
 
     Description:
         Implements the animations and AI for the Boss object when
-        in a walking state
+        in a rushing state
 ]]
 
 BossRushingState = Class{__includes = BaseState}
@@ -14,11 +14,11 @@ BossRushingState = Class{__includes = BaseState}
     BossRushingState constructor
 
     Params:
-        area: table - MapArea object the Boss is spawned in
-        boss: table - Boss object whose state will be updated
-        player: table - Player object to use for the relative positioning of the Boss
+        area:            table - MapArea object the Boss is spawned in
+        boss:            table - Boss object whose state will be updated
+        player:          table - Player object
         collisionSystem: table - collisionSystem object
-        enemySystem: table - EnemySystem object
+        enemySystem:     table - EnemySystem object
     Returns:
         nil
 ]]
@@ -35,6 +35,8 @@ end
     <self.boss> object to the location of the <self.player> object
     and forces the boss to track the Players movement
 
+    TODO: make boss circle Player
+
     Params:
         dt: number - deltatime counter for current frame rate
     Returns:
@@ -49,9 +51,7 @@ function BossRushingState:update(dt)
         -- handle the wall collision
         self.collisionSystem:handleEnemyWallCollision(self.boss, wallCollision.edge)
     end
-
     -- determine the direction the player is relative to the boss
-    -- make boss walk towards the player
     if (self.player.x < self.boss.x) and (self.player.y < self.boss.y) then
         -- boss is SOUTH-EAST of player
         self.boss.direction = 'north-west'
@@ -100,8 +100,9 @@ function BossRushingState:update(dt)
 end
 
 --[[
-    BossRushingState render function. Uses the current frame of the
-    associated Animation instance as defined in GAnimationDefintions.boss.animations
+    BossRushingState render function. Uses the current frame 
+    of the associated Animation instance as defined in 
+    GAnimationDefintions.boss.animations
 
     Params:
         none

@@ -50,8 +50,9 @@ end
 
     Key bindings:
         escape: goes back to the MenuState
-        right: selects the avatar to the right
-        left: selects the avatar to the left
+        right:  highlights the avatar to the right
+        left:   highlights the avatar to the left
+        enter:  selects the highlighted character
     Params:
         dt: number - deltatime counter for current frame rate
     Returns:
@@ -122,7 +123,6 @@ function SelectCharacterState:render()
         WINDOW_WIDTH / GTextures['grey-background']:getWidth(),
         WINDOW_WIDTH / GTextures['grey-background']:getHeight()
     )
-
     --render bullet holes in the centre
     for i = 1, #self.bulletOffsets do
         love.graphics.draw(GTextures['bullet-hole'],
@@ -131,7 +131,6 @@ function SelectCharacterState:render()
             0.25, 0.25
         )
     end
-
     -- render first character
     self:renderShadow(1, 25)
     self:renderAvatar(GTextures['character1-avatar'], 1)
@@ -139,7 +138,6 @@ function SelectCharacterState:render()
         self:renderHighlight(1)
     end
     self:renderName('CAP\'N GUNS', (WINDOW_WIDTH / 4))
-
     -- render second character
     self:renderShadow(3, 25)
     self:renderAvatar(GTextures['character2-avatar'], 3)
@@ -192,7 +190,7 @@ end
     an x offset
 
     Params:
-        texture: Image - avatar image defined in src/utils/dependencies.lua in GTextures
+        texture: Image  - avatar image defined in src/utils/dependencies.lua in GTextures
         xOffset: number - x coordinate offset to adjust the highlight
     Returns:
         nil
@@ -210,7 +208,7 @@ end
     window dimensions and an x offset
 
     Params:
-        name: string - the name of the character
+        name:    string - the name of the character
         xOffset: number - x coordinate offset to adjust the highlight
     Returns:
         nil

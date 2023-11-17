@@ -14,8 +14,9 @@ GruntAttackingState = Class{__includes = BaseState}
     GruntAttackingState constructor
 
     Params:
-        grunt: table - Grunt object whose state will be updated
-        player: table - Player object to use for the relative positioning of the Grunt
+        grunt:            table       - Grunt object whose state will be updated
+        player:           table       - Player object
+        gruntSpriteBatch: SpriteBatch - list of Grunt quads for rendering
     Returns:
         nil
 ]]

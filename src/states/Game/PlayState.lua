@@ -27,7 +27,6 @@ function PlayState:enter(params)
     self.map = params.map
     self.systemManager = params.systemManager
     self.map:generateLevel(self.systemManager)
-
     -- Entity (Player) stateMachine
     self.player = params.player
     self.player.stateMachine = StateMachine {
@@ -35,7 +34,6 @@ function PlayState:enter(params)
         ['walking'] = function () return PlayerWalkingState(self.player, self.map) end,
     }
     self.player.stateMachine:change('idle')
-
     -- pause gameplay
     self.paused = false
     self.selected = 1
@@ -156,7 +154,7 @@ function PlayState:checkObjectInteractions(currentAreaID)
 end
 
 --[[
-    Check for and handle interactions with game objects
+    Check for and handle interactions with game boundarys and doors
 
     Params:
         area: number - Current MapArea object
@@ -249,8 +247,8 @@ end
     Renders the pause menu options using a provided y offset
 
     Params:
-        name: string - name of the menu option
-        id: number - id used to verify what has been selected
+        name:    string - name of the menu option
+        id:      number - id used to verify what has been selected
         yOffset: number - y offset used to render the menu options in a stack
     Returns;
         nil

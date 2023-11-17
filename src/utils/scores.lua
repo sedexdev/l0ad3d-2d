@@ -1,4 +1,13 @@
--- split lines in file on comma
+--[[
+    String split function used to split a string into
+    sub-strings based on a separator
+
+    Params:
+        str: string - string to split
+        sep: string - seperator to split on
+    Returns:
+        table: list of sub-strings after splitting
+]]
 local function split(str, sep)
     if sep == nil then
         sep = "%s"
@@ -10,7 +19,14 @@ local function split(str, sep)
     return t
 end
 
--- create score file if it doesn't exist
+--[[
+    Creates and writes score file to disk if it doesn't exist
+
+    Params:
+        none
+    Returns:
+        nil
+]]
 function CreateFile()
     love.filesystem.setIdentity('l0ad3d')
     local highScores = ''
@@ -21,12 +37,28 @@ function CreateFile()
     love.filesystem.write('l0ad3d.lst', highScores)
 end
 
+--[[
+    Writes highScores string file to disk
+
+    Params:
+        highScores: string - string data of high scores table
+    Returns:
+        nil
+]]
 function WriteHighScores(highScores)
     love.filesystem.setIdentity('l0ad3d')
     love.filesystem.write('l0ad3d.lst', highScores)
 end
 
--- load the highscores from file, or create the file
+--[[
+    Loads the high scores from file, or creates the file
+    if it doesn't exist
+
+    Params:
+        none
+    Returns:
+        nil
+]]
 function LoadHighScores()
     love.filesystem.setIdentity('l0ad3d')
     if not love.filesystem.getInfo('l0ad3d.lst') then

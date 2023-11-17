@@ -16,11 +16,11 @@ BossIdleState = Class{__includes = BaseState}
     BossIdleState constructor
 
     Params:
-        area: table - MapArea object the Boss is spawned in
-        boss: table - Boss object whose state will be updated
-        player: table - Player object to use for the relative positioning of the Boss
+        area:            table - MapArea object the Boss is spawned in
+        boss:            table - Boss object whose state will be updated
+        player:          table - Player object
         collisionSystem: table - collisionSystem object
-        enemySystem: table - EnemySystem object
+        enemySystem:     table - EnemySystem object
     Returns:
         nil
 ]]
@@ -47,13 +47,12 @@ end
 function BossIdleState:update(dt)
     -- call the Animation instance's update function 
     self.boss.animations['walking-'..self.boss.direction]:update(dt)
-
+    -- check for wall collisions
     local wallCollision = self.collisionSystem:checkWallCollision(self.area, self.boss)
     if wallCollision.detected then
         -- handle the wall collision
         self.collisionSystem:handleEnemyWallCollision(self.boss, wallCollision.edge)
     end
-
     -- update boss (x, y) based on current direction
     if self.boss.direction == 'north' then
         self.boss.y = self.boss.y - self.boss.dy * dt
@@ -76,7 +75,7 @@ function BossIdleState:update(dt)
         self.boss.y = self.boss.y - self.boss.dy * dt
         self.boss.x = self.boss.x - self.boss.dx * dt
     end
-
+    -- update direction after defined time interval
     self.interval = self.interval + dt
     if self.interval > self.duration then
         self.boss.direction = DIRECTIONS[math.random(1, 8)]

@@ -187,16 +187,16 @@ GTurretDefinition = {
     take different values for initialisation so not all value are defined
     on each element in this table. MapArea attributes include:
 
-    x: number - x coordinate in px (set to nil for corridors)
-    y: number - y coordinate in px (set to nil for corridors)
-    width: number - width in tiles
-    height: number - height in tiles
-    type: string - area | corridor
-    (corridor) direction: string - which orientation is it using (used to place walls correctly)
-    (corridor) bends: table - corner descriptions (e.g LB = left-bottom, RT = right-top)
-    (corridor) joins: table - area index and location to base corridor (x, y) off of
-    (area | corridor) doors: table - lists the locations and colours of doors in the area
-    (area) adjacentAreas: table - contains area IDs for collision detection
+    x:                       number - x coordinate in px (set to nil for corridors)
+    y:                       number - y coordinate in px (set to nil for corridors)
+    width:                   number - width in tiles
+    height:                  number - height in tiles
+    type:                    string - area | corridor
+    (corridor) direction:    string - which orientation is it using (used to place walls correctly)
+    (corridor) bends:        table  - corner descriptions (e.g LB = left-bottom, RT = right-top)
+    (corridor) joins:        table  - area index and location to base corridor (x, y) off of
+    (area | corridor) doors: table  - lists the locations and colours of doors in the area
+    (area) adjacentAreas:    table  - contains area IDs for collision detection
 ]]
 GMapAreaDefinitions = {
     --========== JOINING AREAS ==========

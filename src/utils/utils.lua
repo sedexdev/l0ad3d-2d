@@ -1,10 +1,10 @@
 --[[
     Creates quads of a specific width/height from a given 
-    sprite sheet and returns a table
+    sprite sheet and returns a table of quads
 
     Params:
-        atlas: Image - sprite sheet to make quads from 
-        tileWidth: number - width of the quads
+        atlas:      Image  - sprite sheet to make quads from 
+        tileWidth:  number - width of the quads
         tileHeight: number - height of the quads
     Returns:
         table: quads - a table of generated quads 
@@ -15,7 +15,6 @@ function GenerateQuads(atlas, tileWidth, tileHeight)
     local rows = math.floor(sheetHeight / tileHeight)
     local quads = {}
     local counter = 1
-
     for y = 1, rows do
         for x = 1, cols do
             quads[counter] = love.graphics.newQuad(
@@ -28,6 +27,5 @@ function GenerateQuads(atlas, tileWidth, tileHeight)
             counter = counter + 1
         end
     end
-
     return quads
 end

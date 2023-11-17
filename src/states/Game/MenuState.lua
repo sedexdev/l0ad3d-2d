@@ -66,8 +66,8 @@ end
     the Timer so the gunshot effects play relative to deltatime  
 
     Key bindings:
-        up: moves the menu selector up
-        down: moves the menu selector down
+        up:    moves the menu selector up
+        down:  moves the menu selector down
         enter: selects the currently highlighted option
     Params:
         dt: number - deltatime counter for current frame rate
@@ -86,7 +86,7 @@ function MenuState:update(dt)
             GAudio['select']:play()
             self.selected = self.selected >= 3 and 1 or self.selected + 1
         end
-    
+        -- handle user selection
         if love.keyboard.wasPressed('enter') or love.keyboard.wasPressed('return') then
             GAudio['select']:stop()
             GAudio['gunshot']:play()
@@ -103,7 +103,6 @@ function MenuState:update(dt)
             end
         end
     end
-
     Timer.update(dt)
 end
 
@@ -126,9 +125,8 @@ function MenuState:render()
         WINDOW_WIDTH / GTextures['grey-background']:getWidth(),
         WINDOW_HEIGHT / GTextures['grey-background']:getHeight()
     )
-
     -- draw bullet holes
-     for i = 1, 4 do
+    for i = 1, 4 do
         if self.bulletOffsets[i].rendered then
             love.graphics.draw(GTextures['bullet-hole'],
                 (WINDOW_WIDTH / 8) * self.bulletOffsets[i].x, (WINDOW_HEIGHT / 4) + self.bulletOffsets[i].y,
@@ -137,7 +135,6 @@ function MenuState:render()
             )
         end
     end
-
     -- draw title
     love.graphics.setFont(GFonts['blood-title'])
     love.graphics.setColor(10/255, 10/255, 10/255, 1)
@@ -145,14 +142,11 @@ function MenuState:render()
     love.graphics.printf('L0ad3d-2D', 2, (WINDOW_HEIGHT / 4) + 2, WINDOW_WIDTH, 'center')
     love.graphics.setColor(1, 0/255, 0/255, 1)
     love.graphics.printf('L0ad3d-2D', 0, WINDOW_HEIGHT / 4, WINDOW_WIDTH, 'center')
-
     -- draw menu
     love.graphics.setFont(GFonts['funkrocker-menu'])
-
     self:renderOption('LOAD UP', 1, 200)
     self:renderOption('HIGH SCORES', 2, 300)
     self:renderOption('QUIT', 3, 400)
-
     -- reset the colour
     love.graphics.setColor(1, 0/255, 0/255, 1)
 end
@@ -161,8 +155,8 @@ end
     Renders the menu options using a provided y offset
 
     Params:
-        name: string - name of the menu option
-        id: number - id used to verify what has been selected
+        name:    string - name of the menu option
+        id:      number - id used to verify what has been selected
         yOffset: number - y offset used to render the menu options in a stack
     Returns;
         nil

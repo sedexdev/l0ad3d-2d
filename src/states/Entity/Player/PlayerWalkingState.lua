@@ -15,7 +15,7 @@ PlayerWalkingState = Class{__includes = BaseState}
 
     Params:
         player: table - Player object whose state is being updated
-        map: table - the Map object the Player will exist in
+        map:    table - Map object
     Returns:
         nil
 ]]
@@ -31,10 +31,10 @@ end
     the Player is currently in for the purposes of collision detection
 
     Key bindings:
-        up, w: player movement up
+        up, w:    player movement up
         right, d: player movement right
-        down, s: player movement down
-        left, a: player movement left
+        down, s:  player movement down
+        left, a:  player movement left
     Params:
         dt: number - deltatime counter for current frame rate
     Returns:
@@ -81,8 +81,9 @@ function PlayerWalkingState:update(dt)
 end
 
 --[[
-    PlayerWalkingState render function. Uses the current frame of the
-    associated Animation instance as defined in GAnimationDefintions.character<1|2>.animations
+    PlayerWalkingState render function. Uses the current frame 
+    of the associated Animation instance as defined in 
+    GAnimationDefintions.character<1|2>.animations
 
     Params:
         none
@@ -92,7 +93,6 @@ end
 function PlayerWalkingState:render()
     love.graphics.setColor(1, 1, 1, 1)
     if self.player.id == 1 then
-        -- render character 1
         local currentFrame = self.player.animations['walking-'..self.player.direction]:getCurrentFrame()
         love.graphics.setColor(1, 1, 1, 1)
         love.graphics.draw(self.player.texture,
@@ -110,12 +110,12 @@ function PlayerWalkingState:render()
 end
 
 --[[
-    Set's the direction attribute on the <self.player> object and 
+    Sets the direction attribute on the <self.player> object and 
     updates the Players velocity in the correct direction
 
     Params:
-        direction: string -current direction the Player is facing
-        dt: number - deltatime counter for current frame rate
+        direction: string - current direction the Player is facing
+        dt:        number - deltatime counter for current frame rate
     Returns:
         nil
 ]]

@@ -44,8 +44,9 @@ function PlayerIdleState:update(dt)
 end
 
 --[[
-    PlayerIdleState render function. Uses the current frame of the
-    associated Animation instance as defined in GAnimationDefintions.character<1|2>.animations
+    PlayerIdleState render function. Uses the current frame 
+    of the associated Animation instance as defined in 
+    GAnimationDefintions.character<1|2>.animations
 
     Params:
         none
@@ -54,7 +55,6 @@ end
 ]]
 function PlayerIdleState:render()
     if self.player.id == 1 then
-        -- render character 1
         local currentFrame = self.player.animations['idle-'..self.player.lastDirection]:getCurrentFrame()
         love.graphics.setColor(1, 1, 1, 1)
         love.graphics.draw(self.player.texture,
@@ -62,7 +62,6 @@ function PlayerIdleState:render()
             self.player.x, self.player.y
         )
     else
-        -- render circle for now
         local currentFrame = self.player.animations['idle-'..self.player.lastDirection]:getCurrentFrame()
         love.graphics.setColor(1, 1, 1, 1)
         love.graphics.draw(self.player.texture,

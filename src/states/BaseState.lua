@@ -14,11 +14,10 @@ BaseState = Class{}
     state classes to call the base functions regardless of
     whether the concrete class overrides the function
 
-    For all
-        Params:
-            none
-        Returns:
-            nil
+    Params (for all):
+        none
+    Returns (for all):
+        nil
 ]]
 function BaseState:init() end
 function BaseState:update() end

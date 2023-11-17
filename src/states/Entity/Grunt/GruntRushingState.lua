@@ -5,7 +5,7 @@
 
     Description:
         Implements the animations and AI for the Grunt object when
-        in a walking state
+        in a rushing state
 ]]
 
 GruntRushingState = Class{__includes = BaseState}
@@ -14,12 +14,12 @@ GruntRushingState = Class{__includes = BaseState}
     GruntRushingState constructor
 
     Params:
-        area: table - MapArea object the Grunt was spawned in
-        grunt: table - Grunt object whose state will be updated
-        player: table - Player object to use for the relative positioning of the Grunt
+        area:             table       - MapArea object the Grunt was spawned in
+        grunt:            table       - Grunt object whose state will be updated
+        player:           table       - Player object to use for the relative positioning of the Grunt
         gruntSpriteBatch: SpriteBatch - list of Grunt quads for rendering
-        collisionSystem: table - CollisionSystem object
-        enemySystem: table - EnemySystem object
+        collisionSystem:  table       - CollisionSystem object
+        enemySystem:      table       - EnemySystem object
     Returns:
         nil
 ]]
@@ -45,22 +45,20 @@ end
 function GruntRushingState:update(dt)
     -- call the Animation instance's update function 
     self.grunt.animations['walking-'..self.grunt.direction]:update(dt)
-
     -- change state if we are close to the player (change to use hitboxes later)
     if math.abs(self.player.x - self.grunt.x) <= 150 and math.abs(self.player.y - self.grunt.y) <= 150 then
         self.grunt.stateMachine:change('attacking')
     end
-
+    -- check for wall collisions
     local wallCollision = self.collisionSystem:checkWallCollision(self.area, self.grunt)
     if wallCollision.detected then
         -- handle the wall collision
         self.collisionSystem:handleEnemyWallCollision(self.grunt, wallCollision.edge)
     end
-
+    -- change to idle state if Player not in proximity
     if not self.enemySystem:checkProximity(self.grunt) then
         self.grunt.stateMachine:change('idle')
     end
-
     -- determine the direction the player is relative to the grunt
     if (self.player.x < self.grunt.x) and (self.player.y < self.grunt.y) then
         -- self.grunt is SOUTH-EAST of player

@@ -16,12 +16,12 @@ GruntIdleState = Class{__includes = BaseState}
     GruntIdleState constructor
 
     Params:
-        area: table - MapArea object the Grunt was spawned in
-        grunt: table - Grunt object whose state will be updated
-        player: table - Player object to use for the relative positioning of the Grunt
+        area:             table       - MapArea object the Grunt was spawned in
+        grunt:            table       - Grunt object whose state will be updated
+        player:           table       - Player object to use for the relative positioning of the Grunt
         gruntSpriteBatch: SpriteBatch - list of Grunt quads for rendering
-        collisionSystem: table - CollisionSystem object
-        enemySystem: table - EnemySystem object
+        collisionSystem:  table       - CollisionSystem object
+        enemySystem:      table       - EnemySystem object
     Returns:
         nil
 ]]
@@ -49,18 +49,16 @@ end
 function GruntIdleState:update(dt)
     -- call the Animation instance's update function 
     self.grunt.animations['walking-'..self.grunt.direction]:update(dt)
-
     -- check for wall collisions
     local wallCollision = self.collisionSystem:checkWallCollision(self.area, self.grunt)
     if wallCollision.detected then
         -- handle the wall collision
         self.collisionSystem:handleEnemyWallCollision(self.grunt, wallCollision.edge)
     end
-
+    -- if grunt in proximity with Player change to rushing state
     if self.enemySystem:checkProximity(self.grunt) then
         self.grunt.stateMachine:change('rushing')
     end
-
     -- update grunt (x, y) based on current direction
     if self.grunt.direction == 'north' then
         self.grunt.y = self.grunt.y - self.grunt.dy * dt
@@ -83,7 +81,7 @@ function GruntIdleState:update(dt)
         self.grunt.y = self.grunt.y - self.grunt.dy * dt
         self.grunt.x = self.grunt.x - self.grunt.dx * dt
     end
-
+    -- update direction after defined time interval
     self.interval = self.interval + dt
     if self.interval > self.duration then
         self.grunt.direction = DIRECTIONS[math.random(1, 8)]
@@ -93,8 +91,9 @@ function GruntIdleState:update(dt)
 end
 
 --[[
-    GruntIdleState render function. Uses the current frame of the
-    associated Animation instance as defined in GAnimationDefintions.grunt.animations
+    GruntIdleState render function. Uses the current frame 
+    of the associated Animation instance as defined in 
+    GAnimationDefintions.grunt.animations
 
     Params:
         none
