@@ -1,8 +1,6 @@
 --[[
     EnemySystem: class
 
-    TODO: respawn enemies as the game goes on
-
     Description:
         An enemy system is responsible for spawning and removing
         enemy (Entity) objects from the Map. As enemies are killed
