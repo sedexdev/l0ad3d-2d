@@ -40,12 +40,23 @@ function Bullet:update(dt)
     if self.direction == 'north' then
         self.y = self.y - self.dy * dt
     elseif self.direction == 'east' then
+        self.x = self.x + self.dx * dt
     elseif self.direction == 'south' then
+        self.y = self.y + self.dy * dt
     elseif self.direction == 'west' then
+        self.x = self.x - self.dx * dt
     elseif self.direction == 'north-east' then
+        self.x = self.x + self.dx * dt
+        self.y = self.y - self.dy * dt
     elseif self.direction == 'south-east' then
+        self.x = self.x + self.dx * dt
+        self.y = self.y + self.dy * dt
     elseif self.direction == 'south-west' then
+        self.x = self.x - self.dx * dt
+        self.y = self.y + self.dy * dt
     elseif self.direction == 'north-west' then
+        self.x = self.x - self.dx * dt
+        self.y = self.y - self.dy * dt
     end
 end
 
@@ -58,5 +69,6 @@ end
         nil
 ]]
 function Bullet:render()
-    
+    love.graphics.setColor(1, 0/255, 0/255, 255/255)
+    love.graphics.circle('fill', self.x, self.y, 5)
 end
