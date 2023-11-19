@@ -22,6 +22,7 @@ Boss = Class{__includes = Entity}
 function Boss:init(animations, def)
     Entity.init(self, def)
     self.texture = animations.texture
+    self.fireShot = animations.fireShot
     self.animations = animations.animations
     self.direction = def.direction
     self.health = def.health

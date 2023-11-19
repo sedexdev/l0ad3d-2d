@@ -162,13 +162,16 @@ GBossDefinition = {
     areaID = 27,
     stateMachine = nil,
     direction = nil,
-    health = 1000
+    health = 1000,
+    weapons = 1,
+    currentWeapon = 'right'
 }
 
 --[[
     Turret attributes definition
 ]]
 GTurretDefinition = {
+    type = 'turret',
     x = nil,
     y = nil,
     width = nil,

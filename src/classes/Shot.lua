@@ -3,8 +3,8 @@
 
     Description:
         Creates shot graphics to be rendered over a set interval
-        when the end user fires the Player weapon using the space
-        key
+        when a game Entity ( Player | Boss | Turret ) fires their
+        weapon
 ]]
 
 Shot = Class{}
@@ -14,13 +14,13 @@ Shot = Class{}
     used to determine if the shot should still be rendered
 
     Params:
-        player: table - Player object
+        entity: table - Entity object
     Returns:
         nil
 ]]
-function Shot:init(player)
-    self.player = player
-    self.shotGraphic = player.fireShot
+function Shot:init(entity)
+    self.entity = entity
+    self.shotGraphic = entity.fireShot
     self.shotTimer = 0
     self.shotInterval = 0.1
     self.renderShot = true
@@ -48,8 +48,8 @@ end
 --[[
     Shot render function. Calls a helper function to determine the
     coordintes and direction of the shot so it lines up correctly
-    with the Players weapon when fired. Depending on the Player ID
-    a different colour is used for the shot
+    with the weapon when fired. For Player Entity objects the ID
+    determines a different colour is used for the shot
 
     Params:
         none
@@ -57,19 +57,23 @@ end
         nil
 ]]
 function Shot:render()
-    local x, y = self:setCoordinates(self.player.x, self.player.y)
-    if self.player.id == 1 then
-        love.graphics.setColor(1, 1, 1, 200/255)
+    local x, y = self:setCoordinates(self.entity.x, self.entity.y)
+    if self.entity.type == 'character' then
+        if self.entity.id == 1 then
+            love.graphics.setColor(1, 1, 1, 200/255)
+        else
+            love.graphics.setColor(30/255, 196/255, 195/255, 200/255)
+        end
     else
-        love.graphics.setColor(30/255, 196/255, 195/255, 200/255)
+        love.graphics.setColor(1, 1, 1, 200/255)
     end
     -- use the ANGLES constant to render at the correct angle 
-    love.graphics.draw(self.shotGraphic, x, y, ANGLES[self.player.direction])
+    love.graphics.draw(self.shotGraphic, x, y, ANGLES[self.entity.direction])
 end
 
 --[[
     Set's the (x, y) coordinate of the shot graphic so it
-    renders correctly by appearing to eminate from the Players
+    renders correctly by appearing to eminate from the Entitys
     weapon. This function handles shot rendering at right angles. 
     Angles with multiples of 45 degrees are handled in the helper 
     function below
@@ -85,28 +89,28 @@ function Shot:setCoordinates(x, y)
     -- get offsets for adjusting the shot graphic
     local rightOffset = 20
     local leftOffset = 110
-    if self.player.direction == 'north' then
+    if self.entity.direction == 'north' then
         return
-            self.player.currentWeapon == 'right'
+            self.entity.currentWeapon == 'right'
                 and x + rightOffset
                 or x - leftOffset,
             y + (CHARACTER_HEIGHT / 2)
-    elseif self.player.direction == 'south' then
+    elseif self.entity.direction == 'south' then
         return
-            self.player.currentWeapon == 'right'
+            self.entity.currentWeapon == 'right'
                 and (x + CHARACTER_WIDTH) - rightOffset
                 or (x + CHARACTER_WIDTH) + leftOffset,
             y + (CHARACTER_HEIGHT / 2)
-    elseif self.player.direction == 'east' then
+    elseif self.entity.direction == 'east' then
         return
             x + (CHARACTER_WIDTH / 2),
-            self.player.currentWeapon == 'right'
+            self.entity.currentWeapon == 'right'
                 and y + rightOffset
                 or y - leftOffset
-    elseif self.player.direction == 'west' then
+    elseif self.entity.direction == 'west' then
         return
             x + (CHARACTER_WIDTH / 2),
-            self.player.currentWeapon == 'right'
+            self.entity.currentWeapon == 'right'
                 and (y + CHARACTER_HEIGHT) - rightOffset
                 or (y + CHARACTER_HEIGHT) + leftOffset
     else
@@ -135,39 +139,39 @@ function Shot:set45DegreeCoordinates(x, y)
     local yOffset = 100
     -- small pixel offset required for better alignment
     local nudge = 20
-    if self.player.direction == 'north-east' then
+    if self.entity.direction == 'north-east' then
         return
-            self.player.currentWeapon == 'right'
+            self.entity.currentWeapon == 'right'
                 and x + rightOffset
                 or x - leftOffset,
-            self.player.currentWeapon == 'right'
+            self.entity.currentWeapon == 'right'
                 and y + (CHARACTER_HEIGHT / 2) - yOffset
                 or y
     end
-    if self.player.direction == 'south-west' then
+    if self.entity.direction == 'south-west' then
         return
-            self.player.currentWeapon == 'right'
+            self.entity.currentWeapon == 'right'
                 and (x + CHARACTER_WIDTH) - rightOffset
                 or (x + CHARACTER_WIDTH) + leftOffset,
-            self.player.currentWeapon == 'right'
+            self.entity.currentWeapon == 'right'
                 and y + (CHARACTER_HEIGHT / 2) + yOffset
                 or y + CHARACTER_HEIGHT
     end
-    if self.player.direction == 'north-west' then
+    if self.entity.direction == 'north-west' then
         return
-            self.player.currentWeapon == 'right'
+            self.entity.currentWeapon == 'right'
                 and (x + rightOffset) + nudge
                 or (x - leftOffset) + nudge,
-            self.player.currentWeapon == 'right'
+            self.entity.currentWeapon == 'right'
                 and (y + (CHARACTER_HEIGHT / 2) + yOffset) + nudge
                 or (y + CHARACTER_HEIGHT) + nudge
     end
-    if self.player.direction == 'south-east' then
+    if self.entity.direction == 'south-east' then
         return
-            self.player.currentWeapon == 'right'
+            self.entity.currentWeapon == 'right'
                 and ((x + CHARACTER_WIDTH) - rightOffset) - nudge
                 or ((x + CHARACTER_WIDTH) + leftOffset) - nudge,
-            self.player.currentWeapon == 'right'
+            self.entity.currentWeapon == 'right'
                 and (y + (CHARACTER_HEIGHT / 2) - yOffset) - nudge
                 or y - nudge
     end
