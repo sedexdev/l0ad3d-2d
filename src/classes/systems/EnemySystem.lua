@@ -130,19 +130,8 @@ end
 ]]
 function EnemySystem:spawn(areas)
     for _, area in pairs(areas) do
-        local roomArea = area.width * area.height
-        local startCount, endCount, numGrunts
-        if roomArea < 64 then
-            startCount = 2
-            endCount = 3
-        elseif roomArea == 64 then
-            startCount = 4
-            endCount = 8
-        else
-            startCount = 9
-            endCount = 12
-        end
-        numGrunts = math.random(startCount, endCount)
+        local startCount, endCount = self:getGruntCounts(area)
+        local numGrunts = math.random(startCount, endCount)
         self:spawnGrunts(numGrunts, area)
     end
 end
@@ -202,18 +191,78 @@ function EnemySystem:spawnBoss(area)
 end
 
 --[[
-    Spawns new enemy objects across the Map as enemies are 
-    killed
+    Spawns new Grunt objects across the Map as enemies are killed
 
     TODO
 
     Params:
-        none
+        area: table - MapArea object
     Returns:
         nil
 ]]
-function EnemySystem:respawn()
+function EnemySystem:respawnGrunts(areaID, map)
+    -- only spawn grunts in area type MapArea locations
+    if areaID >= START_AREA_ID then
+        local areaGruntCounts = {}
+        -- set grunt count in current area and the adjacencies to 0
+        areaGruntCounts[areaID] = 0
+        local areaAdjacencyIDs = GAreaAdjacencyDefinitions[areaID]
+        for _, id in pairs(areaAdjacencyIDs) do
+            if id >= START_AREA_ID then
+                areaGruntCounts[id] = 0
+            end
+        end
+        for _, grunt in pairs(self.grunts) do
+            -- check if Grunt is in the current area
+            if grunt.areaID == areaID then
+                areaGruntCounts[areaID] = areaGruntCounts[areaID] + 1
+                goto continue
+            end
+            -- check if Grunt is one of the area adjacencies
+            for _, id in pairs(areaAdjacencyIDs) do
+                if id >= START_AREA_ID and grunt.areaID == id then
+                    areaGruntCounts[id] = areaGruntCounts[id] + 1
+                    goto continue
+                end
+            end
+            ::continue::
+        end
+        -- spawn grunts in any area that currently has 0 Grunt objects in it
+        for id, count in pairs(areaGruntCounts) do
+            if count == 0 then
+                local area = map:getAreaDefinition(id)
+                local startCount, endCount = self:getGruntCounts(area)
+                local numGrunts = math.random(startCount, endCount)
+                self:spawnGrunts(numGrunts, area)
+            end
+        end
+    end
+end
 
+--[[
+    Gets a startCount number and an endCount number to use to then
+    generate a random number of Grunts dependent on area size
+
+    Params:
+        area: table - area to calculate size of
+    Returns
+        number: start number
+        number: end number
+]]
+function EnemySystem:getGruntCounts(area)
+    local roomArea = area.width * area.height
+    local startCount, endCount
+    if roomArea < 64 then
+        startCount = 2
+        endCount = 3
+    elseif roomArea == 64 then
+        startCount = 4
+        endCount = 8
+    else
+        startCount = 9
+        endCount = 12
+    end
+    return startCount, endCount
 end
 
 -- ========================== ENEMY PROXIMITY ==========================

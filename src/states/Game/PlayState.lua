@@ -52,6 +52,17 @@ end
 function PlayState:init()
     self.cameraX = 0
     self.cameraY = 0
+    -- setup event listeners
+    self.respawnGrunts =
+        Event.on('respawnGrunts', function (areaID, map)
+            self.systemManager.enemySystem:respawnGrunts(areaID, map)
+        end)
+    self.gruntKilled = Event.on('gruntKilled', function ()
+
+    end)
+    self.spawnBullet = Event.on('shotFired', function ()
+
+    end)
 end
 
 --[[

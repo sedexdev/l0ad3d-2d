@@ -120,15 +120,13 @@ end
     can be implemented in the location the Player is currently in
 
     Params:
-        areas: table - list of MapArea objects to compare
-                       Players (x, y) coordinates to 
-        type: string - 'area' | 'corridor' ; used to know how to handle doors
+        map:   table - Map object
     Returns:
-        table: value stored in <self.currentArea>
+        nil
 ]]
-function Player:setCurrentArea(areas)
+function Player:setCurrentArea(map)
     -- <areas> includes both areas and corridors
-    for _, area in pairs(areas) do
+    for _, area in pairs(map.areas) do
         local areaWidth = area.x + (area.width * FLOOR_TILE_WIDTH) + WALL_OFFSET
         local areaHeight = area.y + (area.height * FLOOR_TILE_HEIGHT) + WALL_OFFSET
         if area.type == 'area' then
@@ -139,6 +137,8 @@ function Player:setCurrentArea(areas)
                     -- player current area updated
                     self.currentArea.id = area.id
                     self.currentArea.type = area.type
+                    -- emit respawnGrunts event passing in area
+                    Event.dispatch('respawnGrunts', area.id, map)
                 end
             end
         else
@@ -148,6 +148,8 @@ function Player:setCurrentArea(areas)
                     -- player current area updated
                     self.currentArea.id = area.id
                     self.currentArea.type = area.type
+                    -- emit respawnGrunts event passing in area
+                    Event.dispatch('respawnGrunts', area.id, map)
                 end
             end
         end
