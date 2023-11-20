@@ -69,15 +69,15 @@ function PowerUpSystem:render()
     for _, key in pairs(self.keys) do
         key:render()
     end
-    -- crates
-    for _, crate in pairs(self.crates) do
-        crate:render()
-    end
     -- powerups
     for _, category in pairs(self.powerups) do
         for _, powerup in pairs(category) do
             powerup:render()
         end
+    end
+    -- crates
+    for _, crate in pairs(self.crates) do
+        crate:render()
     end
 end
 
@@ -403,10 +403,10 @@ function PowerUpSystem:powerUpFactory(id, areaID, x, y)
         'powerup'
     )
     if id == 1 then table.insert(self.powerups['doubleSpeed'], powerup) end
-    if id == 2 then table.insert(self.powerups['health'], powerup) end
+    if id == 2 then table.insert(self.powerups['oneShotBossKill'], powerup) end
     if id == 3 then table.insert(self.powerups['ammo'], powerup) end
-    if id == 4 then table.insert(self.powerups['invincible'], powerup) end
-    if id == 5 then table.insert(self.powerups['oneShotBossKill'], powerup) end
+    if id == 4 then table.insert(self.powerups['health'], powerup) end
+    if id == 5 then table.insert(self.powerups['invincible'], powerup) end
 end
 
 -- =========================== COLLISIONS HANDLERS ===========================
@@ -455,6 +455,14 @@ function PowerUpSystem:handlePowerUpCollision(powerup)
         self:removePowerUp(powerup, 'doubleSpeed')
     end
     if powerup.id == 2 then
+        self.player.powerups.oneShotBossKill = true
+        self:removePowerUp(powerup, 'oneShotBossKill')
+    end
+    if powerup.id == 3 then
+        self.player.ammo = self.player.ammo + 1000
+        self:removePowerUp(powerup, 'ammo')
+    end
+    if powerup.id == 4 then
         if self.player.health < MAX_HEALTH then
             local healthIncrease = 25
             local currentHealthDiff = MAX_HEALTH - self.player.health
@@ -466,17 +474,9 @@ function PowerUpSystem:handlePowerUpCollision(powerup)
             self:removePowerUp(powerup, 'health')
         end
     end
-    if powerup.id == 3 then
-        self.player.ammo = self.player.ammo + 1000
-        self:removePowerUp(powerup, 'ammo')
-    end
-    if powerup.id == 4 then
+    if powerup.id == 5 then
         self.player.powerups.invincible = true
         self:removePowerUp(powerup, 'invincible')
-    end
-    if powerup.id == 5 then
-        self.player.powerups.oneShotBossKill = true
-        self:removePowerUp(powerup, 'oneShotBossKill')
     end
 end
 
@@ -494,6 +494,7 @@ function PowerUpSystem:removePowerUp(object, name)
     for i, powerup in pairs(self.powerups[name]) do
         -- if locations match
         if object.x == powerup.x and object.y == powerup.y then
+            powerup = nil
             table.remove(self.powerups[name], i)
             break
         end
