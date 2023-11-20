@@ -21,8 +21,8 @@ Bullet = Class{}
 ]]
 function Bullet:init(entity, x, y, direction)
     self.entity = entity
-    self.x = x
-    self.y = y
+    self.x = self.entity.x + (ENTITY_WIDTH / 2)
+    self.y = self.entity.y + (ENTITY_WIDTH / 2)
     self.dx = entity.type == 'character' and BULLET_SPEED or ENEMY_BULLET_SPEED
     self.dy = entity.type == 'character' and BULLET_SPEED or ENEMY_BULLET_SPEED
     self.direction = direction

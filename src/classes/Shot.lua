@@ -94,25 +94,25 @@ function Shot:setCoordinates(x, y)
             self.entity.currentWeapon == 'right'
                 and x + rightOffset
                 or x - leftOffset,
-            y + (CHARACTER_HEIGHT / 2)
+            y + (ENTITY_HEIGHT / 2)
     elseif self.entity.direction == 'south' then
         return
             self.entity.currentWeapon == 'right'
-                and (x + CHARACTER_WIDTH) - rightOffset
-                or (x + CHARACTER_WIDTH) + leftOffset,
-            y + (CHARACTER_HEIGHT / 2)
+                and (x + ENTITY_WIDTH) - rightOffset
+                or (x + ENTITY_WIDTH) + leftOffset,
+            y + (ENTITY_HEIGHT / 2)
     elseif self.entity.direction == 'east' then
         return
-            x + (CHARACTER_WIDTH / 2),
+            x + (ENTITY_WIDTH / 2),
             self.entity.currentWeapon == 'right'
                 and y + rightOffset
                 or y - leftOffset
     elseif self.entity.direction == 'west' then
         return
-            x + (CHARACTER_WIDTH / 2),
+            x + (ENTITY_WIDTH / 2),
             self.entity.currentWeapon == 'right'
-                and (y + CHARACTER_HEIGHT) - rightOffset
-                or (y + CHARACTER_HEIGHT) + leftOffset
+                and (y + ENTITY_HEIGHT) - rightOffset
+                or (y + ENTITY_HEIGHT) + leftOffset
     else
         -- set coordinates for shots with an angle that is based on a 45 degree offset
         return self:set45DegreeCoordinates(x, y)
@@ -145,17 +145,17 @@ function Shot:set45DegreeCoordinates(x, y)
                 and x + rightOffset
                 or x - leftOffset,
             self.entity.currentWeapon == 'right'
-                and y + (CHARACTER_HEIGHT / 2) - yOffset
+                and y + (ENTITY_HEIGHT / 2) - yOffset
                 or y
     end
     if self.entity.direction == 'south-west' then
         return
             self.entity.currentWeapon == 'right'
-                and (x + CHARACTER_WIDTH) - rightOffset
-                or (x + CHARACTER_WIDTH) + leftOffset,
+                and (x + ENTITY_WIDTH) - rightOffset
+                or (x + ENTITY_WIDTH) + leftOffset,
             self.entity.currentWeapon == 'right'
-                and y + (CHARACTER_HEIGHT / 2) + yOffset
-                or y + CHARACTER_HEIGHT
+                and y + (ENTITY_HEIGHT / 2) + yOffset
+                or y + ENTITY_HEIGHT
     end
     if self.entity.direction == 'north-west' then
         return
@@ -163,16 +163,16 @@ function Shot:set45DegreeCoordinates(x, y)
                 and (x + rightOffset) + nudge
                 or (x - leftOffset) + nudge,
             self.entity.currentWeapon == 'right'
-                and (y + (CHARACTER_HEIGHT / 2) + yOffset) + nudge
-                or (y + CHARACTER_HEIGHT) + nudge
+                and (y + (ENTITY_HEIGHT / 2) + yOffset) + nudge
+                or (y + ENTITY_HEIGHT) + nudge
     end
     if self.entity.direction == 'south-east' then
         return
             self.entity.currentWeapon == 'right'
-                and ((x + CHARACTER_WIDTH) - rightOffset) - nudge
-                or ((x + CHARACTER_WIDTH) + leftOffset) - nudge,
+                and ((x + ENTITY_WIDTH) - rightOffset) - nudge
+                or ((x + ENTITY_WIDTH) + leftOffset) - nudge,
             self.entity.currentWeapon == 'right'
-                and (y + (CHARACTER_HEIGHT / 2) - yOffset) - nudge
+                and (y + (ENTITY_HEIGHT / 2) - yOffset) - nudge
                 or y - nudge
     end
 end

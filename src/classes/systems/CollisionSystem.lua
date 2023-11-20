@@ -53,8 +53,8 @@ function CollisionSystem:checkWallCollision(area, entity)
         bottomVertical = area.y + (area.height * FLOOR_TILE_HEIGHT / 2) + V_DOOR_HEIGHT
     }
     -- set Player (x, y) comparison
-    conditions['horizontalDoorway'] = self.player.x + ENTITY_CORRECTION > conditions.leftHorizontal and (self.player.x + CHARACTER_WIDTH) - ENTITY_CORRECTION < conditions.rightHorizontal
-    conditions['verticalDoorway'] = self.player.y + ENTITY_CORRECTION > conditions.topVertical and (self.player.y + CHARACTER_HEIGHT) - ENTITY_CORRECTION < conditions.bottomVertical
+    conditions['horizontalDoorway'] = self.player.x + ENTITY_CORRECTION > conditions.leftHorizontal and (self.player.x + ENTITY_WIDTH) - ENTITY_CORRECTION < conditions.rightHorizontal
+    conditions['verticalDoorway'] = self.player.y + ENTITY_CORRECTION > conditions.topVertical and (self.player.y + ENTITY_HEIGHT) - ENTITY_CORRECTION < conditions.bottomVertical
     -- if the area is a corridor then allow the player to pass through each end
     if area.type == 'corridor'then
         return self:corridorBoundary(area, conditions)
@@ -293,9 +293,9 @@ end
 function CollisionSystem:handlePlayerWallCollision(area, edge)
     -- declare corrections for readability of the if/elseif statements below
     local leftCorrection = area.x - WALL_OFFSET
-    local rightCorrection = area.x + (area.width * FLOOR_TILE_WIDTH) - CHARACTER_WIDTH + WALL_OFFSET
+    local rightCorrection = area.x + (area.width * FLOOR_TILE_WIDTH) - ENTITY_WIDTH + WALL_OFFSET
     local topCorrection = area.y - WALL_OFFSET
-    local bottomCorrection = area.y + (area.height * FLOOR_TILE_HEIGHT) - CHARACTER_HEIGHT + WALL_OFFSET
+    local bottomCorrection = area.y + (area.height * FLOOR_TILE_HEIGHT) - ENTITY_HEIGHT + WALL_OFFSET
     -- for single wall collisions just update x or y
     if edge == 'L' then
         self.player.x = leftCorrection
@@ -426,7 +426,7 @@ function CollisionSystem:handleDoorCollision(door, edge)
     -- check door location to apply appropriate correction
     if edge == 'L' or edge == 'R' then
         if door.playerLocation == 'left' then
-            self.player.x = (door.leftX + V_DOOR_WIDTH) - CHARACTER_WIDTH
+            self.player.x = (door.leftX + V_DOOR_WIDTH) - ENTITY_WIDTH
         elseif door.playerLocation == 'right' then
             self.player.x = door.leftX - V_DOOR_WIDTH
         end
@@ -435,7 +435,7 @@ function CollisionSystem:handleDoorCollision(door, edge)
         if door.playerLocation == 'below' then
             self.player.y = door.leftY - H_DOOR_HEIGHT
         elseif door.playerLocation == 'above' then
-            self.player.y = (door.leftY + H_DOOR_HEIGHT) - CHARACTER_HEIGHT
+            self.player.y = (door.leftY + H_DOOR_HEIGHT) - ENTITY_HEIGHT
         end
     end
 end
@@ -578,10 +578,10 @@ end
         boolean: true if collision detected
 ]]
 function CollisionSystem:objectCollision(object)
-    if (self.player.x > object.x + object.width) or (object.x > self.player.x + CHARACTER_WIDTH) then
+    if (self.player.x > object.x + object.width) or (object.x > self.player.x + ENTITY_WIDTH) then
         return false
     end
-    if (self.player.y > object.y + object.height) or (object.y > self.player.y + CHARACTER_HEIGHT) then
+    if (self.player.y > object.y + object.height) or (object.y > self.player.y + ENTITY_HEIGHT) then
         return false
     end
     return true
@@ -637,9 +637,9 @@ end
 ]]
 function CollisionSystem:handlePlayerCrateCollision(crate, edge)
     if edge == 'L' then
-        self.player.x = crate.x - CHARACTER_WIDTH + ENTITY_CORRECTION
+        self.player.x = crate.x - ENTITY_WIDTH + ENTITY_CORRECTION
     elseif edge == 'T' then
-        self.player.y = crate.y - CHARACTER_HEIGHT + ENTITY_CORRECTION
+        self.player.y = crate.y - ENTITY_HEIGHT + ENTITY_CORRECTION
     elseif edge == 'R' then
         self.player.x = crate.x + CRATE_WIDTH - ENTITY_CORRECTION
     elseif edge == 'B' then

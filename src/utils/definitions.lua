@@ -98,12 +98,12 @@ GAnimationDefintions = {
 ]]
 GCharacterDefinition = {
     type = 'character',
-    x = (WINDOW_WIDTH / 2) - (CHARACTER_WIDTH / 2),
-    y = (WINDOW_HEIGHT / 2) - (CHARACTER_HEIGHT / 2),
+    x = (WINDOW_WIDTH / 2) - (ENTITY_WIDTH / 2),
+    y = (WINDOW_HEIGHT / 2) - (ENTITY_HEIGHT / 2),
     dx = CHARACTER_SPEED,
     dy = CHARACTER_SPEED,
-    width = CHARACTER_WIDTH,
-    height = CHARACTER_HEIGHT,
+    width = ENTITY_WIDTH,
+    height = ENTITY_HEIGHT,
     stateMachine = nil,
     health = 100,
     ammo = 5000,

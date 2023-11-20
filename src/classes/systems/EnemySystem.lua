@@ -278,10 +278,10 @@ end
         boolean: true if in proximity
 ]]
 function EnemySystem:checkProximity(entity)
-    if (self.player.x > entity.x + entity.width + ENTITY_PROXIMITY) or (entity.x - ENTITY_PROXIMITY > self.player.x + CHARACTER_WIDTH) then
+    if (self.player.x > entity.x + entity.width + ENTITY_PROXIMITY) or (entity.x - ENTITY_PROXIMITY > self.player.x + ENTITY_WIDTH) then
         return false
     end
-    if (self.player.y > entity.y + entity.height + ENTITY_PROXIMITY) or (entity.y - ENTITY_PROXIMITY > self.player.y + CHARACTER_HEIGHT) then
+    if (self.player.y > entity.y + entity.height + ENTITY_PROXIMITY) or (entity.y - ENTITY_PROXIMITY > self.player.y + ENTITY_HEIGHT) then
         return false
     end
     return true
