@@ -37,6 +37,9 @@ function PlayState:enter(params)
     -- pause gameplay
     self.paused = false
     self.selected = 1
+    -- bullet management table
+    self.bulletID = 1
+    self.bullets = {}
 end
 
 --[[
@@ -60,8 +63,9 @@ function PlayState:init()
     self.gruntKilled = Event.on('gruntKilled', function ()
 
     end)
-    self.spawnBullet = Event.on('shotFired', function ()
-
+    self.spawnBullet = Event.on('shotFired', function (entity)
+        table.insert(self.bullets, Bullet(self.bulletID, entity))
+        self.bulletID = self.bulletID + 1
     end)
 end
 
@@ -108,6 +112,16 @@ function PlayState:runGameLoop(dt)
     self.player:update(dt)
     -- update the camera to track the Player
     self:updateCamera()
+    -- check fr bullet hits
+    for _, bullet in pairs(self.bullets) do
+        bullet:update(dt)
+        self:checkBulletHits(self.systemManager.powerupSystem.crates, bullet)
+        self:checkBulletHits(self.systemManager.enemySystem.grunts, bullet)
+        self:checkBulletHits(self.systemManager.enemySystem.turrets, bullet)
+        if self.systemManager.enemySystem.boss then
+            -- check for Boss damage using Boss class
+        end
+    end
 end
 
 --[[
@@ -203,6 +217,28 @@ function PlayState:checkMapInteractions(area)
 end
 
 --[[
+    Checks for Bullet hits and removes the object it hit from the
+    game
+
+    Params:
+        systemTable: table - system objects
+        bullet:      table - Bullet object
+    Returns:
+        nil
+]]
+function PlayState:checkBulletHits(systemTable, bullet)
+    for _, object in pairs(systemTable) do
+        if bullet:hit(object) then
+            object = nil
+            table.remove(systemTable, object)
+            bullet = nil
+            table.remove(self.bullets, bullet)
+            break
+        end
+    end
+end
+
+--[[
     Updates the location of the 'camera' so that the screen is 
     translated in relation to the Player object. The translation
     is based off the players position minus the pixel value of the
@@ -232,6 +268,10 @@ function PlayState:render()
     self.map:render()
     self.systemManager:render()
     self.player:render()
+    -- render Bullet objects
+    for _, bullet in pairs(self.bullets) do
+        bullet:render()
+    end
     self:displayFPS()
     -- show menu if paused
     if self.paused then

@@ -29,9 +29,11 @@ ENTITY_PROXIMITY = 100
 ENTITY_AXIS_PROXIMITY = 10
 START_AREA_ID = 17
 
--- bullet speeds
-BULLET_SPEED = 200
-ENEMY_BULLET_SPEED = 300
+-- bullets
+BULLET_SPEED = 500
+ENEMY_BULLET_SPEED = 600
+BULLET_WIDTH = 10
+BULLET_HEIGHT = 10
 
 -- movement key bindings
 MOVEMENT_KEYS = {'up', 'right', 'down', 'left', 'w', 'd', 's', 'a'}

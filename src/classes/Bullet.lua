@@ -12,20 +12,19 @@ Bullet = Class{}
     Bullet constructor
 
     Params:
-        entity:    table  - Entity object
-        x:         number - x coordinate of the bullet
-        y:         number - y coordinate of the bullet 
-        direction: string - direction to travel in
+        id:      number - id of this Bullet
+        entity:  table  - Entity object
     Returns:
         nil
 ]]
-function Bullet:init(entity, x, y, direction)
+function Bullet:init(id, entity)
+    self.id = id
     self.entity = entity
     self.x = self.entity.x + (ENTITY_WIDTH / 2)
     self.y = self.entity.y + (ENTITY_WIDTH / 2)
     self.dx = entity.type == 'character' and BULLET_SPEED or ENEMY_BULLET_SPEED
     self.dy = entity.type == 'character' and BULLET_SPEED or ENEMY_BULLET_SPEED
-    self.direction = direction
+    self.direction = self.entity.direction
 end
 
 --[[
@@ -58,6 +57,25 @@ function Bullet:update(dt)
         self.x = self.x - self.dx * dt
         self.y = self.y - self.dy * dt
     end
+end
+
+--[[
+    AABB collision detection for a passed in object to detect
+    if the bullet hit the object
+
+    Params;
+        object: table - object to check collision on
+    Returns:
+        boolean: true if collision detected
+]]
+function Bullet:hit(object)
+    if (self.x > object.x + object.width) or (object.x > self.x + BULLET_WIDTH) then
+        return false
+    end
+    if (self.y > object.y + object.height) or (object.y > self.y + BULLET_HEIGHT) then
+        return false
+    end
+    return true
 end
 
 --[[

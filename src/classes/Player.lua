@@ -59,6 +59,8 @@ function Player:update(dt)
 
     if love.keyboard.wasPressed('space') then
         self:fire()
+        -- dispatch event to create Bullet
+        Event.dispatch('shotFired', self)
     end
 
     for _, shot in pairs(self.shots) do

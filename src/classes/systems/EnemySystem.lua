@@ -46,6 +46,7 @@ end
         nil
 ]]
 function EnemySystem:update(dt)
+    io.write('Number of grunts = ' .. tostring(#self.grunts) .. '\n')
     local areaID = self.player.currentArea.id
     for _, grunt in pairs(self.grunts) do
         for _, adjacentID in pairs(GAreaAdjacencyDefinitions[areaID]) do
@@ -285,4 +286,18 @@ function EnemySystem:checkProximity(entity)
         return false
     end
     return true
+end
+
+--[[
+    Handles a Bullet hitting the Boss Entity object
+
+    TODO
+
+    Params:
+        none
+    Returns:
+        nil
+]]
+function EnemySystem:bossHit()
+    
 end
