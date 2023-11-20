@@ -150,8 +150,6 @@ function Player:setCurrentArea(map)
                     -- player current area updated
                     self.currentArea.id = area.id
                     self.currentArea.type = area.type
-                    -- emit respawnGrunts event passing in area
-                    Event.dispatch('respawnGrunts', area.id, map)
                 end
             end
         end
