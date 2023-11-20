@@ -77,16 +77,3 @@ function Bullet:hit(object)
     end
     return true
 end
-
---[[
-    Bullet render function
-
-    Params:
-        none
-    Returns:
-        nil
-]]
-function Bullet:render()
-    love.graphics.setColor(1, 0/255, 0/255, 255/255)
-    love.graphics.circle('fill', self.x, self.y, 5)
-end

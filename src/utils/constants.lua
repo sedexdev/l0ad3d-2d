@@ -30,10 +30,10 @@ ENTITY_AXIS_PROXIMITY = 10
 START_AREA_ID = 17
 
 -- bullets
-BULLET_SPEED = 500
+BULLET_SPEED = 2000
 ENEMY_BULLET_SPEED = 600
-BULLET_WIDTH = 10
-BULLET_HEIGHT = 10
+BULLET_WIDTH = 100
+BULLET_HEIGHT = 100
 
 -- movement key bindings
 MOVEMENT_KEYS = {'up', 'right', 'down', 'left', 'w', 'd', 's', 'a'}
@@ -93,13 +93,13 @@ AREA_DOOR_IDS = {
     [4] = 'B',
 }
 
--- powerup object IDs - includs crates and keys
+-- powerup object IDs
 POWERUP_IDS = {
     ['doubleSpeed'] = 1,
-    ['health'] = 2,
+    ['oneShotBossKill'] = 2,
     ['ammo'] = 3,
-    ['invincible'] = 4,
-    ['oneShotBossKill'] = 5,
+    ['health'] = 4,
+    ['invincible'] = 5,
 }
 
 -- powerup width and height

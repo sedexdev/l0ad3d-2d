@@ -46,7 +46,6 @@ end
         nil
 ]]
 function EnemySystem:update(dt)
-    io.write('Number of grunts = ' .. tostring(#self.grunts) .. '\n')
     local areaID = self.player.currentArea.id
     for _, grunt in pairs(self.grunts) do
         for _, adjacentID in pairs(GAreaAdjacencyDefinitions[areaID]) do

@@ -227,10 +227,10 @@ end
         nil
 ]]
 function PlayState:checkBulletHits(systemTable, bullet)
-    for _, object in pairs(systemTable) do
+    for key, object in pairs(systemTable) do
         if bullet:hit(object) then
             object = nil
-            table.remove(systemTable, object)
+            table.remove(systemTable, key)
             bullet = nil
             table.remove(self.bullets, bullet)
             break
@@ -268,10 +268,6 @@ function PlayState:render()
     self.map:render()
     self.systemManager:render()
     self.player:render()
-    -- render Bullet objects
-    for _, bullet in pairs(self.bullets) do
-        bullet:render()
-    end
     self:displayFPS()
     -- show menu if paused
     if self.paused then
