@@ -54,6 +54,26 @@ function Explosion:render()
         GQuads['explosion'][currentFrame],
         self.x, self.y,
         0,
-        5, 5
+        6, 6
+    )
+end
+
+--[[
+    Creates and returns an Animation instance for rendering
+    an explosio
+
+    Params:
+        object: table - object that has exploded
+    Returns:
+        table: Animation instance
+]]
+function Explosion:factory(object)
+    local frames = {}
+    for i = 1, 16 do table.insert(frames, i) end
+    return Explosion(
+        GTextures['explosion'],
+        Animation(frames, EXPLOSION_INTERVAL),
+        object.x,
+        object.y
     )
 end

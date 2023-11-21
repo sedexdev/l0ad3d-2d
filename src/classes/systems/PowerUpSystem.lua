@@ -36,8 +36,6 @@ function PowerUpSystem:init(player, doorSystem)
     self.crates = {}
     self.keys = {}
     self.locationCount = 1
-    -- explosions for crates
-    self.explosions = {}
 end
 
 --[[
@@ -54,9 +52,6 @@ function PowerUpSystem:update(dt)
         for _, powerup in pairs(category) do
             powerup:update(dt)
         end
-    end
-    for _, explosion in pairs(self.explosions) do
-        explosion:update(dt)
     end
 end
 
@@ -83,14 +78,6 @@ function PowerUpSystem:render()
     -- crates
     for _, crate in pairs(self.crates) do
         crate:render()
-    end
-    -- explosions
-    for key, explosion in pairs(self.explosions) do
-        explosion:render()
-        if explosion.animations:getCurrentFrame() == 16 then
-            explosion = nil
-            table.remove(self.explosions, key)
-        end
     end
 end
 

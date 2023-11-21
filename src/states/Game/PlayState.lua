@@ -37,9 +37,6 @@ function PlayState:enter(params)
     -- pause gameplay
     self.paused = false
     self.selected = 1
-    -- bullet management table
-    self.bulletID = 1
-    self.bullets = {}
 end
 
 --[[
@@ -55,18 +52,6 @@ end
 function PlayState:init()
     self.cameraX = 0
     self.cameraY = 0
-    -- setup event listeners
-    self.respawnGrunts =
-        Event.on('respawnGrunts', function (areaID, map)
-            self.systemManager.enemySystem:respawnGrunts(areaID, map)
-        end)
-    self.gruntKilled = Event.on('gruntKilled', function ()
-
-    end)
-    self.spawnBullet = Event.on('shotFired', function (entity)
-        table.insert(self.bullets, Bullet(self.bulletID, entity))
-        self.bulletID = self.bulletID + 1
-    end)
 end
 
 --[[
@@ -103,25 +88,14 @@ function PlayState:runGameLoop(dt)
     -- get the Player's current area
     local currentAreaID = self.player.currentArea.id
     local area = self.map:getAreaDefinition(currentAreaID)
-    -- check for an handle Player/Entity interactions in the Map
-    self:checkMapInteractions(area)
-    self:checkObjectInteractions(currentAreaID)
-    -- update Map
+    -- check for and handle Player/Entity game interactions
+    self:checkInteractions(currentAreaID, area)
+    -- update all game systems
     self.systemManager:update(dt)
-    -- update Entity objects
+    -- update Player
     self.player:update(dt)
     -- update the camera to track the Player
     self:updateCamera()
-    -- check for bullet hits
-    for _, bullet in pairs(self.bullets) do
-        bullet:update(dt)
-        self:checkBulletHits(self.systemManager.powerupSystem.crates, bullet)
-        self:checkBulletHits(self.systemManager.enemySystem.grunts, bullet)
-        self:checkBulletHits(self.systemManager.enemySystem.turrets, bullet)
-        if self.systemManager.enemySystem.boss then
-            -- check for Boss damage using Boss class
-        end
-    end
 end
 
 --[[
@@ -129,125 +103,15 @@ end
 
     Params:
         currentAreaID: number - ID of the Players current area
+        area:          table  - MapArea object
     Returns:
         nil
 ]]
-function PlayState:checkObjectInteractions(currentAreaID)
-    -- to check for key collisions make sure the Player is in an area with a key
-    for _, key in pairs(self.systemManager.powerupSystem.keys) do
-        if currentAreaID == key.areaID then
-            if self.systemManager.collisionSystem:objectCollision(key) then
-                self.systemManager.powerupSystem:handleKeyCollision(key)
-            end
-        end
-    end
-    -- check for crate collisions in the current area
-    for _, crate in pairs(self.systemManager.powerupSystem.crates) do
-        if currentAreaID == crate.areaID then
-            local playerCollision = self.systemManager.collisionSystem:crateCollision(crate, self.player)
-            if playerCollision.detected then
-                self.systemManager.collisionSystem:handlePlayerCrateCollision(crate, playerCollision.edge)
-            end
-            -- check for grunt collisions
-            for _, grunt in pairs(self.systemManager.enemySystem.grunts) do
-                if grunt.areaID == currentAreaID then
-                    local gruntCollision = self.systemManager.collisionSystem:crateCollision(crate, grunt)
-                    if gruntCollision.detected then
-                        self.systemManager.collisionSystem:handleEnemyCrateCollision(grunt, gruntCollision.edge)
-                    end
-                end
-            end
-            -- check for boss collisions
-            if self.systemManager.enemySystem.boss then
-                local bossCollision = self.systemManager.collisionSystem:crateCollision(crate, self.systemManager.enemySystem.boss)
-                if bossCollision.detected then
-                    self.systemManager.collisionSystem:handleEnemyCrateCollision(self.systemManager.enemySystem.boss, bossCollision.edge)
-                end
-            end
-        end
-    end
-    -- check for powerup collisions in the current area
-    for _, category in pairs(self.systemManager.powerupSystem.powerups) do
-        for _, powerup in pairs(category) do
-            if currentAreaID == powerup.areaID then
-                if self.systemManager.collisionSystem:objectCollision(powerup) then
-                    self.systemManager.powerupSystem:handlePowerUpCollision(powerup)
-                end
-            end
-        end
-    end
-end
-
---[[
-    Check for and handle interactions with game boundarys and doors
-
-    Params:
-        area: number - Current MapArea object
-    Returns:
-        nil
-]]
-function PlayState:checkMapInteractions(area)
-    -- check if the player has collided with the wall in this area
-    local wallCollision = self.systemManager.collisionSystem:checkWallCollision(area, self.player)
-    if wallCollision.detected then
-        -- handle the wall collision
-        self.systemManager.collisionSystem:handlePlayerWallCollision(area, wallCollision.edge)
-    end
-    -- check for any area door collisions
-    local doors = nil
-    if area.type == 'area' then
-        doors = self.systemManager.doorSystem:getAreaDoors(area.id)
-    else
-        doors = self.systemManager.doorSystem:getCorridorDoors(area.id)
-    end
-    if doors then
-        for _, door in pairs(doors) do
-            -- first check Player proximity and open door if not locked
-            local proximity = self.systemManager.collisionSystem:checkDoorProximity(door)
-            if proximity then
-                -- then check collision with the Door object to avoid Player running over it
-                local doorCollision = self.systemManager.collisionSystem:checkDoorCollsion(door)
-                if doorCollision.detected then
-                    -- and handle the collision if so
-                    self.systemManager.collisionSystem:handleDoorCollision(door, doorCollision.edge)
-                end
-            end
-        end
-    end
-end
-
---[[
-    Checks for Bullet hits and removes the object it hit from the
-    game
-
-    Params:
-        systemTable: table - system objects
-        bullet:      table - Bullet object
-    Returns:
-        nil
-]]
-function PlayState:checkBulletHits(systemTable, bullet)
-    for key, object in pairs(systemTable) do
-        if bullet:hit(object) then
-            if object.type == 'crate' then
-                local explosion = Explosion(
-                    GTextures['explosion'],
-                    Animation({1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16}, EXPLOSION_INTERVAL),
-                    object.x,
-                    object.y
-                )
-                table.insert(self.systemManager.powerupSystem.explosions, explosion)
-            end
-            if object.type == 'grunt' then
-                -- draw blood-splatter
-            end
-            object = nil
-            table.remove(systemTable, key)
-            bullet = nil
-            table.remove(self.bullets, bullet)
-            break
-        end
-    end
+function PlayState:checkInteractions(currentAreaID, area)
+    self.systemManager:checkKeys(currentAreaID)
+    self.systemManager:checkCrates(currentAreaID)
+    self.systemManager:checkPowerUps(currentAreaID)
+    self.systemManager:checkMap(area)
 end
 
 --[[
@@ -283,23 +147,36 @@ function PlayState:render()
     self:displayFPS()
     -- show menu if paused
     if self.paused then
-        -- draw dark background  
-        love.graphics.setColor(10/255, 10/255, 10/255, 150/255)
-        -- to keep things centered with the translation add the values to the (cameraX, cameraY) vector
-        love.graphics.rectangle('fill', self.cameraX, self.cameraY, WINDOW_WIDTH, WINDOW_HEIGHT)
-        -- display Paused
-        love.graphics.setFont(GFonts['blood-title'])
-        love.graphics.setColor(10/255, 10/255, 10/255, 1)
-        love.graphics.printf('PAUSED', self.cameraX + 2, (self.cameraY + WINDOW_HEIGHT / 4) + 2, WINDOW_WIDTH, 'center')
-        love.graphics.printf('PAUSED', self.cameraX + 2, (self.cameraY + WINDOW_HEIGHT / 4) + 2, WINDOW_WIDTH, 'center')
-        love.graphics.setColor(1, 0/255, 0/255, 1)
-        love.graphics.printf('PAUSED', self.cameraX, (self.cameraY + WINDOW_HEIGHT / 4), WINDOW_WIDTH, 'center')
-        -- draw menu
-        love.graphics.setFont(GFonts['funkrocker-menu'])
-        self:renderOption('CONTINUE', 1, 200)
-        self:renderOption('RESTART', 2, 300)
-        self:renderOption('QUIT', 3, 400)
+        self:renderPauseMenu()
     end
+end
+
+--[[
+    Renders the pause menu after the user has pressed escape
+    during gameplay
+
+    Params:
+        none
+    Returns:
+        nil
+]]
+function PlayState:renderPauseMenu()
+    -- draw dark background  
+    love.graphics.setColor(10/255, 10/255, 10/255, 150/255)
+    -- to keep things centered with the translation add the values to the (cameraX, cameraY) vector
+    love.graphics.rectangle('fill', self.cameraX, self.cameraY, WINDOW_WIDTH, WINDOW_HEIGHT)
+    -- display Paused
+    love.graphics.setFont(GFonts['blood-title'])
+    love.graphics.setColor(10/255, 10/255, 10/255, 1)
+    love.graphics.printf('PAUSED', self.cameraX + 2, (self.cameraY + WINDOW_HEIGHT / 4) + 2, WINDOW_WIDTH, 'center')
+    love.graphics.printf('PAUSED', self.cameraX + 2, (self.cameraY + WINDOW_HEIGHT / 4) + 2, WINDOW_WIDTH, 'center')
+    love.graphics.setColor(1, 0/255, 0/255, 1)
+    love.graphics.printf('PAUSED', self.cameraX, (self.cameraY + WINDOW_HEIGHT / 4), WINDOW_WIDTH, 'center')
+    -- draw menu
+    love.graphics.setFont(GFonts['funkrocker-menu'])
+    self:renderOption('CONTINUE', 1, 200)
+    self:renderOption('RESTART', 2, 300)
+    self:renderOption('QUIT', 3, 400)
 end
 
 --[[

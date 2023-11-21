@@ -61,6 +61,18 @@ ANGLES = {
     ['north-west'] = 225 * DEGREES_TO_RADIANS
 }
 
+-- inline with direction of Entity object
+ENTITY_ANGLES = {
+    ['north'] = 360 * DEGREES_TO_RADIANS,
+    ['north-east'] = 45 * DEGREES_TO_RADIANS,
+    ['east'] = 90 * DEGREES_TO_RADIANS,
+    ['south-east'] = 135 * DEGREES_TO_RADIANS,
+    ['south'] = 180 * DEGREES_TO_RADIANS,
+    ['south-west'] = 225 * DEGREES_TO_RADIANS,
+    ['west'] = 270 * DEGREES_TO_RADIANS,
+    ['north-west'] = 315 * DEGREES_TO_RADIANS,
+}
+
 -- directions
 DIRECTIONS = {'north', 'east', 'south', 'west', 'north-east', 'south-east', 'south-west', 'north-west'}
 

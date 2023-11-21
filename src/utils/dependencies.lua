@@ -58,6 +58,12 @@ GAudio = {
 }
 
 -- classes
+require 'src/classes/animations/Animation'
+require 'src/classes/animations/BloodSplatter'
+require 'src/classes/animations/Explosion'
+require 'src/classes/animations/PowerUp'
+require 'src/classes/animations/Shot'
+require 'src/classes/animations/SpriteBatcher'
 require 'src/classes/entity/Boss'
 require 'src/classes/entity/Entity'
 require 'src/classes/entity/Grunt'
@@ -66,21 +72,17 @@ require 'src/classes/map/Door'
 require 'src/classes/map/HUD'
 require 'src/classes/map/Map'
 require 'src/classes/map/MapArea'
-require 'src/classes/misc/Animation'
-require 'src/classes/misc/PowerUp'
-require 'src/classes/misc/SpriteBatcher'
-require 'src/classes/misc/StateMachine'
 require 'src/classes/weapons/Bullet'
-require 'src/classes/weapons/Explosion'
-require 'src/classes/weapons/Shot'
 require 'src/classes/systems/CollisionSystem'
 require 'src/classes/systems/DoorSystem'
+require 'src/classes/systems/EffectsSystem'
 require 'src/classes/systems/EnemySystem'
 require 'src/classes/systems/PowerUpSystem'
 require 'src/classes/systems/SystemManager'
 
 -- game states
 require 'src/states/BaseState'
+require 'src/states/StateMachine'
 require 'src/states/Game/MenuState'
 require 'src/states/Game/SelectCharacterState'
 require 'src/states/Game/CountdownState'
@@ -126,7 +128,7 @@ GQuads = {
     ['character1'] = GenerateQuads(GTextures['character1'], 384, 384),
     ['character2'] = GenerateQuads(GTextures['character2'], 384, 384),
     ['explosion'] = GenerateQuads(GTextures['explosion'], 64, 64),
-    ['blood-splatter'] = GenerateQuads(GTextures['blood-splatter'], 2755, 2000),
+    ['blood-splatter'] = GenerateQuads(GTextures['blood-splatter'], 384, 384),
     ['grunt'] = GenerateQuads(GTextures['grunt'], 128, 128),
     ['boss'] = GenerateQuads(GTextures['boss'], 128, 128),
     ['crates'] = GenerateQuads(GTextures['crates'], 128, 128),

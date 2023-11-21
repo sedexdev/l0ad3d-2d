@@ -33,6 +33,13 @@ function EnemySystem:init(player, gruntSpriteBatch, collisionSystem, doorSystem)
     self.turrets = {}
     self.boss = nil
     self.gruntID = 1
+    -- setup event listeners
+    self.respawn = Event.on('respawnGrunts', function (areaID, map)
+        self:respawnGrunts(areaID, map)
+    end)
+    self.gruntKilled = Event.on('gruntKilled', function ()
+
+    end)
 end
 
 --[[
