@@ -238,6 +238,9 @@ function PlayState:checkBulletHits(systemTable, bullet)
                 )
                 table.insert(self.systemManager.powerupSystem.explosions, explosion)
             end
+            if object.type == 'grunt' then
+                -- draw blood-splatter
+            end
             object = nil
             table.remove(systemTable, key)
             bullet = nil
