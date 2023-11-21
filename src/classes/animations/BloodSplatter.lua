@@ -21,8 +21,8 @@ BloodSplatter = Class{}
 ]]
 function BloodSplatter:init(texture, x, y, direction)
     self.texture = texture
-    self.x = x
-    self.y = y
+    self.x = x + (ENTITY_WIDTH / 2)
+    self.y = y + (ENTITY_HEIGHT / 2)
     self.angle = ENTITY_ANGLES[direction]
 end
 
