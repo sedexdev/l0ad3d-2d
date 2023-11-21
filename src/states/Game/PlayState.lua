@@ -23,6 +23,7 @@ PlayState = Class{__includes = BaseState}
         nil
 ]]
 function PlayState:enter(params)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     self.highScores = params.highScores
     self.map = params.map
     self.systemManager = params.systemManager
@@ -50,6 +51,7 @@ end
         nil
 ]]
 function PlayState:init()
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     self.cameraX = 0
     self.cameraY = 0
 end
@@ -66,6 +68,7 @@ end
         nil
 ]]
 function PlayState:update(dt)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     if love.keyboard.wasPressed('escape') then
         self.paused = true
     end
@@ -85,6 +88,7 @@ end
         nil
 ]]
 function PlayState:runGameLoop(dt)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     -- get the Player's current area
     local currentAreaID = self.player.currentArea.id
     local area = self.map:getAreaDefinition(currentAreaID)
@@ -108,10 +112,12 @@ end
         nil
 ]]
 function PlayState:checkInteractions(currentAreaID, area)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     self.systemManager:checkKeys(currentAreaID)
     self.systemManager:checkCrates(currentAreaID)
     self.systemManager:checkPowerUps(currentAreaID)
     self.systemManager:checkMap(area)
+    self.systemManager:checkGrunts(currentAreaID)
 end
 
 --[[
@@ -126,6 +132,7 @@ end
         nil
 ]]
 function PlayState:updateCamera()
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     self.cameraX = self.player.x - (WINDOW_WIDTH / 2) + (self.player.width / 2)
     self.cameraY = self.player.y - (WINDOW_HEIGHT / 2) + (self.player.height / 2)
 end
@@ -140,6 +147,7 @@ end
         nil
 ]]
 function PlayState:render()
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     love.graphics.translate(-math.floor(self.cameraX), -math.floor(self.cameraY))
     self.map:render()
     self.systemManager:render()
@@ -161,6 +169,7 @@ end
         nil
 ]]
 function PlayState:renderPauseMenu()
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     -- draw dark background  
     love.graphics.setColor(10/255, 10/255, 10/255, 150/255)
     -- to keep things centered with the translation add the values to the (cameraX, cameraY) vector
@@ -190,6 +199,7 @@ end
         nil
 ]]
 function PlayState:renderOption(name, id, yOffset)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     love.graphics.setColor(10/255, 10/255, 10/255, 1)
     love.graphics.printf(name, self.cameraX + 2, (self.cameraY + (WINDOW_HEIGHT / 3 + yOffset)) + 2, WINDOW_WIDTH, 'center')
     love.graphics.printf(name, self.cameraX + 2, (self.cameraY + (WINDOW_HEIGHT / 3 + yOffset)) + 2, WINDOW_WIDTH, 'center')
@@ -211,6 +221,7 @@ end
         nil
 ]]
 function PlayState:processPauseMenuInput()
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     if love.keyboard.wasPressed('up') then
         GAudio['select']:stop()
         GAudio['select']:play()
@@ -260,6 +271,7 @@ end
         nil
 ]]
 function PlayState:displayFPS()
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     -- simple FPS display across all states
     love.graphics.setFont(GFonts['funkrocker-small'])
     love.graphics.setColor(1, 0/255, 0/255, 255/255)

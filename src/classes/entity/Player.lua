@@ -21,6 +21,7 @@ Player = Class{__includes = Entity}
         nil
 ]]
 function Player:init(id, animations, def)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     Entity.init(self, def)
     self.id = id
     self.texture = animations.texture
@@ -37,6 +38,11 @@ function Player:init(id, animations, def)
     self.keys = def.keys
     -- defines the current area of the player: {id = areaID, type = 'area' | 'corridor'}
     self.currentArea = {id = START_AREA_ID, type = 'area'}
+    -- powerup timers
+    self.invicibleTimer = 0
+    self.invicibleDuration = 30
+    self.doubleSpeedTimer = 0
+    self.doubleSpeedDuration = 15
     self.isDead = false
 end
 
@@ -53,12 +59,30 @@ end
         nil
 ]]
 function Player:update(dt)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     Entity.update(self, dt)
-
     if love.keyboard.wasPressed('space') then
         self:fire()
         -- dispatch event to create Shot and Bullet instances
         Event.dispatch('shotFired', self)
+    end
+    -- update timers if powerups are true
+    if self.powerups.invincible then
+        self.invicibleTimer = self.invicibleTimer + dt
+        if self.invicibleTimer > self.invicibleDuration then
+            self.powerups.invincible = false
+            self.invicibleTimer = 0
+        end
+    end
+    if self.powerups.doubleSpeed then
+        self.doubleSpeedTimer = self.doubleSpeedTimer + dt
+        if self.doubleSpeedTimer > self.doubleSpeedDuration then
+            self.powerups.doubleSpeed = false
+            self.doubleSpeedTimer = 0
+            -- reset velocity
+            self.dx = CHARACTER_SPEED
+            self.dy = CHARACTER_SPEED
+        end
     end
 end
 
@@ -73,6 +97,7 @@ end
         nil
 ]]
 function Player:render()
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     Entity.render(self)
 end
 
@@ -90,6 +115,7 @@ end
         nil
 ]]
 function Player:fire()
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     if self.weapons > 1 then
         self.currentWeapon = self.currentWeapon == 'right' and 'left' or 'right'
     end
@@ -105,6 +131,7 @@ end
         nil
 ]]
 function Player:setCurrentArea(map)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     -- <areas> includes both areas and corridors
     for _, area in pairs(map.areas) do
         local areaWidth = area.x + (area.width * FLOOR_TILE_WIDTH) + WALL_OFFSET
@@ -117,8 +144,6 @@ function Player:setCurrentArea(map)
                     -- player current area updated
                     self.currentArea.id = area.id
                     self.currentArea.type = area.type
-                    -- TODO: not working properly - emit respawnGrunts event passing in area
-                    Event.dispatch('respawnGrunts', area.id, map)
                 end
             end
         else
@@ -143,6 +168,7 @@ end
         nil
 ]]
 function Player:takeDamage(damage)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     -- only take damage if the Player is not invincible
     if not self.powerups.invincible then
         self.health = self.health - damage
@@ -157,15 +183,13 @@ end
     of seconds
 
     Params:
-        seconds: number - time invincibility will last
+        none
     Returns:
         nil
 ]]
-function Player:makeInvicible(seconds)
+function Player:makeInvicible()
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     self.powerups.invincible = true
-    Timer.after(seconds, function ()
-        self.powerups.invincible = false
-    end)
 end
 
 --[[
@@ -176,9 +200,9 @@ end
     Returns:
         nil
 ]]
-function Player:doubleSpeed()
+function Player:setDoubleSpeed()
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     self.powerups.doubleSpeed = true
-    Timer.after(20, function ()
-        self.powerups.doubleSpeed = false
-    end)
+    self.dx = self.dx * 2
+    self.dy = self.dy * 2
 end

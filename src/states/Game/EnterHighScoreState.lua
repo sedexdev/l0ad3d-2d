@@ -23,17 +23,17 @@ EnterHighScoreState = Class{__includes = BaseState}
         nil
 ]]
 function EnterHighScoreState:enter(params)
-    
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')    
 end
 
 function EnterHighScoreState:init()
-    
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')    
 end
 
 function EnterHighScoreState:update(dt)
-    
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')    
 end
 
 function EnterHighScoreState:render()
-    
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
 end

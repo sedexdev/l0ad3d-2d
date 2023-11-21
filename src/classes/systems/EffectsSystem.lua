@@ -20,6 +20,7 @@ EffectsSystem = Class{}
         nil
 ]]
 function EffectsSystem:init(player, powerupSystem, enemySystem)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     self.player = player
     self.powerupSystem = powerupSystem
     self.enemySystem = enemySystem
@@ -53,6 +54,7 @@ end
         nil
 ]]
 function EffectsSystem:update(dt)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     for _, explosion in pairs(self.explosions) do
         explosion:update(dt)
     end
@@ -85,6 +87,7 @@ end
         none
 ]]
 function EffectsSystem:render()
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     love.graphics.setColor(1, 1, 1, 1)
     -- explosions
     for key, explosion in pairs(self.explosions) do
@@ -119,6 +122,7 @@ end
         nil
 ]]
 function EffectsSystem:checkBullets(systemTable, bullet)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     for key, object in pairs(systemTable) do
         if bullet:hit(object) then
             if object.type == 'crate' then
@@ -151,6 +155,7 @@ end
         nil
 ]]
 function EffectsSystem:handleGruntHit(systemTable, key, grunt)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     grunt:takeDamage()
     if grunt.isDead then
         local bloodSplatter = BloodSplatter(GTextures['blood-splatter'], grunt.x, grunt.y, grunt.direction)

@@ -21,6 +21,7 @@ Grunt = Class{__includes = Entity}
         nil
 ]]
 function Grunt:init(id, animations, def)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     Entity.init(self, def)
     self.id = id
     self.texture = animations.texture
@@ -42,6 +43,7 @@ end
         nil
 ]]
 function Grunt:update(dt)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     Entity.update(self, dt)
 end
 
@@ -55,6 +57,7 @@ end
         nil
 ]]
 function Grunt:render()
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     Entity.render(self)
 end
 
@@ -67,6 +70,7 @@ end
         nil
 ]]
 function Grunt:takeDamage()
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     self.health = self.health - PLAYER_DAMAGE
     if self.health <= 0 then
         self.isDead = true

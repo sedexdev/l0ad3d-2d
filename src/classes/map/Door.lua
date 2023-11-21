@@ -27,6 +27,7 @@ Door = Class{}
         nil
 ]]
 function Door:init(id, areaID, colour, orientation, leftX, rightX, leftY, rightY)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     self.id = id
     self.areaID = areaID
     self.colour = colour
@@ -59,6 +60,7 @@ end
         none
 ]]
 function Door:render()
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     -- draw out the under doors
     love.graphics.draw(GTextures[self.orientation..'-doors'], GQuads[self.orientation..'-doors'][DOOR_IDS['under']], self.underLeftX, self.underLeftY, 0, 5, 5)
     love.graphics.draw(GTextures[self.orientation..'-doors'], GQuads[self.orientation..'-doors'][DOOR_IDS['under']], self.underRightX, self.underRightY, 0, 5, 5)
@@ -78,6 +80,7 @@ end
         nil
 ]]
 function Door:proximity(player)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     -- locked door conditions
     local aboveLocked = (player.y + player.height) > self.leftY + H_DOOR_HEIGHT and (player.y + player.height) > (self.rightY + H_DOOR_HEIGHT)
     local belowLocked = player.y < (self.leftY - H_DOOR_HEIGHT) and player.y < (self.rightY - H_DOOR_HEIGHT)
@@ -123,6 +126,7 @@ end
         boolean: true if either of the arguments are true, false otherwise 
 ]]
 function Door:proximityHelper(lockedCondition, locationCondition)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     if self.isLocked then
         return lockedCondition
     end

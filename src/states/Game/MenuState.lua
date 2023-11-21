@@ -39,6 +39,7 @@ end
         nil
 ]]
 function MenuState:init()
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     self.selected = 1
     self.bulletOffsets = {
         [1] = {x = 1, y = 55, rendered = false},
@@ -75,6 +76,7 @@ end
         nil
 ]]
 function MenuState:update(dt)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     if not self.pauseInput then
         if love.keyboard.wasPressed('up') then
             GAudio['select']:stop()
@@ -117,6 +119,7 @@ end
         nil
 ]]
 function MenuState:render()
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     -- draw background
     love.graphics.setColor(1, 1, 1, 1)
     love.graphics.draw(GTextures['grey-background'],

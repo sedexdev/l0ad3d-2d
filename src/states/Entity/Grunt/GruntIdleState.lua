@@ -26,6 +26,7 @@ GruntIdleState = Class{__includes = BaseState}
         nil
 ]]
 function GruntIdleState:init(area, grunt, player, gruntSpriteBatch, collisionSystem, enemySystem)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     self.area = area
     self.grunt = grunt
     self.player = player
@@ -47,6 +48,7 @@ end
         nil
 ]]
 function GruntIdleState:update(dt)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     -- call the Animation instance's update function 
     self.grunt.animations['walking-'..self.grunt.direction]:update(dt)
     -- check for wall collisions
@@ -101,6 +103,7 @@ end
         nil
 ]]
 function GruntIdleState:render()
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     local currentFrame = self.grunt.animations['walking-'..self.grunt.direction]:getCurrentFrame()
     -- add the Grunt current quad to the SpriteBatch
     self.gruntSpriteBatch:clear()

@@ -9,6 +9,7 @@
         table: list of sub-strings after splitting
 ]]
 local function split(str, sep)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     if sep == nil then
         sep = "%s"
     end
@@ -28,6 +29,7 @@ end
         nil
 ]]
 function CreateFile()
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     love.filesystem.setIdentity('l0ad3d')
     local highScores = ''
     local name = 'L0AD'
@@ -46,6 +48,7 @@ end
         nil
 ]]
 function WriteHighScores(highScores)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     love.filesystem.setIdentity('l0ad3d')
     love.filesystem.write('l0ad3d.lst', highScores)
 end
@@ -60,6 +63,7 @@ end
         nil
 ]]
 function LoadHighScores()
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     love.filesystem.setIdentity('l0ad3d')
     if not love.filesystem.getInfo('l0ad3d.lst') then
         CreateFile()

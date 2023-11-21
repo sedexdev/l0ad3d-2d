@@ -23,6 +23,7 @@ Map = Class{}
         nil
 ]]
 function Map:init(player)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     self.player = player
     self.areas = {}
 end
@@ -37,6 +38,7 @@ end
         none
 ]]
 function Map:render()
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     -- render out each area
     for _, area in pairs(self.areas) do
         area:render()
@@ -53,6 +55,7 @@ end
         table: MapArea object
 ]]
 function Map:getAreaDefinition(areaID)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     return self.areas[areaID]
 end
 
@@ -106,8 +109,8 @@ function Map:generateLevel(systemManager)
 end
 
 --[[
-    Gets the starting MapArea objects that Grunt Entity objects will
-    be spawned in when the Map generates
+    Gets the starting areas to spwn grunt type Entity objects in
+    when the game level is generated
 
     Params:
         none
@@ -115,14 +118,34 @@ end
         table: list of MapArea objects
 ]]
 function Map:getStartingAreas()
-    local startingAreas = {}
-    table.insert(startingAreas, self.areas[START_AREA_ID])
-    for _, areaID in pairs(GAreaAdjacencyDefinitions[START_AREA_ID]) do
-        if areaID >= START_AREA_ID then
-            table.insert(startingAreas, self.areas[areaID])
+    local areas = {}
+    table.insert(areas, self.areas[START_AREA_ID])
+    for _, id in pairs(GAreaAdjacencyDefinitions[START_AREA_ID]) do
+        if id >= START_AREA_ID then
+            table.insert(areas, self.areas[id])
         end
     end
-    return startingAreas
+    return areas
+end
+
+--[[
+    Gets the adjacent MapArea objects that Grunt Entity objects will
+    be spawned in as the game proceeds. Area adjacencies are defined
+    in GAreaAdjacencyDefinitions in src/utils/definitions.lua
+
+    Params:
+        areaID: number - area ID
+    Returns:
+        table: list of MapArea objects
+]]
+function Map:getAreaAdjacencies(areaID)
+    local areas = {}
+    for _, id in pairs(GAreaAdjacencyDefinitions[areaID]) do
+        if id >= START_AREA_ID then
+            table.insert(areas, self.areas[id])
+        end
+    end
+    return areas
 end
 
 --[[

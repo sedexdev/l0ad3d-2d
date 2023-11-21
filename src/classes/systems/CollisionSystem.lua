@@ -23,6 +23,7 @@ CollisionSystem = Class{}
         nil
 ]]
 function CollisionSystem:init(player, doorSystem)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     self.player = player
     self.doorSystem = doorSystem
 end
@@ -41,6 +42,7 @@ end
         table: true if a collision is detected, false if not, along with the edge
 ]]
 function CollisionSystem:checkWallCollision(area, entity)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     -- booleans for stating whether Player object has hit the area boundary
     local conditions = {
         leftCollision = entity.x < area.x - WALL_OFFSET,
@@ -78,6 +80,7 @@ end
         table: collision status update - collision detected and where 
 ]]
 function CollisionSystem:areaBoundary(area, conditions, entity)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     -- default values for detection - no collision
     local collisionDef = {detected = false, edge = nil}
     -- check if the entity is going to pass through an area doorway
@@ -132,6 +135,7 @@ end
         table: collision status update - collision detected and where 
 ]]
 function CollisionSystem:corridorBoundary(area, conditions)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     -- default values for detection - no collision
     local collisionDef = {detected = false, edge = nil}
     -- check for any doors in the corridor
@@ -248,6 +252,7 @@ end
         table: collision status and edge location
 ]]
 function CollisionSystem:detectBend(orientation, bendLabel, area, condition1, condition2, condition3, edgeTable)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     local collisionDef = {detected = false, edge = nil}
     local offset
     -- set the offset based on the orientation and location of the bend
@@ -291,6 +296,7 @@ end
         table: true if a collision is detected, false if not, along with the edge
 ]]
 function CollisionSystem:handlePlayerWallCollision(area, edge)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     -- declare corrections for readability of the if/elseif statements below
     local leftCorrection = area.x - WALL_OFFSET
     local rightCorrection = area.x + (area.width * FLOOR_TILE_WIDTH) - ENTITY_WIDTH + WALL_OFFSET
@@ -335,6 +341,7 @@ end
         nil
 ]]
 function CollisionSystem:handleEnemyWallCollision(entity, edge)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     if edge == 'T' then entity.direction = 'south'
     elseif edge == 'R' then entity.direction = 'west'
     elseif edge == 'B' then entity.direction = 'north'
@@ -359,6 +366,7 @@ end
         nil
 ]]
 function CollisionSystem:checkDoorProximity(door)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     if door:proximity(self.player) then
         -- check if door is locked
         if not door.isLocked then
@@ -389,6 +397,7 @@ end
         boolean: detection status and edge door is on
 ]]
 function CollisionSystem:checkDoorCollsion(door)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     -- return true if the door is locked to block the Entity
     if door.isLocked then
         goto returnTrue
@@ -423,6 +432,7 @@ end
         nil
 ]]
 function CollisionSystem:handleDoorCollision(door, edge)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     -- check door location to apply appropriate correction
     if edge == 'L' or edge == 'R' then
         if door.playerLocation == 'left' then
@@ -454,6 +464,7 @@ end
         boolean: true if doorway detected
 ]]
 function CollisionSystem:detectAreaDoorway(area, door, conditions)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     -- check if this door is in an adjacent area
     if door.areaID ~= area.id then
         -- if Player is in the doorway and the door is not locked then allow through
@@ -506,6 +517,7 @@ end
         boolean: true if Player is in the doorway, false if not
 ]]
 function CollisionSystem:detectAdjacentDoorway(area, adjacentAreaID)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     for _, adjacentArea in pairs(area.adjacentAreas) do
         if adjacentArea.doorID == 1 or adjacentArea.doorID == 3 then -- left or right
             -- use area y coordinates to find doorway
@@ -543,6 +555,7 @@ end
         boolean: true if doorway detected
 ]]
 function CollisionSystem:detectCorridorDoorways(area, conditions)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     -- check for door proximity to allow the Player object to pass through the wall at that point
     for _, door in pairs(self.doorSystem:getCorridorDoors(area.id)) do
         if door.id == 1 and door:proximity(self.player) and conditions.verticalDoorway then
@@ -578,6 +591,7 @@ end
         boolean: true if collision detected
 ]]
 function CollisionSystem:objectCollision(object)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     if (self.player.x > object.x + object.width) or (object.x > self.player.x + ENTITY_WIDTH) then
         return false
     end
@@ -599,6 +613,7 @@ end
         boolean: true if collision detected
 ]]
 function CollisionSystem:crateCollision(crate, entity)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     -- false collision conditions
     if (entity.x > crate.x + CRATE_WIDTH) or (crate.x > entity.x + ENTITY_WIDTH) then
         return {detected = false, edge = nil}
@@ -636,6 +651,7 @@ end
         nil
 ]]
 function CollisionSystem:handlePlayerCrateCollision(crate, edge)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     if edge == 'L' then
         self.player.x = crate.x - ENTITY_WIDTH + ENTITY_CORRECTION
     elseif edge == 'T' then
@@ -660,6 +676,7 @@ end
         nil
 ]]
 function CollisionSystem:handleEnemyCrateCollision(entity, edge)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     if edge == 'L' then
         entity.direction = 'west'
     elseif edge == 'T' then
@@ -682,6 +699,7 @@ end
         boolean: true if collision detected
 ]]
 function CollisionSystem:entityCollision(entity1, entity2)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     if (entity1.x > entity2.x + entity2.width + ENTITY_PROXIMITY) or (entity2.x - ENTITY_PROXIMITY > entity1.x + ENTITY_WIDTH) then
         return false
     end
@@ -702,5 +720,6 @@ end
         nil
 ]]
 function CollisionSystem:handleEntityCollision(entity)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
 
 end

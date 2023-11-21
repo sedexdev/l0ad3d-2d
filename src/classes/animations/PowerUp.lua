@@ -23,6 +23,7 @@ PowerUp = Class{}
         nil
 ]]
 function PowerUp:init(id, areaID, x, y, type, quadID)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     self.id = id
     self.areaID = areaID
     self.x = x
@@ -34,18 +35,6 @@ function PowerUp:init(id, areaID, x, y, type, quadID)
 end
 
 --[[
-    PowerUp update function
-
-    Params:
-        dt: number - deltatime counter for current frame rate
-    Returns:
-        nil
-]]
-function PowerUp:update(dt)
-    
-end
-
---[[
     PowerUp render function
 
     Params:
@@ -54,6 +43,7 @@ end
         nil
 ]]
 function PowerUp:render()
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     love.graphics.setColor(1, 1, 1, 1)
     local quad = self.type == 'powerup' and GQuads['powerups'][self.id] or GQuads[self.type..'s'][self.quadID]
     love.graphics.draw(GTextures[self.type..'s'],

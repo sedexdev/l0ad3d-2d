@@ -34,6 +34,7 @@ MapArea = Class{}
         nil
 ]]
 function MapArea:init(id, x, y, width, height, type, orientation, bends, joins, doors, adjacentAreas)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     self.id = id
     self.x = x
     self.y = y
@@ -60,6 +61,7 @@ end
         nil
 ]]
 function MapArea:render()
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     love.graphics.setColor(1, 1, 1, 1)
     self:drawFloorTiles()
     -- if this area has doors
@@ -86,6 +88,7 @@ end
         nil
 ]]
 function MapArea:drawFloorTiles()
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     for y, tiles in pairs(self.floorTiles) do
         for x, tile in pairs(tiles) do
             love.graphics.draw(GTextures['floor-tiles'],
@@ -110,6 +113,7 @@ end
         nil
 ]]
 function MapArea:drawWallTiles()
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     self:drawHorizontalWall(WALL_OFFSET, -WALL_OFFSET)
     self:drawHorizontalWall(WALL_OFFSET, self.height * FLOOR_TILE_HEIGHT)
     self:drawVerticalWall(-WALL_OFFSET)
@@ -129,6 +133,7 @@ end
         nil
 ]]
 function MapArea:drawCorridorWalls()
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     if self.orientation == 'horizontal' then
         -- draw any bends in this corridor 
         if self.bends then
@@ -159,6 +164,7 @@ end
         nil
 ]]
 function MapArea:drawHorizontalWall(xOffset, yOffset)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     for x, tile in pairs(self.wallTiles['horizontal']) do
         love.graphics.draw(GTextures['wall-topper'],
             tile,
@@ -180,6 +186,7 @@ end
         nil
 ]]
 function MapArea:drawVerticalWall(xOffset)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     for y, tile in pairs(self.wallTiles['vertical']) do
         love.graphics.draw(GTextures['wall-topper'],
             tile,
@@ -201,6 +208,7 @@ end
         nil
 ]]
 function MapArea:drawBendWallTilesHorizontal()
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     local wallTileCount = self.width * FLOOR_TILE_WIDTH / WALL_OFFSET
     local yOffset = self.height * FLOOR_TILE_HEIGHT
 
@@ -217,6 +225,7 @@ function MapArea:drawBendWallTilesHorizontal()
             nil
     ]]
     local helper = function (start, limit, y)
+        DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
         for i = start, limit - 1 do
             love.graphics.draw(GTextures['wall-topper'], GQuads['wall-topper'][1], self.x + (i * WALL_OFFSET), y, 0, 5, 5)
         end
@@ -255,6 +264,7 @@ end
         nil
 ]]
 function MapArea:drawBendWallTilesVertical()
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     local wallTileCount = self.height * FLOOR_TILE_HEIGHT / WALL_OFFSET
     local xOffset = self.width * FLOOR_TILE_WIDTH
 
@@ -271,6 +281,7 @@ function MapArea:drawBendWallTilesVertical()
             nil
     ]]
     local helper = function (start, limit, x)
+        DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
         for i = start, limit - 1 do
             love.graphics.draw(GTextures['wall-topper'], GQuads['wall-topper'][1], x, self.y + (i * WALL_OFFSET), 0, 5, 5)
         end
@@ -309,6 +320,7 @@ end
         nil
 ]]
 function MapArea:generateFloorTiles()
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     for y = 1, self.height do
         table.insert(self.floorTiles, {})
         for _ = 1, self.width do
@@ -329,6 +341,7 @@ end
         nil
 ]]
 function MapArea:generateWallTiles()
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     if self.bend then
         -- -5 to make the wall shorter on the bend side
         for _ = 1, (self.width * 4) - 5 do

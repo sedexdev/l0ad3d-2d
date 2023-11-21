@@ -24,6 +24,7 @@ PowerUpSystem = Class{}
         nil
 ]]
 function PowerUpSystem:init(player, doorSystem)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     self.player = player
     self.doorSystem = doorSystem
     self.powerups = {
@@ -39,23 +40,6 @@ function PowerUpSystem:init(player, doorSystem)
 end
 
 --[[
-    PowerUpSystem update function. Calls the update function
-    of each powerup in the system
-
-    Params:
-        dt: number - deltatime counter for current frame rate
-    Returns:
-        nil
-]]
-function PowerUpSystem:update(dt)
-    for _, category in pairs(self.powerups) do
-        for _, powerup in pairs(category) do
-            powerup:update(dt)
-        end
-    end
-end
-
---[[
     PowerUpSystem render function. Calls the render function
     of each powerup in the system
 
@@ -65,6 +49,7 @@ end
         none
 ]]
 function PowerUpSystem:render()
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     -- keys
     for _, key in pairs(self.keys) do
         key:render()
@@ -91,6 +76,7 @@ end
         nil
 ]]
 function PowerUpSystem:spawn()
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     self:spawnCrates()
     self:spawnKeys()
 end
@@ -105,6 +91,7 @@ end
         nil
 ]]
 function PowerUpSystem:spawnCrates()
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     local crateID = 1
     local startAreaID = 17
     for i = startAreaID, #GMapAreaDefinitions do
@@ -160,6 +147,7 @@ end
         table: (x, y) coordinates of crate
 ]]
 function PowerUpSystem:setCrateXYCoordinates(areaID, prevLocations)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     local edgeOffset = 50
     local x, y
     local edges = {'L', 'T', 'R', 'B'}
@@ -200,6 +188,7 @@ end
         table: (x, y) coordinates of the crate
 ]]
 function PowerUpSystem:getCrateXYCoordinates(edge, areaID, areaDef, edgeOffset)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     -- set door table for checking if a wall has a door
     local doors = {
         leftDoor = false,
@@ -244,6 +233,7 @@ end
         nil
 ]]
 function PowerUpSystem:setDoorLocations(doors, areaDoors, areaID)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     for _, door in pairs(areaDoors) do
         if door.areaID ~= areaID then
             if door.id == 1 then doors.rightDoor = true end
@@ -270,6 +260,7 @@ end
         number: x coordinate of the crate
 ]]
 function PowerUpSystem:getCrateXCoordinateHelper(areaDef, doorEdge)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     -- define edge offset to stop crates touching walls
     local edgeOffset = 100
     -- MapArea x conditions
@@ -304,6 +295,7 @@ end
         number: y coordinate of the crate
 ]]
 function PowerUpSystem:getCrateYCoordinateHelper(areaDef, doorEdge)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     -- define edge offset to stop crates touching walls
     local edgeOffset = 100
     -- define y boundarys
@@ -336,6 +328,7 @@ end
         nil
 ]]
 function PowerUpSystem:spawnKeys()
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     for i = 1, #GKeyDefinitions do
         table.insert(self.keys, PowerUp(
             GKeyDefinitions[i].id,
@@ -360,6 +353,7 @@ end
         nil
 ]]
 function PowerUpSystem:spawnPowerUp(x, y, areaID)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     -- set random chance of finding each powerup
     local ammo = math.random(5) == 1 and true or false
     if ammo then
@@ -396,6 +390,7 @@ end
         nil
 ]]
 function PowerUpSystem:powerUpFactory(id, areaID, x, y)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     local powerup = PowerUp(
         id, areaID,
         -- center the powerup underneath the crate
@@ -421,6 +416,7 @@ end
         nil
 ]]
 function PowerUpSystem:handleKeyCollision(key)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     if key.id == DOOR_IDS['red'] then
         self.player.keys['red'] = true
     end
@@ -450,9 +446,10 @@ end
         nil
 ]]
 function PowerUpSystem:handlePowerUpCollision(powerup)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     if powerup.id == 1 then
         self.player.powerups.doubleSpeed = true
-        self.player:doubleSpeed()
+        self.player:setDoubleSpeed()
         self:removePowerUp(powerup, 'doubleSpeed')
     end
     if powerup.id == 2 then
@@ -476,7 +473,7 @@ function PowerUpSystem:handlePowerUpCollision(powerup)
         end
     end
     if powerup.id == 5 then
-        self.player:makeInvicible(30)
+        self.player:makeInvicible()
         self:removePowerUp(powerup, 'invincible')
     end
 end
@@ -492,6 +489,7 @@ end
         nil
 ]]
 function PowerUpSystem:removePowerUp(object, name)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     for i, powerup in pairs(self.powerups[name]) do
         -- if locations match
         if object.x == powerup.x and object.y == powerup.y then

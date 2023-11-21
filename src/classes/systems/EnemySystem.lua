@@ -25,6 +25,7 @@ EnemySystem = Class{}
         nil
 ]]
 function EnemySystem:init(player, gruntSpriteBatch, collisionSystem, doorSystem)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     self.player = player
     self.gruntSpriteBatch = gruntSpriteBatch
     self.collisionSystem = collisionSystem
@@ -33,13 +34,6 @@ function EnemySystem:init(player, gruntSpriteBatch, collisionSystem, doorSystem)
     self.turrets = {}
     self.boss = nil
     self.gruntID = 1
-    -- setup event listeners
-    self.respawn = Event.on('respawnGrunts', function (areaID, map)
-        self:respawnGrunts(areaID, map)
-    end)
-    self.gruntKilled = Event.on('gruntKilled', function ()
-
-    end)
 end
 
 --[[
@@ -53,6 +47,7 @@ end
         nil
 ]]
 function EnemySystem:update(dt)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     local areaID = self.player.currentArea.id
     for _, grunt in pairs(self.grunts) do
         for _, adjacentID in pairs(GAreaAdjacencyDefinitions[areaID]) do
@@ -83,6 +78,7 @@ end
         none
 ]]
 function EnemySystem:render()
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     local areaID = self.player.currentArea.id
     for _, grunt in pairs(self.grunts) do
         for _, adjacentID in pairs(GAreaAdjacencyDefinitions[areaID]) do
@@ -104,24 +100,23 @@ end
 -- ========================== GET ENEMY OBJECTS ==========================
 
 --[[
-    Gets all Grunt Entity objects in the current and adjacent 
-    areas as defined in <definitions.lua:GAreaAdjacencyDefinitions>
+    Gets a count of the number of grunt type Entity in
+    an area
 
     Params:
         areaID: number - ID of th current area
     Returns:
-        table: Grunt Entity object list
+        number: number of grunts in the area
 ]]
-function EnemySystem:getGrunts(areaID)
-    local gruntObjects = {}
+function EnemySystem:getGruntCount(areaID)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
+    local count = 0
     for _, grunt in pairs(self.grunts) do
-        for _, adjacentID in pairs(GAreaAdjacencyDefinitions[areaID]) do
-            if grunt.areaID == areaID or grunt.areaID == adjacentID then
-                table.insert(gruntObjects, grunt)
-            end
+        if grunt.areaID == areaID then
+            count = count + 1
         end
     end
-    return gruntObjects
+    return count
 end
 
 -- ========================== SPAWNING ==========================
@@ -136,10 +131,13 @@ end
         nil
 ]]
 function EnemySystem:spawn(areas)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     for _, area in pairs(areas) do
-        local startCount, endCount = self:getGruntCounts(area)
-        local numGrunts = math.random(startCount, endCount)
-        self:spawnGrunts(numGrunts, area)
+        if self:getGruntCount(area.id) == 0 then
+            local startCount, endCount = self:getGruntLimits(area)
+            local numGrunts = math.random(startCount, endCount)
+            self:spawnGrunts(numGrunts, area)
+        end
     end
 end
 
@@ -154,6 +152,7 @@ end
         nil
 ]]
 function EnemySystem:spawnGrunts(numGrunts, area)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     for _ = 1, numGrunts do
         local grunt = Grunt(self.gruntID, GAnimationDefintions['grunt'], GGruntDefinition)
         -- set ID
@@ -187,6 +186,7 @@ end
         nil
 ]]
 function EnemySystem:spawnBoss(area)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     self.boss = Boss(GAnimationDefintions['boss'], GBossDefinition)
     -- set random starting direction
     self.boss.direction = DIRECTIONS[math.random(1, 8)]
@@ -195,55 +195,6 @@ function EnemySystem:spawnBoss(area)
         ['rushing'] = function () return BossRushingState(area, self.boss, self.player, self.collisionSystem, self) end
     }
     self.boss.stateMachine:change('idle')
-end
-
---[[
-    Spawns new Grunt objects across the Map as enemies are killed
-
-    TODO
-
-    Params:
-        area: table - MapArea object
-    Returns:
-        nil
-]]
-function EnemySystem:respawnGrunts(areaID, map)
-    -- only spawn grunts in area type MapArea locations
-    if areaID >= START_AREA_ID then
-        local areaGruntCounts = {}
-        -- set grunt count in current area and the adjacencies to 0
-        areaGruntCounts[areaID] = 0
-        local areaAdjacencyIDs = GAreaAdjacencyDefinitions[areaID]
-        for _, id in pairs(areaAdjacencyIDs) do
-            if id >= START_AREA_ID then
-                areaGruntCounts[id] = 0
-            end
-        end
-        for _, grunt in pairs(self.grunts) do
-            -- check if Grunt is in the current area
-            if grunt.areaID == areaID then
-                areaGruntCounts[areaID] = areaGruntCounts[areaID] + 1
-                goto continue
-            end
-            -- check if Grunt is one of the area adjacencies
-            for _, id in pairs(areaAdjacencyIDs) do
-                if id >= START_AREA_ID and grunt.areaID == id then
-                    areaGruntCounts[id] = areaGruntCounts[id] + 1
-                    goto continue
-                end
-            end
-            ::continue::
-        end
-        -- spawn grunts in any area that currently has 0 Grunt objects in it
-        for id, count in pairs(areaGruntCounts) do
-            if count == 0 then
-                local area = map:getAreaDefinition(id)
-                local startCount, endCount = self:getGruntCounts(area)
-                local numGrunts = math.random(startCount, endCount)
-                self:spawnGrunts(numGrunts, area)
-            end
-        end
-    end
 end
 
 --[[
@@ -256,7 +207,8 @@ end
         number: start number
         number: end number
 ]]
-function EnemySystem:getGruntCounts(area)
+function EnemySystem:getGruntLimits(area)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     local roomArea = area.width * area.height
     local startCount, endCount
     if roomArea < 64 then
@@ -285,6 +237,7 @@ end
         boolean: true if in proximity
 ]]
 function EnemySystem:checkProximity(entity)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     if (self.player.x > entity.x + entity.width + ENTITY_PROXIMITY) or (entity.x - ENTITY_PROXIMITY > self.player.x + ENTITY_WIDTH) then
         return false
     end

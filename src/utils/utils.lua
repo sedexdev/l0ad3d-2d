@@ -10,6 +10,7 @@
         table: quads - a table of generated quads 
 ]]
 function GenerateQuads(atlas, tileWidth, tileHeight)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     local sheetWidth, sheetHeight = atlas:getDimensions()
     local cols = sheetWidth / tileWidth
     local rows = math.floor(sheetHeight / tileHeight)

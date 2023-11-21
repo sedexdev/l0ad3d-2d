@@ -21,6 +21,7 @@ DoorSystem = Class{}
         nil
 ]]
 function DoorSystem:init(player, map)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     self.player = player
     self.map = map
     self.doors = {}
@@ -37,6 +38,7 @@ end
         nil
 ]]
 function DoorSystem:update(dt)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     Timer.update(dt)
     -- update Player location relative to doors in the current location
     self:setPlayerLocation()
@@ -58,6 +60,7 @@ end
         none
 ]]
 function DoorSystem:render()
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     for _, door in pairs(self.doors) do
         door:render()
     end
@@ -73,6 +76,7 @@ end
         nil
 ]]
 function DoorSystem:initialiseDoors(areas)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     for _, area in pairs(areas) do
         if area.doors then
             -- area dimensions in px
@@ -130,6 +134,7 @@ end
         nil
 ]]
 function DoorSystem:setPlayerLocation()
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     local areaID = self.player.currentArea.id
     local type = GMapAreaDefinitions[areaID].type
     if type == 'area' then
@@ -173,6 +178,7 @@ end
         nil 
 ]]
 function DoorSystem:setMatchingLocation(door)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     if door.id == 1 then
         door.playerLocation = 'left'
     elseif door.id == 2 then
@@ -195,6 +201,7 @@ end
         nil
 ]]
 function DoorSystem:setOppositeLocation(door)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     if door.id == 1 then --left
         door.playerLocation = 'right'
     elseif door.id == 2 then --top
@@ -218,6 +225,7 @@ end
         nil
 ]]
 function DoorSystem:setJoinLocation(join)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     -- join[1] == areaID as defined in GMapAreaDefinitions
     -- join[2] == location of this door in that area
     if join[2] == 'L' then
@@ -247,6 +255,7 @@ end
         table: Door object
 ]]
 function DoorSystem:getAreaDoor(areaID, doorID)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     for _, door in pairs(self.doors) do
         if door.areaID == areaID and door.id == doorID then
             return door
@@ -264,6 +273,7 @@ end
         table: Door objects linked to the area
 ]]
 function DoorSystem:getAreaDoors(areaID)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     local areaDoors = {}
     -- check if the area has any doors to return
     if not self.doors then
@@ -301,6 +311,7 @@ end
         table: Door objects linked to the area
 ]]
 function DoorSystem:getCorridorDoors(areaID)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     local areaDoors = {}
     -- get the joins for this corridor
     local joins = GMapAreaDefinitions[areaID].joins
@@ -341,6 +352,7 @@ end
         nil
 ]]
 function DoorSystem:open(door)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     if not door.isOpen then
         if door.orientation == 'horizontal' then
             -- tween callback function for opening/closing doors
@@ -368,6 +380,7 @@ end
         nil
 ]]
 function DoorSystem:close(door)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     if door.isOpen then
         if door.orientation == 'horizontal' then
             -- tween callback function for opening/closing doors

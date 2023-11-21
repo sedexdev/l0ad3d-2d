@@ -21,6 +21,7 @@ GruntAttackingState = Class{__includes = BaseState}
         nil
 ]]
 function GruntAttackingState:init(grunt, player, gruntSpriteBatch)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     self.gruntSpriteBatch = gruntSpriteBatch
     self.grunt = grunt
     self.player = player
@@ -37,6 +38,7 @@ end
         nil
 ]]
 function GruntAttackingState:update(dt)
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     -- call the Animation instance's update function 
     self.grunt.animations['attacking-'..self.grunt.direction]:update(dt)
 
@@ -56,6 +58,7 @@ end
         nil
 ]]
 function GruntAttackingState:render()
+    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     local currentFrame = self.grunt.animations['attacking-'..self.grunt.direction]:getCurrentFrame()
     -- add the Grunt current quad to the SpriteBatch
     self.gruntSpriteBatch:clear()
