@@ -44,8 +44,8 @@ end
 function SystemManager:update(dt)
     self.doorSystem:update(dt)
     self.powerupSystem:update(dt)
-    self.enemySystem:update(dt)
     self.effectsSystem:update(dt)
+    self.enemySystem:update(dt)
 end
 
 --[[
@@ -59,8 +59,8 @@ end
 function SystemManager:render()
     self.doorSystem:render()
     self.powerupSystem:render()
-    self.enemySystem:render()
     self.effectsSystem:render()
+    self.enemySystem:render()
 end
 
 --[[

@@ -100,7 +100,13 @@ function EffectsSystem:checkBullets(systemTable, bullet)
                 table.insert(self.explosions, Explosion:factory(object))
             end
             if object.type == 'grunt' then
-                table.insert(self.bloodStains, BloodSplatter(GTextures['blood-splatter'], object.x, object.y, object.direction))
+                local bloodSplatter = BloodSplatter(GTextures['blood-splatter'], object.x, object.y, object.direction)
+                table.insert(self.bloodStains, bloodSplatter)
+                Timer.after(180, function ()
+                    for i, _ in pairs(self.bloodStains) do
+                        table.remove(self.bloodStains, i)
+                    end
+                end)
             end
             object = nil
             table.remove(systemTable, key)
