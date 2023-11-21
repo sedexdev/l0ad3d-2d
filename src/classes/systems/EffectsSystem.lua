@@ -13,21 +13,30 @@ EffectsSystem = Class{}
     EffectsSystem constructor
 
     Params:
+        player:        table - Player object
         powerupSystem: table - PowerupSystem object
         enemySystem:   table - EnemySystem object
     Returns:
         nil
 ]]
-function EffectsSystem:init(powerupSystem, enemySystem)
+function EffectsSystem:init(player, powerupSystem, enemySystem)
+    self.player = player
     self.powerupSystem = powerupSystem
     self.enemySystem = enemySystem
     -- explosions table
     self.explosions = {}
+    -- shots table keeps track of Shot objects so they can be 
+    -- instantiated and removed after the assigned interval
+    self.shots = {}
     -- bullet management table
     self.bulletID = 1
     self.bullets = {}
     -- bullet fired event
     self.spawnBullet = Event.on('shotFired', function (entity)
+        table.insert(self.shots, Shot(entity))
+        -- TODO: change shot sound for Boss/Turret
+        GAudio['gunshot']:stop()
+        GAudio['gunshot']:play()
         table.insert(self.bullets, Bullet(self.bulletID, entity))
         self.bulletID = self.bulletID + 1
     end)
@@ -56,6 +65,15 @@ function EffectsSystem:update(dt)
             -- check for Boss damage using Boss class
         end
     end
+    for _, shot in pairs(self.shots) do
+        -- update the shot animation
+        shot:update(dt)
+        if not shot.renderShot then
+            shot = nil
+            -- remove shots once their interval has passed
+            table.remove(self.shots, shot)
+        end
+    end
 end
 
 --[[
@@ -67,6 +85,7 @@ end
         none
 ]]
 function EffectsSystem:render()
+    love.graphics.setColor(1, 1, 1, 1)
     -- explosions
     for key, explosion in pairs(self.explosions) do
         explosion:render()
@@ -78,6 +97,12 @@ function EffectsSystem:render()
     -- blood stains
     for _, stain in pairs(self.bloodStains) do
         stain:render()
+    end
+    -- shots
+    for _, shot in pairs(self.shots) do
+        if shot.renderShot then
+            shot:render()
+        end
     end
 end
 
@@ -98,23 +123,50 @@ function EffectsSystem:checkBullets(systemTable, bullet)
         if bullet:hit(object) then
             if object.type == 'crate' then
                 table.insert(self.explosions, Explosion:factory(object))
+                object = nil
+                table.remove(systemTable, key)
+                bullet = nil
+                table.remove(self.bullets, bullet)
+                break
             end
             if object.type == 'grunt' then
-                local bloodSplatter = BloodSplatter(GTextures['blood-splatter'], object.x, object.y, object.direction)
-                table.insert(self.bloodStains, bloodSplatter)
-                Timer.after(180, function ()
-                    for i, _ in pairs(self.bloodStains) do
-                        table.remove(self.bloodStains, i)
-                    end
-                end)
+                self:handleGruntHit(systemTable, key, object)
+                bullet = nil
+                table.remove(self.bullets, bullet)
+                break
             end
-            object = nil
-            table.remove(systemTable, key)
-            bullet = nil
-            table.remove(self.bullets, bullet)
-            break
         end
     end
 end
 
-
+--[[
+    Handles the workflow when a Bullet object hits a 
+    Grunt Entity object
+    
+    Params:
+        systemTable: table  - system table objects
+        key:         number - table index
+        grunt:       table  - grunt type Entity object      
+    Returns:
+        nil
+]]
+function EffectsSystem:handleGruntHit(systemTable, key, grunt)
+    grunt:takeDamage()
+    if grunt.isDead then
+        local bloodSplatter = BloodSplatter(GTextures['blood-splatter'], grunt.x, grunt.y, grunt.direction)
+        table.insert(self.bloodStains, bloodSplatter)
+        Timer.after(180, function ()
+            for i, _ in pairs(self.bloodStains) do
+                table.remove(self.bloodStains, i)
+            end
+        end)
+        -- set a random chance of spawning a powerup
+        local powerUpChance = math.random(1, 5) == 1 and true or false
+        -- assign same (x, y) as the crate
+        if powerUpChance then
+            self.powerupSystem:spawnPowerUp(grunt.x, grunt.y, self.player.currentArea.id)
+        end
+        grunt = nil
+        table.remove(systemTable, key)
+    end
+end

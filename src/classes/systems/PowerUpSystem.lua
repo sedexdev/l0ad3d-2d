@@ -452,6 +452,7 @@ end
 function PowerUpSystem:handlePowerUpCollision(powerup)
     if powerup.id == 1 then
         self.player.powerups.doubleSpeed = true
+        self.player:doubleSpeed()
         self:removePowerUp(powerup, 'doubleSpeed')
     end
     if powerup.id == 2 then
@@ -475,7 +476,7 @@ function PowerUpSystem:handlePowerUpCollision(powerup)
         end
     end
     if powerup.id == 5 then
-        self.player.powerups.invincible = true
+        self.player:makeInvicible(30)
         self:removePowerUp(powerup, 'invincible')
     end
 end

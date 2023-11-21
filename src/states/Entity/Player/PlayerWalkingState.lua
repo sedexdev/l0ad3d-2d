@@ -91,17 +91,19 @@ end
         nil
 ]]
 function PlayerWalkingState:render()
-    love.graphics.setColor(1, 1, 1, 1)
+    if self.player.powerups.invincible then
+        love.graphics.setColor(1, 1, 1, 100/255)
+    else
+        love.graphics.setColor(1, 1, 1, 1)
+    end
     if self.player.id == 1 then
         local currentFrame = self.player.animations['walking-'..self.player.direction]:getCurrentFrame()
-        love.graphics.setColor(1, 1, 1, 1)
         love.graphics.draw(self.player.texture,
             GQuads['character1'][currentFrame],
             self.player.x, self.player.y
         )
     else
         local currentFrame = self.player.animations['walking-'..self.player.direction]:getCurrentFrame()
-        love.graphics.setColor(1, 1, 1, 1)
         love.graphics.draw(self.player.texture,
             GQuads['character2'][currentFrame],
             self.player.x, self.player.y
@@ -120,6 +122,14 @@ end
         nil
 ]]
 function PlayerWalkingState:setDirection(direction, dt)
+    -- chyeck for double speed powerup
+    if self.player.powerups.doubleSpeed then
+        self.player.dx = self.player.dx * 2
+        self.player.dy = self.player.dy * 2
+    else
+        self.player.dx = CHARACTER_SPEED
+        self.player.dy = CHARACTER_SPEED
+    end
     if direction == 'north' then
         self.player.y = self.player.y - self.player.dy * dt
     end

@@ -54,16 +54,19 @@ end
         nil
 ]]
 function PlayerIdleState:render()
+    if self.player.powerups.invincible then
+        love.graphics.setColor(1, 1, 1, 100/255)
+    else
+        love.graphics.setColor(1, 1, 1, 1)
+    end
     if self.player.id == 1 then
         local currentFrame = self.player.animations['idle-'..self.player.lastDirection]:getCurrentFrame()
-        love.graphics.setColor(1, 1, 1, 1)
         love.graphics.draw(self.player.texture,
             GQuads['character1'][currentFrame],
             self.player.x, self.player.y
         )
     else
         local currentFrame = self.player.animations['idle-'..self.player.lastDirection]:getCurrentFrame()
-        love.graphics.setColor(1, 1, 1, 1)
         love.graphics.draw(self.player.texture,
             GQuads['character2'][currentFrame],
             self.player.x, self.player.y

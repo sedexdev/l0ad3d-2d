@@ -37,9 +37,7 @@ function Player:init(id, animations, def)
     self.keys = def.keys
     -- defines the current area of the player: {id = areaID, type = 'area' | 'corridor'}
     self.currentArea = {id = START_AREA_ID, type = 'area'}
-    -- shots table keeps track of Shot objects so they can be 
-    -- instantiated and removed after the assigned interval
-    self.shots = {}
+    self.isDead = false
 end
 
 --[[
@@ -59,18 +57,8 @@ function Player:update(dt)
 
     if love.keyboard.wasPressed('space') then
         self:fire()
-        -- dispatch event to create Bullet
+        -- dispatch event to create Shot and Bullet instances
         Event.dispatch('shotFired', self)
-    end
-
-    for _, shot in pairs(self.shots) do
-        -- update the shot animation
-        shot:update(dt)
-        if not shot.renderShot then
-            shot = nil
-            -- remove shots once their interval has passed
-            table.remove(self.shots, shot)
-        end
     end
 end
 
@@ -86,13 +74,6 @@ end
 ]]
 function Player:render()
     Entity.render(self)
-
-    love.graphics.setColor(1, 1, 1, 1)
-    for _, shot in pairs(self.shots) do
-        if shot.renderShot then
-            shot:render()
-        end
-    end
 end
 
 --[[
@@ -109,9 +90,6 @@ end
         nil
 ]]
 function Player:fire()
-    table.insert(self.shots, Shot(self))
-    GAudio['gunshot']:stop()
-    GAudio['gunshot']:play()
     if self.weapons > 1 then
         self.currentWeapon = self.currentWeapon == 'right' and 'left' or 'right'
     end
@@ -139,7 +117,7 @@ function Player:setCurrentArea(map)
                     -- player current area updated
                     self.currentArea.id = area.id
                     self.currentArea.type = area.type
-                    -- emit respawnGrunts event passing in area
+                    -- TODO: not working properly - emit respawnGrunts event passing in area
                     Event.dispatch('respawnGrunts', area.id, map)
                 end
             end
@@ -154,4 +132,53 @@ function Player:setCurrentArea(map)
             end
         end
     end
+end
+
+--[[
+    Handles damage dealt by enemies
+
+    Params:
+        damage: number - amount of damage dealt
+    Returns:
+        nil
+]]
+function Player:takeDamage(damage)
+    -- only take damage if the Player is not invincible
+    if not self.powerups.invincible then
+        self.health = self.health - damage
+        if self.health <= 0 then
+            self.isDead = true
+        end
+    end
+end
+
+--[[
+    Makes the Player invincible for the passed in number
+    of seconds
+
+    Params:
+        seconds: number - time invincibility will last
+    Returns:
+        nil
+]]
+function Player:makeInvicible(seconds)
+    self.powerups.invincible = true
+    Timer.after(seconds, function ()
+        self.powerups.invincible = false
+    end)
+end
+
+--[[
+    Doubles the speed of the Player for a 20s duration
+
+    Params:
+        none
+    Returns:
+        nil
+]]
+function Player:doubleSpeed(seconds)
+    self.powerups.doubleSpeed = true
+    Timer.after(seconds, function ()
+        self.powerups.doubleSpeed = false
+    end)
 end

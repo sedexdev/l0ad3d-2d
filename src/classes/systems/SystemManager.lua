@@ -30,7 +30,7 @@ function SystemManager:init(player, map)
     -- create an EnemySystem
     self.enemySystem = EnemySystem(self.player, self.gruntSpriteBatch, self.collisionSystem, self.doorSystem)
     -- crate an EffectsSystem
-    self.effectsSystem = EffectsSystem(self.powerupSystem, self.enemySystem)
+    self.effectsSystem = EffectsSystem(self.player, self.powerupSystem, self.enemySystem)
 end
 
 --[[
@@ -43,8 +43,8 @@ end
 ]]
 function SystemManager:update(dt)
     self.doorSystem:update(dt)
-    self.powerupSystem:update(dt)
     self.effectsSystem:update(dt)
+    self.powerupSystem:update(dt)
     self.enemySystem:update(dt)
 end
 
@@ -58,8 +58,8 @@ end
 ]]
 function SystemManager:render()
     self.doorSystem:render()
-    self.powerupSystem:render()
     self.effectsSystem:render()
+    self.powerupSystem:render()
     self.enemySystem:render()
 end
 

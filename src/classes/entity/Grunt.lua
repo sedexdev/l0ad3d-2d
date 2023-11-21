@@ -28,6 +28,8 @@ function Grunt:init(id, animations, def)
     self.direction = def.direction
     self.health = def.health
     self.powerUpChance = def.powerUpChance
+    -- bollean flag to detect if this Grunt is dead
+    self.isDead = false
 end
 
 --[[
@@ -54,4 +56,19 @@ end
 ]]
 function Grunt:render()
     Entity.render(self)
+end
+
+--[[
+    Handles damage dealt from the Player
+
+    Params:
+        none
+    Returns:
+        nil
+]]
+function Grunt:takeDamage()
+    self.health = self.health - PLAYER_DAMAGE
+    if self.health <= 0 then
+        self.isDead = true
+    end
 end

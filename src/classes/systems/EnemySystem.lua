@@ -293,17 +293,3 @@ function EnemySystem:checkProximity(entity)
     end
     return true
 end
-
---[[
-    Handles a Bullet hitting the Boss Entity object
-
-    TODO
-
-    Params:
-        none
-    Returns:
-        nil
-]]
-function EnemySystem:bossHit()
-    
-end
