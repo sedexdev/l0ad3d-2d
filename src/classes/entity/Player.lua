@@ -176,9 +176,9 @@ end
     Returns:
         nil
 ]]
-function Player:doubleSpeed(seconds)
+function Player:doubleSpeed()
     self.powerups.doubleSpeed = true
-    Timer.after(seconds, function ()
+    Timer.after(20, function ()
         self.powerups.doubleSpeed = false
     end)
 end
