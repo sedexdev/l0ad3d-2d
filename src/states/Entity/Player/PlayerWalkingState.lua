@@ -20,7 +20,6 @@ PlayerWalkingState = Class{__includes = BaseState}
         nil
 ]]
 function PlayerWalkingState:init(player, map)
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     self.player = player
     self.map = map
 end
@@ -42,7 +41,6 @@ end
         nil
 ]]
 function PlayerWalkingState:update(dt)
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     -- call the Animation instance's update function 
     self.player.animations['walking-'..self.player.direction]:update(dt)
 
@@ -93,7 +91,6 @@ end
         nil
 ]]
 function PlayerWalkingState:render()
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     if self.player.powerups.invincible then
         love.graphics.setColor(1, 1, 1, 100/255)
     else
@@ -125,7 +122,6 @@ end
         nil
 ]]
 function PlayerWalkingState:setDirection(direction, dt)
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     if direction == 'north' then
         self.player.y = self.player.y - self.player.dy * dt
     end

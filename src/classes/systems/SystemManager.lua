@@ -17,7 +17,6 @@ SystemManager = Class{}
         nil
 ]]
 function SystemManager:init(player, map)
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     self.player = player
     self.map = map
     -- create a DoorSystem
@@ -43,7 +42,6 @@ end
         nil
 ]]
 function SystemManager:update(dt)
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     self.doorSystem:update(dt)
     self.enemySystem:update(dt)
     self.effectsSystem:update(dt)
@@ -58,7 +56,6 @@ end
         nil
 ]]
 function SystemManager:render()
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     self.doorSystem:render()
     self.effectsSystem:render()
     self.powerupSystem:render()
@@ -76,7 +73,6 @@ end
         nil
 ]]
 function SystemManager:checkKeys(currentAreaID)
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     for _, key in pairs(self.powerupSystem.keys) do
         if currentAreaID == key.areaID then
             if self.collisionSystem:objectCollision(key) then
@@ -97,7 +93,6 @@ end
         nil
 ]]
 function SystemManager:checkCrates(currentAreaID)
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     for _, crate in pairs(self.powerupSystem.crates) do
         if currentAreaID == crate.areaID then
             -- check for Player collisions
@@ -136,7 +131,6 @@ end
         nil
 ]]
 function SystemManager:checkPowerUps(currentAreaID)
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     -- check for powerup collisions in the current area
     for _, category in pairs(self.powerupSystem.powerups) do
         for _, powerup in pairs(category) do
@@ -159,7 +153,6 @@ end
         nil 
 ]]
 function SystemManager:checkMap(area)
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     -- check if the player has collided with the wall in this area
     local wallCollision = self.collisionSystem:checkWallCollision(area, self.player)
     if wallCollision.detected then
@@ -193,7 +186,6 @@ end
 
 ]]
 function SystemManager:checkGrunts(currentAreaID)
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     -- will only spawn grunts in adjacent areas that have 0 grunts in
     self.enemySystem:spawn(self.map:getAreaAdjacencies(currentAreaID))
 end

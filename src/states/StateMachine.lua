@@ -22,7 +22,6 @@ StateMachine = Class{}
         nil
 ]]
 function StateMachine:init(states)
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     -- defines the base functions of any instance of StateMachine
     self.coreState = {
         render = function () end,
@@ -44,7 +43,6 @@ end
         params:    table  - list of parameters to pass into the new state
 ]]
 function StateMachine:change(stateName, params)
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     assert(self.states[stateName])
     self.current:exit()
     self.current = self.states[stateName]()
@@ -62,7 +60,6 @@ end
         nil
 ]]
 function StateMachine:update(dt)
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     self.current:update(dt)
 end
 
@@ -76,6 +73,5 @@ end
         nil
 ]]
 function StateMachine:render()
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     self.current:render()
 end

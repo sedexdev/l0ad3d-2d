@@ -21,7 +21,6 @@ Player = Class{__includes = Entity}
         nil
 ]]
 function Player:init(id, animations, def)
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     Entity.init(self, def)
     self.id = id
     self.texture = animations.texture
@@ -59,7 +58,6 @@ end
         nil
 ]]
 function Player:update(dt)
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     Entity.update(self, dt)
     if love.keyboard.wasPressed('space') then
         self:fire()
@@ -97,7 +95,6 @@ end
         nil
 ]]
 function Player:render()
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     Entity.render(self)
 end
 
@@ -115,7 +112,6 @@ end
         nil
 ]]
 function Player:fire()
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     if self.weapons > 1 then
         self.currentWeapon = self.currentWeapon == 'right' and 'left' or 'right'
     end
@@ -131,7 +127,6 @@ end
         nil
 ]]
 function Player:setCurrentArea(map)
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     -- <areas> includes both areas and corridors
     for _, area in pairs(map.areas) do
         local areaWidth = area.x + (area.width * FLOOR_TILE_WIDTH) + WALL_OFFSET
@@ -168,7 +163,6 @@ end
         nil
 ]]
 function Player:takeDamage(damage)
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     -- only take damage if the Player is not invincible
     if not self.powerups.invincible then
         self.health = self.health - damage
@@ -188,7 +182,6 @@ end
         nil
 ]]
 function Player:makeInvicible()
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     self.powerups.invincible = true
 end
 
@@ -201,7 +194,6 @@ end
         nil
 ]]
 function Player:setDoubleSpeed()
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     self.powerups.doubleSpeed = true
     self.dx = self.dx * 2
     self.dy = self.dy * 2

@@ -20,7 +20,6 @@ Explosion = Class{}
         nil
 ]]
 function Explosion:init(texture, animations, x, y)
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     self.texture = texture
     self.animations = animations
     self.x = x
@@ -37,7 +36,6 @@ end
         nil
 ]]
 function Explosion:update(dt)
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     self.animations:update(dt)
 end
 
@@ -50,7 +48,6 @@ end
         nil
 ]]
 function Explosion:render()
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     local currentFrame = self.animations:getCurrentFrame()
     love.graphics.setColor(1, 1, 1, 1)
     love.graphics.draw(self.texture,
@@ -71,7 +68,6 @@ end
         table: Animation instance
 ]]
 function Explosion:factory(object)
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     local frames = {}
     for i = 1, 16 do table.insert(frames, i) end
     return Explosion(

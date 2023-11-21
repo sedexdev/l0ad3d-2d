@@ -23,7 +23,6 @@ SelectCharacterState = Class{__includes = BaseState}
         nil
 ]]
 function SelectCharacterState:enter(params)
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     self.highScores = params.highScores
 end
 
@@ -37,7 +36,6 @@ end
         nil
 ]]
 function SelectCharacterState:init()
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     self.selected = 1
     self.bulletOffsets = {
         [1] = {x = 3, y = -50},
@@ -61,7 +59,6 @@ end
         nil
 ]]
 function SelectCharacterState:update(dt)
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     if love.keyboard.wasPressed('escape') then
         GStateMachine:change('menu', {
             highScores = self.highScores
@@ -118,7 +115,6 @@ end
         nil
 ]]
 function SelectCharacterState:render()
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     -- draw background
     love.graphics.setColor(1, 1, 1, 1)
     love.graphics.draw(GTextures['grey-background'],
@@ -162,7 +158,6 @@ end
         nil
 ]]
 function SelectCharacterState:renderShadow(xOffset, yOffset)
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     love.graphics.setColor(20/255, 20/255, 20/255, 1)
     love.graphics.rectangle('fill',
         ((WINDOW_WIDTH / 4 * xOffset ) - (AVATAR_WIDTH / 2)) + yOffset,
@@ -181,7 +176,6 @@ end
         nil
 ]]
 function SelectCharacterState:renderHighlight(xOffset)
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     -- render opaque rectangle on top
     love.graphics.setColor(1, 1, 1, 50/255)
     love.graphics.rectangle('fill',
@@ -202,7 +196,6 @@ end
         nil
 ]]
 function SelectCharacterState:renderAvatar(texture, xOffset)
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     love.graphics.setColor(1, 1, 1, 1)
     love.graphics.draw(texture,
         (WINDOW_WIDTH / 4 * xOffset) - (AVATAR_WIDTH / 2),
@@ -221,7 +214,6 @@ end
         nil
 ]]
 function SelectCharacterState:renderName(name, xOffset)
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     local fontWidth = GFonts['funkrocker-highscores']:getWidth(name)
     love.graphics.setFont(GFonts['funkrocker-highscores'])
     love.graphics.setColor(10/255, 10/255, 10/255, 1)

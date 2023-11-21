@@ -22,7 +22,6 @@ CountdownState = Class{__includes = BaseState}
         nil
 ]]
 function CountdownState:enter(params)
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     self.highScores = params.highScores
     self.player = params.player
     self.map = params.map
@@ -47,7 +46,6 @@ end
         nil
 ]]
 function CountdownState:init()
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     self.timer = 0
     self.count = 3
 end
@@ -63,7 +61,6 @@ end
         nil
 ]]
 function CountdownState:update(dt)
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     self.timer = self.timer + dt
 
     if self.timer >= 1 then
@@ -84,7 +81,6 @@ end
         nil
 ]]
 function CountdownState:render()
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     love.graphics.setFont(GFonts['funkrocker-count'])
     love.graphics.setColor(1, 1, 1, 1)
     -- draw shadow

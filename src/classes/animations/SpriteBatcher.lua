@@ -18,7 +18,6 @@ SpriteBatcher = Class{}
         nil
 ]]
 function SpriteBatcher:init(texture)
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     self.spriteBatch = love.graphics.newSpriteBatch(texture, 1000, 'dynamic')
 end
 
@@ -36,7 +35,6 @@ end
         nil
 ]]
 function SpriteBatcher:add(quad, x, y, s1, s2)
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     self.spriteBatch:add(quad, x, y, 0, s1, s2)
 end
 
@@ -49,7 +47,6 @@ end
         nil
 ]]
 function SpriteBatcher:draw()
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     love.graphics.draw(self.spriteBatch)
 end
 
@@ -62,6 +59,5 @@ end
         nil
 ]]
 function SpriteBatcher:clear()
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     self.spriteBatch:clear()
 end

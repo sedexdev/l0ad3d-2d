@@ -23,7 +23,6 @@ Map = Class{}
         nil
 ]]
 function Map:init(player)
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     self.player = player
     self.areas = {}
 end
@@ -38,7 +37,6 @@ end
         none
 ]]
 function Map:render()
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     -- render out each area
     for _, area in pairs(self.areas) do
         area:render()
@@ -55,7 +53,6 @@ end
         table: MapArea object
 ]]
 function Map:getAreaDefinition(areaID)
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     return self.areas[areaID]
 end
 

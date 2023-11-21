@@ -19,7 +19,6 @@ PlayerIdleState = Class{__includes = BaseState}
         nil
 ]]
 function PlayerIdleState:init(player)
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     self.player = player
 end
 
@@ -34,7 +33,6 @@ end
         nil
 ]]
 function PlayerIdleState:update(dt)
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     -- update the player animations
     self.player.animations['idle-'..self.player.lastDirection]:update(dt)
 
@@ -56,7 +54,6 @@ end
         nil
 ]]
 function PlayerIdleState:render()
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     if self.player.powerups.invincible then
         love.graphics.setColor(1, 1, 1, 100/255)
     else

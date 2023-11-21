@@ -23,7 +23,6 @@ BossRushingState = Class{__includes = BaseState}
         nil
 ]]
 function BossRushingState:init(area, boss, player, collisionSystem, enemySystem)
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     self.area = area
     self.boss = boss
     self.player = player
@@ -44,7 +43,6 @@ end
         nil
 ]]
 function BossRushingState:update(dt)
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     -- call the Animation instance's update function 
     self.boss.animations['walking-'..self.boss.direction]:update(dt)
 
@@ -112,7 +110,6 @@ end
         nil
 ]]
 function BossRushingState:render()
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     local currentFrame = self.boss.animations['walking-'..self.boss.direction]:getCurrentFrame()
     love.graphics.setColor(1, 1, 1, 1)
     love.graphics.draw(self.boss.texture,

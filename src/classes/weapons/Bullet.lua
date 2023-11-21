@@ -18,7 +18,6 @@ Bullet = Class{}
         nil
 ]]
 function Bullet:init(id, entity)
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     self.id = id
     self.entity = entity
     self.x = self.entity.x + (ENTITY_WIDTH / 2)
@@ -37,7 +36,6 @@ end
         nil
 ]]
 function Bullet:update(dt)
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     if self.direction == 'north' then
         self.y = self.y - self.dy * dt
     elseif self.direction == 'east' then
@@ -71,7 +69,6 @@ end
         boolean: true if collision detected
 ]]
 function Bullet:hit(object)
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     if (self.x > object.x + object.width) or (object.x > self.x + BULLET_WIDTH) then
         return false
     end

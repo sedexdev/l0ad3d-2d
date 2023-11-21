@@ -19,7 +19,6 @@ Shot = Class{}
         nil
 ]]
 function Shot:init(entity)
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     self.entity = entity
     self.shotGraphic = entity.fireShot
     self.shotTimer = 0
@@ -39,7 +38,6 @@ end
         nil
 ]]
 function Shot:update(dt)
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     self.shotTimer = self.shotTimer + dt
     if self.shotTimer > self.shotInterval then
         self.shotTimer = self.shotTimer % self.shotInterval
@@ -59,7 +57,6 @@ end
         nil
 ]]
 function Shot:render()
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     local x, y = self:setCoordinates(self.entity.x, self.entity.y)
     if self.entity.type == 'character' then
         if self.entity.id == 1 then
@@ -89,7 +86,6 @@ end
         number: value representing the y offset required
 ]]
 function Shot:setCoordinates(x, y)
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     -- get offsets for adjusting the shot graphic
     local rightOffset = 20
     local leftOffset = 110
@@ -137,7 +133,6 @@ end
         number: value representing the y offset required
 ]]
 function Shot:set45DegreeCoordinates(x, y)
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     -- get offsets for adjusting the shot graphic
     local leftOffset = 30
     local rightOffset = 60

@@ -25,7 +25,6 @@ require 'src/utils/dependencies'
         nil
 ]]
 function InitialiseWindow()
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     love.window.setTitle('L0ad3d-2D')
     love.window.setMode(0, 0, {
         fullscreen = true,
@@ -47,7 +46,6 @@ end
         nil
 ]]
 function love.load()
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     -- seed RNG
     math.randomseed(os.time())
     InitialiseWindow()
@@ -69,7 +67,6 @@ end
         nil
 ]]
 function love.keypressed(key)
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     love.keyboard.keysPressed[key] = true
 end
 
@@ -82,7 +79,6 @@ end
         boolean: true if key was pressed
 ]]
 function love.keyboard.wasPressed(key)
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     return love.keyboard.keysPressed[key]
 end
 
@@ -95,7 +91,6 @@ end
         boolean: true if both keys are pressed
 ]]
 function love.keyboard.multiplePressed(key1, key2)
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     return love.keyboard.isDown(key1) and love.keyboard.isDown(key2)
 end
 
@@ -108,7 +103,6 @@ end
         boolean: true if a key is down
 ]]
 function love.keyboard.anyDown(t)
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     for _, key in pairs(t) do
         if love.keyboard.isDown(key) then
             return true
@@ -127,7 +121,6 @@ end
         nil
 ]]
 function love.update(dt)
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     GStateMachine:update(dt)
     love.keyboard.keysPressed = {}
 end
@@ -141,6 +134,5 @@ end
         nil
 ]]
 function love.draw()
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     GStateMachine:render()
 end

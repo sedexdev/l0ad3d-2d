@@ -24,7 +24,6 @@ GruntRushingState = Class{__includes = BaseState}
         nil
 ]]
 function GruntRushingState:init(area, grunt, player, gruntSpriteBatch, collisionSystem, enemySystem)
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     self.area = area
     self.grunt = grunt
     self.player = player
@@ -44,7 +43,6 @@ end
         nil
 ]]
 function GruntRushingState:update(dt)
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     -- call the Animation instance's update function 
     self.grunt.animations['walking-'..self.grunt.direction]:update(dt)
     -- change state if we are close to the player (change to use hitboxes later)
@@ -119,7 +117,6 @@ end
         nil
 ]]
 function GruntRushingState:render()
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     local currentFrame = self.grunt.animations['walking-'..self.grunt.direction]:getCurrentFrame()
     -- add the Grunt current quad to the SpriteBatch
     self.gruntSpriteBatch:clear()

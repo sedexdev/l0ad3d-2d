@@ -19,7 +19,6 @@ Animation = Class{}
         nil
 ]]
 function Animation:init(frames, interval)
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     self.frames = frames
     self.interval = interval
     self.currentFrame = 1
@@ -39,7 +38,6 @@ end
         nil
 ]]
 function Animation:update(dt)
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     if #self.frames > 1 then
         self.timer = self.timer + dt
         if self.timer > self.interval then
@@ -60,6 +58,5 @@ end
                 to draw during this frame
 ]]
 function Animation:getCurrentFrame()
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     return self.frames[self.currentFrame]
 end

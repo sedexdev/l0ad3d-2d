@@ -20,7 +20,6 @@ Entity = Class{}
         nil
 ]]
 function Entity:init(def)
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     self.type = def.type
     self.x = def.x
     self.y = def.y
@@ -43,7 +42,6 @@ end
         nil
 ]]
 function Entity:update(dt)
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     self.stateMachine:update(dt)
 end
 
@@ -57,6 +55,5 @@ end
         nil
 ]]
 function Entity:render()
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     self.stateMachine:render()
 end

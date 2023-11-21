@@ -20,7 +20,6 @@ HighScoreState = Class{__includes = BaseState}
         nil
 ]]
 function HighScoreState:enter(params)
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     self.highScores = params.highScores
 end
 
@@ -35,7 +34,6 @@ end
         nil
 ]]
 function HighScoreState:update(dt)
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     if love.keyboard.wasPressed('escape') then
         GStateMachine:change('menu', {
             highScores = self.highScores
@@ -53,7 +51,6 @@ end
         nil
 ]]
 function HighScoreState:render()
-    DebugFile:write(os.date('%A, %B %d %Y at %I:%M:%S %p - ') .. debug.getinfo(2, "S").source .. ':' .. debug.getinfo(1, 'n').name .. '\n')
     love.graphics.setFont(GFonts['funkrocker-highscores'])
     love.graphics.setColor(1, 0/255, 0/255, 1)
     love.graphics.printf('HIGH SCORES', 0, 80, WINDOW_WIDTH, 'center')
