@@ -36,6 +36,7 @@ GTextures = {
     ['horizontal-doors'] = love.graphics.newImage('graphics/horizontal_doors.png'),
     ['gun-flash'] = love.graphics.newImage('graphics/gun_flash.png'),
     ['boss-gun-flash'] = love.graphics.newImage('graphics/boss_gun_flash.png'),
+    ['explosion'] = love.graphics.newImage('graphics/explosions.png'),
     ['character1-avatar'] = love.graphics.newImage('graphics/cap_n_hands.png'),
     ['character2-avatar'] = love.graphics.newImage('graphics/fwank.png'),
     ['character1'] = love.graphics.newImage('graphics/character1.png'),
@@ -61,6 +62,7 @@ require 'src/classes/Boss'
 require 'src/classes/Bullet'
 require 'src/classes/Door'
 require 'src/classes/Entity'
+require 'src/classes/Explosion'
 require 'src/classes/Grunt'
 require 'src/classes/HUD'
 require 'src/classes/Map'
@@ -122,6 +124,7 @@ GQuads = {
     ['horizontal-doors'] = GenerateQuads(GTextures['horizontal-doors'], 32, 16),
     ['character1'] = GenerateQuads(GTextures['character1'], 384, 384),
     ['character2'] = GenerateQuads(GTextures['character2'], 384, 384),
+    ['explosion'] = GenerateQuads(GTextures['explosion'], 64, 64),
     ['grunt'] = GenerateQuads(GTextures['grunt'], 128, 128),
     ['boss'] = GenerateQuads(GTextures['boss'], 128, 128),
     ['crates'] = GenerateQuads(GTextures['crates'], 128, 128),

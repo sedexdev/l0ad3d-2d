@@ -112,7 +112,7 @@ function PlayState:runGameLoop(dt)
     self.player:update(dt)
     -- update the camera to track the Player
     self:updateCamera()
-    -- check fr bullet hits
+    -- check for bullet hits
     for _, bullet in pairs(self.bullets) do
         bullet:update(dt)
         self:checkBulletHits(self.systemManager.powerupSystem.crates, bullet)
@@ -229,6 +229,15 @@ end
 function PlayState:checkBulletHits(systemTable, bullet)
     for key, object in pairs(systemTable) do
         if bullet:hit(object) then
+            if object.type == 'crate' then
+                local explosion = Explosion(
+                    GTextures['explosion'],
+                    Animation({1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16}, EXPLOSION_INTERVAL),
+                    object.x,
+                    object.y
+                )
+                table.insert(self.systemManager.powerupSystem.explosions, explosion)
+            end
             object = nil
             table.remove(systemTable, key)
             bullet = nil
