@@ -183,7 +183,13 @@ function SystemManager:checkMap(area)
 end
 
 --[[
+    Check the area adjacencies for the area ID passed in and
+    spawns more grunts in those areas if the current count is 0
 
+    Params:
+        currentAreaID: number MapArea ID
+    Returns:
+        nil
 ]]
 function SystemManager:checkGrunts(currentAreaID)
     -- will only spawn grunts in adjacent areas that have 0 grunts in
