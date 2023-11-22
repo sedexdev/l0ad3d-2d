@@ -236,7 +236,7 @@ function PlayState:processPauseMenuInput()
                 GAnimationDefintions['character'..tostring(self.player.id)],
                 GCharacterDefinition
             )
-            local map = Map(player)
+            local map = Map()
             GStateMachine:change('countdown', {
                 highScores = self.highScores,
                 player = player,

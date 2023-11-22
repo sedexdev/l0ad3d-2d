@@ -93,7 +93,7 @@ function SelectCharacterState:update(dt)
             GAnimationDefintions['character'..tostring(self.selected)],
             GCharacterDefinition
         )
-        local map = Map(player)
+        local map = Map()
         GStateMachine:change('countdown', {
             highScores = self.highScores,
             player = player,

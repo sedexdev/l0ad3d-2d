@@ -18,12 +18,11 @@ Map = Class{}
     objects, as well as defining the starting area
 
     Params:
-        player: table - Player object
+        none
     Returns:
         nil
 ]]
-function Map:init(player)
-    self.player = player
+function Map:init()
     self.areas = {}
 end
 
