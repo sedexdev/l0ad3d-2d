@@ -9,7 +9,7 @@
         be collected
 ]]
 
-PowerUpSystem = Class{}
+PowerUpSystem = Class{__includes = Observer}
 
 --[[
     PowerUpSystem constructor. Tables are used to store currently
@@ -18,14 +18,19 @@ PowerUpSystem = Class{}
     and also manages keys
 
     Params:
-        player:        table - Player object
-        systemManager: table - SystemManager object
+    systemManager: table - SystemManager object
+    player:        table - Player object
     Returns:
         nil
 ]]
-function PowerUpSystem:init(player, systemManager)
-    self.player = player
+function PowerUpSystem:init(systemManager, player)
+
+    -- upates with data received from Observable PlayerWalkingState class
+    -- instantiate with Player starting data
+    self.currentAreaID = START_AREA_ID
+
     self.systemManager = systemManager
+    self.player = player
     self.powerups = {
         ['ammo'] = {},
         ['health'] = {},
@@ -62,6 +67,19 @@ function PowerUpSystem:render()
     for _, crate in pairs(self.crates) do
         crate:render()
     end
+end
+
+--[[
+    Observer message function implementation. Updates the current
+    (x, y) coordinates of the Player
+
+    Params:
+        playerData: table - Player object current state
+    Returns;
+        nil
+]]
+function PowerUpSystem:message(playerData)
+    self.currentAreaID = playerData.areaID
 end
 
 --[[
@@ -346,23 +364,23 @@ function PowerUpSystem:spawnPowerUp(x, y, areaID)
     -- set random chance of finding each powerup
     local ammo = math.random(5) == 1 and true or false
     if ammo then
-        self:powerUpFactory(POWERUP_IDS['ammo'], areaID, x, y)
+        self:factory(POWERUP_IDS['ammo'], areaID, x, y)
     end
     local health = math.random(5) == 1 and true or false
     if health then
-        self:powerUpFactory(POWERUP_IDS['health'], areaID, x, y)
+        self:factory(POWERUP_IDS['health'], areaID, x, y)
     end
     local doubleSpeed = math.random(15) == 1 and true or false
     if doubleSpeed then
-        self:powerUpFactory(POWERUP_IDS['doubleSpeed'], areaID, x, y)
+        self:factory(POWERUP_IDS['doubleSpeed'], areaID, x, y)
     end
     local invincible = math.random(15) == 1 and true or false
     if invincible then
-        self:powerUpFactory(POWERUP_IDS['invincible'], areaID, x, y)
+        self:factory(POWERUP_IDS['invincible'], areaID, x, y)
     end
     local oneShotBossKill = math.random(25) == 1 and true or false
     if oneShotBossKill then
-        self:powerUpFactory(POWERUP_IDS['oneShotBossKill'], areaID, x, y)
+        self:factory(POWERUP_IDS['oneShotBossKill'], areaID, x, y)
     end
 end
 
@@ -378,7 +396,7 @@ end
     Returns:
         nil
 ]]
-function PowerUpSystem:powerUpFactory(id, areaID, x, y)
+function PowerUpSystem:factory(id, areaID, x, y)
     local powerup = PowerUp(
         id, areaID,
         -- center the powerup underneath the crate
@@ -434,16 +452,15 @@ end
 ]]
 function PowerUpSystem:handlePowerUpCollision(powerup)
     if powerup.id == 1 then
-        self.player.powerups.doubleSpeed = true
         self.player:setDoubleSpeed()
         self:removePowerUp(powerup, 'doubleSpeed')
     end
     if powerup.id == 2 then
-        self.player.powerups.oneShotBossKill = true
+        self.player:setOneShotBossKill()
         self:removePowerUp(powerup, 'oneShotBossKill')
     end
     if powerup.id == 3 then
-        self.player.ammo = self.player.ammo + 1000
+        self.player.mmo = self.player.ammo + 1000
         self:removePowerUp(powerup, 'ammo')
     end
     if powerup.id == 4 then

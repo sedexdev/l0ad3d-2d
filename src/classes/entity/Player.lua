@@ -198,3 +198,15 @@ function Player:setDoubleSpeed()
     self.dx = self.dx * 2
     self.dy = self.dy * 2
 end
+
+--[[
+    Sets the one shot boss kill boolean to true
+
+    Params:
+        none
+    Returns:
+        nil
+]]
+function Player:setOneShotBossKill()
+    self.player.powerups.oneShotBossKill = true
+end

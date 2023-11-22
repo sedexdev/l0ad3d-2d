@@ -8,7 +8,7 @@
         doors
 ]]
 
-DoorSystem = Class{}
+DoorSystem = Class{__includes = Observer}
 
 --[[
     DoorSystem constructor. Creates a store for the doors in the
@@ -20,8 +20,14 @@ DoorSystem = Class{}
     Returns:
         nil
 ]]
-function DoorSystem:init(player, map)
-    self.player = player
+function DoorSystem:init(map)
+
+    -- upates with data received from Observable PlayerWalkingState class
+    -- instantiate with Player starting data
+    self.playerX = PLAYER_STARTING_X
+    self.playerY = PLAYER_STARTING_Y
+    self.currentAreaID = START_AREA_ID
+
     self.map = map
     self.doors = {}
     self.currentDoor = nil
@@ -42,7 +48,7 @@ function DoorSystem:update(dt)
     self:setPlayerLocation()
     -- close any doors that the Player is no longer in proximity with
     for _, door in pairs(self.doors) do
-        if not door:proximity(self.player) then
+        if not door:proximity(self.playerX, self.playerY) then
             self:close(door)
         end
     end
@@ -61,6 +67,21 @@ function DoorSystem:render()
     for _, door in pairs(self.doors) do
         door:render()
     end
+end
+
+--[[
+    Observer message function implementation. Updates the current
+    (x, y) coordinates of the Player
+
+    Params:
+        playerData: table - Player object current state
+    Returns;
+        nil
+]]
+function DoorSystem:message(playerData)
+    self.playerX = playerData.x
+    self.playerY = playerData.y
+    self.currentAreaID = playerData.areaID
 end
 
 --[[
@@ -130,13 +151,12 @@ end
         nil
 ]]
 function DoorSystem:setPlayerLocation()
-    local areaID = self.player.currentArea.id
-    local type = GMapAreaDefinitions[areaID].type
+    local type = GMapAreaDefinitions[self.currentAreaID].type
     if type == 'area' then
         -- set Player location to the side WITHIN the area
-        for _, door in pairs(self:getAreaDoors(areaID)) do
+        for _, door in pairs(self:getAreaDoors(self.currentAreaID)) do
             -- if the area IDs do not match then this door is in an adjacent area
-            if door.areaID ~= areaID then
+            if door.areaID ~= self.currentAreaID then
                 -- set Player on the current area side of the door
                 self:setMatchingLocation(door)
             else
@@ -145,15 +165,15 @@ function DoorSystem:setPlayerLocation()
         end
     else
         -- use area.joins to get door adjacencies for corridors
-        local joins = GMapAreaDefinitions[areaID].joins
+        local joins = GMapAreaDefinitions[self.currentAreaID].joins
         -- set Player location to the side OUTSIDE the joined areas
         for _, join in pairs(joins) do
             self:setJoinLocation(join)
         end
         -- check if this corridor has door defined
-        local doors = GMapAreaDefinitions[areaID].doors
+        local doors = GMapAreaDefinitions[self.currentAreaID].doors
         if doors then
-            for _, door in pairs(self:getAreaDoors(areaID)) do
+            for _, door in pairs(self:getAreaDoors(self.currentAreaID)) do
                 self:setOppositeLocation(door)
             end
         end

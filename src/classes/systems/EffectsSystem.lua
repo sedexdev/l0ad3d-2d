@@ -7,7 +7,7 @@
         shots fired, powerup rotation physics, and particle systems
 ]]
 
-EffectsSystem = Class{}
+EffectsSystem = Class{__includes = Observer}
 
 --[[
     EffectsSystem constructor
@@ -18,8 +18,14 @@ EffectsSystem = Class{}
     Returns:
         nil
 ]]
-function EffectsSystem:init(player, systemManager)
-    self.player = player
+function EffectsSystem:init(systemManager)
+
+    -- upates with data received from Observable PlayerWalkingState class
+    -- instantiate with Player starting data
+    self.playerX = PLAYER_STARTING_X
+    self.playerY = PLAYER_STARTING_Y
+    self.currentAreaID = START_AREA_ID
+
     self.systemManager = systemManager
     -- explosions table
     self.explosions = {}
@@ -104,7 +110,20 @@ function EffectsSystem:render()
     end
 end
 
+--[[
+    Observer message function implementation. Updates the current
+    (x, y) coordinates of the Player
 
+    Params:
+        playerData: table - Player object current state
+    Returns;
+        nil
+]]
+function EffectsSystem:message(playerData)
+    self.playerX = playerData.x
+    self.playerY = playerData.y
+    self.currentAreaID = playerData.areaID
+end
 
 --[[
     Checks for Bullet hits and removes the object it hit 
@@ -162,7 +181,7 @@ function EffectsSystem:handleGruntHit(systemTable, key, grunt)
         local powerUpChance = math.random(1, 5) == 1 and true or false
         -- assign same (x, y) as the crate
         if powerUpChance then
-            self.systemManager.powerupSystem:spawnPowerUp(grunt.x, grunt.y, self.player.currentArea.id)
+            self.systemManager.powerupSystem:spawnPowerUp(grunt.x, grunt.y, self.currentAreaID)
         end
         grunt = nil
         table.remove(systemTable, key)

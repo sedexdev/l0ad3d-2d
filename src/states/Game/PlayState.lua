@@ -24,16 +24,10 @@ PlayState = Class{__includes = BaseState}
 ]]
 function PlayState:enter(params)
     self.highScores = params.highScores
+    self.player = params.player
     self.map = params.map
     self.systemManager = params.systemManager
     self.map:generateLevel(self.systemManager)
-    -- Entity (Player) stateMachine
-    self.player = params.player
-    self.player.stateMachine = StateMachine {
-        ['idle'] = function () return PlayerIdleState(self.player) end,
-        ['walking'] = function () return PlayerWalkingState(self.player, self.map) end,
-    }
-    self.player.stateMachine:change('idle')
     -- pause gameplay
     self.paused = false
     self.selected = 1
@@ -230,18 +224,34 @@ function PlayState:processPauseMenuInput()
             -- continue game with all player data
             self.paused = false
         elseif self.selected == 2 then
-            -- restart game with fresh Player data
+            -- restart game with fresh data
+            local map = Map()
             local player = Player(
-                self.player.id,
-                GAnimationDefintions['character'..tostring(self.player.id)],
+                self.selected,
+                GAnimationDefintions['character'..tostring(self.selected)],
                 GCharacterDefinition
             )
-            local map = Map()
+            local systemManager = SystemManager(map, player)
+            -- Player stateMachine
+            player.stateMachine = StateMachine {
+                ['idle'] = function () return PlayerIdleState(player) end,
+                ['walking'] = function ()
+                    local walkingState = PlayerWalkingState(player, map)
+                    walkingState:subscribe(systemManager)
+                    walkingState:subscribe(systemManager.doorSystem)
+                    walkingState:subscribe(systemManager.collisionSystem)
+                    walkingState:subscribe(systemManager.powerupSystem)
+                    walkingState:subscribe(systemManager.enemySystem)
+                    walkingState:subscribe(systemManager.effectsSystem)
+                    return walkingState
+                end
+            }
+            player.stateMachine:change('idle')
             GStateMachine:change('countdown', {
                 highScores = self.highScores,
                 player = player,
                 map = map,
-                systemManager = SystemManager(player, map)
+                systemManager = systemManager
             })
         else
             -- quit to MenuState

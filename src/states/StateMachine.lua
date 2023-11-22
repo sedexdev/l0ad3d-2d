@@ -31,6 +31,7 @@ function StateMachine:init(states)
     }
     self.states = states or {}
     self.current = self.coreState
+    self.name = nil
 end
 
 --[[
@@ -44,6 +45,7 @@ end
 ]]
 function StateMachine:change(stateName, params)
     assert(self.states[stateName])
+    self.name = stateName
     self.current:exit()
     self.current = self.states[stateName]()
     self.current:enter(params)

@@ -14,16 +14,18 @@ GruntAttackingState = Class{__includes = BaseState}
     GruntAttackingState constructor
 
     Params:
-        grunt:            table       - Grunt object whose state will be updated
-        player:           table       - Player object
-        gruntSpriteBatch: SpriteBatch - list of Grunt quads for rendering
+        grunt:             table       - Grunt object whose state will be updated
+        playerX:           table       - Player x to use for the relative positioning of the Grunt
+        playerX:           table       - Player y to use for the relative positioning of the Grunt
+        gruntSpriteBatch:  SpriteBatch - list of Grunt quads for rendering
     Returns:
         nil
 ]]
-function GruntAttackingState:init(grunt, player, gruntSpriteBatch)
+function GruntAttackingState:init(grunt, playerX, playerY, gruntSpriteBatch)
     self.gruntSpriteBatch = gruntSpriteBatch
     self.grunt = grunt
-    self.player = player
+    self.playerX = playerX
+    self.playerY = playerY
 end
 
 --[[
@@ -41,7 +43,7 @@ function GruntAttackingState:update(dt)
     self.grunt.animations['attacking-'..self.grunt.direction]:update(dt)
 
     -- change state if we get further away from the player (change to use hitboxes later)
-    if math.abs(self.player.x - self.grunt.x) > 150 or math.abs(self.player.y - self.grunt.y) > 150 then
+    if math.abs(self.playerX - self.grunt.x) > 150 or math.abs(self.playerY - self.grunt.y) > 150 then
         self.grunt.stateMachine:change('rushing')
     end
 end

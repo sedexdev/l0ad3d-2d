@@ -9,7 +9,7 @@
         the Map
 ]]
 
-EnemySystem = Class{}
+EnemySystem = Class{__includes = Observer}
 
 --[[
     EnemySystem constructor. Creates a store for the doors in the
@@ -23,8 +23,14 @@ EnemySystem = Class{}
     Returns:
         nil
 ]]
-function EnemySystem:init(player, gruntSpriteBatch, systemManager)
-    self.player = player
+function EnemySystem:init(gruntSpriteBatch, systemManager)
+
+    -- upates with data received from Observable PlayerWalkingState class
+    -- instantiate with Player starting data
+    self.playerX = PLAYER_STARTING_X
+    self.playerY = PLAYER_STARTING_Y
+    self.currentAreaID = START_AREA_ID
+
     self.gruntSpriteBatch = gruntSpriteBatch
     self.systemManager = systemManager
     self.grunts = {}
@@ -44,10 +50,9 @@ end
         nil
 ]]
 function EnemySystem:update(dt)
-    local areaID = self.player.currentArea.id
     for _, grunt in pairs(self.grunts) do
-        for _, adjacentID in pairs(GAreaAdjacencyDefinitions[areaID]) do
-            if grunt.areaID == areaID or grunt.areaID == adjacentID then
+        for _, adjacentID in pairs(GAreaAdjacencyDefinitions[self.currentAreaID]) do
+            if grunt.areaID == self.currentAreaID or grunt.areaID == adjacentID then
                 grunt:update(dt)
                 -- jump out of loop to save processing further areas
                 goto continue
@@ -74,10 +79,9 @@ end
         none
 ]]
 function EnemySystem:render()
-    local areaID = self.player.currentArea.id
     for _, grunt in pairs(self.grunts) do
-        for _, adjacentID in pairs(GAreaAdjacencyDefinitions[areaID]) do
-            if grunt.areaID == areaID or grunt.areaID == adjacentID then
+        for _, adjacentID in pairs(GAreaAdjacencyDefinitions[self.currentAreaID]) do
+            if grunt.areaID == self.currentAreaID or grunt.areaID == adjacentID then
                 grunt:render()
                 goto continue
             end
@@ -90,6 +94,21 @@ function EnemySystem:render()
     if self.boss then
         self.boss:render()
     end
+end
+
+--[[
+    Observer message function implementation. Updates the current
+    (x, y) coordinates of the Player
+
+    Params:
+        playerData: table - Player object current state
+    Returns;
+        nil
+]]
+function EnemySystem:message(playerData)
+    self.playerX = playerData.x
+    self.playerY = playerData.y
+    self.currentAreaID = playerData.areaID
 end
 
 -- ========================== GET ENEMY OBJECTS ==========================
@@ -158,9 +177,9 @@ function EnemySystem:spawnGrunts(numGrunts, area)
         grunt.direction = DIRECTIONS[math.random(1, 8)]
         grunt.areaID = area.id
         grunt.stateMachine = StateMachine {
-            ['idle'] = function () return GruntIdleState(area, grunt, self.player, self.gruntSpriteBatch, self.systemManager.collisionSystem, self) end,
-            ['rushing'] = function () return GruntRushingState(area, grunt, self.player, self.gruntSpriteBatch, self.systemManager.collisionSystem, self) end,
-            ['attacking'] = function () return GruntAttackingState(grunt, self.player, self.gruntSpriteBatch) end,
+            ['idle'] = function () return GruntIdleState(area, grunt, self.gruntSpriteBatch, self.systemManager.collisionSystem, self) end,
+            ['rushing'] = function () return GruntRushingState(area, grunt, self.playerX, self.playerY, self.gruntSpriteBatch, self.systemManager.collisionSystem, self) end,
+            ['attacking'] = function () return GruntAttackingState(grunt, self.playerX, self.playerY, self.gruntSpriteBatch) end,
         }
         grunt.stateMachine:change('idle')
         table.insert(self.grunts, grunt)
@@ -182,8 +201,8 @@ function EnemySystem:spawnBoss(area)
     -- set random starting direction
     self.boss.direction = DIRECTIONS[math.random(1, 8)]
     self.boss.stateMachine = StateMachine {
-        ['idle'] = function () return BossIdleState(area, self.boss, self.player, self.systemManager.collisionSystem, self) end,
-        ['rushing'] = function () return BossRushingState(area, self.boss, self.player, self.systemManager.collisionSystem, self) end
+        ['idle'] = function () return BossIdleState(area, self.boss, self.systemManager.collisionSystem, self) end,
+        ['rushing'] = function () return BossRushingState(area, self.boss, self.playerX, self.playerY, self.systemManager.collisionSystem, self) end
     }
     self.boss.stateMachine:change('idle')
 end
@@ -227,10 +246,10 @@ end
         boolean: true if in proximity
 ]]
 function EnemySystem:checkProximity(entity)
-    if (self.player.x > entity.x + entity.width + ENTITY_PROXIMITY) or (entity.x - ENTITY_PROXIMITY > self.player.x + ENTITY_WIDTH) then
+    if (self.playerX > entity.x + entity.width + ENTITY_PROXIMITY) or (entity.x - ENTITY_PROXIMITY > self.playerX + ENTITY_WIDTH) then
         return false
     end
-    if (self.player.y > entity.y + entity.height + ENTITY_PROXIMITY) or (entity.y - ENTITY_PROXIMITY > self.player.y + ENTITY_HEIGHT) then
+    if (self.playerY > entity.y + entity.height + ENTITY_PROXIMITY) or (entity.y - ENTITY_PROXIMITY > self.playerY + ENTITY_HEIGHT) then
         return false
     end
     return true

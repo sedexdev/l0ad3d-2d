@@ -6,31 +6,34 @@
         all game systems
 ]]
 
-SystemManager = Class{}
+SystemManager = Class{__includes = Observer}
 
 --[[
     SystemManager constructor 
 
     Params:
+        map:    table - Map object
         player: table - Player object
     Returns:
         nil
 ]]
-function SystemManager:init(player, map)
-    self.player = player
+function SystemManager:init(map, player)
     self.map = map
+    self.player = player
     -- create a DoorSystem
-    self.doorSystem = DoorSystem(self.player, self.map)
+    self.doorSystem = DoorSystem(self.map)
     -- create a CollisionSystem
-    self.collisionSystem = CollisionSystem(self.player, self)
+    self.collisionSystem = CollisionSystem(self, self.player)
     -- create a PowerUpSystem
-    self.powerupSystem = PowerUpSystem(self.player, self)
+    self.powerupSystem = PowerUpSystem(self, self.player)
     -- create an instance of SpriteBatch for Grunt Entity objects
     self.gruntSpriteBatch = SpriteBatcher(GTextures['grunt'])
     -- create an EnemySystem
-    self.enemySystem = EnemySystem(self.player, self.gruntSpriteBatch, self)
+    self.enemySystem = EnemySystem(self.gruntSpriteBatch, self)
     -- crate an EffectsSystem
-    self.effectsSystem = EffectsSystem(self.player, self)
+    self.effectsSystem = EffectsSystem(self)
+    -- playerData table
+    self.playerData = {}
 end
 
 --[[
@@ -60,6 +63,20 @@ function SystemManager:render()
     self.effectsSystem:render()
     self.powerupSystem:render()
     self.enemySystem:render()
+end
+
+--[[
+    Observer message function implementation. Updates the
+    <self.playerData> instance variable with the latest
+    Player data
+
+    Params:
+        playerData: table - Player object current state
+    Returns;
+        nil
+]]
+function SystemManager:message(playerData)
+    self.playerData = playerData
 end
 
 --[[
@@ -95,10 +112,13 @@ end
 function SystemManager:checkCrates(currentAreaID)
     for _, crate in pairs(self.powerupSystem.crates) do
         if currentAreaID == crate.areaID then
-            -- check for Player collisions
-            local playerCollision = self.collisionSystem:crateCollision(crate, self.player)
-            if playerCollision.detected then
-                self.collisionSystem:handlePlayerCrateCollision(crate, playerCollision.edge)
+            local next = next
+            if next(self.playerData) ~= nil then
+                -- check for Player collisions if playerData has been sent by the Observable
+                local playerCollision = self.collisionSystem:crateCollision(crate, self.playerData)
+                if playerCollision.detected then
+                    self.collisionSystem:handlePlayerCrateCollision(crate, playerCollision.edge)
+                end
             end
             -- check for grunt collisions
             for _, grunt in pairs(self.enemySystem.grunts) do
@@ -153,29 +173,32 @@ end
         nil 
 ]]
 function SystemManager:checkMap(area)
-    -- check if the player has collided with the wall in this area
-    local wallCollision = self.collisionSystem:checkWallCollision(area, self.player)
-    if wallCollision.detected then
-        -- handle the wall collision
-        self.collisionSystem:handlePlayerWallCollision(area, wallCollision.edge)
-    end
-    -- check for any area door collisions
-    local doors = nil
-    if area.type == 'area' then
-        doors = self.doorSystem:getAreaDoors(area.id)
-    else
-        doors = self.doorSystem:getCorridorDoors(area.id)
-    end
-    if doors then
-        for _, door in pairs(doors) do
-            -- first check Player proximity and open door if not locked
-            local proximity = self.collisionSystem:checkDoorProximity(door)
-            if proximity then
-                -- then check collision with the Door object to avoid Player running over it
-                local doorCollision = self.collisionSystem:checkDoorCollsion(door)
-                if doorCollision.detected then
-                    -- and handle the collision if so
-                    self.collisionSystem:handleDoorCollision(door, doorCollision.edge)
+    local next = next
+    if next(self.playerData) ~= nil then
+        -- check if the player has collided with the wall in this area
+        local wallCollision = self.collisionSystem:checkWallCollision(area, self.playerData)
+        if wallCollision.detected then
+            -- handle the wall collision
+            self.collisionSystem:handlePlayerWallCollision(area, wallCollision.edge)
+        end
+        -- check for any area door collisions
+        local doors = nil
+        if area.type == 'area' then
+            doors = self.doorSystem:getAreaDoors(area.id)
+        else
+            doors = self.doorSystem:getCorridorDoors(area.id)
+        end
+        if doors then
+            for _, door in pairs(doors) do
+                -- first check Player proximity and open door if not locked
+                local proximity = self.collisionSystem:checkDoorProximity(door)
+                if proximity then
+                    -- then check collision with the Door object to avoid Player running over it
+                    local doorCollision = self.collisionSystem:checkDoorCollsion(door)
+                    if doorCollision.detected then
+                        -- and handle the collision if so
+                        self.collisionSystem:handleDoorCollision(door, doorCollision.edge)
+                    end
                 end
             end
         end
