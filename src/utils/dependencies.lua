@@ -60,7 +60,9 @@ GAudio = {
 -- classes
 require 'src/classes/animations/Animation'
 require 'src/classes/animations/BloodSplatter'
+require 'src/classes/animations/Crate'
 require 'src/classes/animations/Explosion'
+require 'src/classes/animations/Key'
 require 'src/classes/animations/PowerUp'
 require 'src/classes/animations/Shot'
 require 'src/classes/animations/SpriteBatcher'
