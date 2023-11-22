@@ -22,15 +22,15 @@ function SystemManager:init(player, map)
     -- create a DoorSystem
     self.doorSystem = DoorSystem(self.player, self.map)
     -- create a CollisionSystem
-    self.collisionSystem = CollisionSystem(self.player, self.doorSystem)
+    self.collisionSystem = CollisionSystem(self.player, self)
     -- create a PowerUpSystem
-    self.powerupSystem = PowerUpSystem(self.player, self.doorSystem)
+    self.powerupSystem = PowerUpSystem(self.player, self)
     -- create an instance of SpriteBatch for Grunt Entity objects
     self.gruntSpriteBatch = SpriteBatcher(GTextures['grunt'])
     -- create an EnemySystem
-    self.enemySystem = EnemySystem(self.player, self.gruntSpriteBatch, self.collisionSystem, self.doorSystem)
+    self.enemySystem = EnemySystem(self.player, self.gruntSpriteBatch, self)
     -- crate an EffectsSystem
-    self.effectsSystem = EffectsSystem(self.player, self.powerupSystem, self.enemySystem)
+    self.effectsSystem = EffectsSystem(self.player, self)
 end
 
 --[[

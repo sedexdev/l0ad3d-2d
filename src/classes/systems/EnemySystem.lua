@@ -19,16 +19,14 @@ EnemySystem = Class{}
     Params:
         player:           table       - Player object
         gruntSpriteBatch: SpriteBatch - collection of Grunt Entity quads
-        collisionSystem:  table       - collisionSystem object
-        doorSystem:       table       - DoorSystem object
+        systemManager:  table         - SystemManager object
     Returns:
         nil
 ]]
-function EnemySystem:init(player, gruntSpriteBatch, collisionSystem, doorSystem)
+function EnemySystem:init(player, gruntSpriteBatch, systemManager)
     self.player = player
     self.gruntSpriteBatch = gruntSpriteBatch
-    self.collisionSystem = collisionSystem
-    self.doorSystem = doorSystem
+    self.systemManager = systemManager
     self.grunts = {}
     self.turrets = {}
     self.boss = nil
@@ -160,8 +158,8 @@ function EnemySystem:spawnGrunts(numGrunts, area)
         grunt.direction = DIRECTIONS[math.random(1, 8)]
         grunt.areaID = area.id
         grunt.stateMachine = StateMachine {
-            ['idle'] = function () return GruntIdleState(area, grunt, self.player, self.gruntSpriteBatch, self.collisionSystem, self) end,
-            ['rushing'] = function () return GruntRushingState(area, grunt, self.player, self.gruntSpriteBatch, self.collisionSystem, self) end,
+            ['idle'] = function () return GruntIdleState(area, grunt, self.player, self.gruntSpriteBatch, self.systemManager.collisionSystem, self) end,
+            ['rushing'] = function () return GruntRushingState(area, grunt, self.player, self.gruntSpriteBatch, self.systemManager.collisionSystem, self) end,
             ['attacking'] = function () return GruntAttackingState(grunt, self.player, self.gruntSpriteBatch) end,
         }
         grunt.stateMachine:change('idle')
@@ -184,8 +182,8 @@ function EnemySystem:spawnBoss(area)
     -- set random starting direction
     self.boss.direction = DIRECTIONS[math.random(1, 8)]
     self.boss.stateMachine = StateMachine {
-        ['idle'] = function () return BossIdleState(area, self.boss, self.player, self.collisionSystem, self) end,
-        ['rushing'] = function () return BossRushingState(area, self.boss, self.player, self.collisionSystem, self) end
+        ['idle'] = function () return BossIdleState(area, self.boss, self.player, self.systemManager.collisionSystem, self) end,
+        ['rushing'] = function () return BossRushingState(area, self.boss, self.player, self.systemManager.collisionSystem, self) end
     }
     self.boss.stateMachine:change('idle')
 end

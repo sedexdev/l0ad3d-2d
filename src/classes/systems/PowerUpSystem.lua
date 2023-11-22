@@ -18,14 +18,14 @@ PowerUpSystem = Class{}
     and also manages keys
 
     Params:
-        player:     table - Player object
-        doorSystem: table - DoorSystem object
+        player:        table - Player object
+        systemManager: table - SystemManager object
     Returns:
         nil
 ]]
-function PowerUpSystem:init(player, doorSystem)
+function PowerUpSystem:init(player, systemManager)
     self.player = player
-    self.doorSystem = doorSystem
+    self.systemManager = systemManager
     self.powerups = {
         ['ammo'] = {},
         ['health'] = {},
@@ -190,7 +190,7 @@ function PowerUpSystem:getCrateXYCoordinates(edge, areaID, areaDef, edgeOffset)
         rightDoor = false,
         bottomDoor = false
     }
-    local areaDoors = self.doorSystem:getAreaDoors(areaID)
+    local areaDoors = self.systemManager.doorSystem:getAreaDoors(areaID)
     -- update the boolean table
     self:setDoorLocations(doors, areaDoors, areaID)
     local x, y

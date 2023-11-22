@@ -14,15 +14,13 @@ EffectsSystem = Class{}
 
     Params:
         player:        table - Player object
-        powerupSystem: table - PowerupSystem object
-        enemySystem:   table - EnemySystem object
+        systemManager: table - SystemManager object
     Returns:
         nil
 ]]
-function EffectsSystem:init(player, powerupSystem, enemySystem)
+function EffectsSystem:init(player, systemManager)
     self.player = player
-    self.powerupSystem = powerupSystem
-    self.enemySystem = enemySystem
+    self.systemManager = systemManager
     -- explosions table
     self.explosions = {}
     -- shots table keeps track of Shot objects so they can be 
@@ -58,10 +56,10 @@ function EffectsSystem:update(dt)
     end
     for _, bullet in pairs(self.bullets) do
         bullet:update(dt)
-        self:checkBullets(self.powerupSystem.crates, bullet)
-        self:checkBullets(self.enemySystem.grunts, bullet)
-        self:checkBullets(self.enemySystem.turrets, bullet)
-        if self.enemySystem.boss then
+        self:checkBullets(self.systemManager.powerupSystem.crates, bullet)
+        self:checkBullets(self.systemManager.enemySystem.grunts, bullet)
+        self:checkBullets(self.systemManager.enemySystem.turrets, bullet)
+        if self.systemManager.enemySystem.boss then
             -- check for Boss damage using Boss class
         end
     end
@@ -164,7 +162,7 @@ function EffectsSystem:handleGruntHit(systemTable, key, grunt)
         local powerUpChance = math.random(1, 5) == 1 and true or false
         -- assign same (x, y) as the crate
         if powerUpChance then
-            self.powerupSystem:spawnPowerUp(grunt.x, grunt.y, self.player.currentArea.id)
+            self.systemManager.powerupSystem:spawnPowerUp(grunt.x, grunt.y, self.player.currentArea.id)
         end
         grunt = nil
         table.remove(systemTable, key)

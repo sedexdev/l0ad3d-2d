@@ -13,18 +13,18 @@ CollisionSystem = Class{}
 
 --[[
     CollisionSystem constructor. Requires the Player object to
-    run checks against and the DoorSystem to allow the Player
+    run checks against and the SystemManager to allow the Player
     to pass through wall segments in areas with doors defined 
 
     Params:
-        player:     table - Player object
-        doorSystem: table - DoorSystem object
+        player:        table - Player object
+        systemManager: table - SystemManager object
     Returns:
         nil
 ]]
-function CollisionSystem:init(player, doorSystem)
+function CollisionSystem:init(player, systemManager)
     self.player = player
-    self.doorSystem = doorSystem
+    self.systemManager = systemManager
 end
 
 -- ========================== WALL COLLISIONS ==========================
@@ -82,7 +82,7 @@ function CollisionSystem:areaBoundary(area, conditions, entity)
     local collisionDef = {detected = false, edge = nil}
     -- check if the entity is going to pass through an area doorway
     if entity.type == 'character' then
-        for _, door in pairs(self.doorSystem:getAreaDoors(area.id)) do
+        for _, door in pairs(self.systemManager.doorSystem:getAreaDoors(area.id)) do
             if self:detectAreaDoorway(area, door, conditions) then
                 goto returnFalse
             end
@@ -362,12 +362,12 @@ function CollisionSystem:checkDoorProximity(door)
     if door:proximity(self.player) then
         -- check if door is locked
         if not door.isLocked then
-            self.doorSystem:open(door)
+            self.systemManager.doorSystem:open(door)
         else
             if self.player.keys[door.colour] then
                 -- if locked and has key open the door
                 door.isLocked = false
-                self.doorSystem:open(door)
+                self.systemManager.doorSystem:open(door)
                 if DOOR_IDS[door.colour] == 3 then self.player.keys['blue'] = false end
                 if DOOR_IDS[door.colour] == 4 then self.player.keys['red'] = false end
                 if DOOR_IDS[door.colour] == 5 then self.player.keys['green'] = false end
@@ -544,7 +544,7 @@ end
 ]]
 function CollisionSystem:detectCorridorDoorways(area, conditions)
     -- check for door proximity to allow the Player object to pass through the wall at that point
-    for _, door in pairs(self.doorSystem:getCorridorDoors(area.id)) do
+    for _, door in pairs(self.systemManager.doorSystem:getCorridorDoors(area.id)) do
         if door.id == 1 and door:proximity(self.player) and conditions.verticalDoorway then
             if not conditions.rightCollision then
                 return true

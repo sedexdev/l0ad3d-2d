@@ -10,7 +10,7 @@
 ]]
 
 -- debug file - debug.getinfo(1, 'n').name
-DebugFile = io.open('D:\\OneDrive - Andrew Macmillan\\backup\\My_Work\\Programming\\Games\\L0ad3d-2D\\debug.txt', 'a+')
+-- DebugFile = io.open('D:\\OneDrive - Andrew Macmillan\\backup\\My_Work\\Programming\\Games\\L0ad3d-2D\\debug.txt', 'a+')
 
 -- dependencies are managed in dependencies.lua
 require 'src/utils/dependencies'
