@@ -207,8 +207,8 @@ function PlayState:processPauseMenuInput()
             -- restart game with fresh data
             local map = Map()
             local player = Player(
-                self.selected,
-                GAnimationDefintions['character'..tostring(self.selected)],
+                self.player.id,
+                GAnimationDefintions['character'..tostring(self.player.id)],
                 GCharacterDefinition
             )
             local systemManager = SystemManager(map, player)
