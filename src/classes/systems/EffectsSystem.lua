@@ -69,14 +69,19 @@ function EffectsSystem:update(dt)
             -- check for Boss damage using Boss class
         end
     end
-    for _, shot in pairs(self.shots) do
+    local index
+    for i = 1, #self.shots do
         -- update the shot animation
-        shot:update(dt)
-        if not shot.renderShot then
-            shot = nil
-            -- remove shots once their interval has passed
-            table.remove(self.shots, shot)
+        self.shots[i]:update(dt)
+        if not self.shots[i].renderShot then
+            index = i
+            break
         end
+    end
+    if index then
+        self.shots[index] = nil
+        -- remove shots once their interval has passed
+        table.remove(self.shots, index)
     end
 end
 
@@ -91,12 +96,17 @@ end
 function EffectsSystem:render()
     love.graphics.setColor(1, 1, 1, 1)
     -- explosions
-    for key, explosion in pairs(self.explosions) do
-        explosion:render()
-        if explosion.animations:getCurrentFrame() == 16 then
-            explosion = nil
-            table.remove(self.explosions, key)
+    local index
+    for i = 1, #self.explosions do
+        self.explosions[i]:render()
+        if self.explosions[i].animations:getCurrentFrame() == 16 then
+            index = i
+            break
         end
+    end
+    if index then
+        self.explosions[index] = nil
+        table.remove(self.explosions, index)
     end
     -- blood stains
     for _, stain in pairs(self.bloodStains) do

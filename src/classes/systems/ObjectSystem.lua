@@ -273,12 +273,14 @@ function ObjectSystem:handleKeyCollision(key)
     if key.id == 3 then
         self.systemManager.player.keys['green'] = true
     end
+    local index
     for i = 1, #self.keys do
         if self.keys[i].id == key.id then
-            table.remove(self.keys, i)
+            index = i
             break
         end
     end
+    if index then table.remove(self.keys, index) end
 end
 
 --[[
@@ -292,10 +294,10 @@ end
 ]]
 function ObjectSystem:handlePowerUpCollision(powerup)
     if powerup.id == 1 then
-        self.player:setDoubleSpeed()
+        self.systemManager.player:setDoubleSpeed()
         self:removePowerUp(powerup, 'doubleSpeed')
     elseif powerup.id == 2 then
-        self.player:setOneShotBossKill()
+        self.systemManager.player:setOneShotBossKill()
         self:removePowerUp(powerup, 'oneShotBossKill')
     elseif powerup.id == 3 then
         self.systemManager.player.ammo = self.systemManager.player.ammo + 1000
@@ -312,7 +314,7 @@ function ObjectSystem:handlePowerUpCollision(powerup)
             self:removePowerUp(powerup, 'health')
         end
     elseif powerup.id == 5 then
-        self.player:makeInvicible()
+        self.systemManager.player:makeInvicible()
         self:removePowerUp(powerup, 'invincible')
     end
 end
@@ -328,13 +330,13 @@ end
         nil
 ]]
 function ObjectSystem:removePowerUp(object, name)
-    for key, powerup in pairs(self.powerups[name]) do
-        if object.x == powerup.x and object.y == powerup.y then
-            powerup = nil
-            table.remove(self.powerups[name], key)
-            break
+    local index
+    for i = 1, #self.powerups[name] do
+        if self.powerups[name][i].x == object.x and self.powerups[name][i].y == object.y then
+            index = i
         end
     end
+    if index then table.remove(self.powerups[name], index) end
 end
 
 -- =========================== CRATE (X, Y) HELPERS ===========================

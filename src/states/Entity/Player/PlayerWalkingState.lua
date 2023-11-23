@@ -166,7 +166,14 @@ end
         table: Player object (x, y) coordinates
 ]]
 function PlayerWalkingState:unsubscribe(observer)
-    table.remove(self.observers, observer)
+    local index
+    for i = 1, #self.observers do
+        if self.observers[i] == observer then
+            index = i
+            break
+        end
+    end
+    table.remove(self.observers, index)
 end
 
 --[[
