@@ -18,16 +18,14 @@ BossIdleState = Class{__includes = BaseState}
     Params:
         area:            table - MapArea object the Boss is spawned in
         boss:            table - Boss object whose state will be updated
-        player:          table - Player object
         collisionSystem: table - collisionSystem object
         enemySystem:     table - EnemySystem object
     Returns:
         nil
 ]]
-function BossIdleState:init(area, boss, player, collisionSystem, enemySystem)
+function BossIdleState:init(area, boss, collisionSystem, enemySystem)
     self.area = area
     self.boss = boss
-    self.player = player
     self.collisionSystem = collisionSystem
     self.enemySystem = enemySystem
     self.interval = 0

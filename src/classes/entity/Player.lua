@@ -112,6 +112,7 @@ end
         nil
 ]]
 function Player:fire()
+    self.ammo = self.ammo - 1
     if self.weapons > 1 then
         self.currentWeapon = self.currentWeapon == 'right' and 'left' or 'right'
     end
@@ -197,4 +198,16 @@ function Player:setDoubleSpeed()
     self.powerups.doubleSpeed = true
     self.dx = self.dx * 2
     self.dy = self.dy * 2
+end
+
+--[[
+    Sets the one shot boss kill boolean to true
+
+    Params:
+        none
+    Returns:
+        nil
+]]
+function Player:setOneShotBossKill()
+    self.powerups.oneShotBossKill = true
 end

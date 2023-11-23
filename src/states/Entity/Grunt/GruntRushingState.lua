@@ -14,28 +14,28 @@ GruntRushingState = Class{__includes = BaseState}
     GruntRushingState constructor
 
     Params:
-        area:             table       - MapArea object the Grunt was spawned in
-        grunt:            table       - Grunt object whose state will be updated
-        player:           table       - Player object to use for the relative positioning of the Grunt
-        gruntSpriteBatch: SpriteBatch - list of Grunt quads for rendering
-        collisionSystem:  table       - CollisionSystem object
-        enemySystem:      table       - EnemySystem object
+        area:              table       - MapArea object the Grunt was spawned in
+        grunt:             table       - Grunt object whose state will be updated
+        gruntSpriteBatch:  SpriteBatch - list of Grunt quads for rendering
+        player:            table       - Player object
+        collisionSystem:   table       - CollisionSystem object
+        enemySystem:       table       - EnemySystem object
     Returns:
         nil
 ]]
-function GruntRushingState:init(area, grunt, player, gruntSpriteBatch, collisionSystem, enemySystem)
+function GruntRushingState:init(area, grunt, gruntSpriteBatch, player, collisionSystem, enemySystem)
     self.area = area
     self.grunt = grunt
-    self.player = player
     self.gruntSpriteBatch = gruntSpriteBatch
+    self.player = player
     self.collisionSystem = collisionSystem
     self.enemySystem = enemySystem
 end
 
 --[[
     GruntRushingState update function. Compares the location of the 
-    <self.grunt> object to the location of the <self.player> object
-    and forces the grunt to track the Players movement
+    <self.grunt> object to the location of the Player object and 
+    forces the grunt to track the Players movement
 
     Params:
         dt: number - deltatime counter for current frame rate

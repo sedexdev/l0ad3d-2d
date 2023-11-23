@@ -8,7 +8,7 @@
         in a walking state
 ]]
 
-PlayerWalkingState = Class{__includes = BaseState}
+PlayerWalkingState = Class{__includes = BaseState, Observable}
 
 --[[
     PlayerWalkingState constructor
@@ -22,6 +22,9 @@ PlayerWalkingState = Class{__includes = BaseState}
 function PlayerWalkingState:init(player, map)
     self.player = player
     self.map = map
+
+    -- observers table
+    self.observers = {}
 end
 
 --[[
@@ -46,7 +49,11 @@ function PlayerWalkingState:update(dt)
 
     -- keep track of the players current area when moving
     if love.keyboard.anyDown(MOVEMENT_KEYS) then
+
         self.player:setCurrentArea(self.map)
+        -- notify observers of new player data
+        self:notify()
+
     end
 
     -- check for keyboard input by from the end user
@@ -136,4 +143,47 @@ function PlayerWalkingState:setDirection(direction, dt)
     end
     self.player.lastDirection = self.player.direction
     self.player.direction = direction
+end
+
+--[[
+    Subscribes an Observer to this Observable
+
+    Params:
+        observer: table - Observer object 
+    Returns:
+        table: Player object (x, y) coordinates
+]]
+function PlayerWalkingState:subscribe(observer)
+    table.insert(self.observers, observer)
+end
+
+--[[
+    Unsubscribes an Observer to this Observable
+
+    Params:
+        observer: table - Observer object 
+    Returns:
+        table: Player object (x, y) coordinates
+]]
+function PlayerWalkingState:unsubscribe(observer)
+    table.remove(self.observers, observer)
+end
+
+--[[
+    Notify function for this Observable class
+
+    Params:
+        none
+    Returns:
+        table: Player object data
+]]
+function PlayerWalkingState:notify()
+    for _, observer in pairs(self.observers) do
+        observer:message({
+            x = self.player.x,
+            y = self.player.y,
+            type = self.player.type,
+            areaID = self.player.currentArea.id
+        })
+    end
 end

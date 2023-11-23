@@ -18,12 +18,11 @@ Map = Class{}
     objects, as well as defining the starting area
 
     Params:
-        player: table - Player object
+        none
     Returns:
         nil
 ]]
-function Map:init(player)
-    self.player = player
+function Map:init()
     self.areas = {}
 end
 
@@ -100,7 +99,7 @@ function Map:generateLevel(systemManager)
     -- initialise the Door objects in the DoorSystem
     systemManager.doorSystem:initialiseDoors(self.areas)
     -- spawn powerups, crates, and keys
-    systemManager.powerupSystem:spawn()
+    systemManager.objectSystem:spawn()
     -- spawn enemies in area 17 and it's adjacent areas at the start
     systemManager.enemySystem:spawn(self:getStartingAreas())
 end

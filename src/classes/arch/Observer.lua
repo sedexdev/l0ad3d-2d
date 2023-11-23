@@ -23,5 +23,5 @@ Observer = Class{}
     Returns (for all):
         nil
 ]]
-function Observer:init(observable) end
-function Observer:onNotify() end
+function Observer:init() end
+function Observer:message() end

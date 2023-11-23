@@ -14,13 +14,13 @@ GruntAttackingState = Class{__includes = BaseState}
     GruntAttackingState constructor
 
     Params:
-        grunt:            table       - Grunt object whose state will be updated
-        player:           table       - Player object
-        gruntSpriteBatch: SpriteBatch - list of Grunt quads for rendering
+        grunt:             table       - Grunt object whose state will be updated
+        gruntSpriteBatch:  SpriteBatch - list of Grunt quads for rendering
+        player:            table       - Player object
     Returns:
         nil
 ]]
-function GruntAttackingState:init(grunt, player, gruntSpriteBatch)
+function GruntAttackingState:init(grunt, gruntSpriteBatch, player)
     self.gruntSpriteBatch = gruntSpriteBatch
     self.grunt = grunt
     self.player = player

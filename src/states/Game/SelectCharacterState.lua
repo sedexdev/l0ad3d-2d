@@ -88,17 +88,33 @@ function SelectCharacterState:update(dt)
     if love.keyboard.wasPressed('enter') or love.keyboard.wasPressed('return') then
         GAudio['select']:stop()
         GAudio['gunshot']:play()
+        local map = Map()
         local player = Player(
             self.selected,
             GAnimationDefintions['character'..tostring(self.selected)],
             GCharacterDefinition
         )
-        local map = Map(player)
+        local systemManager = SystemManager(map, player)
+        -- Player stateMachine
+        player.stateMachine = StateMachine {
+            ['idle'] = function () return PlayerIdleState(player) end,
+            ['walking'] = function ()
+                local walkingState = PlayerWalkingState(player, map)
+                walkingState:subscribe(systemManager)
+                walkingState:subscribe(systemManager.doorSystem)
+                walkingState:subscribe(systemManager.collisionSystem)
+                walkingState:subscribe(systemManager.objectSystem)
+                walkingState:subscribe(systemManager.enemySystem)
+                walkingState:subscribe(systemManager.effectsSystem)
+                return walkingState
+            end
+        }
+        player.stateMachine:change('idle')
         GStateMachine:change('countdown', {
             highScores = self.highScores,
             player = player,
             map = map,
-            systemManager = SystemManager(player, map)
+            systemManager = systemManager
         })
     end
 end

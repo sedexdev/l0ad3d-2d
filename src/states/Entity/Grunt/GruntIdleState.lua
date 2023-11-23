@@ -18,17 +18,15 @@ GruntIdleState = Class{__includes = BaseState}
     Params:
         area:             table       - MapArea object the Grunt was spawned in
         grunt:            table       - Grunt object whose state will be updated
-        player:           table       - Player object to use for the relative positioning of the Grunt
         gruntSpriteBatch: SpriteBatch - list of Grunt quads for rendering
         collisionSystem:  table       - CollisionSystem object
         enemySystem:      table       - EnemySystem object
     Returns:
         nil
 ]]
-function GruntIdleState:init(area, grunt, player, gruntSpriteBatch, collisionSystem, enemySystem)
+function GruntIdleState:init(area, grunt, gruntSpriteBatch, collisionSystem, enemySystem)
     self.area = area
     self.grunt = grunt
-    self.player = player
     self.gruntSpriteBatch = gruntSpriteBatch
     self.collisionSystem = collisionSystem
     self.enemySystem = enemySystem

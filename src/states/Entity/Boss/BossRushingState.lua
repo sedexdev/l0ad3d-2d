@@ -25,7 +25,7 @@ BossRushingState = Class{__includes = BaseState}
 function BossRushingState:init(area, boss, player, collisionSystem, enemySystem)
     self.area = area
     self.boss = boss
-    self.player = player
+    self.player= player
     self.collisionSystem = collisionSystem
     self.enemySystem = enemySystem
 end
