@@ -34,6 +34,8 @@ function SystemManager:init(map, player)
     self.effectsSystem = EffectsSystem(self)
     -- playerData table
     self.playerData = {}
+    -- bulletData table
+    self.bulletData = {}
 end
 
 --[[
@@ -72,17 +74,23 @@ end
     and the map enevironment
 
     Params:
-        playerData: table - Player object current state
+        data: table - Player object current state
     Returns;
         nil
 ]]
-function SystemManager:message(playerData)
-    self.playerData = playerData
-    self:checkKeys()
-    self:checkCrates()
-    self:checkPowerUps()
-    self:checkMap()
-    self:checkGrunts()
+function SystemManager:message(data)
+    if data.source == 'PlayerWalkingState' then
+        self.playerData = data
+        self:checkKeys()
+        self:checkCrates()
+        self:checkPowerUps()
+        self:checkMap()
+        self:checkGrunts()
+    end
+    if data.source == 'Bullet' then
+        self.bulletData = data
+        self:checkBullet()
+    end
 end
 
 --[[
@@ -213,4 +221,21 @@ end
 function SystemManager:checkGrunts()
     -- will only spawn grunts in adjacent areas that have 0 grunts in
     self.enemySystem:spawn(self.map:getAreaAdjacencies(self.playerData.areaID))
+end
+
+--[[
+    Check the area for Bullet hits
+
+    Params:
+        none
+    Returns:
+        nil
+]]
+function SystemManager:checkBullet()
+    for _, crate in pairs(self.objectSystem.crates) do
+        if self.collisionSystem:bulletCollision(self.bulletData, crate) then
+            table.insert(self.effectsSystem.explosions, Explosion:factory(crate))
+            self.effectsSystem:removeBullet(self.bulletData.id)
+        end
+    end
 end

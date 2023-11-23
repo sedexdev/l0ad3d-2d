@@ -41,8 +41,10 @@ function EffectsSystem:init(systemManager)
         -- TODO: change shot sound for Boss/Turret
         GAudio['gunshot']:stop()
         GAudio['gunshot']:play()
-        table.insert(self.bullets, Bullet(self.bulletID, entity))
+        local bullet =  Bullet(self.bulletID, entity)
+        table.insert(self.bullets, bullet)
         self.bulletID = self.bulletID + 1
+        bullet:subscribe(self.systemManager)
     end)
     -- blood stains
     self.bloodStains = {}
@@ -62,12 +64,6 @@ function EffectsSystem:update(dt)
     end
     for _, bullet in pairs(self.bullets) do
         bullet:update(dt)
-        self:checkBullets(self.systemManager.objectSystem.crates, bullet)
-        self:checkBullets(self.systemManager.enemySystem.grunts, bullet)
-        self:checkBullets(self.systemManager.enemySystem.turrets, bullet)
-        if self.systemManager.enemySystem.boss then
-            -- check for Boss damage using Boss class
-        end
     end
     local index
     for i = 1, #self.shots do
@@ -125,79 +121,32 @@ end
     (x, y) coordinates of the Player
 
     Params:
-        playerData: table - Player object current state
+        data: table - Player object current state
     Returns;
         nil
 ]]
-function EffectsSystem:message(playerData)
-    self.playerX = playerData.x
-    self.playerY = playerData.y
-    self.currentAreaID = playerData.areaID
-end
-
---[[
-    Checks for Bullet hits and removes the object it hit 
-    from the game
-
-    Params:
-        systemTable: table - system objects
-        bullet:      table - Bullet object
-    Returns:
-        nil
-]]
-function EffectsSystem:checkBullets(systemTable, bullet)
-    for key, object in pairs(systemTable) do
-        if bullet:hit(object) then
-            if object.type == 'crate' then
-                table.insert(self.explosions, Explosion:factory(object))
-                object = nil
-                table.remove(systemTable, key)
-                bullet = nil
-                table.remove(self.bullets, bullet)
-                break
-            end
-            if object.type == 'grunt' then
-                self:handleGruntHit(systemTable, key, object)
-                bullet = nil
-                table.remove(self.bullets, bullet)
-                break
-            end
-        end
-        -- if bullet:hitBoundary(self.currentAreaID) then
-        --     bullet = nil
-        --     table.remove(self.bullets, bullet)
-        -- end
+function EffectsSystem:message(data)
+    if data.source == 'PlayerWalkingState' then
+        self.playerX = data.x
+        self.playerY = data.y
+        self.currentAreaID = data.areaID
     end
 end
 
 --[[
-    Handles the workflow when a Bullet object hits a 
-    Grunt Entity object
-    
+    Removes a Bullet from <self.bullets>
+
     Params:
-        systemTable: table  - system table objects
-        key:         number - table index
-        grunt:       table  - grunt type Entity object      
+        id: number - Bullet object ID
     Returns:
         nil
 ]]
-function EffectsSystem:handleGruntHit(systemTable, key, grunt)
-    grunt:takeDamage()
-    if grunt.isDead then
-        local bloodSplatter = BloodSplatter(GTextures['blood-splatter'], grunt.x, grunt.y, grunt.direction)
-        table.insert(self.bloodStains, bloodSplatter)
-        Timer.after(180, function ()
-            for i, _ in pairs(self.bloodStains) do
-                table.remove(self.bloodStains, i)
-            end
-        end)
-        -- set a random chance of spawning a powerup
-        local powerUpChance = math.random(1, 5) == 1 and true or false
-        -- assign same (x, y) as the crate
-        if powerUpChance then
-            self.systemManager.objectSystem:spawnPowerUp(grunt.x, grunt.y, self.currentAreaID)
+function EffectsSystem:removeBullet(id)
+    local index
+    for i = 1, #self.bullets do
+        if self.bullets[i].id == id then
+            index = i
         end
-        grunt = nil
-        table.remove(systemTable, key)
     end
+    if index then table.remove(self.bullets, index) end
 end

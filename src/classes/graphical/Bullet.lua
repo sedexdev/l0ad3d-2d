@@ -6,7 +6,7 @@
         after a Shot instance has been created and 'fired'
 ]]
 
-Bullet = Class{}
+Bullet = Class{__includes = Observable}
 
 --[[
     Bullet constructor
@@ -18,6 +18,10 @@ Bullet = Class{}
         nil
 ]]
 function Bullet:init(id, entity)
+
+    -- Observer object list
+    self.observers = {}
+
     self.id = id
     self.x = entity.x + (ENTITY_WIDTH / 2)
     self.y = entity.y + (ENTITY_WIDTH / 2)
@@ -35,6 +39,10 @@ end
         nil
 ]]
 function Bullet:update(dt)
+
+    -- update Observers as the Bullet moves through the Map
+    self:notify()
+
     if self.direction == 'north' then
         self.y = self.y - self.dy * dt
     elseif self.direction == 'east' then
@@ -100,4 +108,55 @@ function Bullet:hitBoundary(areaID)
         return true
     end
     return false
+end
+
+--[[
+    Subscribes an Observer to this Observable
+
+    Params:
+        observer: table - Observer object 
+    Returns:
+        nil
+]]
+function Bullet:subscribe(observer)
+    table.insert(self.observers, observer)
+end
+
+--[[
+    Unsubscribes an Observer to this Observable
+
+    Params:
+        observer: table - Observer object 
+    Returns:
+        nil
+]]
+function Bullet:unsubscribe(observer)
+    local index
+    for i = 1, #self.observers do
+        if self.observers[i] == observer then
+            index = i
+            break
+        end
+    end
+    table.remove(self.observers, index)
+end
+
+--[[
+    Notify function for this Observable class
+
+    Params:
+        none
+    Returns:
+        table: Player object data
+]]
+function Bullet:notify()
+    for _, observer in pairs(self.observers) do
+        observer:message({
+            source = 'Bullet',
+            id = self.id,
+            x = self.x,
+            y = self.y,
+            entityType = self.entity.type
+        })
+    end
 end

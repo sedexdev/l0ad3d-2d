@@ -72,12 +72,14 @@ end
     (x, y) coordinates of the Player
 
     Params:
-        playerData: table - Player object current state
+        data: table - Player object current state
     Returns;
         nil
 ]]
-function ObjectSystem:message(playerData)
-    self.currentAreaID = playerData.areaID
+function ObjectSystem:message(data)
+    if data.source == 'PlayerWalkingState' then
+        self.currentAreaID = data.areaID
+    end
 end
 
 -- =========================== SPAWN OBJECTS ===========================
