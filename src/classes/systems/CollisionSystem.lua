@@ -18,19 +18,16 @@ CollisionSystem = Class{__includes = Observer}
 
     Params:
     systemManager: table - SystemManager object
-    player:        table - Player object
     Returns:
         nil
 ]]
-function CollisionSystem:init(systemManager, player)
+function CollisionSystem:init(systemManager)
 
     -- upates with data received from Observable PlayerWalkingState class
     -- instantiate with Player starting positions
     self.playerX = PLAYER_STARTING_X
     self.playerY = PLAYER_STARTING_Y
 
-    -- player required to then update the Player object after a collision
-    self.player = player
     self.systemManager = systemManager
 end
 
@@ -319,26 +316,26 @@ function CollisionSystem:handlePlayerWallCollision(area, edge)
     local bottomCorrection = area.y + (area.height * FLOOR_TILE_HEIGHT) - ENTITY_HEIGHT + WALL_OFFSET
     -- for single wall collisions just update x or y
     if edge == 'L' then
-        self.player.x = leftCorrection
+        self.systemManager.player.x = leftCorrection
     elseif edge == 'R' then
-        self.player.x = rightCorrection
+        self.systemManager.player.x = rightCorrection
     elseif edge == 'T' then
-        self.player.y = topCorrection
+        self.systemManager.player.y = topCorrection
     elseif edge == 'B' then
-        self.player.y = bottomCorrection
+        self.systemManager.player.y = bottomCorrection
     -- for multi-wall collisions update x and y
     elseif edge == 'LT' then
-        self.player.x = leftCorrection
-        self.player.y = topCorrection
+        self.systemManager.player.x = leftCorrection
+        self.systemManager.player.y = topCorrection
     elseif edge == 'RT' then
-        self.player.x = rightCorrection
-        self.player.y = topCorrection
+        self.systemManager.player.x = rightCorrection
+        self.systemManager.player.y = topCorrection
     elseif edge == 'LB' then
-        self.player.x = leftCorrection
-        self.player.y = bottomCorrection
+        self.systemManager.player.x = leftCorrection
+        self.systemManager.player.y = bottomCorrection
     elseif edge == 'RB' then
-        self.player.x = rightCorrection
-        self.player.y = bottomCorrection
+        self.systemManager.player.x = rightCorrection
+        self.systemManager.player.y = bottomCorrection
     end
 end
 
@@ -385,13 +382,13 @@ function CollisionSystem:checkDoorProximity(door)
         if not door.isLocked then
             self.systemManager.doorSystem:open(door)
         else
-            if self.player.keys[door.colour] then
+            if self.systemManager.player.keys[door.colour] then
                 -- if locked and has key open the door
                 door.isLocked = false
                 self.systemManager.doorSystem:open(door)
-                if DOOR_IDS[door.colour] == 3 then self.player.keys['blue'] = false end
-                if DOOR_IDS[door.colour] == 4 then self.player.keys['red'] = false end
-                if DOOR_IDS[door.colour] == 5 then self.player.keys['green'] = false end
+                if DOOR_IDS[door.colour] == 3 then self.systemManager.player.keys['blue'] = false end
+                if DOOR_IDS[door.colour] == 4 then self.systemManager.player.keys['red'] = false end
+                if DOOR_IDS[door.colour] == 5 then self.systemManager.player.keys['green'] = false end
             end
         end
         return true
@@ -430,35 +427,6 @@ function CollisionSystem:checkDoorCollsion(door)
     ::returnTrue::
     -- return true detection if the Player is overlapping any part of any door
     return {detected = true, edge = AREA_DOOR_IDS[door.id]}
-end
-
---[[
-    Handles a collision with a pair of Door objects to reposition
-    the Player object until they can correctly pass through the 
-    door
-
-    Params:
-        door: table  - Door object Player is interacting with
-        edge: string - edge the Player has collisded with
-    Returns:
-        nil
-]]
-function CollisionSystem:handleDoorCollision(door, edge)
-    -- check door location to apply appropriate correction
-    if edge == 'L' or edge == 'R' then
-        if door.playerLocation == 'left' then
-            self.player.x = (door.leftX + V_DOOR_WIDTH) - ENTITY_WIDTH
-        elseif door.playerLocation == 'right' then
-            self.player.x = door.leftX - V_DOOR_WIDTH
-        end
-    end
-    if edge == 'T' or edge == 'B' then
-        if door.playerLocation == 'below' then
-            self.player.y = door.leftY - H_DOOR_HEIGHT
-        elseif door.playerLocation == 'above' then
-            self.player.y = (door.leftY + H_DOOR_HEIGHT) - ENTITY_HEIGHT
-        end
-    end
 end
 
 -- ========================== DOORWAY DETECTION HELPER FUNCTIONS ==========================
@@ -586,7 +554,7 @@ function CollisionSystem:detectCorridorDoorways(area, conditions)
     end
 end
 
--- ========================== CRATE/KEY/POWERUP COLLISIONS ==========================
+-- ========================== CRATE/KEY/POWERUP/ENTITY COLLISIONS ==========================
 
 --[[
     Detects a collision with key/powerup type PowerUp object. Uses
@@ -647,6 +615,29 @@ function CollisionSystem:crateCollision(crate, entity)
 end
 
 --[[
+    Detects collisions between entity objects so they do not pass
+    through each other
+
+    Params:
+        entity1: table - Entity object
+        entity2: table - Entity object
+    Returns:
+        boolean: true if collision detected
+]]
+function CollisionSystem:entityCollision(entity1, entity2)
+    if (entity1.x > entity2.x + entity2.width + ENTITY_PROXIMITY) or (entity2.x - ENTITY_PROXIMITY > entity1.x + ENTITY_WIDTH) then
+        return false
+    end
+    if (entity1.y > entity2.y + entity2.height + ENTITY_PROXIMITY) or (entity2.y - ENTITY_PROXIMITY > entity1.y + ENTITY_HEIGHT) then
+        return false
+    end
+    return true
+end
+
+-- ========================== COLLISION HANDLERS ==========================
+
+
+--[[
     Handles the crate collision by setting the Player (x, y) so
     they cannot run over the crate
 
@@ -658,17 +649,15 @@ end
 ]]
 function CollisionSystem:handlePlayerCrateCollision(crate, edge)
     if edge == 'L' then
-        self.player.x = crate.x - ENTITY_WIDTH + ENTITY_CORRECTION
+        self.systemManager.player.x = crate.x - ENTITY_WIDTH + ENTITY_CORRECTION
     elseif edge == 'T' then
-        self.player.y = crate.y - ENTITY_HEIGHT + ENTITY_CORRECTION
+        self.systemManager.player.y = crate.y - ENTITY_HEIGHT + ENTITY_CORRECTION
     elseif edge == 'R' then
-        self.player.x = crate.x + CRATE_WIDTH - ENTITY_CORRECTION
+        self.systemManager.player.x = crate.x + CRATE_WIDTH - ENTITY_CORRECTION
     elseif edge == 'B' then
-        self.player.y = crate.y + CRATE_HEIGHT - ENTITY_CORRECTION
+        self.systemManager.player.y = crate.y + CRATE_HEIGHT - ENTITY_CORRECTION
     end
 end
-
--- ========================== ENEMY COLLISIONS ==========================
 
 --[[
     Handles the crate collision by changing the direction of
@@ -693,23 +682,32 @@ function CollisionSystem:handleEnemyCrateCollision(entity, edge)
 end
 
 --[[
-    Detects collisions between entity objects so they do not pass
-    through each other
+    Handles a collision with a pair of Door objects to reposition
+    the Player object until they can correctly pass through the 
+    door
 
     Params:
-        entity1: table - Entity object
-        entity2: table - Entity object
+        door: table  - Door object Player is interacting with
+        edge: string - edge the Player has collisded with
     Returns:
-        boolean: true if collision detected
+        nil
 ]]
-function CollisionSystem:entityCollision(entity1, entity2)
-    if (entity1.x > entity2.x + entity2.width + ENTITY_PROXIMITY) or (entity2.x - ENTITY_PROXIMITY > entity1.x + ENTITY_WIDTH) then
-        return false
+function CollisionSystem:handleDoorCollision(door, edge)
+    -- check door location to apply appropriate correction
+    if edge == 'L' or edge == 'R' then
+        if door.playerLocation == 'left' then
+            self.systemManager.player.x = (door.leftX + V_DOOR_WIDTH) - ENTITY_WIDTH
+        elseif door.playerLocation == 'right' then
+            self.systemManager.player.x = door.leftX - V_DOOR_WIDTH
+        end
     end
-    if (entity1.y > entity2.y + entity2.height + ENTITY_PROXIMITY) or (entity2.y - ENTITY_PROXIMITY > entity1.y + ENTITY_HEIGHT) then
-        return false
+    if edge == 'T' or edge == 'B' then
+        if door.playerLocation == 'below' then
+            self.systemManager.player.y = door.leftY - H_DOOR_HEIGHT
+        elseif door.playerLocation == 'above' then
+            self.systemManager.player.y = (door.leftY + H_DOOR_HEIGHT) - ENTITY_HEIGHT
+        end
     end
-    return true
 end
 
 --[[

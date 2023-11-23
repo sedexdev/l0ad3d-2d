@@ -183,12 +183,7 @@ function PlayerWalkingState:notify()
             x = self.player.x,
             y = self.player.y,
             type = self.player.type,
-            ammo = self.player.ammo,
-            health = self.player.health,
-            areaID = self.player.currentArea.id,
-            direction = self.player.direction,
-            keys = self.player.keys,
-            powerups = self.player.powerups
+            areaID = self.player.currentArea.id
         })
     end
 end

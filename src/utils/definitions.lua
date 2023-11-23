@@ -245,9 +245,9 @@ GMapAreaDefinitions = {
 
 -- (x, y) coordinates for each key
 GKeyDefinitions = {
-    [1] = {id = 4, areaID = 37, x = 20700, y = 4140, quadID = 1},  -- red
-    [2] = {id = 3, areaID = 35, x = 15460, y = 9038, quadID = 2},  -- blue
-    [3] = {id = 5, areaID = 25, x = -15580, y = -2560, quadID = 3} -- green
+    [1] = {areaID = 37, x = 20700, y = 4140},  -- red
+    [2] = {areaID = 35, x = 15460, y = 9038},  -- blue
+    [3] = {areaID = 25, x = -15580, y = -2560} -- green
 }
 
 --[[

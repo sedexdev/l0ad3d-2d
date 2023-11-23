@@ -112,6 +112,7 @@ end
         nil
 ]]
 function Player:fire()
+    self.ammo = self.ammo - 1
     if self.weapons > 1 then
         self.currentWeapon = self.currentWeapon == 'right' and 'left' or 'right'
     end
@@ -208,5 +209,5 @@ end
         nil
 ]]
 function Player:setOneShotBossKill()
-    self.player.powerups.oneShotBossKill = true
+    self.powerups.oneShotBossKill = true
 end

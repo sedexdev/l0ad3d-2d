@@ -45,7 +45,7 @@ GTextures = {
     ['grunt'] = love.graphics.newImage('graphics/grunt.png'),
     ['turret']= love.graphics.newImage('graphics/turret.png'),
     ['boss']= love.graphics.newImage('graphics/boss.png'),
-    ['crates']= love.graphics.newImage('graphics/crate.png'),
+    ['crate']= love.graphics.newImage('graphics/crate.png'),
     ['powerups']= love.graphics.newImage('graphics/powerups.png'),
     ['keys']= love.graphics.newImage('graphics/keys.png')
 }
@@ -58,14 +58,15 @@ GAudio = {
 }
 
 -- classes
-require 'src/classes/animations/Animation'
-require 'src/classes/animations/BloodSplatter'
-require 'src/classes/animations/Crate'
-require 'src/classes/animations/Explosion'
-require 'src/classes/animations/Key'
-require 'src/classes/animations/PowerUp'
-require 'src/classes/animations/Shot'
-require 'src/classes/animations/SpriteBatcher'
+require 'src/classes/graphical/Animation'
+require 'src/classes/graphical/BloodSplatter'
+require 'src/classes/graphical/Bullet'
+require 'src/classes/graphical/Crate'
+require 'src/classes/graphical/Explosion'
+require 'src/classes/graphical/Key'
+require 'src/classes/graphical/PowerUp'
+require 'src/classes/graphical/Shot'
+require 'src/classes/graphical/SpriteBatcher'
 require 'src/classes/entity/Boss'
 require 'src/classes/entity/Entity'
 require 'src/classes/entity/Grunt'
@@ -74,12 +75,11 @@ require 'src/classes/map/Door'
 require 'src/classes/map/HUD'
 require 'src/classes/map/Map'
 require 'src/classes/map/MapArea'
-require 'src/classes/weapons/Bullet'
 require 'src/classes/systems/CollisionSystem'
 require 'src/classes/systems/DoorSystem'
 require 'src/classes/systems/EffectsSystem'
 require 'src/classes/systems/EnemySystem'
-require 'src/classes/systems/PowerUpSystem'
+require 'src/classes/systems/ObjectSystem'
 require 'src/classes/systems/SystemManager'
 
 -- game states
@@ -133,7 +133,7 @@ GQuads = {
     ['blood-splatter'] = GenerateQuads(GTextures['blood-splatter'], 384, 384),
     ['grunt'] = GenerateQuads(GTextures['grunt'], 128, 128),
     ['boss'] = GenerateQuads(GTextures['boss'], 128, 128),
-    ['crates'] = GenerateQuads(GTextures['crates'], 128, 128),
+    ['crate'] = GenerateQuads(GTextures['crate'], 128, 128),
     ['powerups'] = GenerateQuads(GTextures['powerups'], 64, 64),
     ['keys'] = GenerateQuads(GTextures['keys'], 64, 64)
 }

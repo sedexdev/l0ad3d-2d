@@ -79,34 +79,12 @@ end
         nil
 ]]
 function PlayState:runGameLoop(dt)
-    -- get the Player's current area
-    local currentAreaID = self.player.currentArea.id
-    local area = self.map:getAreaDefinition(currentAreaID)
-    -- check for and handle Player/Entity game interactions
-    self:checkInteractions(currentAreaID, area)
     -- update all game systems
     self.systemManager:update(dt)
     -- update Player
     self.player:update(dt)
     -- update the camera to track the Player
     self:updateCamera()
-end
-
---[[
-    Check for and handle interactions with game objects
-
-    Params:
-        currentAreaID: number - ID of the Players current area
-        area:          table  - MapArea object
-    Returns:
-        nil
-]]
-function PlayState:checkInteractions(currentAreaID, area)
-    self.systemManager:checkKeys(currentAreaID)
-    self.systemManager:checkCrates(currentAreaID)
-    self.systemManager:checkPowerUps(currentAreaID)
-    self.systemManager:checkMap(area)
-    self.systemManager:checkGrunts(currentAreaID)
 end
 
 --[[
@@ -139,7 +117,9 @@ function PlayState:render()
     self.map:render()
     self.systemManager:render()
     self.player:render()
+    -- debug data
     self:displayFPS()
+    self:displayPlayerData()
     -- show menu if paused
     if self.paused then
         self:renderPauseMenu()
@@ -240,7 +220,7 @@ function PlayState:processPauseMenuInput()
                     walkingState:subscribe(systemManager)
                     walkingState:subscribe(systemManager.doorSystem)
                     walkingState:subscribe(systemManager.collisionSystem)
-                    walkingState:subscribe(systemManager.powerupSystem)
+                    walkingState:subscribe(systemManager.objectSystem)
                     walkingState:subscribe(systemManager.enemySystem)
                     walkingState:subscribe(systemManager.effectsSystem)
                     return walkingState
@@ -276,4 +256,28 @@ function PlayState:displayFPS()
     love.graphics.setColor(1, 0/255, 0/255, 255/255)
     love.graphics.print('FPS: ' .. tostring(love.timer.getFPS()), self.cameraX + 50, self.cameraY + 50)
     love.graphics.setColor(1, 1, 1, 1)
+end
+
+--[[
+    Displays player data on the screen
+
+    Params:
+        none
+    Retuns:
+        nil
+]]
+function PlayState:displayPlayerData()
+    love.graphics.setFont(GFonts['funkrocker-smaller'])
+    love.graphics.setColor(0/255, 1, 0/255, 1)
+    love.graphics.print('Health: ' .. tostring(self.player.health), self.cameraX + 50, self.cameraY + 140)
+    love.graphics.print('Ammo: ' .. tostring(self.player.ammo), self.cameraX + 50, self.cameraY + 180)
+    love.graphics.print('Red key: ' .. tostring(self.player.keys['red']), self.cameraX + 50, self.cameraY + 220)
+    love.graphics.print('Green key: ' .. tostring(self.player.keys['green']), self.cameraX + 50, self.cameraY + 260)
+    love.graphics.print('Blue key: ' .. tostring(self.player.keys['blue']), self.cameraX + 50, self.cameraY + 300)
+    love.graphics.print('Invincible: ' .. tostring(self.player.powerups.invincible), self.cameraX + 50, self.cameraY + 340)
+    love.graphics.print('Double speed: ' .. tostring(self.player.powerups.doubleSpeed), self.cameraX + 50, self.cameraY + 380)
+    love.graphics.print('One shot Boss kill: ' .. tostring(self.player.powerups.oneShotBossKill), self.cameraX + 50, self.cameraY + 420)
+    love.graphics.print('X: ' .. tostring(self.player.x), self.cameraX + 50, self.cameraY + 460)
+    love.graphics.print('Y: ' .. tostring(self.player.y), self.cameraX + 50, self.cameraY + 500)
+    love.graphics.print('Direction: ' .. self.player.direction, self.cameraX + 50, self.cameraY + 540)
 end

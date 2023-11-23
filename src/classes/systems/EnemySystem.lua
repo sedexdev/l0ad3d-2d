@@ -178,8 +178,8 @@ function EnemySystem:spawnGrunts(numGrunts, area)
         grunt.areaID = area.id
         grunt.stateMachine = StateMachine {
             ['idle'] = function () return GruntIdleState(area, grunt, self.gruntSpriteBatch, self.systemManager.collisionSystem, self) end,
-            ['rushing'] = function () return GruntRushingState(area, grunt, self.playerX, self.playerY, self.gruntSpriteBatch, self.systemManager.collisionSystem, self) end,
-            ['attacking'] = function () return GruntAttackingState(grunt, self.playerX, self.playerY, self.gruntSpriteBatch) end,
+            ['rushing'] = function () return GruntRushingState(area, grunt, self.gruntSpriteBatch, self.systemManager.player, self.systemManager.collisionSystem, self) end,
+            ['attacking'] = function () return GruntAttackingState(grunt, self.gruntSpriteBatch, self.systemManager.player) end,
         }
         grunt.stateMachine:change('idle')
         table.insert(self.grunts, grunt)
@@ -202,7 +202,7 @@ function EnemySystem:spawnBoss(area)
     self.boss.direction = DIRECTIONS[math.random(1, 8)]
     self.boss.stateMachine = StateMachine {
         ['idle'] = function () return BossIdleState(area, self.boss, self.systemManager.collisionSystem, self) end,
-        ['rushing'] = function () return BossRushingState(area, self.boss, self.playerX, self.playerY, self.systemManager.collisionSystem, self) end
+        ['rushing'] = function () return BossRushingState(area, self.boss, self.systemManager.player, self.systemManager.collisionSystem, self) end
     }
     self.boss.stateMachine:change('idle')
 end

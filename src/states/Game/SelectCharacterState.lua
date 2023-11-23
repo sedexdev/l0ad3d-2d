@@ -103,7 +103,7 @@ function SelectCharacterState:update(dt)
                 walkingState:subscribe(systemManager)
                 walkingState:subscribe(systemManager.doorSystem)
                 walkingState:subscribe(systemManager.collisionSystem)
-                walkingState:subscribe(systemManager.powerupSystem)
+                walkingState:subscribe(systemManager.objectSystem)
                 walkingState:subscribe(systemManager.enemySystem)
                 walkingState:subscribe(systemManager.effectsSystem)
                 return walkingState
