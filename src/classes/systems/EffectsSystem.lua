@@ -19,14 +19,10 @@ EffectsSystem = Class{__includes = Observer}
         nil
 ]]
 function EffectsSystem:init(systemManager)
-
-    -- upates with data received from Observable PlayerWalkingState class
-    -- instantiate with Player starting data
+    self.systemManager = systemManager
     self.playerX = PLAYER_STARTING_X
     self.playerY = PLAYER_STARTING_Y
     self.currentAreaID = START_AREA_ID
-
-    self.systemManager = systemManager
     -- explosions table
     self.explosions = {}
     -- shots table keeps track of Shot objects so they can be 
@@ -95,7 +91,7 @@ function EffectsSystem:render()
     local index
     for i = 1, #self.explosions do
         self.explosions[i]:render()
-        if self.explosions[i].animations:getCurrentFrame() == 16 then
+        if self.explosions[i].animations:getCurrentFrame() == #self.explosions then
             index = i
             break
         end
@@ -149,4 +145,20 @@ function EffectsSystem:removeBullet(id)
         end
     end
     if index then table.remove(self.bullets, index) end
+end
+
+--[[
+    Emits a particle system effect on amn area boundary wall
+    when a Bullet object overlaps the boundary
+
+    TODO: implement wall hit particle system effect
+
+    Params:
+        x: number - x coordinate
+        y: number - y coordinate
+    Returns:
+        nil
+]]
+function EffectsSystem:emitWallParticleEffect(x, y)
+    io.write('Emitting wall hit particle system effect...\n')
 end

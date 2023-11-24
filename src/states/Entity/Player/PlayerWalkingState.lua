@@ -22,7 +22,6 @@ PlayerWalkingState = Class{__includes = BaseState, Observable}
 function PlayerWalkingState:init(player, map)
     self.player = player
     self.map = map
-
     -- observers table
     self.observers = {}
 end
@@ -49,11 +48,9 @@ function PlayerWalkingState:update(dt)
 
     -- keep track of the players current area when moving
     if love.keyboard.anyDown(MOVEMENT_KEYS) then
-
         self.player:setCurrentArea(self.map)
         -- notify observers of new player data
         self:notify()
-
     end
 
     -- check for keyboard input by from the end user

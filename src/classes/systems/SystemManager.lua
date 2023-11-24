@@ -232,9 +232,41 @@ end
         nil
 ]]
 function SystemManager:checkBullet()
-    for _, crate in pairs(self.objectSystem.crates) do
+    -- use boolean flag to track if we need to check checking for Bullet hits
+    local bulletHit = false
+    local crates = self.objectSystem:getAreaCrates()
+    for _, crate in pairs(crates) do
         if self.collisionSystem:bulletCollision(self.bulletData, crate) then
+            self.objectSystem:removeCrate(crate.id)
             table.insert(self.effectsSystem.explosions, Explosion:factory(crate))
+            self.effectsSystem:removeBullet(self.bulletData.id)
+            bulletHit = true
+        end
+    end
+    -- if Bullet didn't hit a crate check for grunts
+    if not bulletHit then
+        local grunts = self.enemySystem:getAreaGrunts()
+        for _, grunt in pairs(grunts) do
+            if self.collisionSystem:bulletCollision(self.bulletData, grunt) then
+                grunt:takeDamage()
+                if grunt.isDead then
+                    local bloodStain = BloodSplatter:factory(grunt.x, grunt.y, grunt.direction)
+                    table.insert(self.effectsSystem.bloodStains, bloodStain)
+                    Timer.after(BLOOD_STAIN_INTERVAL, function ()
+                        bloodStain = nil
+                        table.remove(self.effectsSystem.bloodStains, bloodStain)
+                    end)
+                    self.enemySystem:removeGrunt(grunt.id)
+                    self.effectsSystem:removeBullet(self.bulletData.id)
+                    bulletHit = true
+                end
+            end
+        end
+    end
+    -- if Bullet hit nothing then remove it when it hits the area boundary
+    if not bulletHit then
+        if self.collisionSystem:bulletHitBoundary(self.bulletData.x, self.bulletData.y) then
+            self.effectsSystem:emitWallParticleEffect(self.bulletData.x, self.bulletData.y)
             self.effectsSystem:removeBullet(self.bulletData.id)
         end
     end

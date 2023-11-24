@@ -23,12 +23,8 @@ ObjectSystem = Class{__includes = Observer}
         nil
 ]]
 function ObjectSystem:init(systemManager)
-
-    -- upates with data received from Observable PlayerWalkingState class
-    -- instantiate with Player starting data
-    self.currentAreaID = START_AREA_ID
-
     self.systemManager = systemManager
+    self.currentAreaID = START_AREA_ID
     self.powerups = {
         ['ammo'] = {},
         ['health'] = {},
@@ -339,6 +335,25 @@ function ObjectSystem:removePowerUp(object, name)
         end
     end
     if index then table.remove(self.powerups[name], index) end
+end
+
+--[[
+    Removes a Crate from <self.crates> after a collision is
+    detected with a Bullet object
+
+    Params:
+        crateID: number - ID of the Crate to remove
+    Returns:
+        nil
+]]
+function ObjectSystem:removeCrate(crateID)
+    local index
+    for i = 1, #self.crates do
+        if self.crates[i].id == crateID then
+            index = i
+        end
+    end
+    if index then table.remove(self.crates, index) end
 end
 
 -- =========================== CRATE (X, Y) HELPERS ===========================

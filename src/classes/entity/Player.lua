@@ -39,9 +39,7 @@ function Player:init(id, animations, def)
     self.currentArea = {id = START_AREA_ID, type = 'area'}
     -- powerup timers
     self.invicibleTimer = 0
-    self.invicibleDuration = 30
     self.doubleSpeedTimer = 0
-    self.doubleSpeedDuration = 15
     self.isDead = false
 end
 
@@ -61,20 +59,18 @@ function Player:update(dt)
     Entity.update(self, dt)
     if love.keyboard.wasPressed('space') then
         self:fire()
-        -- dispatch event to create Shot and Bullet instances
-        Event.dispatch('shotFired', self)
     end
     -- update timers if powerups are true
     if self.powerups.invincible then
         self.invicibleTimer = self.invicibleTimer + dt
-        if self.invicibleTimer > self.invicibleDuration then
+        if self.invicibleTimer > INVINCIBLE_DURATION then
             self.powerups.invincible = false
             self.invicibleTimer = 0
         end
     end
     if self.powerups.doubleSpeed then
         self.doubleSpeedTimer = self.doubleSpeedTimer + dt
-        if self.doubleSpeedTimer > self.doubleSpeedDuration then
+        if self.doubleSpeedTimer > X2_SPEED_DURATION then
             self.powerups.doubleSpeed = false
             self.doubleSpeedTimer = 0
             -- reset velocity
@@ -112,7 +108,11 @@ end
         nil
 ]]
 function Player:fire()
+    -- dispatch event to create Shot and Bullet instances
+    Event.dispatch('shotFired', self)
+    -- reduce ammo count
     self.ammo = self.ammo - 1
+    -- change weapon if character has 2 weapons
     if self.weapons > 1 then
         self.currentWeapon = self.currentWeapon == 'right' and 'left' or 'right'
     end

@@ -24,15 +24,11 @@ EnemySystem = Class{__includes = Observer}
         nil
 ]]
 function EnemySystem:init(gruntSpriteBatch, systemManager)
-
-    -- upates with data received from Observable PlayerWalkingState class
-    -- instantiate with Player starting data
+    self.gruntSpriteBatch = gruntSpriteBatch
+    self.systemManager = systemManager
     self.playerX = PLAYER_STARTING_X
     self.playerY = PLAYER_STARTING_Y
     self.currentAreaID = START_AREA_ID
-
-    self.gruntSpriteBatch = gruntSpriteBatch
-    self.systemManager = systemManager
     self.grunts = {}
     self.turrets = {}
     self.boss = nil
@@ -111,27 +107,6 @@ function EnemySystem:message(data)
         self.playerY = data.y
         self.currentAreaID = data.areaID
     end
-end
-
--- ========================== GET ENEMY OBJECTS ==========================
-
---[[
-    Gets a count of the number of grunt type Entity in
-    an area
-
-    Params:
-        areaID: number - ID of th current area
-    Returns:
-        number: number of grunts in the area
-]]
-function EnemySystem:getGruntCount(areaID)
-    local count = 0
-    for _, grunt in pairs(self.grunts) do
-        if grunt.areaID == areaID then
-            count = count + 1
-        end
-    end
-    return count
 end
 
 -- ========================== SPAWNING ==========================
@@ -233,6 +208,66 @@ function EnemySystem:getGruntLimits(area)
         endCount = 12
     end
     return startCount, endCount
+end
+
+-- ========================== GET ENEMY OBJECTS ==========================
+
+--[[
+    Gets a count of the number of grunt type Entity in
+    an area
+
+    Params:
+        areaID: number - ID of th current area
+    Returns:
+        number: number of grunts in the area
+]]
+function EnemySystem:getGruntCount(areaID)
+    local count = 0
+    for _, grunt in pairs(self.grunts) do
+        if grunt.areaID == areaID then
+            count = count + 1
+        end
+    end
+    return count
+end
+
+--[[
+    Gets all the grunt type Entity objects in the
+    current area
+
+    Params:
+        none
+    Returns:
+        nil
+]]
+function EnemySystem:getAreaGrunts()
+    local grunts = {}
+    for _, grunt in pairs(self.grunts) do
+        if grunt.areaID == self.currentAreaID then
+            table.insert(grunts, grunt)
+        end
+    end
+    return grunts
+end
+
+-- ========================== REMOVE ENEMY OBJECTS ==========================
+
+--[[
+    Removes a grunt after its <isDead> attribute is set to true
+
+    Params:
+        gruntID
+    Returns:
+        nil
+]]
+function EnemySystem:removeGrunt(gruntID)
+    local index
+    for i = 1, #self.grunts do
+        if self.grunts[i].id == gruntID then
+            index = i
+        end
+    end
+    if index then table.remove(self.grunts, index) end
 end
 
 -- ========================== ENEMY PROXIMITY ==========================

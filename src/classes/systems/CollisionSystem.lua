@@ -22,13 +22,10 @@ CollisionSystem = Class{__includes = Observer}
         nil
 ]]
 function CollisionSystem:init(systemManager)
-
-    -- upates with data received from Observable PlayerWalkingState class
-    -- instantiate with Player starting positions
+    self.systemManager = systemManager
     self.playerX = PLAYER_STARTING_X
     self.playerY = PLAYER_STARTING_Y
-
-    self.systemManager = systemManager
+    self.currentAreaID = START_AREA_ID
 end
 
 --[[
@@ -44,6 +41,7 @@ function CollisionSystem:message(data)
     if data.source == 'PlayerWalkingState' then
         self.playerX = data.x
         self.playerY = data.y
+        self.currentAreaID = data.areaID
     end
 end
 
@@ -656,6 +654,31 @@ function CollisionSystem:bulletCollision(bullet, subject)
     return true
 end
 
+--[[
+    Detects if a Bullet object has gone past the area boundary
+
+    Params;
+        x: number - x coordinate of Bullet
+        y: number - y coordinate of Bullet
+    Returns:
+        boolean: true if collision detected
+]]
+function CollisionSystem:bulletHitBoundary(x, y)
+    if x < GMapAreaDefinitions[self.currentAreaID].x then
+        return true
+    end
+    if x > (GMapAreaDefinitions[self.currentAreaID].x + GMapAreaDefinitions[self.currentAreaID].width * FLOOR_TILE_WIDTH) then
+        return true
+    end
+    if y < GMapAreaDefinitions[self.currentAreaID].y then
+        return true
+    end
+    if y > (GMapAreaDefinitions[self.currentAreaID].y + GMapAreaDefinitions[self.currentAreaID].height * FLOOR_TILE_HEIGHT) then
+        return true
+    end
+    return false
+end
+
 -- ========================== COLLISION HANDLERS ==========================
 
 
@@ -735,7 +758,7 @@ end
 --[[
     Handles a collision between 2 Entity objects
 
-    TODO
+    TODO: implement handler when 2 entitys collide
 
     Params:
         entity: table - Entity object

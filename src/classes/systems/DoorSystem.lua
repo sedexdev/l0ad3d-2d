@@ -21,14 +21,10 @@ DoorSystem = Class{__includes = Observer}
         nil
 ]]
 function DoorSystem:init(map)
-
-    -- upates with data received from Observable PlayerWalkingState class
-    -- instantiate with Player starting data
+    self.map = map
     self.playerX = PLAYER_STARTING_X
     self.playerY = PLAYER_STARTING_Y
     self.currentAreaID = START_AREA_ID
-
-    self.map = map
     self.doors = {}
     self.currentDoor = nil
 end

@@ -32,6 +32,8 @@ STARTING_AMMO = 5000
 ENTITY_PROXIMITY = 100
 ENTITY_AXIS_PROXIMITY = 10
 START_AREA_ID = 17
+INVINCIBLE_DURATION = 30
+X2_SPEED_DURATION = 15
 
 -- bullets
 PLAYER_DAMAGE = 25
@@ -129,3 +131,6 @@ KEY_HEIGHT = 64 * 2.5
 
 -- correction for Player to collide with crates
 CRATE_CORRECTION = 160
+
+-- remove blood stain interval
+BLOOD_STAIN_INTERVAL = 180

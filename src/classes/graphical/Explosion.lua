@@ -70,8 +70,7 @@ end
 function Explosion:factory(object)
     local frames = {}
     for i = 1, 16 do table.insert(frames, i) end
-    return Explosion(
-        GTextures['explosion'],
+    return Explosion(GTextures['explosion'],
         Animation(frames, EXPLOSION_INTERVAL),
         object.x,
         object.y

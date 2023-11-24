@@ -26,6 +26,8 @@ function Boss:init(animations, def)
     self.animations = animations.animations
     self.direction = def.direction
     self.health = def.health
+    -- boolean flag to detect if the Boss is dead
+    self.isDead = false
 end
 
 --[[
@@ -52,4 +54,19 @@ end
 ]]
 function Boss:render()
    Entity.render(self)
+end
+
+--[[
+    Handles damage dealt from the Player
+
+    Params:
+        none
+    Returns:
+        nil
+]]
+function Boss:takeDamage()
+    self.health = self.health - PLAYER_DAMAGE
+    if self.health <= 0 then
+        self.isDead = true
+    end
 end
