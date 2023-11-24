@@ -295,7 +295,7 @@ function DoorSystem:getAreaDoors(areaID)
     -- get MapArea definition of the current area
     local areaDef = self.map:getAreaDefinition(areaID)
     -- check if the area has adjacent areas
-    if areaDef.adjacentAreas then
+    if areaDef.adjacentAreas ~= nil then
         -- check each adjacent area
         for _, area in pairs(areaDef.adjacentAreas) do
             -- and find the right door from the door system
