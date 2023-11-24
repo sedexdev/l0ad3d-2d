@@ -91,7 +91,7 @@ function EffectsSystem:render()
     local index
     for i = 1, #self.explosions do
         self.explosions[i]:render()
-        if self.explosions[i].animations:getCurrentFrame() == #self.explosions then
+        if self.explosions[i].animations:getCurrentFrame() == 16 then
             index = i
             break
         end

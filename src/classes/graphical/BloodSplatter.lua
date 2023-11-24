@@ -38,7 +38,9 @@ function BloodSplatter:render()
         GQuads['blood-splatter'][1],
         self.x, self.y,
         self.angle,
-        1.2, 1.2
+        1.2, 1.2,
+        ENTITY_WIDTH / 2,
+        ENTITY_HEIGHT / 2
     )
 end
 
