@@ -26,7 +26,7 @@ below)</p>
         <ul>
             <li>Selection error     - https://freesound.org/people/Isaac200000/</li>
             <li>Gun click select    - https://freesound.org/people/magnuswaker/</li>
-            <li>Gunshot   - https://freesound.org/people/Xenonn/</li>
+            <li>Gunshot             - https://freesound.org/people/Xenonn/</li>
         </ul>
     <li>Graphics:</li>
         <ul>
@@ -34,7 +34,7 @@ below)</p>
             <li>Bullet holes        - https://www.spriters-resource.com/submitter/MagicMaker/</li>
             <li>Gunshot flash       - https://www.pngwing.com/en/free-png-mwnxf</li>
             <li>Gunshot flash 2     - https://www.pngitem.com/middle/TbhhRJ_muzzle-flash-vfx-transparent-background-gun-shot-png/
-            <li>Blood splatter      - https://www.vecteezy.com/free-png/blood-png</li>
+            <li>Blood splatter      - https://www.freeiconspng.com/images/blood-splatter-png</li>
         </ul>
     <li>Character select:</li>
         <ul>
