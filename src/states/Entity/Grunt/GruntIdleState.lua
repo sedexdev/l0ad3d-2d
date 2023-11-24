@@ -102,7 +102,7 @@ function GruntIdleState:render()
     local currentFrame = self.grunt.animations['walking-'..self.grunt.direction]:getCurrentFrame()
     -- add the Grunt current quad to the SpriteBatch
     self.gruntSpriteBatch:clear()
-    self.gruntSpriteBatch:add(GQuads['grunt'][currentFrame], self.grunt.x, self.grunt.y, 3, 3)
+    self.gruntSpriteBatch:add(GQuads['grunt'][currentFrame], self.grunt.x, self.grunt.y, 0, 3, 3)
     -- render the Grunt quads
     self.gruntSpriteBatch:draw()
 end

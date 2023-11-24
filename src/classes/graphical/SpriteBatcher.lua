@@ -29,13 +29,14 @@ end
         quad: Quad   - the quad to send to the Spritebatch draw function
         x:    number - x coordinate of quad
         y:    number - y coordinate of quad
+        r:    number - rotation of quad
         s1:   number - scale factor 1
         s2:   number - scale factor 2
     Returns:
         nil
 ]]
-function SpriteBatcher:add(quad, x, y, s1, s2)
-    self.spriteBatch:add(quad, x, y, 0, s1, s2)
+function SpriteBatcher:add(quad, x, y, r, s1, s2)
+    self.spriteBatch:add(quad, x, y, r, s1, s2)
 end
 
 --[[

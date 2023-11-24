@@ -276,7 +276,8 @@ function SystemManager:checkBullet()
                     table.insert(self.effectsSystem.bloodStains, bloodStain)
                     Timer.after(BLOOD_STAIN_INTERVAL, function ()
                         bloodStain = nil
-                        table.remove(self.effectsSystem.bloodStains, bloodStain)
+                        -- pass 1 as the index to always remove the first one rendered
+                        table.remove(self.effectsSystem.bloodStains, 1)
                     end)
                     self.enemySystem:removeGrunt(grunt.id)
                     bulletHit = true
