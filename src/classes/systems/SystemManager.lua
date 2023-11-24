@@ -86,6 +86,7 @@ function SystemManager:message(data)
         self:checkPowerUps()
         self:checkMap()
         self:checkGrunts()
+        self:checkBoss()
     end
     if data.source == 'Bullet' then
         self.bulletData = data
@@ -221,6 +222,23 @@ end
 function SystemManager:checkGrunts()
     -- will only spawn grunts in adjacent areas that have 0 grunts in
     self.enemySystem:spawn(self.map:getAreaAdjacencies(self.playerData.areaID))
+end
+
+--[[
+    Checks ton see if we need to spawn the Boss
+
+    Params:
+        none
+    Returns:
+        nil
+]]
+function SystemManager:checkBoss()
+    -- spawn Boss if we are in the spawn area and not yet spawned
+    if self.playerData.areaID == BOSS_SPAWN_AREA_ID and not self.enemySystem.bossSpawned then
+        -- Boss is then spawned in the defined area
+        self.enemySystem:spawnBoss(self.map:getAreaDefinition(BOSS_AREA_ID))
+        self.enemySystem.bossSpawned = true
+    end
 end
 
 --[[

@@ -31,6 +31,8 @@ function EnemySystem:init(gruntSpriteBatch, systemManager)
     self.currentAreaID = START_AREA_ID
     self.grunts = {}
     self.turrets = {}
+    -- boss tracker flag and object
+    self.bossSpawned = false
     self.boss = nil
     self.gruntID = 1
 end
@@ -166,7 +168,7 @@ end
 
 --[[
     Spawns the Boss Entity object when the Player enters the
-    corridor type MapArea object with ID == 4
+    corridor type MapArea object with ID == 4 
 
     Params:
         area: table - MapArea object to spawn the Boss in

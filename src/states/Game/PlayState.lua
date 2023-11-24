@@ -280,4 +280,5 @@ function PlayState:displayPlayerData()
     love.graphics.print('X: ' .. tostring(self.player.x), self.cameraX + 50, self.cameraY + 460)
     love.graphics.print('Y: ' .. tostring(self.player.y), self.cameraX + 50, self.cameraY + 500)
     love.graphics.print('Direction: ' .. self.player.direction, self.cameraX + 50, self.cameraY + 540)
+    love.graphics.print('Boss spawned: ' .. tostring(self.systemManager.enemySystem.bossSpawned), self.cameraX + 50, self.cameraY + 580)
 end
