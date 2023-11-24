@@ -615,26 +615,6 @@ function CollisionSystem:crateCollision(crate, entity)
 end
 
 --[[
-    Detects collisions between entity objects so they do not pass
-    through each other
-
-    Params:
-        entity1: table - Entity object
-        entity2: table - Entity object
-    Returns:
-        boolean: true if collision detected
-]]
-function CollisionSystem:entityCollision(entity1, entity2)
-    if (entity1.x > entity2.x + entity2.width + ENTITY_PROXIMITY) or (entity2.x - ENTITY_PROXIMITY > entity1.x + ENTITY_WIDTH) then
-        return false
-    end
-    if (entity1.y > entity2.y + entity2.height + ENTITY_PROXIMITY) or (entity2.y - ENTITY_PROXIMITY > entity1.y + ENTITY_HEIGHT) then
-        return false
-    end
-    return true
-end
-
---[[
     Detects a collision with a subject and a Bullet object using
     AABB collision detection
 
@@ -753,18 +733,4 @@ function CollisionSystem:handleDoorCollision(door, edge)
             self.systemManager.player.y = (door.leftY + H_DOOR_HEIGHT) - ENTITY_HEIGHT
         end
     end
-end
-
---[[
-    Handles a collision between 2 Entity objects
-
-    TODO: implement handler when 2 entitys collide
-
-    Params:
-        entity: table - Entity object
-    Returns:
-        nil
-]]
-function CollisionSystem:handleEntityCollision(entity)
-
 end
