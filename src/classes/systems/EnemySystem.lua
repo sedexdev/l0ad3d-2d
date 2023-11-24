@@ -35,6 +35,7 @@ function EnemySystem:init(gruntSpriteBatch, systemManager)
     self.bossSpawned = false
     self.boss = nil
     self.gruntID = 1
+    self.turretID = 1
 end
 
 --[[
@@ -77,6 +78,9 @@ end
         none
 ]]
 function EnemySystem:render()
+    for _, turret in pairs(self.turrets) do
+        turret:render()
+    end
     for _, grunt in pairs(self.grunts) do
         for _, adjacentID in pairs(GAreaAdjacencyDefinitions[self.currentAreaID]) do
             if grunt.areaID == self.currentAreaID or grunt.areaID == adjacentID then
@@ -85,9 +89,6 @@ function EnemySystem:render()
             end
         end
         ::continue::
-    end
-    for _, turret in pairs(self.turrets) do
-        turret:render()
     end
     if self.boss then
         self.boss:render()
@@ -164,6 +165,111 @@ function EnemySystem:spawnGrunts(numGrunts, area)
         table.insert(self.grunts, grunt)
         self.gruntID = self.gruntID + 1
     end
+end
+
+--[[
+    Spawns Turret Entity objects in the the defined areas of the
+    Map that have them
+
+    Params:
+        ...
+    Returns:
+        nil
+]]
+function EnemySystem:spawnTurrets()
+    for i = 1, #GMapAreaDefinitions do
+        local areaDef = GMapAreaDefinitions[i]
+        local turrets = areaDef.turrets
+        if turrets ~= nil then
+            if turrets == 2 then
+                self:spawn2Turrets(i, areaDef)
+            end
+            if turrets == 4 then
+                self:spawn4Turrets(i, areaDef)
+            end
+        end
+    end
+end
+
+--[[
+    Spawns 2 turrets in the MapArea location defined by
+    GMapAreaDefinitions[i]
+
+    Params:
+        i:       number - current area index
+        areaDef: number - definition of the MapArea object at index i
+    Returns:
+        nil
+]]
+function EnemySystem:spawn2Turrets(i, areaDef)
+    -- spawn vertically in the area
+    local centre = areaDef.y + (areaDef.height * FLOOR_TILE_HEIGHT) / 2
+    local xOffset = areaDef.x + (areaDef.width * FLOOR_TILE_WIDTH) / 2 - (TURRET_WIDTH * 2.5 / 2)
+    local yOffsets = {
+        [1] = centre - 500 - (TURRET_HEIGHT * 2.5 / 2),
+        [2] = centre + 500 - (TURRET_HEIGHT * 2.5 / 2)
+    }
+    for j = 1, 2 do
+        self:spawnTurretsHelper(xOffset, yOffsets[j], i)
+    end
+end
+
+--[[
+    Spawns 2 turrets in the MapArea location defined by
+    GMapAreaDefinitions[i]
+
+    Params:
+        i:       number - current area index
+        areaDef: number - definition of the MapArea object at index i
+    Returns:
+        nil
+]]
+function EnemySystem:spawn4Turrets(i, areaDef)
+    -- spawn vertically in the area
+    local centre = areaDef.y + (areaDef.height * FLOOR_TILE_HEIGHT) / 2
+    local xOffsets = {
+        [1] = areaDef.x + (areaDef.width / 4 * FLOOR_TILE_WIDTH) - (TURRET_WIDTH * 2.5 / 2),
+        [2] = areaDef.x + ((areaDef.width / 4 * 3) * FLOOR_TILE_WIDTH) - (TURRET_WIDTH * 2.5 / 2)
+    }
+    local yOffsets = {
+        [1] = centre - 600 - (TURRET_HEIGHT * 2.5 / 2),
+        [2] = centre + 600 - (TURRET_HEIGHT * 2.5 / 2)
+    }
+    local coordinates = {
+        [1] = {x = xOffsets[1], y = yOffsets[1]},
+        [2] = {x = xOffsets[1], y = yOffsets[2]},
+        [3] = {x = xOffsets[2], y = yOffsets[1]},
+        [4] = {x = xOffsets[2], y = yOffsets[2]},
+    }
+    for j = 1, 4 do
+        self:spawnTurretsHelper(coordinates[j].x, coordinates[j].y, i)
+    end
+end
+
+--[[
+    Helper function to instantiate and insert new Turret objects
+    in the <self.turrets> table
+
+    Params:
+        x:      number - x coordinate  
+        y:      number - y coordinate
+        areaID: number - area ID
+    Returns:
+        nil
+]]
+function EnemySystem:spawnTurretsHelper(x, y, areaID)
+    local turret = Turret(self.turretID, GAnimationDefintions['turret'], GTurretDefinition)
+    turret.x = x
+    turret.y = y
+    turret.areaID = areaID
+    turret.direction = DIRECTIONS[math.random(1, 8)]
+    turret.stateMachine = StateMachine {
+        ['idle'] = function () return TurretIdleState(turret) end,
+        ['attacking'] = function () return TurretAttackingState() end
+    }
+    turret.stateMachine:change('idle')
+    table.insert(self.turrets, turret)
+    self.turretID = self.turretID + 1
 end
 
 --[[

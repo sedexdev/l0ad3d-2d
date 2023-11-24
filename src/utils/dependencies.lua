@@ -71,6 +71,7 @@ require 'src/classes/entity/Boss'
 require 'src/classes/entity/Entity'
 require 'src/classes/entity/Grunt'
 require 'src/classes/entity/Player'
+require 'src/classes/entity/Turret'
 require 'src/classes/map/Door'
 require 'src/classes/map/HUD'
 require 'src/classes/map/Map'
@@ -102,6 +103,8 @@ require 'src/states/Entity/Grunt/GruntIdleState'
 require 'src/states/Entity/Grunt/GruntRushingState'
 require 'src/states/Entity/Boss/BossIdleState'
 require 'src/states/Entity/Boss/BossRushingState'
+require 'src/states/Entity/Turret/TurretIdleState'
+require 'src/states/Entity/Turret/TurretAttackingState'
 
 -- util files
 require 'src/utils/utils'
@@ -132,6 +135,7 @@ GQuads = {
     ['explosion'] = GenerateQuads(GTextures['explosion'], 64, 64),
     ['blood-splatter'] = GenerateQuads(GTextures['blood-splatter'], 384, 384),
     ['grunt'] = GenerateQuads(GTextures['grunt'], 128, 128),
+    ['turret'] = GenerateQuads(GTextures['turret'], 256, 256),
     ['boss'] = GenerateQuads(GTextures['boss'], 128, 128),
     ['crate'] = GenerateQuads(GTextures['crate'], 128, 128),
     ['powerups'] = GenerateQuads(GTextures['powerups'], 64, 64),

@@ -102,6 +102,8 @@ function Map:generateLevel(systemManager)
     systemManager.objectSystem:spawn()
     -- spawn enemies in area 17 and it's adjacent areas at the start
     systemManager.enemySystem:spawn(self:getStartingAreas())
+    -- spawn the turrets in each area
+    systemManager.enemySystem:spawnTurrets()
 end
 
 --[[

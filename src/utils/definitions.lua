@@ -84,12 +84,8 @@ GAnimationDefintions = {
         }
     },
     ['turret'] = {
-        texture = nil,
-        fireShot = nil,
-        animations = {
-            frames = nil,
-            intervals = nil
-        }
+        texture = GTextures['turret'],
+        fireShot = GTextures['boss-gun-flash'],
     }
 }
 
@@ -174,8 +170,11 @@ GTurretDefinition = {
     type = 'turret',
     x = nil,
     y = nil,
-    width = nil,
-    height = nil,
+    dx = nil,
+    dy = nil,
+    width = TURRET_WIDTH,
+    height = TURRET_HEIGHT,
+    areaID = nil,
     direction = nil,
     stateMachine = nil,
     health = 200,
@@ -220,27 +219,27 @@ GMapAreaDefinitions = {
     [15] = {x = nil, y = nil, width = 18, height = 2, type = 'corridor', orientation = 'horizontal', bends = {'RB'}, doors = nil, joins = {{33, 'R'}}},
     [16] = {x = nil, y = nil, width = 1, height = 10, type = 'corridor', orientation = 'vertical', bends = {'LT'}, doors = nil, joins = {{36, 'T'}}},
     -- ========== MAIN AREAS ========== 
-    [17] = {x = -3200, y = -1600, width = 20, height = 20, type = 'area', adjacentAreas = nil, doors = {L = 'purple', B = 'purple', R = 'purple'}, key = nil},
-    [18] = {x = -9920, y = -1280, width = 16, height = 16, type = 'area', adjacentAreas = nil, doors = {L = 'purple', B = 'purple', R = 'purple', T = 'purple'}, key = nil},
-    [19] = {x = -1280, y = 3520, width = 8, height = 8, type = 'area', adjacentAreas = nil, doors = {T = 'purple'}, key = nil},
-    [20] = {x = 1840, y = 1920, width = 8, height = 8, type = 'area', adjacentAreas = nil, doors = {L = 'purple'}, key = nil},
-    [21] = {x = 4800, y = -640, width = 8, height = 8, type = 'area', adjacentAreas = nil, doors = {L = 'purple', R = 'purple', T = 'purple'}, key = nil},
-    [22] = {x = -8640, y = -3360, width = 8, height = 8, type = 'area', adjacentAreas = nil, doors = {B = 'purple'}, key = nil},
-    [23] = {x = -9920, y = 2080, width = 16, height = 8, type = 'area', adjacentAreas = nil, doors = {T = 'purple'}, key = nil},
-    [24] = {x = -15680, y = -1280, width = 8, height = 16, type = 'area', adjacentAreas = {[1] = {areaID = 25, doorID = 4}, [2] = {areaID = 26, doorID = 3}}, doors = {B = 'purple', R = 'purple'}, key = nil},
-    [25] = {x = -15680, y = -2640, width = 8, height = 8, type = 'area', adjacentAreas = nil, doors = {B = 'purple'}, key = 'green'},
-    [26] = {x = -18320, y = -640, width = 8, height = 8, type = 'area', adjacentAreas = nil, doors = {R = 'blue'}, key = nil},
-    [27] = {x = -18560, y = 2560, width = 26, height = 22, type = 'area', adjacentAreas = {[1] = {areaID = 28, doorID = 2}, [2] = {areaID = 29, doorID = 2}}, doors = {T = 'red'}, key = nil},
-    [28] = {x = -18240, y = 6160, width = 8, height = 8, type = 'area', adjacentAreas = nil, doors = {T = 'purple'}, key = nil},
-    [29] = {x = -14400, y = 6160, width = 8, height = 8, type = 'area', adjacentAreas = nil, doors = {T = 'purple'}, key = nil},
-    [30] = {x = 5440, y = -2080, width = 4, height = 4, type = 'area', adjacentAreas = nil, doors = {B = 'purple'}, key = nil},
-    [31] = {x = 6720, y = 1040, width = 20, height = 22, type = 'area', adjacentAreas = {[1] = {areaID = 32, doorID = 1}}, doors = {B = 'purple', T = 'purple'}, key = nil},
-    [32] = {x = 13200, y = 2080, width = 6, height = 8, type = 'area', adjacentAreas = nil, doors = {L = 'purple'}, key = nil},
-    [33] = {x = 9680, y = -2560, width = 16, height = 12, type = 'area', adjacentAreas = nil, doors = {B = 'purple', R = 'purple'}, key = nil},
-    [34] = {x = 13520, y = 4720, width = 20, height = 20, type = 'area', adjacentAreas = {[1] = {areaID = 35, doorID = 2}}, doors = {L = 'purple'}, key = nil},
-    [35] = {x = 15360, y = 8000, width = 8, height = 8, type = 'area', adjacentAreas = nil, doors = {T = 'purple'}, key = 'blue'},
-    [36] = {x = 16480, y = -160, width = 24, height = 24, type = 'area', adjacentAreas = {[1] = {areaID = 37, doorID = 2}}, doors = {T = 'green'}, key = nil},
-    [37] = {x = 19680, y = 3760, width = 4, height = 4, type = 'area', adjacentAreas = nil, doors = {T = 'purple'}, key = 'red'}
+    [17] = {x = -3200, y = -1600, width = 20, height = 20, type = 'area', adjacentAreas = nil, doors = {L = 'purple', B = 'purple', R = 'purple'}, key = nil, turrets = nil},
+    [18] = {x = -9920, y = -1280, width = 16, height = 16, type = 'area', adjacentAreas = nil, doors = {L = 'purple', B = 'purple', R = 'purple', T = 'purple'}, key = nil, turrets = nil},
+    [19] = {x = -1280, y = 3520, width = 8, height = 8, type = 'area', adjacentAreas = nil, doors = {T = 'purple'}, key = nil, turrets = nil},
+    [20] = {x = 1840, y = 1920, width = 8, height = 8, type = 'area', adjacentAreas = nil, doors = {L = 'purple'}, key = nil, turrets = nil},
+    [21] = {x = 4800, y = -640, width = 8, height = 8, type = 'area', adjacentAreas = nil, doors = {L = 'purple', R = 'purple', T = 'purple'}, key = nil, turrets = nil},
+    [22] = {x = -8640, y = -3360, width = 8, height = 8, type = 'area', adjacentAreas = nil, doors = {B = 'purple'}, key = nil, turrets = nil},
+    [23] = {x = -9920, y = 2080, width = 16, height = 8, type = 'area', adjacentAreas = nil, doors = {T = 'purple'}, key = nil, turrets = nil},
+    [24] = {x = -15680, y = -1280, width = 8, height = 16, type = 'area', adjacentAreas = {[1] = {areaID = 25, doorID = 4}, [2] = {areaID = 26, doorID = 3}}, doors = {B = 'purple', R = 'purple'}, key = nil, turrets = 2},
+    [25] = {x = -15680, y = -2640, width = 8, height = 8, type = 'area', adjacentAreas = nil, doors = {B = 'purple'}, key = 'green', turrets = nil},
+    [26] = {x = -18320, y = -640, width = 8, height = 8, type = 'area', adjacentAreas = nil, doors = {R = 'blue'}, key = nil, turrets = nil},
+    [27] = {x = -18560, y = 2560, width = 26, height = 22, type = 'area', adjacentAreas = {[1] = {areaID = 28, doorID = 2}, [2] = {areaID = 29, doorID = 2}}, doors = {T = 'red'}, key = nil, turrets = 4},
+    [28] = {x = -18240, y = 6160, width = 8, height = 8, type = 'area', adjacentAreas = nil, doors = {T = 'purple'}, key = nil, turrets = nil},
+    [29] = {x = -14400, y = 6160, width = 8, height = 8, type = 'area', adjacentAreas = nil, doors = {T = 'purple'}, key = nil, turrets = nil},
+    [30] = {x = 5440, y = -2080, width = 4, height = 4, type = 'area', adjacentAreas = nil, doors = {B = 'purple'}, key = nil, turrets = nil},
+    [31] = {x = 6720, y = 1040, width = 20, height = 22, type = 'area', adjacentAreas = {[1] = {areaID = 32, doorID = 1}}, doors = {B = 'purple', T = 'purple'}, key = nil, turrets = 2},
+    [32] = {x = 13200, y = 2080, width = 6, height = 8, type = 'area', adjacentAreas = nil, doors = {L = 'purple'}, key = nil, turrets = nil},
+    [33] = {x = 9680, y = -2560, width = 16, height = 12, type = 'area', adjacentAreas = nil, doors = {B = 'purple', R = 'purple'}, key = nil, turrets = nil},
+    [34] = {x = 13520, y = 4720, width = 20, height = 20, type = 'area', adjacentAreas = {[1] = {areaID = 35, doorID = 2}}, doors = {L = 'purple'}, key = nil, turrets = 2},
+    [35] = {x = 15360, y = 8000, width = 8, height = 8, type = 'area', adjacentAreas = nil, doors = {T = 'purple'}, key = 'blue', turrets = nil},
+    [36] = {x = 16480, y = -160, width = 24, height = 24, type = 'area', adjacentAreas = {[1] = {areaID = 37, doorID = 2}}, doors = {T = 'green'}, key = nil, turrets = 4},
+    [37] = {x = 19680, y = 3760, width = 4, height = 4, type = 'area', adjacentAreas = nil, doors = {T = 'purple'}, key = 'red', turrets = nil},
 }
 
 -- (x, y) coordinates for each key
