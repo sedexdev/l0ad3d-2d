@@ -151,7 +151,7 @@ end
     Params:
         observer: table - Observer object 
     Returns:
-        table: Player object (x, y) coordinates
+        nil
 ]]
 function PlayerWalkingState:subscribe(observer)
     table.insert(self.observers, observer)
@@ -163,7 +163,7 @@ end
     Params:
         observer: table - Observer object 
     Returns:
-        table: Player object (x, y) coordinates
+        nil
 ]]
 function PlayerWalkingState:unsubscribe(observer)
     local index
@@ -187,6 +187,7 @@ end
 function PlayerWalkingState:notify()
     for _, observer in pairs(self.observers) do
         observer:message({
+            source = 'PlayerWalkingState',
             x = self.player.x,
             y = self.player.y,
             type = self.player.type,

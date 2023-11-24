@@ -36,13 +36,15 @@ end
     (x, y) coordinates of the Player
 
     Params:
-        playerData: table - Player object current state
+        data: table - Player object current state
     Returns;
         nil
 ]]
-function CollisionSystem:message(playerData)
-    self.playerX = playerData.x
-    self.playerY = playerData.y
+function CollisionSystem:message(data)
+    if data.source == 'PlayerWalkingState' then
+        self.playerX = data.x
+        self.playerY = data.y
+    end
 end
 
 -- ========================== WALL COLLISIONS ==========================
@@ -629,6 +631,26 @@ function CollisionSystem:entityCollision(entity1, entity2)
         return false
     end
     if (entity1.y > entity2.y + entity2.height + ENTITY_PROXIMITY) or (entity2.y - ENTITY_PROXIMITY > entity1.y + ENTITY_HEIGHT) then
+        return false
+    end
+    return true
+end
+
+--[[
+    Detects a collision with a subject and a Bullet object using
+    AABB collision detection
+
+    Params:
+        bullet:  table - Bullet object
+        subject: table - object to check collision with
+    Returns:
+        boolean: true if collision detected
+]]
+function CollisionSystem:bulletCollision(bullet, subject)
+    if (bullet.x > subject.x + subject.width) or (subject.x > bullet.x + 10) then
+        return false
+    end
+    if (bullet.y > subject.y + subject.height) or (subject.y > bullet.y + 10) then
         return false
     end
     return true

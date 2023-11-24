@@ -101,14 +101,16 @@ end
     (x, y) coordinates of the Player
 
     Params:
-        playerData: table - Player object current state
+        data: table - Player object current state
     Returns;
         nil
 ]]
-function EnemySystem:message(playerData)
-    self.playerX = playerData.x
-    self.playerY = playerData.y
-    self.currentAreaID = playerData.areaID
+function EnemySystem:message(data)
+    if data.source == 'PlayerWalkingState' then
+        self.playerX = data.x
+        self.playerY = data.y
+        self.currentAreaID = data.areaID
+    end
 end
 
 -- ========================== GET ENEMY OBJECTS ==========================
