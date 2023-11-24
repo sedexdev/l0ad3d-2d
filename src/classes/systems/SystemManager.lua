@@ -237,10 +237,12 @@ function SystemManager:checkBullet()
     local crates = self.objectSystem:getAreaCrates()
     for _, crate in pairs(crates) do
         if self.collisionSystem:bulletCollision(self.bulletData, crate) then
+            -- remove the Bullet on hit to avoid it continuing to update
+            self.effectsSystem:removeBullet(self.bulletData.id)
             self.objectSystem:removeCrate(crate.id)
             table.insert(self.effectsSystem.explosions, Explosion:factory(crate))
-            self.effectsSystem:removeBullet(self.bulletData.id)
             bulletHit = true
+            break
         end
     end
     -- if Bullet didn't hit a crate check for grunts
@@ -248,6 +250,8 @@ function SystemManager:checkBullet()
         local grunts = self.enemySystem:getAreaGrunts()
         for _, grunt in pairs(grunts) do
             if self.collisionSystem:bulletCollision(self.bulletData, grunt) then
+                -- remove the Bullet on hit to avoid it continuing to update
+                self.effectsSystem:removeBullet(self.bulletData.id)
                 grunt:takeDamage()
                 if grunt.isDead then
                     local bloodStain = BloodSplatter:factory(grunt.x, grunt.y, grunt.direction)
@@ -257,8 +261,8 @@ function SystemManager:checkBullet()
                         table.remove(self.effectsSystem.bloodStains, bloodStain)
                     end)
                     self.enemySystem:removeGrunt(grunt.id)
-                    self.effectsSystem:removeBullet(self.bulletData.id)
                     bulletHit = true
+                    break
                 end
             end
         end
