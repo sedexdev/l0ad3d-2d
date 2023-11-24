@@ -70,7 +70,7 @@ function EffectsSystem:update(dt)
             break
         end
     end
-    if index then
+    if index ~= nil then
         self.shots[index] = nil
         -- remove shots once their interval has passed
         table.remove(self.shots, index)
@@ -96,7 +96,7 @@ function EffectsSystem:render()
             break
         end
     end
-    if index then
+    if index ~= nil then
         self.explosions[index] = nil
         table.remove(self.explosions, index)
     end
@@ -144,7 +144,7 @@ function EffectsSystem:removeBullet(id)
             index = i
         end
     end
-    if index then 
+    if index ~= nil then
         self.bullets[index] = nil
         table.remove(self.bullets, index)
     end

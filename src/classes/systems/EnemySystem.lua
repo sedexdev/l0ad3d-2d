@@ -375,7 +375,7 @@ function EnemySystem:removeGrunt(gruntID)
             index = i
         end
     end
-    if index then
+    if index ~= nil then
         self.grunts[index] = nil
         table.remove(self.grunts, index)
     end

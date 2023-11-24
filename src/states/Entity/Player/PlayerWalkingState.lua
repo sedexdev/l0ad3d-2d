@@ -170,7 +170,7 @@ function PlayerWalkingState:unsubscribe(observer)
             break
         end
     end
-    if index then
+    if index ~= nil then
         self.observers[index] = nil
         table.remove(self.observers, index)
     end

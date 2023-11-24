@@ -278,7 +278,7 @@ function ObjectSystem:handleKeyCollision(key)
             break
         end
     end
-    if index then 
+    if index ~= nil then 
         self.keys[index] = nil
         table.remove(self.keys, index)
     end
@@ -337,7 +337,7 @@ function ObjectSystem:removePowerUp(object, name)
             index = i
         end
     end
-    if index then 
+    if index ~= nil then 
         self.powerups[index] = nil
         table.remove(self.powerups[name], index)
     end
@@ -359,7 +359,7 @@ function ObjectSystem:removeCrate(crateID)
             index = i
         end
     end
-    if index then
+    if index ~= nil then
         self.crates[index] = nil
         table.remove(self.crates, index)
     end

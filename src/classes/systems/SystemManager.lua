@@ -289,8 +289,10 @@ function SystemManager:checkBullet()
     -- if Bullet hit nothing then remove it when it hits the area boundary
     if not bulletHit then
         if self.collisionSystem:bulletHitBoundary(self.bulletData.x, self.bulletData.y) then
-            self.effectsSystem:emitWallParticleEffect(self.bulletData.x, self.bulletData.y)
+            -- capture Bullet coordinates before removing
+            local x, y = self.bulletData.x, self.bulletData.y
             self.effectsSystem:removeBullet(self.bulletData.id)
+            self.effectsSystem:emitWallParticleEffect(x, y)
         end
     end
 end
