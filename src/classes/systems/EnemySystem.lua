@@ -375,7 +375,10 @@ function EnemySystem:removeGrunt(gruntID)
             index = i
         end
     end
-    if index then table.remove(self.grunts, index) end
+    if index then
+        self.grunts[index] = nil
+        table.remove(self.grunts, index)
+    end
 end
 
 -- ========================== ENEMY PROXIMITY ==========================

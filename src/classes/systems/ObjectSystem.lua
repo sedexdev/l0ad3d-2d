@@ -278,7 +278,10 @@ function ObjectSystem:handleKeyCollision(key)
             break
         end
     end
-    if index then table.remove(self.keys, index) end
+    if index then 
+        self.keys[index] = nil
+        table.remove(self.keys, index)
+    end
 end
 
 --[[
@@ -334,7 +337,10 @@ function ObjectSystem:removePowerUp(object, name)
             index = i
         end
     end
-    if index then table.remove(self.powerups[name], index) end
+    if index then 
+        self.powerups[index] = nil
+        table.remove(self.powerups[name], index)
+    end
 end
 
 --[[
@@ -353,7 +359,10 @@ function ObjectSystem:removeCrate(crateID)
             index = i
         end
     end
-    if index then table.remove(self.crates, index) end
+    if index then
+        self.crates[index] = nil
+        table.remove(self.crates, index)
+    end
 end
 
 -- =========================== CRATE (X, Y) HELPERS ===========================

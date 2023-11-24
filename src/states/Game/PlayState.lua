@@ -60,6 +60,8 @@ end
         nil
 ]]
 function PlayState:update(dt)
+    -- debug
+    print(collectgarbage('count'))
     if love.keyboard.wasPressed('escape') then
         self.paused = true
     end

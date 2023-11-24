@@ -144,7 +144,10 @@ function EffectsSystem:removeBullet(id)
             index = i
         end
     end
-    if index then table.remove(self.bullets, index) end
+    if index then 
+        self.bullets[index] = nil
+        table.remove(self.bullets, index)
+    end
 end
 
 --[[
