@@ -264,8 +264,8 @@ function EnemySystem:spawnTurretsHelper(x, y, areaID)
     turret.areaID = areaID
     turret.direction = DIRECTIONS[math.random(1, 8)]
     turret.stateMachine = StateMachine {
-        ['idle'] = function () return TurretIdleState(turret) end,
-        ['attacking'] = function () return TurretAttackingState() end
+        ['idle'] = function () return TurretIdleState(turret, self.systemManager.player) end,
+        ['attacking'] = function () return TurretAttackingState(turret, self.systemManager.player) end
     }
     turret.stateMachine:change('idle')
     table.insert(self.turrets, turret)

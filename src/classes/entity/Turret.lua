@@ -27,6 +27,7 @@ function Turret:init(id, animations, def)
     self.fireShot = animations.fireShot
     self.direction = def.direction
     self.health = def.health
+    self.rotateFrequency = def.rotateFrequency
     -- boolean flag to detect if the Turret is dead
     self.isDead = false
 end

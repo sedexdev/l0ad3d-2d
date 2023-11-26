@@ -16,13 +16,31 @@ TurretIdleState = Class{__includes = BaseState}
     TurretIdleState constructor
 
     Params:
-        turret: table - turret type Entity object
+        turret: table - Turret object
+        player: table - Player object
     Returns:
         nil
 ]]
-function TurretIdleState:init(turret)
+function TurretIdleState:init(turret, player)
     self.turret = turret
+    self.player = player
 end
+
+--[[
+    TurretAttackingState update function.
+
+    Params:
+        dt: number - deltatime counter for current frame rate
+    Returns:
+        nil
+]]
+function TurretIdleState:update(dt)
+    -- change to attack state when Player enters the area
+    if self.player.currentArea.id == self.turret.areaID then
+        self.turret.stateMachine:change('attacking')
+    end
+end
+
 
 --[[
     TurretIdleState render function.
@@ -37,7 +55,8 @@ function TurretIdleState:render()
     love.graphics.draw(self.turret.texture,
         GQuads['turret'][1],
         self.turret.x, self.turret.y,
-        0,
-        2.5, 2.5
+        ENTITY_ANGLES[self.turret.direction],
+        2.5, 2.5,
+        TURRET_WIDTH / 2, TURRET_HEIGHT / 2
     )
 end

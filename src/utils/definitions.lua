@@ -175,11 +175,10 @@ GTurretDefinition = {
     width = TURRET_WIDTH,
     height = TURRET_HEIGHT,
     areaID = nil,
-    direction = nil,
+    direction = 'north',
     stateMachine = nil,
     health = 200,
-    fireRate = 2,
-    rotateFrequency = 4
+    rotateFrequency = 2
 }
 
 --[[
