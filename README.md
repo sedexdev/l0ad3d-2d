@@ -73,3 +73,7 @@ your friends will compete to have the most points!</p>
             <li>Fwank               - https://www.deviantart.com/tj-ryan/art/Fwank-from-Loaded-254964042</il>
         </ul>
 </ul>
+
+<h2>LICENSE</h2>
+
+<a href="https://github.com/sedexdev/l0ad3d-2d/blob/main/LICENSE">MIT<a>
