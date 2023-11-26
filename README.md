@@ -8,10 +8,40 @@ to emulate the original in a 2D plane using Lua and
 the LOVE2D game engine for development. All textures
 were created by me using GIMP (unless otherwise credited
 below)</p>
+
 <p>Author: Andrew Macmillan</p>
 <p>Version: 1.0</p>
 
+<h2>Running the code</h2>
+
+<p>This project currently requires a local install of the LOVE2D game engine to run.
+A fully working executable will be published in the <code>bin</code> directory
+when the game is finished packaged with the required libraries</p>
+
+<p>LOVE can be downloaded and installed from <a href="https://www.love2d.org/">their 
+website here</a></p>
+
+<p>Once LOVE2D is installed navigate to the root of the project and run <code>love .</code> 
+or <code>lovec .</code> on Windows</p>
+
+<h2>Gameplay</h2>
+
+<p>The game is very simple. There is a single level that you need to navigate to find keys
+to get into the boss room and kill the boss. You get points for the number of enemies killed
+along the way. After killing the boss the level starts again, and all enemies get slightly
+stronger. After eventually dying your score goes in the high scores table where you and
+your friends will compete to have the most points!</p>
+
+<h3>Controls</h3>
+
+<p>Movement: WASD or up, down, left, right keys</p>
+<p>Shooting: Space bar</p>
+<p>Pause: Escape key</p>
+<p>Menu select: Up, down keys and Enter to select</p>
+<p>Enter high score: Up, down keys and Enter to select</p>
+
 <h2>Non-original sources credit</h2>
+
 <ul>
     <li>Fonts:</li>
         <ul>
