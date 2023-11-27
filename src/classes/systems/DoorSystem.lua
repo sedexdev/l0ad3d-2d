@@ -42,12 +42,6 @@ function DoorSystem:update(dt)
     Timer.update(dt)
     -- update Player location relative to doors in the current location
     self:setPlayerLocation()
-    -- close any doors that the Player is no longer in proximity with
-    for _, door in pairs(self.doors) do
-        if not door:proximity(self.playerX, self.playerY) then
-            self:close(door)
-        end
-    end
 end
 
 --[[

@@ -392,8 +392,10 @@ function CollisionSystem:checkDoorProximity(door)
             end
         end
         return true
+    else
+        self.systemManager.doorSystem:close(door)
+        return false
     end
-    return false
 end
 
 --[[
