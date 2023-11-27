@@ -14,22 +14,24 @@ GruntAttackingState = Class{__includes = BaseState}
     GruntAttackingState constructor
 
     Params:
-        grunt:             table       - Grunt object whose state will be updated
-        gruntSpriteBatch:  SpriteBatch - list of Grunt quads for rendering
-        player:            table       - Player object
+        area:             table       - MapArea object the Grunt was spawned in
+        grunt:            table       - Grunt object whose state will be updated
+        gruntSpriteBatch: SpriteBatch - list of Grunt quads for rendering
+        systemManager:    table       - SystemManager object
     Returns:
         nil
 ]]
-function GruntAttackingState:init(grunt, gruntSpriteBatch, player)
+function GruntAttackingState:init(area, grunt, gruntSpriteBatch, systemManager)
+    self.area = area
     self.gruntSpriteBatch = gruntSpriteBatch
     self.grunt = grunt
-    self.player = player
+    self.systemManager = systemManager
 end
 
 --[[
-    GruntAttackingState update function. Checks to see if the <self.player>
-    object has moved away from the <self.grunt> by 100px and changes the 
-    grunts state to rushing if so
+    GruntAttackingState update function. Checks to see if the Player
+    object has moved away from the grunt Entity by 150px and changes 
+    the state to rushing if so
 
     Params:
         dt: number - deltatime counter for current frame rate
@@ -39,9 +41,15 @@ end
 function GruntAttackingState:update(dt)
     -- call the Animation instance's update function 
     self.grunt.animations['attacking-'..self.grunt.direction]:update(dt)
-
+    -- check for wall collisions
+    local wallCollision = self.systemManager.collisionSystem:checkWallCollision(self.area, self.grunt)
+    if wallCollision.detected then
+        -- handle the wall collision
+        self.systemManager.collisionSystem:handleEnemyWallCollision(self.grunt, wallCollision.edge)
+    end
     -- change state if we get further away from the player (change to use hitboxes later)
-    if math.abs(self.player.x - self.grunt.x) > 150 or math.abs(self.player.y - self.grunt.y) > 150 then
+    if math.abs(self.systemManager.player.x - self.grunt.x) > GRUNT_ATTACK_PROXIMITY or
+       math.abs(self.systemManager.player.y - self.grunt.y) > GRUNT_ATTACK_PROXIMITY then
         self.grunt.stateMachine:change('rushing')
     end
 end

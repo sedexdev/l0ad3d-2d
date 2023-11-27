@@ -19,17 +19,16 @@ GruntIdleState = Class{__includes = BaseState}
         area:             table       - MapArea object the Grunt was spawned in
         grunt:            table       - Grunt object whose state will be updated
         gruntSpriteBatch: SpriteBatch - list of Grunt quads for rendering
-        collisionSystem:  table       - CollisionSystem object
+        systemManager:    table       - SystemManager object
         enemySystem:      table       - EnemySystem object
     Returns:
         nil
 ]]
-function GruntIdleState:init(area, grunt, gruntSpriteBatch, collisionSystem, enemySystem)
+function GruntIdleState:init(area, grunt, gruntSpriteBatch, systemManager)
     self.area = area
     self.grunt = grunt
     self.gruntSpriteBatch = gruntSpriteBatch
-    self.collisionSystem = collisionSystem
-    self.enemySystem = enemySystem
+    self.systemManager = systemManager
     self.interval = 0
     self.duration = math.random(15, 20)
 end
@@ -48,14 +47,10 @@ function GruntIdleState:update(dt)
     -- call the Animation instance's update function 
     self.grunt.animations['walking-'..self.grunt.direction]:update(dt)
     -- check for wall collisions
-    local wallCollision = self.collisionSystem:checkWallCollision(self.area, self.grunt)
+    local wallCollision = self.systemManager.collisionSystem:checkWallCollision(self.area, self.grunt)
     if wallCollision.detected then
         -- handle the wall collision
-        self.collisionSystem:handleEnemyWallCollision(self.grunt, wallCollision.edge)
-    end
-    -- if grunt in proximity with Player change to rushing state
-    if self.enemySystem:checkProximity(self.grunt) then
-        self.grunt.stateMachine:change('rushing')
+        self.systemManager.collisionSystem:handleEnemyWallCollision(self.grunt, wallCollision.edge)
     end
     -- update grunt (x, y) based on current direction
     if self.grunt.direction == 'north' then
@@ -85,6 +80,10 @@ function GruntIdleState:update(dt)
         self.grunt.direction = DIRECTIONS[math.random(1, 8)]
         self.duration = math.random(8, 10)
         self.interval = 0
+    end
+    -- if grunt in proximity with Player change to rushing state
+    if self.systemManager.enemySystem:checkProximity(self.grunt) then
+        self.grunt.stateMachine:change('rushing')
     end
 end
 

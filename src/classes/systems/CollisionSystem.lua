@@ -99,9 +99,12 @@ function CollisionSystem:areaBoundary(area, conditions, entity)
     -- default values for detection - no collision
     local collisionDef = {detected = false, edge = nil}
     -- check if the entity is going to pass through an area doorway
-    for _, door in pairs(self.systemManager.doorSystem:getAreaDoors(area.id)) do
-        if self:detectAreaDoorway(area, door, conditions) then
-            goto returnFalse
+    if entity.type == 'character' then
+        for _, door in pairs(self.systemManager.doorSystem:getAreaDoors(area.id)) do
+            if self:detectAreaDoorway(area, door, conditions) then
+                io.write('Detected doorway - Entity type: ' .. entity.type .. '\n')
+                goto returnFalse
+            end
         end
     end
     -- check for single wall collisions first

@@ -16,18 +16,16 @@ BossIdleState = Class{__includes = BaseState}
     BossIdleState constructor
 
     Params:
-        area:            table - MapArea object the Boss is spawned in
-        boss:            table - Boss object whose state will be updated
-        collisionSystem: table - collisionSystem object
-        enemySystem:     table - EnemySystem object
+        area:          table - MapArea object the Boss is spawned in
+        boss:          table - Boss object whose state will be updated
+        systemManager: table - SystemManager object
     Returns:
         nil
 ]]
-function BossIdleState:init(area, boss, collisionSystem, enemySystem)
+function BossIdleState:init(area, boss, systemManager)
     self.area = area
     self.boss = boss
-    self.collisionSystem = collisionSystem
-    self.enemySystem = enemySystem
+    self.systemManager = systemManager
     self.interval = 0
     self.duration = math.random(4, 6)
 end
@@ -46,10 +44,10 @@ function BossIdleState:update(dt)
     -- call the Animation instance's update function 
     self.boss.animations['walking-'..self.boss.direction]:update(dt)
     -- check for wall collisions
-    local wallCollision = self.collisionSystem:checkWallCollision(self.area, self.boss)
+    local wallCollision = self.systemManager.collisionSystem:checkWallCollision(self.area, self.boss)
     if wallCollision.detected then
         -- handle the wall collision
-        self.collisionSystem:handleEnemyWallCollision(self.boss, wallCollision.edge)
+        self.systemManager.collisionSystem:handleEnemyWallCollision(self.boss, wallCollision.edge)
     end
     -- update boss (x, y) based on current direction
     if self.boss.direction == 'north' then
@@ -80,7 +78,8 @@ function BossIdleState:update(dt)
         self.duration = math.random(15, 20)
         self.interval = 0
     end
-    if self.enemySystem:checkProximity(self.boss) then
+    -- TODO: start rushing when Player enters Boss area
+    if self.systemManager.enemySystem:checkProximity(self.boss) then
         self.boss.stateMachine:change('rushing')
     end
 end
