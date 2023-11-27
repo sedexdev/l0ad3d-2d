@@ -16,12 +16,11 @@ BossRushingState = Class{__includes = BaseState}
     Params:
         area:          table - MapArea object the Boss is spawned in
         boss:          table - Boss object whose state will be updated
-        player:        table - Player object
         systemManager: table - SystemManager object
     Returns:
         nil
 ]]
-function BossRushingState:init(area, boss, player, systemManager)
+function BossRushingState:init(area, boss, systemManager)
     self.area = area
     self.boss = boss
     self.systemManager.player= player
