@@ -296,6 +296,24 @@ function SystemManager:checkBullet()
             end
         end
     end
+    -- if Bullet didn't hit a grunt check for turrets
+    if not bulletHit then
+        local turrets = self.enemySystem:getAreaTurrets()
+        for _, turret in pairs(turrets) do
+            if self.collisionSystem:bulletCollision(self.bulletData, turret) then
+                io.write('Bullet hit turret!\n')
+                -- remove the Bullet on hit to avoid it continuing to update
+                self.effectsSystem:removeBullet(self.bulletData.id)
+                turret:takeDamage()
+                if turret.isDead then
+                    self.enemySystem:removeTurret(turret.id)
+                    table.insert(self.effectsSystem.explosions, Explosion:factory(turret))
+                    bulletHit = true
+                    break
+                end
+            end
+        end
+    end
     -- if Bullet hit nothing then remove it when it hits the area boundary
     if not bulletHit then
         if self.collisionSystem:bulletHitBoundary(self.bulletData.x, self.bulletData.y) then

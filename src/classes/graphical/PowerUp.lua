@@ -28,7 +28,7 @@ function PowerUp:init(id, areaID, x, y)
     self.width = POWERUP_WIDTH
     self.height = POWERUP_HEIGHT
     -- rotational values
-    self.degrees = 1
+    self.degrees = math.random(1, 359)
     self.angle = 0
 end
 

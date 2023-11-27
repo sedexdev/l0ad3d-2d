@@ -357,6 +357,25 @@ function EnemySystem:getAreaGrunts()
     return grunts
 end
 
+--[[
+    Gets all the turret type Entity objects in the
+    current area
+
+    Params:
+        none
+    Returns:
+        nil
+]]
+function EnemySystem:getAreaTurrets()
+    local turrets = {}
+    for _, turret in pairs(self.turrets) do
+        if turret.areaID == self.currentAreaID then
+            table.insert(turret, turrets)
+        end
+    end
+    return turrets
+end
+
 -- ========================== REMOVE ENEMY OBJECTS ==========================
 
 --[[
@@ -378,6 +397,28 @@ function EnemySystem:removeGrunt(gruntID)
     if index ~= nil then
         self.grunts[index] = nil
         table.remove(self.grunts, index)
+    end
+end
+
+--[[
+    Removes a turret after its <isDead> attribute is set to true
+
+    Params:
+        turretID: number - ID of the turret to remove
+    Returns:
+        nil
+]]
+function EnemySystem:removeTurret(turretID)
+    local index
+    for i = 1, #self.turrets do
+        if self.turrets[i].id == turretID then
+            index = i
+            break
+        end
+    end
+    if index ~= nil then
+        self.turrets[index] = nil
+        table.remove(self.turrets, index)
     end
 end
 

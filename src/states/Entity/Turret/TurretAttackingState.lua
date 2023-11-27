@@ -25,9 +25,9 @@ function TurretAttackingState:init(turret, player)
     self.turret = turret
     self.player = player
     -- rotation data
-    self.timer = 0
-    self.interval = self.turret.rotateFrequency
-    self.directionIndex = 2
+    -- rotational values
+    self.degrees = math.random(1, 359)
+    self.angle = 0
 end
 
 --[[
@@ -43,19 +43,11 @@ function TurretAttackingState:update(dt)
         self.turret.stateMachine:change('idle')
     end
     -- handle rotation
-    self.timer = self.timer + dt
-    -- check if timer exceeds interval
-    if self.timer > self.interval then
-        -- change direction/angle
-        self.turret.direction = DIRECTIONS[self.directionIndex]
-        -- incrememnt the index for querying DIRECTIONS
-        self.directionIndex = self.directionIndex + 1
-        -- if over 8 then reset to 1 (north)
-        if self.directionIndex > 8 then
-            self.directionIndex = 1
-        end
-        -- reset timer
-        self.timer = 0
+    self.degrees = self.degrees + 1
+    self.angle = self.degrees * DEGREES_TO_RADIANS
+    if self.degrees > 360 then
+        self.degrees = 1
+        self.angle = 0
     end
 end
 
@@ -72,7 +64,7 @@ function TurretAttackingState:render()
     love.graphics.draw(self.turret.texture,
         GQuads['turret'][1],
         self.turret.x, self.turret.y,
-        ENTITY_ANGLES[self.turret.direction],
+        self.angle,
         2.5, 2.5,
         TURRET_WIDTH / 2, TURRET_HEIGHT / 2
     )
