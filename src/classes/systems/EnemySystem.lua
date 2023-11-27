@@ -54,10 +54,9 @@ function EnemySystem:update(dt)
             if grunt.areaID == self.currentAreaID or grunt.areaID == adjacentID then
                 grunt:update(dt)
                 -- jump out of loop to save processing further areas
-                goto continue
+                break
             end
         end
-        ::continue::
     end
     for _, turret in pairs(self.turrets) do
         turret:update(dt)
