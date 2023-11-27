@@ -58,6 +58,8 @@ your friends will compete to have the most points!</p>
             <li>Selection error     - https://freesound.org/people/Isaac200000/</li>
             <li>Gun click select    - https://freesound.org/people/magnuswaker/</li>
             <li>Gunshot             - https://freesound.org/people/Xenonn/</li>
+            <li>Explosion           - https://freesound.org/people/derplayer/sounds/587183/></li>
+            <li>Grunt death         - https://freesound.org/people/Shakedown_M/sounds/685205/></li>
         </ul>
     <li>Graphics:</li>
         <ul>

@@ -54,7 +54,9 @@ GAudio = {
     ['theme'] = love.audio.newSource('audio/theme.mp3', 'static'),
     ['gunshot'] = love.audio.newSource('audio/gunshot.wav', 'static'),
     ['select'] = love.audio.newSource('audio/select.wav', 'static'),
-    ['error'] = love.audio.newSource('audio/error.wav', 'static')
+    ['error'] = love.audio.newSource('audio/error.wav', 'static'),
+    ['explosion'] = love.audio.newSource('audio/explosion.wav', 'static'),
+    ['grunt-death'] = love.audio.newSource('audio/grunt_splat.wav', 'static'),
 }
 
 -- classes

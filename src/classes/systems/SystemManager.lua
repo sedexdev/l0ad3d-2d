@@ -255,6 +255,8 @@ function SystemManager:checkBullet()
     local crates = self.objectSystem:getAreaCrates()
     for _, crate in pairs(crates) do
         if self.collisionSystem:bulletCollision(self.bulletData, crate) then
+            GAudio['explosion']:stop()
+            GAudio['explosion']:play()
             -- remove the Bullet on hit to avoid it continuing to update
             self.effectsSystem:removeBullet(self.bulletData.id)
             self.objectSystem:removeCrate(crate.id)
@@ -272,6 +274,8 @@ function SystemManager:checkBullet()
                 self.effectsSystem:removeBullet(self.bulletData.id)
                 grunt:takeDamage()
                 if grunt.isDead then
+                    GAudio['grunt-death']:stop()
+                    GAudio['grunt-death']:play()
                     local bloodStain = BloodSplatter:factory(grunt.x, grunt.y, grunt.direction)
                     table.insert(self.effectsSystem.bloodStains, bloodStain)
                     Timer.after(BLOOD_STAIN_INTERVAL, function ()
