@@ -51,52 +51,53 @@ function GruntRushingState:update(dt)
     if wallCollision.detected then
         -- handle the wall collision
         self.systemManager.collisionSystem:handleEnemyWallCollision(self.grunt, wallCollision.edge)
-    end
-    -- determine the direction the player is relative to the grunt
-    if (self.systemManager.player.x < self.grunt.x) and (self.systemManager.player.y < self.grunt.y) then
-        -- self.grunt is SOUTH-EAST of player
-        self.grunt.direction = 'north-west'
-        self.grunt.x = self.grunt.x - self.grunt.dx * dt
-        self.grunt.y = self.grunt.y - self.grunt.dy * dt
-    end
-    if (self.systemManager.player.x < self.grunt.x) and (self.systemManager.player.y > self.grunt.y) then
-        -- self.grunt is NORTH-EAST of player
-        self.grunt.direction = 'south-west'
-        self.grunt.x = self.grunt.x - self.grunt.dx * dt
-        self.grunt.y = self.grunt.y + self.grunt.dy * dt
-    end
-    if (self.systemManager.player.x > self.grunt.x) and (self.systemManager.player.y < self.grunt.y) then
-        -- self.grunt is SOUTH-WEST of player
-        self.grunt.direction = 'north-east'
-        self.grunt.x = self.grunt.x + self.grunt.dx * dt
-        self.grunt.y = self.grunt.y - self.grunt.dy * dt
-    end
-    if (self.systemManager.player.x > self.grunt.x) and (self.systemManager.player.y > self.grunt.y) then
-        -- self.grunt is NORTH-WEST of player
-        self.grunt.direction = 'south-east'
-        self.grunt.x = self.grunt.x + self.grunt.dx * dt
-        self.grunt.y = self.grunt.y + self.grunt.dy * dt
-    end
-    -- abs the value to find if the player is on the same vertical or horizontal axis
-    if (self.systemManager.player.x < self.grunt.x) and (math.abs(self.grunt.y - self.systemManager.player.y) <= ENTITY_AXIS_PROXIMITY) then
-        -- self.grunt is EAST of player
-        self.grunt.direction = 'west'
-        self.grunt.x = self.grunt.x - self.grunt.dx * dt
-    end
-    if (self.systemManager.player.x > self.grunt.x) and (math.abs(self.grunt.y - self.systemManager.player.y) <= ENTITY_AXIS_PROXIMITY) then
-        -- self.grunt is WEST of player
-        self.grunt.direction = 'east'
-        self.grunt.x = self.grunt.x + self.grunt.dx * dt
-    end
-    if (math.abs(self.grunt.x - self.systemManager.player.x) <= ENTITY_AXIS_PROXIMITY) and (self.systemManager.player.y < self.grunt.y) then
-        -- self.grunt is SOUTH of player
-        self.grunt.direction = 'north'
-        self.grunt.y = self.grunt.y - self.grunt.dy * dt
-    end
-    if (math.abs(self.grunt.x - self.systemManager.player.x) <= ENTITY_AXIS_PROXIMITY) and (self.systemManager.player.y > self.grunt.y) then
-        -- self.grunt is NORTH of player
-        self.grunt.direction = 'south'
-        self.grunt.y = self.grunt.y + self.grunt.dy * dt
+    else
+        -- determine the direction the player is relative to the grunt
+        if (self.systemManager.player.x < self.grunt.x) and (self.systemManager.player.y < self.grunt.y) then
+            -- self.grunt is SOUTH-EAST of player
+            self.grunt.direction = 'north-west'
+            self.grunt.x = self.grunt.x - self.grunt.dx * dt
+            self.grunt.y = self.grunt.y - self.grunt.dy * dt
+        end
+        if (self.systemManager.player.x < self.grunt.x) and (self.systemManager.player.y > self.grunt.y) then
+            -- self.grunt is NORTH-EAST of player
+            self.grunt.direction = 'south-west'
+            self.grunt.x = self.grunt.x - self.grunt.dx * dt
+            self.grunt.y = self.grunt.y + self.grunt.dy * dt
+        end
+        if (self.systemManager.player.x > self.grunt.x) and (self.systemManager.player.y < self.grunt.y) then
+            -- self.grunt is SOUTH-WEST of player
+            self.grunt.direction = 'north-east'
+            self.grunt.x = self.grunt.x + self.grunt.dx * dt
+            self.grunt.y = self.grunt.y - self.grunt.dy * dt
+        end
+        if (self.systemManager.player.x > self.grunt.x) and (self.systemManager.player.y > self.grunt.y) then
+            -- self.grunt is NORTH-WEST of player
+            self.grunt.direction = 'south-east'
+            self.grunt.x = self.grunt.x + self.grunt.dx * dt
+            self.grunt.y = self.grunt.y + self.grunt.dy * dt
+        end
+        -- abs the value to find if the player is on the same vertical or horizontal axis
+        if (self.systemManager.player.x < self.grunt.x) and (math.abs(self.grunt.y - self.systemManager.player.y) <= ENTITY_AXIS_PROXIMITY) then
+            -- self.grunt is EAST of player
+            self.grunt.direction = 'west'
+            self.grunt.x = self.grunt.x - self.grunt.dx * dt
+        end
+        if (self.systemManager.player.x > self.grunt.x) and (math.abs(self.grunt.y - self.systemManager.player.y) <= ENTITY_AXIS_PROXIMITY) then
+            -- self.grunt is WEST of player
+            self.grunt.direction = 'east'
+            self.grunt.x = self.grunt.x + self.grunt.dx * dt
+        end
+        if (math.abs(self.grunt.x - self.systemManager.player.x) <= ENTITY_AXIS_PROXIMITY) and (self.systemManager.player.y < self.grunt.y) then
+            -- self.grunt is SOUTH of player
+            self.grunt.direction = 'north'
+            self.grunt.y = self.grunt.y - self.grunt.dy * dt
+        end
+        if (math.abs(self.grunt.x - self.systemManager.player.x) <= ENTITY_AXIS_PROXIMITY) and (self.systemManager.player.y > self.grunt.y) then
+            -- self.grunt is NORTH of player
+            self.grunt.direction = 'south'
+            self.grunt.y = self.grunt.y + self.grunt.dy * dt
+        end
     end
     -- change to idle state if Player not in proximity
     if not self.systemManager.enemySystem:checkProximity(self.grunt) then
