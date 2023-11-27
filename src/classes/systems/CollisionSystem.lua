@@ -74,7 +74,7 @@ function CollisionSystem:checkWallCollision(area, entity)
     conditions['horizontalDoorway'] = self.playerX + ENTITY_CORRECTION > conditions.leftHorizontal and (self.playerX + ENTITY_WIDTH) - ENTITY_CORRECTION < conditions.rightHorizontal
     conditions['verticalDoorway'] = self.playerY + ENTITY_CORRECTION > conditions.topVertical and (self.playerY + ENTITY_HEIGHT) - ENTITY_CORRECTION < conditions.bottomVertical
     -- if the area is a corridor then allow the player to pass through each end
-    if area.type == 'corridor'then
+    if area.type == 'corridor' then
         return self:corridorBoundary(area, conditions)
     else
         return self:areaBoundary(area, conditions, entity)
@@ -99,11 +99,9 @@ function CollisionSystem:areaBoundary(area, conditions, entity)
     -- default values for detection - no collision
     local collisionDef = {detected = false, edge = nil}
     -- check if the entity is going to pass through an area doorway
-    if entity.type == 'character' then
-        for _, door in pairs(self.systemManager.doorSystem:getAreaDoors(area.id)) do
-            if self:detectAreaDoorway(area, door, conditions) then
-                goto returnFalse
-            end
+    for _, door in pairs(self.systemManager.doorSystem:getAreaDoors(area.id)) do
+        if self:detectAreaDoorway(area, door, conditions) then
+            goto returnFalse
         end
     end
     -- check for single wall collisions first
