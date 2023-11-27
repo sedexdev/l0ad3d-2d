@@ -26,7 +26,6 @@ function DoorSystem:init(map)
     self.playerY = PLAYER_STARTING_Y
     self.currentAreaID = START_AREA_ID
     self.doors = {}
-    self.currentDoor = nil
 end
 
 --[[
