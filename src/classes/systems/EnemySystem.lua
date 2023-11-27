@@ -364,7 +364,7 @@ end
     Removes a grunt after its <isDead> attribute is set to true
 
     Params:
-        gruntID: bumber - ID of the grunt to remove
+        gruntID: number - ID of the grunt to remove
     Returns:
         nil
 ]]
