@@ -52,15 +52,15 @@ function Explosion:render()
     love.graphics.setColor(1, 1, 1, 1)
     love.graphics.draw(self.texture,
         GQuads['explosion'][currentFrame],
-        self.x, self.y,
+        self.x - EXPLOSION_OFFSET, self.y - EXPLOSION_OFFSET,
         0,
-        6, 6
+        5, 5
     )
 end
 
 --[[
     Creates and returns an Animation instance for rendering
-    an explosio
+    an explosion
 
     Params:
         object: table - object that has exploded

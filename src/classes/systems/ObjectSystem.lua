@@ -38,6 +38,22 @@ function ObjectSystem:init(systemManager)
 end
 
 --[[
+    ObjectSystem update function
+
+    Params:
+        dt: number - deltatime counter for current frame rate
+    Returns:
+        nil
+]]
+function ObjectSystem:update(dt)
+    for k, category in pairs(self.powerups) do
+        for _, powerup in pairs(category) do
+            powerup:update(dt)
+        end
+    end
+end
+
+--[[
     ObjectSystem render function. Calls the render function
     of each powerup in the system
 
@@ -131,7 +147,7 @@ function ObjectSystem:spawnCrates()
             table.insert(self.crates, Crate:factory(crateID, i, x, y))
             crateID = crateID + 1
             -- set a random chance of hiding a powerup under the crate
-            local powerUpChance = math.random(1, 5) == 1 and true or false
+            local powerUpChance = math.random(1, 4) == 1 and true or false
             -- assign same (x, y) as the crate
             if powerUpChance then
                 self:spawnPowerUp(x, y, i)
@@ -172,25 +188,30 @@ end
 ]]
 function ObjectSystem:spawnPowerUp(x, y, areaID)
     -- set random chance of finding each powerup
-    local ammo = math.random(1, 5) == 1 and true or false
+    local ammo = math.random(5) == 1 and true or false
     if ammo then
         table.insert(self.powerups['ammo'], PowerUp:factory(POWERUP_IDS['ammo'], areaID, x, y))
+        return
     end
-    local health = math.random(1, 5) == 1 and true or false
+    local health = math.random(5) == 1 and true or false
     if health then
         table.insert(self.powerups['health'], PowerUp:factory(POWERUP_IDS['health'], areaID, x, y))
+        return
     end
-    local doubleSpeed = math.random(1, 15) == 1 and true or false
+    local doubleSpeed = math.random(15) == 1 and true or false
     if doubleSpeed then
         table.insert(self.powerups['doubleSpeed'], PowerUp:factory(POWERUP_IDS['doubleSpeed'], areaID, x, y))
+        return
     end
-    local invincible = math.random(1, 15) == 1 and true or false
+    local invincible = math.random(20) == 1 and true or false
     if invincible then
         table.insert(self.powerups['invincible'], PowerUp:factory(POWERUP_IDS['invincible'], areaID, x, y))
+        return
     end
-    local oneShotBossKill = math.random(1, 25) == 1 and true or false
+    local oneShotBossKill = math.random(25) == 1 and true or false
     if oneShotBossKill then
         table.insert(self.powerups['oneShotBossKill'], PowerUp:factory(POWERUP_IDS['oneShotBossKill'], areaID, x, y))
+        return
     end
 end
 
@@ -381,7 +402,7 @@ end
         table: (x, y) coordinates of crate
 ]]
 function ObjectSystem:setCrateXYCoordinates(areaID, prevLocations)
-    local edgeOffset = 50
+    local edgeOffset = 150
     local x, y
     local edges = {'L', 'T', 'R', 'B'}
     local edge = edges[math.random(1, 4)]

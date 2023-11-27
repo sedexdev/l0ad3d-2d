@@ -50,6 +50,7 @@ function SystemManager:update(dt)
     self.doorSystem:update(dt)
     self.enemySystem:update(dt)
     self.effectsSystem:update(dt)
+    self.objectSystem:update(dt)
 end
 
 --[[
@@ -283,6 +284,11 @@ function SystemManager:checkBullet()
                         -- pass 1 as the index to always remove the first one rendered
                         table.remove(self.effectsSystem.bloodStains, 1)
                     end)
+                    -- set 1/10 chance to drop a powerup
+                    local powerUpChance = math.random(1, 10) == 1 and true or false
+                    if powerUpChance then
+                        self.objectSystem:spawnPowerUp(grunt.areaID, grunt.x, grunt.y)
+                    end
                     self.enemySystem:removeGrunt(grunt.id)
                     bulletHit = true
                     break

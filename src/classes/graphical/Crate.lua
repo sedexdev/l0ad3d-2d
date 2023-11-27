@@ -42,7 +42,7 @@ function Crate:render()
         GQuads['crate'][1],
         self.x, self.y,
         0,
-        2.5, 2.5
+        2.7, 2.7
     )
 end
 

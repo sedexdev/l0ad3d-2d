@@ -27,10 +27,40 @@ function PowerUp:init(id, areaID, x, y)
     self.type = 'powerup'
     self.width = POWERUP_WIDTH
     self.height = POWERUP_HEIGHT
+    -- rotational values
+    self.degrees = 1
+    self.angle = 0
+end
+
+--[[
+    PowerUp update function. Updates the (x, y) of the powerup
+    so it rotates in a circle
+
+    Params:
+        dt: number - deltatime counter for current frame rate
+    Returns:
+        nil
+]]
+function PowerUp:update(dt)
+    self.degrees = self.degrees + 1
+    self.angle = self.degrees * DEGREES_TO_RADIANS
+    if self.degrees > 360 then
+        self.degrees = 1
+        self.angle = 0
+    end
 end
 
 --[[
     PowerUp render function
+
+    == Notes on LOVE2D draw order == 
+
+    Now LÖVE performs a series of transformations to the image: 
+
+    First a displacement by -ox,-oy (which will be in image coordinates 
+    because it's the first one), then skew, then scale, then rotation and
+    finally a displacement by (x, y) (the draw coordinates, which will be in 
+    screen coordinates because it's the last one).
 
     Params:
         none
@@ -41,9 +71,10 @@ function PowerUp:render()
     love.graphics.setColor(1, 1, 1, 1)
     love.graphics.draw(GTextures['powerups'],
         GQuads['powerups'][self.id],
-        self.x, self.y,
-        0,
-        2.5, 2.5
+        self.x + (self.width / 2), self.y + (self.height / 2),
+        self.angle,
+        2.5, 2.5,
+        (self.width / 4) - 8, (self.height / 4) - 8
     )
 end
 
@@ -59,9 +90,8 @@ end
         table: PowerUp instance
 ]]
 function PowerUp:factory(id, areaID, x, y)
-    return PowerUp(
-        id, areaID,
-        -- center the powerup underneath a crate
-        x + (CRATE_WIDTH / 2) - (POWERUP_WIDTH / 2), y + (CRATE_WIDTH / 2) - (POWERUP_HEIGHT / 2)
-    )
+    -- center PowerUp with Crate
+    x = x + (CRATE_WIDTH - POWERUP_WIDTH) / 2
+    y = y + (CRATE_HEIGHT - POWERUP_HEIGHT) / 2
+    return PowerUp(id, areaID, x, y)
 end

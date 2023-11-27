@@ -127,8 +127,8 @@ POWERUP_IDS = {
 }
 
 -- powerup width and height
-CRATE_WIDTH = 128 * 2.5
-CRATE_HEIGHT = 128 * 2.5
+CRATE_WIDTH = 85 * 2.7
+CRATE_HEIGHT = 85 * 2.7
 POWERUP_WIDTH = 64 * 2.5
 POWERUP_HEIGHT = 64 * 2.5
 KEY_WIDTH = 64 * 2.5
@@ -139,3 +139,6 @@ CRATE_CORRECTION = 160
 
 -- remove blood stain interval
 BLOOD_STAIN_INTERVAL = 180
+
+-- set offset to centre explosions
+EXPLOSION_OFFSET = 50
