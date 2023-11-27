@@ -27,7 +27,6 @@ function TurretAttackingState:init(turret, player)
     -- rotation data
     self.timer = 0
     self.interval = self.turret.rotateFrequency
-    io.write(tostring(self.interval)..'\n')
     self.directionIndex = 2
 end
 

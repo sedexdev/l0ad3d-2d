@@ -102,7 +102,6 @@ function CollisionSystem:areaBoundary(area, conditions, entity)
     if entity.type == 'character' then
         for _, door in pairs(self.systemManager.doorSystem:getAreaDoors(area.id)) do
             if self:detectAreaDoorway(area, door, conditions) then
-                io.write('Detected doorway - Entity type: ' .. entity.type .. '\n')
                 goto returnFalse
             end
         end

@@ -164,5 +164,5 @@ end
         nil
 ]]
 function EffectsSystem:emitWallParticleEffect(x, y)
-    io.write('Emitting wall hit particle system effect...\n')
+
 end
