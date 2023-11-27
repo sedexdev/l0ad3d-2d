@@ -373,6 +373,7 @@ function EnemySystem:removeGrunt(gruntID)
     for i = 1, #self.grunts do
         if self.grunts[i].id == gruntID then
             index = i
+            break
         end
     end
     if index ~= nil then

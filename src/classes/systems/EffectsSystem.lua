@@ -142,6 +142,7 @@ function EffectsSystem:removeBullet(id)
     for i = 1, #self.bullets do
         if self.bullets[i].id == id then
             index = i
+            break
         end
     end
     if index ~= nil then

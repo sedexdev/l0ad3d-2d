@@ -335,6 +335,7 @@ function ObjectSystem:removePowerUp(object, name)
     for i = 1, #self.powerups[name] do
         if self.powerups[name][i].x == object.x and self.powerups[name][i].y == object.y then
             index = i
+            break
         end
     end
     if index ~= nil then 
@@ -357,6 +358,7 @@ function ObjectSystem:removeCrate(crateID)
     for i = 1, #self.crates do
         if self.crates[i].id == crateID then
             index = i
+            break
         end
     end
     if index ~= nil then
