@@ -24,6 +24,9 @@ function BossRushingState:init(area, boss, systemManager)
     self.area = area
     self.boss = boss
     self.systemManager = systemManager
+    -- shot timer values
+    self.timer = 0
+    self.shotInterval = 3
 end
 
 --[[
@@ -41,7 +44,12 @@ end
 function BossRushingState:update(dt)
     -- call the Animation instance's update function 
     self.boss.animations['walking-'..self.boss.direction]:update(dt)
-
+    -- fire weapon on shotInterval
+    self.timer = self.timer + dt
+    if self.timer > self.shotInterval then
+        self.boss:fire()
+        self.timer = 0
+    end
     local wallCollision = self.systemManager.collisionSystem:checkWallCollision(self.area, self.boss)
     if wallCollision.detected then
         -- handle the wall collision
