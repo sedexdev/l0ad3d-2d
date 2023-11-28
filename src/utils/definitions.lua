@@ -177,8 +177,7 @@ GTurretDefinition = {
     areaID = nil,
     direction = nil,
     stateMachine = nil,
-    health = 200,
-    shotInterval = 2
+    health = 200
 }
 
 --[[

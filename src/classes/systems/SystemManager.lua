@@ -252,7 +252,39 @@ end
 ]]
 function SystemManager:checkBullet()
     -- use boolean flag to track if we need to check checking for Bullet hits
-    local bulletHit = false
+    local bulletHit = self:crateHelper()
+    -- if Bullet didn't hit a crate check for grunts
+    if not bulletHit then
+        bulletHit = self:gruntHelper()
+    end
+    -- if Bullet didn't hit a grunt check for turrets
+    if not bulletHit then
+        bulletHit = self:turretHelper()
+    end
+    -- if Bullet didn't hit a grunt check for boss
+    if not bulletHit then
+        bulletHit = self:bossHelper()
+    end
+    -- if Bullet hit nothing then remove it when it hits the area boundary
+    if not bulletHit then
+        self:boundaryHelper()
+    end
+end
+
+-- ======================= BULLET COLLISION HELPERS =======================
+
+--[[
+    Gets the crates in the local area and checks for a
+    bullet collision with any of them. If a collision is
+    detected both the bullet and the crate are removed
+    and an explosion is rendered
+
+    Params:
+        none
+    Returns:
+        boolean: true if bullet hit a Crate object
+]]
+function SystemManager:crateHelper()
     local crates = self.objectSystem:getAreaCrates()
     for _, crate in pairs(crates) do
         if self.collisionSystem:bulletCollision(self.bulletData, crate) then
@@ -262,64 +294,114 @@ function SystemManager:checkBullet()
             self.effectsSystem:removeBullet(self.bulletData.id)
             self.objectSystem:removeCrate(crate.id)
             table.insert(self.effectsSystem.explosions, Explosion:factory(crate))
-            bulletHit = true
-            break
+            return true
         end
     end
-    -- if Bullet didn't hit a crate check for grunts
-    if not bulletHit then
-        local grunts = self.enemySystem:getAreaGrunts()
-        for _, grunt in pairs(grunts) do
-            if self.collisionSystem:bulletCollision(self.bulletData, grunt) then
-                -- remove the Bullet on hit to avoid it continuing to update
-                self.effectsSystem:removeBullet(self.bulletData.id)
-                grunt:takeDamage()
-                if grunt.isDead then
-                    GAudio['grunt-death']:stop()
-                    GAudio['grunt-death']:play()
-                    local bloodStain = BloodSplatter:factory(grunt.x, grunt.y, grunt.direction)
-                    table.insert(self.effectsSystem.bloodStains, bloodStain)
-                    Timer.after(BLOOD_STAIN_INTERVAL, function ()
-                        bloodStain = nil
-                        -- pass 1 as the index to always remove the first one rendered
-                        table.remove(self.effectsSystem.bloodStains, 1)
-                    end)
-                    -- set 1/10 chance to drop a powerup
-                    local powerUpChance = math.random(1, 10) == 1 and true or false
-                    if powerUpChance then
-                        self.objectSystem:spawnPowerUp(grunt.areaID, grunt.x, grunt.y)
-                    end
-                    self.enemySystem:removeGrunt(grunt.id)
-                    bulletHit = true
-                    break
-                end
-            end
-        end
-    end
-    -- if Bullet didn't hit a grunt check for turrets
-    if not bulletHit then
-        local turrets = self.enemySystem:getAreaTurrets()
-        for _, turret in pairs(turrets) do
-            if self.collisionSystem:bulletCollision(self.bulletData, turret) then
-                -- remove the Bullet on hit to avoid it continuing to update
-                self.effectsSystem:removeBullet(self.bulletData.id)
-                turret:takeDamage()
-                if turret.isDead then
-                    self.enemySystem:removeTurret(turret.id)
-                    table.insert(self.effectsSystem.explosions, Explosion:factory(turret))
-                    bulletHit = true
-                    break
-                end
-            end
-        end
-    end
-    -- if Bullet hit nothing then remove it when it hits the area boundary
-    if not bulletHit then
-        if self.collisionSystem:bulletHitBoundary(self.bulletData.x, self.bulletData.y) then
-            -- capture Bullet coordinates before removing
-            local x, y = self.bulletData.x, self.bulletData.y
+    return false
+end
+
+--[[
+    Gets the grunts in the local area and checks for a
+    bullet collision with any of them. If a collision is
+    detected both the bullet and the grunt are removed
+    and a blood splatter is rendered. A chance of also
+    dropping a powerup is also handled
+
+    Params:
+        none
+    Returns:
+        boolean: true if bullet hit a Grunt object
+]]
+function SystemManager:gruntHelper()
+    local grunts = self.enemySystem:getAreaGrunts()
+    for _, grunt in pairs(grunts) do
+        if self.collisionSystem:bulletCollision(self.bulletData, grunt) then
+            -- remove the Bullet on hit to avoid it continuing to update
             self.effectsSystem:removeBullet(self.bulletData.id)
-            self.effectsSystem:emitWallParticleEffect(x, y)
+            grunt:takeDamage()
+            if grunt.isDead then
+                GAudio['grunt-death']:stop()
+                GAudio['grunt-death']:play()
+                local bloodStain = BloodSplatter:factory(grunt.x, grunt.y, grunt.direction)
+                table.insert(self.effectsSystem.bloodStains, bloodStain)
+                Timer.after(BLOOD_STAIN_INTERVAL, function ()
+                    bloodStain = nil
+                    -- pass 1 as the index to always remove the first one rendered
+                    table.remove(self.effectsSystem.bloodStains, 1)
+                end)
+                -- set 1/10 chance to drop a powerup
+                local powerUpChance = math.random(1, 10) == 1 and true or false
+                if powerUpChance then
+                    self.objectSystem:spawnPowerUp(grunt.areaID, grunt.x, grunt.y)
+                end
+                self.enemySystem:removeGrunt(grunt.id)
+                break
+            end
+            return true
         end
+    end
+    return false
+end
+
+--[[
+    Gets the turrets in the local area and checks for a
+    bullet collision with any of them. If a collision is
+    detected both the bullet and the turret are removed
+    and an explosion is rendered
+
+    Params:
+        none
+    Returns:
+        boolean: true if bullet hit a Turret object
+]]
+function SystemManager:turretHelper()
+    local turrets = self.enemySystem:getAreaTurrets()
+    for _, turret in pairs(turrets) do
+        if self.collisionSystem:bulletCollision(self.bulletData, turret) then
+            -- remove the Bullet on hit to avoid it continuing to update
+            self.effectsSystem:removeBullet(self.bulletData.id)
+            turret:takeDamage()
+            if turret.isDead then
+                self.enemySystem:removeTurret(turret.id)
+                table.insert(self.effectsSystem.explosions, Explosion:factory(turret))
+                break
+            end
+            return true
+        end
+    end
+    return false
+end
+
+--[[
+    Description
+
+    TODO: implement Boss hit
+
+    Params:
+        none
+    Returns:
+        boolean: true if bullet hit the Boss object
+]]
+function SystemManager:bossHelper()
+    return false
+end
+
+--[[
+    Checks for the moment when the bullet hits the area boundary wall
+    and removes the bullet and emits a particle system effect at that
+    location
+
+    Params:
+        none
+    Returns:
+        nil
+]]
+function SystemManager:boundaryHelper()
+    if self.collisionSystem:bulletHitBoundary(self.bulletData.x, self.bulletData.y) then
+        -- capture Bullet coordinates before removing
+        local x, y = self.bulletData.x, self.bulletData.y
+        self.effectsSystem:removeBullet(self.bulletData.id)
+        -- display particle system effect on wall
+        self.effectsSystem:emitWallParticleEffect(x, y)
     end
 end

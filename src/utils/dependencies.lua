@@ -56,6 +56,7 @@ GAudio = {
     ['select'] = love.audio.newSource('audio/select.wav', 'static'),
     ['error'] = love.audio.newSource('audio/error.wav', 'static'),
     ['explosion'] = love.audio.newSource('audio/explosion.wav', 'static'),
+    ['canon'] = love.audio.newSource('audio/canon.wav', 'static'),
     ['grunt-death'] = love.audio.newSource('audio/grunt_splat.wav', 'static'),
 }
 

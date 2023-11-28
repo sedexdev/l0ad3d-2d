@@ -57,18 +57,26 @@ end
         nil
 ]]
 function Shot:render()
-    local x, y = self:setCoordinates(self.entity.x, self.entity.y)
-    if self.entity.type == 'character' then
-        if self.entity.id == 1 then
-            love.graphics.setColor(1, 1, 1, 200/255)
-        else
-            love.graphics.setColor(30/255, 196/255, 195/255, 200/255)
-        end
+    if self.entity.type == 'turret' then
+        local x, y = self:setTurretCoordinates()
+        -- use the ANGLES constant to render at the correct angle 
+        love.graphics.draw(self.shotGraphic,
+            x, y,
+            ANGLES[self.entity.direction]
+        )
     else
-        love.graphics.setColor(1, 1, 1, 200/255)
+        local x, y = self:setCoordinates(self.entity.x, self.entity.y)
+        if self.entity.type == 'character' then
+            if self.entity.id == 1 then
+                love.graphics.setColor(1, 1, 1, 200/255)
+            else
+                love.graphics.setColor(30/255, 196/255, 195/255, 200/255)
+            end
+        else
+            love.graphics.setColor(1, 1, 1, 200/255)
+        end
+        love.graphics.draw(self.shotGraphic, x, y, ANGLES[self.entity.direction])
     end
-    -- use the ANGLES constant to render at the correct angle 
-    love.graphics.draw(self.shotGraphic, x, y, ANGLES[self.entity.direction])
 end
 
 --[[
@@ -79,8 +87,8 @@ end
     function below
 
     Params:
-        x: table - current x coordinate
-        y: table - current y coordinate
+        x: number - current x coordinate
+        y: number - current y coordinate
     Returns:
         number: value representing the x offset required
         number: value representing the y offset required
@@ -126,8 +134,8 @@ end
     of 45 degrees
 
     Params:
-        x: table - current x coordinate
-        y: table - current y coordinate
+        x: number - current x coordinate
+        y: number - current y coordinate
     Returns:
         number: value representing the x offset required
         number: value representing the y offset required
@@ -174,5 +182,42 @@ function Shot:set45DegreeCoordinates(x, y)
             self.entity.currentWeapon == 'right'
                 and (y + (ENTITY_HEIGHT / 2) - yOffset) - nudge
                 or y - nudge
+    end
+end
+
+--[[
+    Sets the (x, y) coordinates for a turret shot
+
+    Params:
+        none
+    Returns:
+        number: shot x coordinate
+        number: shot y coordinate
+]]
+function Shot:setTurretCoordinates()
+    local offset = 120
+    if self.entity.direction == 'north' then
+        return self.entity.x - (offset * 2), self.entity.y - TURRET_HEIGHT + offset
+    end
+    if self.entity.direction == 'north-east' then
+        return self.entity.x - offset, self.entity.y - (offset * 2)
+    end
+    if self.entity.direction == 'east' then
+        return self.entity.x + TURRET_WIDTH - offset, self.entity.y - (ENEMY_SHOT_PX / 2) - offset
+    end
+    if self.entity.direction == 'south-east' then
+        return self.entity.x + TURRET_WIDTH, self.entity.y - offset
+    end
+    if self.entity.direction == 'south' then
+        return self.entity.x + (offset * 2.5), self.entity.y + offset
+    end
+    if self.entity.direction == 'south-west' then
+        return self.entity.x + offset, self.entity.y + TURRET_HEIGHT
+    end
+    if self.entity.direction == 'west' then
+        return self.entity.x - offset, self.entity.y + TURRET_HEIGHT
+    end
+    if self.entity.direction == 'north-west' then
+        return self.entity.x - (offset * 2), self.entity.y + offset
     end
 end

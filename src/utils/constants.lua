@@ -46,6 +46,7 @@ BULLET_SPEED = 2000
 ENEMY_BULLET_SPEED = 600
 BULLET_WIDTH = 100
 BULLET_HEIGHT = 100
+ENEMY_SHOT_PX = 360
 
 -- movement key bindings
 MOVEMENT_KEYS = {'up', 'right', 'down', 'left', 'w', 'd', 's', 'a'}
@@ -85,7 +86,7 @@ ENTITY_ANGLES = {
 }
 
 -- directions
-DIRECTIONS = {'north', 'east', 'south', 'west', 'north-east', 'south-east', 'south-west', 'north-west'}
+DIRECTIONS = {'north', 'north-east', 'east', 'south-east', 'south', 'south-west', 'west', 'north-west'}
 
 -- map components scaled to x5
 WALL_OFFSET = 16 * 5

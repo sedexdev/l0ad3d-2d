@@ -24,8 +24,6 @@ TurretAttackingState = Class{__includes = BaseState}
 function TurretAttackingState:init(turret, player)
     self.turret = turret
     self.player = player
-    -- rotational values
-    self.angle = 0
 end
 
 --[[
@@ -37,19 +35,28 @@ end
         nil
 ]]
 function TurretAttackingState:update(dt)
-    io.write('Turret ID: '..tostring(self.turret.id)..', direction: '..self.turret.direction..'\n')
-    if self.player.currentArea.id ~= self.turret.areaID then
-        self.turret.stateMachine:change('idle')
-    end
-    -- handle rotation
+    -- update angle in degree
     self.turret.degrees = self.turret.degrees + 1
+    -- update direction when degrees hits a multiple of 45 and fire weapon
     if self.turret.degrees % 45 == 0 then
-        self.direction = DIRECTIONS[(self.turret.degrees % 45) + 1]
+        -- update the direction
+        if self.turret.degrees == 360 then
+            self.turret.direction = DIRECTIONS[1] -- north
+        else
+            self.turret.direction = DIRECTIONS[(self.turret.degrees / 45) + 1]
+        end
+        self.turret:fire()
     end
-    self.angle = self.turret.degrees * DEGREES_TO_RADIANS
+    -- convert to radians to get angle
+    self.turret.angle = self.turret.degrees * DEGREES_TO_RADIANS
+    -- reset at 360 to do another revolution
     if self.turret.degrees > 360 then
         self.turret.degrees = 1
-        self.angle = 0
+        self.turret.angle = 0
+    end
+    -- change state if Player leaves area
+    if self.player.currentArea.id ~= self.turret.areaID then
+        self.turret.stateMachine:change('idle')
     end
 end
 
@@ -66,7 +73,7 @@ function TurretAttackingState:render()
     love.graphics.draw(self.turret.texture,
         GQuads['turret'][1],
         self.turret.x, self.turret.y,
-        self.angle,
+        self.turret.angle,
         2.5, 2.5,
         TURRET_WIDTH / 2, TURRET_HEIGHT / 2
     )

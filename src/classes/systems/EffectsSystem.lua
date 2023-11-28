@@ -34,9 +34,14 @@ function EffectsSystem:init(systemManager)
     -- bullet fired event
     self.spawnBullet = Event.on('shotFired', function (entity)
         table.insert(self.shots, Shot(entity))
-        -- TODO: change shot sound for Player/Boss/Turret
-        GAudio['gunshot']:stop()
-        GAudio['gunshot']:play()
+        if entity.type == 'character' then
+            GAudio['gunshot']:stop()
+            GAudio['gunshot']:play()
+        end
+        if entity.type == 'turret' then
+            GAudio['canon']:stop()
+            GAudio['canon']:play()
+        end
         local bullet =  Bullet(self.bulletID, entity)
         table.insert(self.bullets, bullet)
         self.bulletID = self.bulletID + 1

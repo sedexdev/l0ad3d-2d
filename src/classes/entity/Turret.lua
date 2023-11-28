@@ -27,11 +27,13 @@ function Turret:init(id, animations, def)
     self.fireShot = animations.fireShot
     self.direction = def.direction
     self.health = def.health
-    self.shotInterval = def.shotInterval
-    self.timer = 0
     -- random angle in degrees to draw turret
-    self.degrees = math.random(1, 359)
-    self.direction = DIRECTIONS[(self.degrees % 45) + 1]
+    self.startDirection = math.random(1, 8)
+    self.direction = DIRECTIONS[self.startDirection]
+    -- starting degrees - if equal to 0 set as North (360)
+    self.degrees = (self.startDirection - 1) * 45 == 0 and 360 or (self.startDirection - 1) * 45
+    -- angle in radians
+    self.angle = 0
     -- boolean flag to detect if the Turret is dead
     self.isDead = false
 end
@@ -47,12 +49,6 @@ end
 ]]
 function Turret:update(dt)
     Entity.update(self, dt)
-    -- update timer for firing
-    self.timer = self.timer + dt
-    if self.timer > self.shotInterval then
-        self:fire()
-        self.timer = 0
-    end
 end
 
 --[[

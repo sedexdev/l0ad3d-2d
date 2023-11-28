@@ -59,6 +59,7 @@ your friends will compete to have the most points!</p>
             <li>Gun click select    - https://freesound.org/people/magnuswaker/</li>
             <li>Gunshot             - https://freesound.org/people/Xenonn/</li>
             <li>Explosion           - https://freesound.org/people/derplayer/sounds/587183/></li>
+            <li>Canon fire          - https://freesound.org/people/inferno/sounds/18391/></li>
             <li>Grunt death         - https://www.zapsplat.com/music/body-impact-splat/></li>
         </ul>
     <li>Graphics:</li>
