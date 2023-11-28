@@ -63,8 +63,8 @@ end
 ]]
 function SystemManager:render()
     self.doorSystem:render()
-    self.effectsSystem:render()
     self.objectSystem:render()
+    self.effectsSystem:render()
     self.enemySystem:render()
 end
 
@@ -404,11 +404,9 @@ end
 ]]
 function SystemManager:boundaryHelper()
     if self.collisionSystem:bulletHitBoundary(self.bulletData.x, self.bulletData.y) then
-        -- capture Bullet coordinates before removing
-        local x, y = self.bulletData.x, self.bulletData.y
+        table.insert(self.effectsSystem.smokeEffects, Smoke:factory(self.bulletData.x, self.bulletData.y))
+        -- remove bullet
         self.effectsSystem:removeBullet(self.bulletData.id)
-        -- display particle system effect on wall
-        self.effectsSystem:emitWallParticleEffect(x, y)
     end
 end
 

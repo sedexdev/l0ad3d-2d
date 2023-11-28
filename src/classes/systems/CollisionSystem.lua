@@ -646,16 +646,17 @@ end
         boolean: true if collision detected
 ]]
 function CollisionSystem:bulletHitBoundary(x, y)
-    if x < GMapAreaDefinitions[self.currentAreaID].x then
+    local offset = 20
+    if x < GMapAreaDefinitions[self.currentAreaID].x - WALL_OFFSET - offset then
         return true
     end
-    if x > (GMapAreaDefinitions[self.currentAreaID].x + GMapAreaDefinitions[self.currentAreaID].width * FLOOR_TILE_WIDTH) then
+    if x > (GMapAreaDefinitions[self.currentAreaID].x + GMapAreaDefinitions[self.currentAreaID].width * FLOOR_TILE_WIDTH) - WALL_OFFSET - offset then
         return true
     end
-    if y < GMapAreaDefinitions[self.currentAreaID].y then
+    if y < GMapAreaDefinitions[self.currentAreaID].y - WALL_OFFSET - offset then
         return true
     end
-    if y > (GMapAreaDefinitions[self.currentAreaID].y + GMapAreaDefinitions[self.currentAreaID].height * FLOOR_TILE_HEIGHT) then
+    if y > (GMapAreaDefinitions[self.currentAreaID].y + GMapAreaDefinitions[self.currentAreaID].height * FLOOR_TILE_HEIGHT) - WALL_OFFSET - offset then
         return true
     end
     return false

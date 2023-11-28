@@ -47,7 +47,8 @@ GTextures = {
     ['boss']= love.graphics.newImage('graphics/boss.png'),
     ['crate']= love.graphics.newImage('graphics/crate.png'),
     ['powerups']= love.graphics.newImage('graphics/powerups.png'),
-    ['keys']= love.graphics.newImage('graphics/keys.png')
+    ['keys']= love.graphics.newImage('graphics/keys.png'),
+    ['smoke']= love.graphics.newImage('graphics/smoke.png'),
 }
 
 GAudio = {
@@ -69,6 +70,7 @@ require 'src/classes/graphical/Explosion'
 require 'src/classes/graphical/Key'
 require 'src/classes/graphical/PowerUp'
 require 'src/classes/graphical/Shot'
+require 'src/classes/graphical/Smoke'
 require 'src/classes/graphical/SpriteBatcher'
 require 'src/classes/entity/Boss'
 require 'src/classes/entity/Entity'
@@ -142,5 +144,6 @@ GQuads = {
     ['boss'] = GenerateQuads(GTextures['boss'], 128, 128),
     ['crate'] = GenerateQuads(GTextures['crate'], 85, 85),
     ['powerups'] = GenerateQuads(GTextures['powerups'], 64, 64),
-    ['keys'] = GenerateQuads(GTextures['keys'], 64, 64)
+    ['keys'] = GenerateQuads(GTextures['keys'], 64, 64),
+    ['smoke'] = GenerateQuads(GTextures['smoke'], 128, 128),
 }

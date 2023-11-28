@@ -31,6 +31,10 @@ function EffectsSystem:init(systemManager)
     -- bullet management table
     self.bulletID = 1
     self.bullets = {}
+    -- blood stains
+    self.bloodStains = {}
+    -- smoke effects
+    self.smokeEffects = {}
     -- bullet fired event
     self.spawnBullet = Event.on('shotFired', function (entity)
         table.insert(self.shots, Shot(entity))
@@ -47,8 +51,6 @@ function EffectsSystem:init(systemManager)
         self.bulletID = self.bulletID + 1
         bullet:subscribe(self.systemManager)
     end)
-    -- blood stains
-    self.bloodStains = {}
 end
 
 --[[
@@ -65,6 +67,9 @@ function EffectsSystem:update(dt)
     end
     for _, bullet in pairs(self.bullets) do
         bullet:update(dt)
+    end
+    for _, effect in pairs(self.smokeEffects) do
+        effect:update(dt)
     end
     local index
     for i = 1, #self.shots do
@@ -104,6 +109,19 @@ function EffectsSystem:render()
     if index ~= nil then
         self.explosions[index] = nil
         table.remove(self.explosions, index)
+    end
+    -- smoke
+    index = nil
+    for i = 1, #self.smokeEffects do
+        self.smokeEffects[i]:render()
+        if self.smokeEffects[i].animations:getCurrentFrame() == 8 then
+            index = i
+            break
+        end
+    end
+    if index ~= nil then
+        self.smokeEffects[index] = nil
+        table.remove(self.smokeEffects, index)
     end
     -- blood stains
     for _, stain in pairs(self.bloodStains) do
@@ -154,20 +172,4 @@ function EffectsSystem:removeBullet(id)
         self.bullets[index] = nil
         table.remove(self.bullets, index)
     end
-end
-
---[[
-    Emits a particle system effect on amn area boundary wall
-    when a Bullet object overlaps the boundary
-
-    TODO: implement wall hit particle system effect
-
-    Params:
-        x: number - x coordinate
-        y: number - y coordinate
-    Returns:
-        nil
-]]
-function EffectsSystem:emitWallParticleEffect(x, y)
-
 end
