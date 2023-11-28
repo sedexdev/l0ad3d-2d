@@ -26,6 +26,7 @@ function Boss:init(animations, def)
     self.animations = animations.animations
     self.direction = def.direction
     self.health = def.health
+    self.damage = def.damage
     -- boolean flag to detect if the Boss is dead
     self.isDead = false
 end

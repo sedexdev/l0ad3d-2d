@@ -27,6 +27,7 @@ function Turret:init(id, animations, def)
     self.fireShot = animations.fireShot
     self.direction = def.direction
     self.health = def.health
+    self.damage = def.damage
     -- random angle in degrees to draw turret
     self.startDirection = math.random(1, 8)
     self.direction = DIRECTIONS[self.startDirection]

@@ -28,6 +28,7 @@ function Grunt:init(id, animations, def)
     self.direction = def.direction
     self.health = def.health
     self.powerUpChance = def.powerUpChance
+    self.damage = def.damage
     -- boolean flag to detect if this Grunt is dead
     self.isDead = false
 end
