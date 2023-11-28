@@ -24,9 +24,7 @@ TurretAttackingState = Class{__includes = BaseState}
 function TurretAttackingState:init(turret, player)
     self.turret = turret
     self.player = player
-    -- rotation data
     -- rotational values
-    self.degrees = math.random(1, 359)
     self.angle = 0
 end
 
@@ -39,14 +37,18 @@ end
         nil
 ]]
 function TurretAttackingState:update(dt)
+    io.write('Turret ID: '..tostring(self.turret.id)..', direction: '..self.turret.direction..'\n')
     if self.player.currentArea.id ~= self.turret.areaID then
         self.turret.stateMachine:change('idle')
     end
     -- handle rotation
-    self.degrees = self.degrees + 1
-    self.angle = self.degrees * DEGREES_TO_RADIANS
-    if self.degrees > 360 then
-        self.degrees = 1
+    self.turret.degrees = self.turret.degrees + 1
+    if self.turret.degrees % 45 == 0 then
+        self.direction = DIRECTIONS[(self.turret.degrees % 45) + 1]
+    end
+    self.angle = self.turret.degrees * DEGREES_TO_RADIANS
+    if self.turret.degrees > 360 then
+        self.turret.degrees = 1
         self.angle = 0
     end
 end

@@ -301,7 +301,6 @@ function SystemManager:checkBullet()
         local turrets = self.enemySystem:getAreaTurrets()
         for _, turret in pairs(turrets) do
             if self.collisionSystem:bulletCollision(self.bulletData, turret) then
-                io.write('Bullet hit turret!\n')
                 -- remove the Bullet on hit to avoid it continuing to update
                 self.effectsSystem:removeBullet(self.bulletData.id)
                 turret:takeDamage()

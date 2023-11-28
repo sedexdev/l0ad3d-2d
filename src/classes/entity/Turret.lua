@@ -27,7 +27,11 @@ function Turret:init(id, animations, def)
     self.fireShot = animations.fireShot
     self.direction = def.direction
     self.health = def.health
-    self.rotateFrequency = def.rotateFrequency
+    self.shotInterval = def.shotInterval
+    self.timer = 0
+    -- random angle in degrees to draw turret
+    self.degrees = math.random(1, 359)
+    self.direction = DIRECTIONS[(self.degrees % 45) + 1]
     -- boolean flag to detect if the Turret is dead
     self.isDead = false
 end
@@ -43,6 +47,12 @@ end
 ]]
 function Turret:update(dt)
     Entity.update(self, dt)
+    -- update timer for firing
+    self.timer = self.timer + dt
+    if self.timer > self.shotInterval then
+        self:fire()
+        self.timer = 0
+    end
 end
 
 --[[
@@ -55,7 +65,22 @@ end
         nil
 ]]
 function Turret:render()
-   Entity.render(self)
+    love.graphics.setColor(1, 0/255, 0/255, 1)
+    love.graphics.rectangle('line', self.x, self.y, self.width, self.height)
+    Entity.render(self)
+end
+
+--[[
+    Fires a shot from the turret at the interval specified in
+    GTurretDefinition as shotInterval
+
+    Params:
+        none
+    Returns:
+        nil
+]]
+function Turret:fire()
+    Event.dispatch('shotFired', self)
 end
 
 --[[
