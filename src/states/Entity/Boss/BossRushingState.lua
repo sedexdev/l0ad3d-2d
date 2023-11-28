@@ -51,47 +51,63 @@ function BossRushingState:update(dt)
     if (self.systemManager.player.x < self.boss.x) and (self.systemManager.player.y < self.boss.y) then
         -- boss is SOUTH-EAST of player
         self.boss.direction = 'north-west'
-        self.boss.x = self.boss.x - self.boss.dx * dt
-        self.boss.y = self.boss.y - self.boss.dy * dt
+        if not self:proximity() then
+            self.boss.x = self.boss.x - self.boss.dx * dt
+            self.boss.y = self.boss.y - self.boss.dy * dt
+        end
     end
     if (self.systemManager.player.x < self.boss.x) and (self.systemManager.player.y > self.boss.y) then
         -- boss is NORTH-EAST of player
         self.boss.direction = 'south-west'
-        self.boss.x = self.boss.x - self.boss.dx * dt
-        self.boss.y = self.boss.y + self.boss.dy * dt
+        if not self:proximity() then
+            self.boss.x = self.boss.x - self.boss.dx * dt
+            self.boss.y = self.boss.y + self.boss.dy * dt
+        end
     end
     if (self.systemManager.player.x > self.boss.x) and (self.systemManager.player.y < self.boss.y) then
         -- boss is SOUTH-WEST of player
         self.boss.direction = 'north-east'
-        self.boss.x = self.boss.x + self.boss.dx * dt
-        self.boss.y = self.boss.y - self.boss.dy * dt
+        if not self:proximity() then
+            self.boss.x = self.boss.x + self.boss.dx * dt
+            self.boss.y = self.boss.y - self.boss.dy * dt
+        end
     end
     if (self.systemManager.player.x > self.boss.x) and (self.systemManager.player.y > self.boss.y) then
         -- boss is NORTH-WEST of player
         self.boss.direction = 'south-east'
-        self.boss.x = self.boss.x + self.boss.dx * dt
-        self.boss.y = self.boss.y + self.boss.dy * dt
+        if not self:proximity() then
+            self.boss.x = self.boss.x + self.boss.dx * dt
+            self.boss.y = self.boss.y + self.boss.dy * dt
+        end
     end
     -- abs the value to find if the player is on the same vertical or horizontal axis
     if (self.systemManager.player.x < self.boss.x) and (math.abs(self.boss.y - self.systemManager.player.y) <= ENTITY_AXIS_PROXIMITY) then
         -- boss is EAST of player
         self.boss.direction = 'west'
-        self.boss.x = self.boss.x - self.boss.dx * dt
+        if not self:proximity() then
+            self.boss.x = self.boss.x - self.boss.dx * dt
+        end
     end
     if (self.systemManager.player.x > self.boss.x) and (math.abs(self.boss.y - self.systemManager.player.y) <= ENTITY_AXIS_PROXIMITY) then
         -- boss is WEST of player
         self.boss.direction = 'east'
-        self.boss.x = self.boss.x + self.boss.dx * dt
+        if not self:proximity() then
+            self.boss.x = self.boss.x + self.boss.dx * dt
+        end
     end
     if (math.abs(self.boss.x - self.systemManager.player.x) <= ENTITY_AXIS_PROXIMITY) and (self.systemManager.player.y < self.boss.y) then
         -- boss is SOUTH of player
         self.boss.direction = 'north'
-        self.boss.y = self.boss.y - self.boss.dy * dt
+        if not self:proximity() then
+            self.boss.y = self.boss.y - self.boss.dy * dt
+        end
     end
     if (math.abs(self.boss.x - self.systemManager.player.x) <= ENTITY_AXIS_PROXIMITY) and (self.systemManager.player.y > self.boss.y) then
         -- boss is NORTH of player
         self.boss.direction = 'south'
-        self.boss.y = self.boss.y + self.boss.dy * dt
+        if not self:proximity() then
+            self.boss.y = self.boss.y + self.boss.dy * dt
+        end
     end
 end
 
@@ -114,4 +130,18 @@ function BossRushingState:render()
         0,
         3, 3
     )
+end
+
+--[[
+    Checks the proximity of the Boss to the Player so the
+    Boss circles round never gets within the promximty
+    distance
+
+    Params:
+
+    Returns:
+    
+]]
+function BossRushingState:proximity()
+    return math.abs(self.boss.x - self.systemManager.player.x) <= BOSS_PROXIMITY and math.abs(self.boss.y - self.systemManager.player.y) <= BOSS_PROXIMITY
 end

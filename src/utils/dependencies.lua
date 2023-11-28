@@ -54,10 +54,11 @@ GTextures = {
 GAudio = {
     ['theme'] = love.audio.newSource('audio/theme.mp3', 'static'),
     ['gunshot'] = love.audio.newSource('audio/gunshot.wav', 'static'),
+    ['canon'] = love.audio.newSource('audio/canon.wav', 'static'),
+    ['laser'] = love.audio.newSource('audio/laser.wav', 'static'),
     ['select'] = love.audio.newSource('audio/select.wav', 'static'),
     ['error'] = love.audio.newSource('audio/error.wav', 'static'),
     ['explosion'] = love.audio.newSource('audio/explosion.wav', 'static'),
-    ['canon'] = love.audio.newSource('audio/canon.wav', 'static'),
     ['grunt-death'] = love.audio.newSource('audio/grunt_splat.wav', 'static'),
 }
 

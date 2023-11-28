@@ -58,6 +58,18 @@ function Boss:render()
 end
 
 --[[
+    Fires a shot from the Boss by dispatching a shotFired event
+
+    Params:
+        none
+    Returns:
+        nil
+]]
+function Boss:fire()
+    Event.dispatch('shotFired', self)
+end
+
+--[[
     Handles damage dealt from the Player
 
     Params:

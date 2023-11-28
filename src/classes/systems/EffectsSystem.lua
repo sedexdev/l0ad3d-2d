@@ -46,6 +46,10 @@ function EffectsSystem:init(systemManager)
             GAudio['canon']:stop()
             GAudio['canon']:play()
         end
+        if entity.type == 'boss' then
+            GAudio['laser']:stop()
+            GAudio['laser']:play()
+        end
         local bullet =  Bullet(self.bulletID, entity)
         table.insert(self.bullets, bullet)
         self.bulletID = self.bulletID + 1

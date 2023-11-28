@@ -68,8 +68,7 @@ function Turret:render()
 end
 
 --[[
-    Fires a shot from the turret at the interval specified in
-    GTurretDefinition as shotInterval
+    Fires a shot from the turret by dispatching a shotFired event
 
     Params:
         none
