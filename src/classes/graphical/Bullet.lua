@@ -113,7 +113,7 @@ function Bullet:notify()
             id = self.id,
             x = self.x,
             y = self.y,
-            entityType = self.entity.type
+            entity = self.entity
         })
     end
 end

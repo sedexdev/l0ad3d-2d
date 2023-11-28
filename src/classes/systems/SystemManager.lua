@@ -251,19 +251,25 @@ end
         nil
 ]]
 function SystemManager:checkBullet()
-    -- use boolean flag to track if we need to check checking for Bullet hits
-    local bulletHit = self:crateHelper()
-    -- if Bullet didn't hit a crate check for grunts
-    if not bulletHit then
-        bulletHit = self:gruntHelper()
+    local bulletHit = false
+    if self.bulletData.entity.type == 'character' then
+        -- use boolean flag to track if we need to check checking for Bullet hits
+        bulletHit = self:crateHelper()
+        -- if Bullet didn't hit a crate check for grunts
+        if not bulletHit then
+            bulletHit = self:gruntHelper()
+        end
+        -- if Bullet didn't hit a grunt check for turrets
+        if not bulletHit then
+            bulletHit = self:turretHelper()
+        end
+        -- if Bullet didn't hit a grunt check for boss
+        if not bulletHit then
+            bulletHit = self:bossHelper()
+        end
     end
-    -- if Bullet didn't hit a grunt check for turrets
-    if not bulletHit then
-        bulletHit = self:turretHelper()
-    end
-    -- if Bullet didn't hit a grunt check for boss
-    if not bulletHit then
-        bulletHit = self:bossHelper()
+    if self.bulletData.entity.type == 'turret' or self.bulletData.entity.type == 'boss' then
+        self:playerHelper()
     end
     -- if Bullet hit nothing then remove it when it hits the area boundary
     if not bulletHit then
@@ -404,4 +410,22 @@ function SystemManager:boundaryHelper()
         -- display particle system effect on wall
         self.effectsSystem:emitWallParticleEffect(x, y)
     end
+end
+
+--[[
+    Checks for a bullet collision with the Player from a bullet
+    fired by an enemy e.g. Turrets or the Boss
+
+    Params:
+        none
+    Returns:
+        nil
+]]
+function SystemManager:playerHelper()
+    if self.collisionSystem:bulletCollision(self.bulletData, self.player) then
+        self.player:takeDamage(self.bulletData.entity.damage)
+        self.effectsSystem:removeBullet(self.bulletData.id)
+        return true
+    end
+    return false
 end
