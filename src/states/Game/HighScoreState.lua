@@ -51,7 +51,7 @@ end
         nil
 ]]
 function HighScoreState:render()
-    love.graphics.setFont(GFonts['funkrocker-highscores'])
+    love.graphics.setFont(GFonts['funkrocker-medium'])
     love.graphics.setColor(1, 0/255, 0/255, 1)
     love.graphics.printf('HIGH SCORES', 0, 80, WINDOW_WIDTH, 'center')
 

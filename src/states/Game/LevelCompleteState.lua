@@ -25,17 +25,70 @@ LevelCompleteState = Class{__includes = BaseState}
         nil
 ]]
 function LevelCompleteState:enter(params)
-
+    self.highScores = params.highScores
+    self.player = params.player
+    self.map = params.map
+    self.systemManager = params.systemManager
+    self.level = params.level
 end
 
+--[[
+    LevelCompleteState constructor
+
+    Params:
+        none
+    Returns:
+        nil
+]]
 function LevelCompleteState:init()
-
+    self.fontHeight = GFonts['funkrocker-medium']:getHeight()
+    self.y = -self.fontHeight
+    self.duration = 2
 end
 
+--[[
+    LevelCompleteState update function. Updates the timer for
+    tweening the Level Complete mesage
+
+    Params:
+        dt: number - deltatime counter for current frame rate
+    Returns:
+        nil
+]]
 function LevelCompleteState:update(dt)
-
+    Timer.tween(self.duration, {
+        [self] = {y = (WINDOW_HEIGHT / 2) - (self.fontHeight / 2)}
+    }):after(
+        Timer.tween(self.duration, {
+            [self] = {y = WINDOW_HEIGHT + self.fontHeight}
+        }):after(
+            GStateMachine:change('countdown', {
+                highScores = self.highScores,
+                player = self.player,
+                map = self.map,
+                systemManager = self.systemManager,
+                level = self.level + 1
+            })
+        )
+    )
 end
 
-function LevelCompleteState:render()
+--[[
+    LevelCompleteState render function
 
+    Params:
+        none
+    Returns:
+        nil
+]]
+function LevelCompleteState:render()
+    local message = 'LEVEL COMPLETE'
+    love.graphics.setFont(GFonts['funkrocker-medium'])
+    local fontWidth = GFonts['funkrocker-medium']:getWidth(message)
+    love.graphics.setColor(1, 0/255, 0/255, 1)
+    love.graphics.printf(message,
+        (WINDOW_WIDTH / 2) - (fontWidth / 2), self.y,
+        WINDOW_WIDTH,
+        'center'
+    )
 end

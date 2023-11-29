@@ -231,8 +231,8 @@ end
         nil
 ]]
 function SelectCharacterState:renderName(name, xOffset)
-    local fontWidth = GFonts['funkrocker-highscores']:getWidth(name)
-    love.graphics.setFont(GFonts['funkrocker-highscores'])
+    local fontWidth = GFonts['funkrocker-medium']:getWidth(name)
+    love.graphics.setFont(GFonts['funkrocker-medium'])
     love.graphics.setColor(10/255, 10/255, 10/255, 1)
     love.graphics.print(name,
         xOffset + 2, (WINDOW_HEIGHT / 3) + 2,
