@@ -437,7 +437,7 @@ function SystemManager:playerHelper()
         self.player:takeDamage(self.bulletData.entity.damage)
         self.effectsSystem:removeBullet(self.bulletData.id)
         if self.player.isDead then
-            Event.dispatch('gameOver')
+            -- Event.dispatch('gameOver')
         end
         return true
     end
