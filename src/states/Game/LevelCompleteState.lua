@@ -58,10 +58,10 @@ end
 function LevelCompleteState:update(dt)
     Timer.tween(self.duration, {
         [self] = {y = (WINDOW_HEIGHT / 2) - (self.fontHeight / 2)}
-    }):after(
+    }):finish(
         Timer.tween(self.duration, {
             [self] = {y = WINDOW_HEIGHT + self.fontHeight}
-        }):after(
+        }):finish(
             GStateMachine:change('countdown', {
                 highScores = self.highScores,
                 player = self.player,
