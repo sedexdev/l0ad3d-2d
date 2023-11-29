@@ -389,6 +389,19 @@ end
         boolean: true if bullet hit the Boss object
 ]]
 function SystemManager:bossHelper()
+    if self.enemySystem.boss ~= nil then
+        if self.collisionSystem:bulletCollision(self.bulletData, self.enemySystem.boss) then
+            -- remove the Bullet on hit to avoid it continuing to update
+            self.effectsSystem:removeBullet(self.bulletData.id)
+            self.enemySystem.boss:takeDamage()
+            if self.enemySystem.boss.isDead then
+                -- TODO: play level complete audio
+                self.enemySystem.boss = nil
+                Event.dispatch('levelComplete')
+            end
+            return true
+        end
+    end
     return false
 end
 
