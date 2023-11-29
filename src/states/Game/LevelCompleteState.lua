@@ -30,6 +30,24 @@ function LevelCompleteState:enter(params)
     self.map = params.map
     self.systemManager = params.systemManager
     self.level = params.level
+    -- tween message in
+    Timer.tween(self.duration, {
+        [self] = {y = (WINDOW_HEIGHT / 2) - (self.fontHeight / 2)}
+    }):finish(function ()
+        Timer.after(self.duration, function ()
+            Timer.tween(self.duration, {
+                [self] = {y = WINDOW_HEIGHT + self.fontHeight}
+            }):finish(function ()
+                GStateMachine:change('countdown', {
+                    highScores = self.highScores,
+                    player = self.player,
+                    map = self.map,
+                    systemManager = self.systemManager,
+                    level = self.level + 1
+                })
+            end)
+        end)
+    end)
 end
 
 --[[
@@ -56,21 +74,10 @@ end
         nil
 ]]
 function LevelCompleteState:update(dt)
-    Timer.tween(self.duration, {
-        [self] = {y = (WINDOW_HEIGHT / 2) - (self.fontHeight / 2)}
-    }):finish(
-        Timer.tween(self.duration, {
-            [self] = {y = WINDOW_HEIGHT + self.fontHeight}
-        }):finish(
-            GStateMachine:change('countdown', {
-                highScores = self.highScores,
-                player = self.player,
-                map = self.map,
-                systemManager = self.systemManager,
-                level = self.level + 1
-            })
-        )
-    )
+    if love.keyboard.wasPressed('escape') then
+        GStateMachine:change('menu')
+    end
+    Timer.update(dt)
 end
 
 --[[
@@ -82,13 +89,20 @@ end
         nil
 ]]
 function LevelCompleteState:render()
+    -- render map in the background
+    self.map:render()
+    -- draw dark background  
+    love.graphics.setColor(10/255, 10/255, 10/255, 150/255)
+    -- to keep things centered with the translation add the values to the (cameraX, cameraY) vector
+    love.graphics.rectangle('fill', 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT)
+    -- draw message
     local message = 'LEVEL COMPLETE'
     love.graphics.setFont(GFonts['funkrocker-medium'])
-    local fontWidth = GFonts['funkrocker-medium']:getWidth(message)
+    -- print text shadow
+    love.graphics.setColor(0/255, 0/255, 0/255, 1)
+    love.graphics.printf(message, 0, self.y, WINDOW_WIDTH, 'center')
+    love.graphics.printf(message, 0, self.y, WINDOW_WIDTH, 'center')
+    -- print message
     love.graphics.setColor(1, 0/255, 0/255, 1)
-    love.graphics.printf(message,
-        (WINDOW_WIDTH / 2) - (fontWidth / 2), self.y,
-        WINDOW_WIDTH,
-        'center'
-    )
+    love.graphics.printf(message, 0, self.y, WINDOW_WIDTH, 'center')
 end
