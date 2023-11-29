@@ -26,6 +26,7 @@ function GameOverState:enter(params)
     self.highScores = params.highScores
     self.map = params.map
     self.level = params.level
+    self.score = params.score
     -- tween message in
     Timer.tween(self.duration, {
         [self] = {y = (WINDOW_HEIGHT / 2) - (self.fontHeight / 2)}

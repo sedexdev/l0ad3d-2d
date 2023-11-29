@@ -341,6 +341,7 @@ function SystemManager:gruntHelper()
                     self.objectSystem:spawnPowerUp(grunt.areaID, grunt.x, grunt.y)
                 end
                 self.enemySystem:removeGrunt(grunt.id)
+                Event.dispatch('score', 25)
                 break
             end
             return true
@@ -370,6 +371,7 @@ function SystemManager:turretHelper()
             if turret.isDead then
                 self.enemySystem:removeTurret(turret.id)
                 table.insert(self.effectsSystem.explosions, Explosion:factory(turret))
+                Event.dispatch('score', 100)
                 break
             end
             return true
@@ -397,6 +399,7 @@ function SystemManager:bossHelper()
             if self.enemySystem.boss.isDead then
                 -- TODO: play level complete audio
                 self.enemySystem.boss = nil
+                Event.dispatch('score', 1000)
                 Event.dispatch('levelComplete')
             end
             return true

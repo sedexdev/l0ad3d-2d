@@ -28,6 +28,7 @@ function PlayState:enter(params)
     self.map = params.map
     self.systemManager = params.systemManager
     self.level = params.level
+    self.score = params.score
     self.map:generateLevel(self.systemManager)
 end
 
@@ -49,12 +50,14 @@ function PlayState:init()
     self.selected = 1
     -- event listeners
     Event.on('levelComplete', function ()
+        Event.dispatch('score', 2000 * self.level)
         self.systemManager.enemySystem:increaseStats()
         GStateMachine:change('complete', {
             highScores = self.highScores,
             player = self.player,
             map = self.map,
             systemManager = self.systemManager,
+            score = self.score,
             level = self.level
         })
     end)
@@ -62,8 +65,12 @@ function PlayState:init()
         GStateMachine:change('gameover', {
             highScores = self.highScores,
             map = self.map,
+            score = self.score,
             level = self.level
         })
+    end)
+    Event.on('score', function (points)
+        self.score = self.score + points
     end)
 end
 
@@ -137,6 +144,7 @@ function PlayState:render()
     self.map:render()
     self.systemManager:render()
     self.player:render()
+    self:displayScore()
     -- debug data
     self:displayFPS()
     self:displayPlayerData()
@@ -252,6 +260,7 @@ function PlayState:processPauseMenuInput()
                 player = player,
                 map = map,
                 systemManager = systemManager,
+                score = 0,
                 level = 1
             })
         else
@@ -261,6 +270,24 @@ function PlayState:processPauseMenuInput()
             })
         end
     end
+end
+
+--[[
+    Renders the current FPS
+
+    Params:
+        none
+    Returns:
+        nil
+]]
+function PlayState:displayScore()
+    love.graphics.setFont(GFonts['funkrocker-small'])
+    love.graphics.setColor(0/255, 0/255, 0/255, 255/255)
+    love.graphics.print('Score: ' .. tostring(self.score), self.cameraX + (WINDOW_WIDTH - 300) + 2, self.cameraY + 50 + 2)
+    love.graphics.print('Score: ' .. tostring(self.score), self.cameraX + (WINDOW_WIDTH - 300) + 2, self.cameraY + 50 + 2)
+    love.graphics.setColor(1, 0/255, 0/255, 255/255)
+    love.graphics.print('Score: ' .. tostring(self.score), self.cameraX + (WINDOW_WIDTH - 300), self.cameraY + 50)
+    love.graphics.setColor(1, 1, 1, 1)
 end
 
 --[[

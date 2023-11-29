@@ -29,6 +29,7 @@ function LevelCompleteState:enter(params)
     self.player = params.player
     self.map = params.map
     self.systemManager = params.systemManager
+    self.score = params.score
     self.level = params.level
     -- tween message in
     Timer.tween(self.duration, {
@@ -43,6 +44,7 @@ function LevelCompleteState:enter(params)
                     player = self.player,
                     map = self.map,
                     systemManager = self.systemManager,
+                    score = self.score,
                     level = self.level + 1
                 })
             end)
@@ -99,8 +101,8 @@ function LevelCompleteState:render()
     love.graphics.setFont(GFonts['funkrocker-medium'])
     -- print text shadow
     love.graphics.setColor(0/255, 0/255, 0/255, 1)
-    love.graphics.printf(message, 0, self.y, WINDOW_WIDTH, 'center')
-    love.graphics.printf(message, 0, self.y, WINDOW_WIDTH, 'center')
+    love.graphics.printf(message, 2, self.y + 2, WINDOW_WIDTH, 'center')
+    love.graphics.printf(message, 2, self.y + 2, WINDOW_WIDTH, 'center')
     -- print message
     love.graphics.setColor(1, 0/255, 0/255, 1)
     love.graphics.printf(message, 0, self.y, WINDOW_WIDTH, 'center')
