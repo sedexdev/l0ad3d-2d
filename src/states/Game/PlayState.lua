@@ -60,7 +60,9 @@ function PlayState:init()
     end)
     Event.on('gameOver', function ()
         GStateMachine:change('gameover', {
-            highScores = self.highScores
+            highScores = self.highScores,
+            map = self.map,
+            level = self.level
         })
     end)
 end

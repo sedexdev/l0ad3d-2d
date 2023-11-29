@@ -65,8 +65,7 @@ function LevelCompleteState:init()
 end
 
 --[[
-    LevelCompleteState update function. Updates the timer for
-    tweening the Level Complete mesage
+    LevelCompleteState update function
 
     Params:
         dt: number - deltatime counter for current frame rate
