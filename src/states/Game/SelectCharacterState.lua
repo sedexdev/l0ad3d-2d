@@ -114,7 +114,8 @@ function SelectCharacterState:update(dt)
             highScores = self.highScores,
             player = player,
             map = map,
-            systemManager = systemManager
+            systemManager = systemManager,
+            level = 1
         })
     end
 end

@@ -436,6 +436,9 @@ function SystemManager:playerHelper()
     if self.collisionSystem:bulletCollision(self.bulletData, self.player) then
         self.player:takeDamage(self.bulletData.entity.damage)
         self.effectsSystem:removeBullet(self.bulletData.id)
+        if self.player.isDead then
+            Event.dispatch('gameOver')
+        end
         return true
     end
     return false

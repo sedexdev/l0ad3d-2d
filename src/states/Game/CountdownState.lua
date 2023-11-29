@@ -26,12 +26,14 @@ function CountdownState:enter(params)
     self.player = params.player
     self.map = params.map
     self.systemManager = params.systemManager
+    self.level = params.level
     Timer.after(3, function()
         GStateMachine:change('playing', {
             highScores = self.highScores,
             player = self.player,
             map = self.map,
-            systemManager = self.systemManager
+            systemManager = self.systemManager,
+            level = self.level
         })
     end)
 end

@@ -27,10 +27,8 @@ function PlayState:enter(params)
     self.player = params.player
     self.map = params.map
     self.systemManager = params.systemManager
+    self.level = params.level
     self.map:generateLevel(self.systemManager)
-    -- pause gameplay
-    self.paused = false
-    self.selected = 1
 end
 
 --[[
@@ -46,6 +44,25 @@ end
 function PlayState:init()
     self.cameraX = 0
     self.cameraY = 0
+    -- pause gameplay
+    self.paused = false
+    self.selected = 1
+    -- event listeners
+    Event.on('levelComplete', function ()
+        self.systemManager.enemySystem:increaseStats()
+        GStateMachine:change('complete', {
+            highScores = self.highScores,
+            player = self.player,
+            map = self.map,
+            systemManager = self.systemManager,
+            level = self.level
+        })
+    end)
+    Event.on('gameOver', function ()
+        GStateMachine:change('gameover', {
+            highScores = self.highScores
+        })
+    end)
 end
 
 --[[
@@ -232,7 +249,8 @@ function PlayState:processPauseMenuInput()
                 highScores = self.highScores,
                 player = player,
                 map = map,
-                systemManager = systemManager
+                systemManager = systemManager,
+                level = 1
             })
         else
             -- quit to MenuState
