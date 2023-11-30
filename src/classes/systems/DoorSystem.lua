@@ -15,13 +15,14 @@ DoorSystem = Class{__includes = Observer}
     system and knows which door the Player is currently interacting with 
 
     Params:
-        player: table - Player object
         map:    table - Map object used to get door references for adjacent areas
+        player: table - Player object
     Returns:
         nil
 ]]
-function DoorSystem:init(map)
+function DoorSystem:init(map, player)
     self.map = map
+    self.player = player
     self.playerX = PLAYER_STARTING_X
     self.playerY = PLAYER_STARTING_Y
     self.currentAreaID = START_AREA_ID
@@ -104,28 +105,33 @@ function DoorSystem:initialiseDoors(areas)
                     -- leftX, rightX
                     area.x - WALL_OFFSET, area.x - WALL_OFFSET,
                     -- leftY, rightY
-                    area.y + verticalBottomDoorOffset, area.y + verticalTopDoorOffset
+                    area.y + verticalBottomDoorOffset, area.y + verticalTopDoorOffset,
+                    -- width and height
+                    V_DOOR_WIDTH, V_DOOR_HEIGHT
                 ))
             end
             if area.doors.T then
                 table.insert(self.doors, Door(
                     2, area.id, area.doors.T, 'horizontal',
                     area.x + horizontalLeftDoorOffset, area.x + horizontalRightDoorOffset,
-                    area.y - WALL_OFFSET, area.y - WALL_OFFSET
+                    area.y - WALL_OFFSET, area.y - WALL_OFFSET,
+                    H_DOOR_WIDTH, H_DOOR_HEIGHT
                 ))
             end
             if area.doors.R then
                 table.insert(self.doors, Door(
                     3, area.id, area.doors.R, 'vertical',
                     area.x + areaWidth, area.x + areaWidth,
-                    area.y + verticalBottomDoorOffset, area.y + verticalTopDoorOffset
+                    area.y + verticalBottomDoorOffset, area.y + verticalTopDoorOffset,
+                    V_DOOR_WIDTH, V_DOOR_HEIGHT
                 ))
             end
             if area.doors.B then
                 table.insert(self.doors, Door(
                     4, area.id, area.doors.B, 'horizontal',
                     area.x + horizontalLeftDoorOffset, area.x + horizontalRightDoorOffset,
-                    area.y + areaHeight, area.y + areaHeight
+                    area.y + areaHeight, area.y + areaHeight,
+                    H_DOOR_WIDTH, H_DOOR_HEIGHT
                 ))
             end
         end
@@ -391,6 +397,37 @@ function DoorSystem:close(door)
                 [door] = {leftY = door.leftY - V_DOOR_HEIGHT, rightY = door.rightY + V_DOOR_HEIGHT}
             })
             door.isOpen = false
+        end
+    end
+end
+
+--[[
+    Corrects Player object (x, y) if the door is locked
+
+    Params:
+        door: table - door object
+    Returns:
+        nil
+]]
+function DoorSystem:handleLockedDoor(door)
+    if door.playerLocation == 'left' then
+        if self.player.x > door.leftX + V_DOOR_WIDTH - ENTITY_WIDTH then
+            self.player.x = door.leftX + V_DOOR_WIDTH - ENTITY_WIDTH
+        end
+    end
+    if door.playerLocation == 'above' then
+        if self.player.y > door.leftY + H_DOOR_HEIGHT - ENTITY_HEIGHT then
+            self.player.y = door.leftY + H_DOOR_HEIGHT - ENTITY_HEIGHT
+        end
+    end
+    if door.playerLocation == 'right' then
+        if self.player.x < door.leftX then
+            self.player.x = door.leftX
+        end
+    end
+    if door.playerLocation == 'below' then
+        if self.player.y < door.leftY then
+            self.player.y = door.lefty
         end
     end
 end

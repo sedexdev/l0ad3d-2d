@@ -21,7 +21,7 @@ function SystemManager:init(map, player)
     self.map = map
     self.player = player
     -- create a DoorSystem
-    self.doorSystem = DoorSystem(self.map)
+    self.doorSystem = DoorSystem(self.map, player)
     -- create a CollisionSystem
     self.collisionSystem = CollisionSystem(self)
     -- create a ObjectSystem
@@ -197,15 +197,9 @@ function SystemManager:checkMap()
     end
     if doors then
         for _, door in pairs(doors) do
-            -- first check Player proximity and open door if not locked
             local proximity = self.collisionSystem:checkDoorProximity(door)
-            if proximity then
-                -- then check collision with the Door object to avoid Player running over it
-                local doorCollision = self.collisionSystem:checkDoorCollsion(door)
-                if doorCollision.detected then
-                    -- and handle the collision if so
-                    self.collisionSystem:handleDoorCollision(door, doorCollision.edge)
-                end
+            if proximity and door.isLocked then
+                self.doorSystem:handleLockedDoor(door)
             end
         end
     end

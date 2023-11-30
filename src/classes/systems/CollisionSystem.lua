@@ -398,39 +398,6 @@ function CollisionSystem:checkDoorProximity(door)
     end
 end
 
---[[
-    Checks for collisions with the Door objects themselves to stop
-    the Player from passing through the doors while they are in the
-    process of opening
-
-    Param:
-        door: table - Door object Entity is interacting with
-    Returns:
-        boolean: detection status and edge door is on
-]]
-function CollisionSystem:checkDoorCollsion(door)
-    -- return true if the door is locked to block the Entity
-    if door.isLocked then
-        goto returnTrue
-    end
-    -- AABB collision detection for the left and right doors
-    if self.playerX > door.leftX or door.leftX > (self.playerX + ENTITY_WIDTH) then
-        return {detected = false, edge = AREA_DOOR_IDS[door.id]}
-    end
-    if self.playerY > door.leftY or door.leftY > (self.playerY + ENTITY_HEIGHT) then
-        return {detected = false, edge = AREA_DOOR_IDS[door.id]}
-    end
-    if self.playerX > door.rightX or door.rightX > (self.playerX + ENTITY_WIDTH) then
-        return {detected = false, edge = AREA_DOOR_IDS[door.id]}
-    end
-    if self.playerY > door.rightY or door.rightY > (self.playerY + ENTITY_HEIGHT) then
-        return {detected = false, edge = AREA_DOOR_IDS[door.id]}
-    end
-    ::returnTrue::
-    -- return true detection if the Player is overlapping any part of any door
-    return {detected = true, edge = AREA_DOOR_IDS[door.id]}
-end
-
 -- ========================== DOORWAY DETECTION HELPER FUNCTIONS ==========================
 
 --[[
@@ -706,34 +673,5 @@ function CollisionSystem:handleEnemyCrateCollision(entity, edge)
         entity.direction = 'east'
     elseif edge == 'B' then
         entity.direction = 'south'
-    end
-end
-
---[[
-    Handles a collision with a pair of Door objects to reposition
-    the Player object until they can correctly pass through the 
-    door
-
-    Params:
-        door: table  - Door object Player is interacting with
-        edge: string - edge the Player has collisded with
-    Returns:
-        nil
-]]
-function CollisionSystem:handleDoorCollision(door, edge)
-    -- check door location to apply appropriate correction
-    if edge == 'L' or edge == 'R' then
-        if door.playerLocation == 'left' then
-            self.systemManager.player.x = (door.leftX + V_DOOR_WIDTH) - ENTITY_WIDTH
-        elseif door.playerLocation == 'right' then
-            self.systemManager.player.x = door.leftX - V_DOOR_WIDTH
-        end
-    end
-    if edge == 'T' or edge == 'B' then
-        if door.playerLocation == 'below' then
-            self.systemManager.player.y = door.leftY - H_DOOR_HEIGHT
-        elseif door.playerLocation == 'above' then
-            self.systemManager.player.y = (door.leftY + H_DOOR_HEIGHT) - ENTITY_HEIGHT
-        end
     end
 end

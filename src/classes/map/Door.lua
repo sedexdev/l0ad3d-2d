@@ -23,10 +23,12 @@ Door = Class{}
         rightX:         number - x coordinate of the right door in the pair
         leftY:          number - y coordinate of the left door in the pair
         rightY:         number - y coordinate of the right door in the pair
+        width:          number - y coordinate of the left door in the pair
+        heigt:          number - y coordinate of the right door in the pair
     Returns:
         nil
 ]]
-function Door:init(id, areaID, colour, orientation, leftX, rightX, leftY, rightY)
+function Door:init(id, areaID, colour, orientation, leftX, rightX, leftY, rightY, width, height)
     self.id = id
     self.areaID = areaID
     self.colour = colour
@@ -41,6 +43,8 @@ function Door:init(id, areaID, colour, orientation, leftX, rightX, leftY, rightY
     self.rightX = rightX
     self.leftY = leftY
     self.rightY = rightY
+    self.width = width
+    self.height = height
     -- flag to check if the door is open
     self.isOpen = false
     -- boolean flag to check if door is locked
@@ -78,11 +82,6 @@ end
         nil
 ]]
 function Door:proximity(x, y)
-    -- locked door conditions
-    local aboveLocked = (y + ENTITY_HEIGHT) > self.leftY + H_DOOR_HEIGHT and (y + ENTITY_HEIGHT) > (self.rightY + H_DOOR_HEIGHT)
-    local belowLocked = y < (self.leftY - H_DOOR_HEIGHT) and y < (self.rightY - H_DOOR_HEIGHT)
-    local leftLocked = (x + ENTITY_WIDTH) > self.leftX + V_DOOR_WIDTH and (x + ENTITY_WIDTH) > (self.rightX + V_DOOR_WIDTH)
-    local rightLocked = x < (self.leftX - V_DOOR_WIDTH) and x < (self.rightX - V_DOOR_WIDTH)
     if self.orientation == 'horizontal' then
         -- x proximity is the same no matter which side the Player object is on
         local xProximity = (x + ENTITY_CORRECTION) > self.leftX and (x + ENTITY_WIDTH) - ENTITY_CORRECTION < (self.rightX + H_DOOR_WIDTH)
@@ -90,10 +89,10 @@ function Door:proximity(x, y)
         local aboveYProximity = (self.leftY - (y + ENTITY_HEIGHT) <= DOOR_PROXIMITY and self.rightY - (y + ENTITY_HEIGHT) <= DOOR_PROXIMITY) and xProximity
         local belowYProximity = (y - (self.leftY + H_DOOR_HEIGHT) <= DOOR_PROXIMITY and y - (self.rightY + H_DOOR_HEIGHT) <= DOOR_PROXIMITY) and xProximity
         if self.playerLocation == 'above' then
-            return self:proximityHelper(aboveLocked, aboveYProximity)
+            return aboveYProximity
         end
         if self.playerLocation == 'below' then
-            return self:proximityHelper(belowLocked, belowYProximity)
+            return belowYProximity
         end
     else
         -- y proximity is the same no matter which side the Player object is on
@@ -102,32 +101,10 @@ function Door:proximity(x, y)
         local leftXProximity = (self.leftX - (x + ENTITY_WIDTH) <= DOOR_PROXIMITY and self.rightX - (x + ENTITY_WIDTH) <= DOOR_PROXIMITY) and yProximity
         local rightXProximity = (x - (self.leftX + H_DOOR_WIDTH) <= DOOR_PROXIMITY and x - (self.rightX + H_DOOR_WIDTH) <= DOOR_PROXIMITY) and yProximity
         if self.playerLocation == 'left' then
-            return self:proximityHelper(leftLocked, leftXProximity)
+            return leftXProximity
         end
         if self.playerLocation == 'right' then
-            return self:proximityHelper(rightLocked, rightXProximity)
+            return rightXProximity
         end
     end
-end
-
---[[
-    Reduces bulk in the <self:proximity> function by evaluating
-    the arguments for doors in a locked state and then checking
-    the appropriate condition for which side of the door the 
-    Entity object is currently on
-    
-    Params:
-        lockedCondition:   boolean - condition to evaluate if the door is locked
-        locationCondition: boolean - Entity location dependent condition 
-    Returns:
-        boolean: true if either of the arguments are true, false otherwise 
-]]
-function Door:proximityHelper(lockedCondition, locationCondition)
-    if self.isLocked then
-        return lockedCondition
-    end
-    if locationCondition then
-        return true
-    end
-    return false
 end
