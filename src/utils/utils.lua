@@ -29,3 +29,31 @@ function GenerateQuads(atlas, tileWidth, tileHeight)
     end
     return quads
 end
+
+--[[
+    Makes a copy of a game Entity definition so the original
+    definitions are not updated as the game progresses
+
+    Disclaimer: non-original code sourced from 
+    
+        - http://lua-users.org/wiki/CopyTable
+
+    Params:
+        orig: table - table to copy data from
+    Returns:
+        table: copy of the given table
+]]
+function Copy(orig)
+    local orig_type = type(orig)
+    local copy
+    if orig_type == 'table' then
+        copy = {}
+        for orig_key, orig_value in next, orig, nil do
+            copy[Copy(orig_key)] = Copy(orig_value)
+        end
+        setmetatable(copy, Copy(getmetatable(orig)))
+    else -- number, string, boolean, etc
+        copy = orig
+    end
+    return copy
+end

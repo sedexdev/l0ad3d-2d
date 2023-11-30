@@ -144,7 +144,7 @@ end
 ]]
 function EnemySystem:spawnGrunts(numGrunts, area)
     for _ = 1, numGrunts do
-        local grunt = Grunt(self.gruntID, GAnimationDefintions['grunt'], GGruntDefinition)
+        local grunt = Grunt(self.gruntID, GAnimationDefintions['grunt'], Copy(GGruntDefinition))
         -- set ID
         -- set random (x, y) within the area
         grunt.x = math.random(area.x, area.x + (area.width * FLOOR_TILE_WIDTH) - ENTITY_WIDTH)
@@ -257,7 +257,7 @@ end
         nil
 ]]
 function EnemySystem:spawnTurretsHelper(x, y, areaID)
-    local turret = Turret(self.turretID, GAnimationDefintions['turret'], GTurretDefinition)
+    local turret = Turret(self.turretID, GAnimationDefintions['turret'], Copy(GTurretDefinition))
     turret.x = x
     turret.y = y
     turret.areaID = areaID
@@ -281,7 +281,7 @@ end
         nil
 ]]
 function EnemySystem:spawnBoss(area)
-    self.boss = Boss(GAnimationDefintions['boss'], GBossDefinition)
+    self.boss = Boss(GAnimationDefintions['boss'], Copy(GBossDefinition))
     -- set random starting direction
     self.boss.direction = DIRECTIONS[math.random(1, 8)]
     self.boss.stateMachine = StateMachine {

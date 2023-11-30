@@ -92,7 +92,7 @@ function SelectCharacterState:update(dt)
         local player = Player(
             self.selected,
             GAnimationDefintions['character'..tostring(self.selected)],
-            GCharacterDefinition
+            Copy(GCharacterDefinition)
         )
         local systemManager = SystemManager(map, player)
         -- Player stateMachine

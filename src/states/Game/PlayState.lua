@@ -51,6 +51,7 @@ function PlayState:init()
     -- event listeners
     Event.on('levelComplete', function ()
         Event.dispatch('score', 2000 * self.level)
+        self.player:reset()
         self.systemManager.enemySystem:increaseStats()
         GStateMachine:change('complete', {
             highScores = self.highScores,
@@ -233,35 +234,12 @@ function PlayState:processPauseMenuInput()
             self.paused = false
         elseif self.selected == 2 then
             -- restart game with fresh data
-            local map = Map()
-            local player = Player(
-                self.player.id,
-                GAnimationDefintions['character'..tostring(self.player.id)],
-                GCharacterDefinition
-            )
-            local systemManager = SystemManager(map, player)
-            -- Player stateMachine
-            player.stateMachine = StateMachine {
-                ['idle'] = function () return PlayerIdleState(player) end,
-                ['walking'] = function ()
-                    local walkingState = PlayerWalkingState(player, map)
-                    walkingState:subscribe(systemManager)
-                    walkingState:subscribe(systemManager.doorSystem)
-                    walkingState:subscribe(systemManager.collisionSystem)
-                    walkingState:subscribe(systemManager.objectSystem)
-                    walkingState:subscribe(systemManager.enemySystem)
-                    walkingState:subscribe(systemManager.effectsSystem)
-                    return walkingState
-                end
-            }
-            player.stateMachine:change('idle')
-            GStateMachine:change('countdown', {
+            self.player = nil
+            self.map = nil
+            self.systemManager = nil
+            collectgarbage('collect')
+            GStateMachine:change('select', {
                 highScores = self.highScores,
-                player = player,
-                map = map,
-                systemManager = systemManager,
-                score = 0,
-                level = 1
             })
         else
             -- quit to MenuState
