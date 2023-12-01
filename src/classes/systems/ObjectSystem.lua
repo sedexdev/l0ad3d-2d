@@ -188,14 +188,14 @@ end
 ]]
 function ObjectSystem:spawnPowerUp(x, y, areaID)
     -- set random chance of finding each powerup
+    local health = math.random(3) == 1 and true or false
+    if health then
+        table.insert(self.powerups['health'], PowerUp:factory(POWERUP_IDS['health'], areaID, x, y))
+        return
+    end
     local ammo = math.random(5) == 1 and true or false
     if ammo then
         table.insert(self.powerups['ammo'], PowerUp:factory(POWERUP_IDS['ammo'], areaID, x, y))
-        return
-    end
-    local health = math.random(5) == 1 and true or false
-    if health then
-        table.insert(self.powerups['health'], PowerUp:factory(POWERUP_IDS['health'], areaID, x, y))
         return
     end
     local doubleSpeed = math.random(15) == 1 and true or false
