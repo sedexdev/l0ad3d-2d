@@ -200,6 +200,8 @@ GTurretDefinition = {
     (corridor) joins:        table  - area index and location to base corridor (x, y) off of
     (area | corridor) doors: table  - lists the locations and colours of doors in the area
     (area) adjacentAreas:    table  - contains area IDs for collision detection
+    turrets:                 number - the number of turret Entity objects in the area
+    key:                     string - the colour of a key found in this area
 ]]
 GMapAreaDefinitions = {
     --========== JOINING AREAS ==========
