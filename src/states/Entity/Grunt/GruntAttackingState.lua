@@ -39,7 +39,7 @@ end
         nil
         ]]
 function GruntAttackingState:update(dt)
-    -- dispatch attack event
+    -- dispatch attack event after 1 second to allow PLayer to pass grunt without taking damage
     Event.dispatch('gruntAttack', self.grunt)
     -- call the Animation instance's update function 
     self.grunt.animations['attacking-'..self.grunt.direction]:update(dt)

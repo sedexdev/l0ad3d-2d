@@ -43,6 +43,13 @@ function Player:init(id, animations, def)
     self.invicibleTimer = 0
     self.doubleSpeedTimer = 0
     self.isDead = false
+    -- even listener for grunt attacks
+    Event.on('gruntAttack', function (grunt)
+        self:takeDamage(grunt.damage)
+        if self.isDead then
+            Event.dispatch('gameOver')
+        end
+    end)
 end
 
 --[[

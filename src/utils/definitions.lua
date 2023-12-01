@@ -143,7 +143,7 @@ GGruntDefinition = {
     direction = nil,
     health = 50,
     powerUpChance = 20,
-    damage = 10
+    damage = 5
 }
 
 --[[
@@ -163,7 +163,7 @@ GBossDefinition = {
     health = 1000,
     weapons = 1,
     currentWeapon = 'right',
-    damage = 20
+    damage = 10
 }
 
 --[[
@@ -181,7 +181,7 @@ GTurretDefinition = {
     direction = nil,
     stateMachine = nil,
     health = 200,
-    damage = 25
+    damage = 15
 }
 
 --[[

@@ -72,12 +72,6 @@ function PlayState:init()
     Event.on('score', function (points)
         self.score = self.score + points
     end)
-    Event.on('gruntAttack', function (grunt)
-        self.player:takeDamage(grunt.damage)
-        if self.player.isDead then
-            Event.dispatch('gameOver')
-        end
-    end)
 end
 
 --[[
