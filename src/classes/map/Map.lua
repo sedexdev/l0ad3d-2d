@@ -43,19 +43,6 @@ function Map:render()
 end
 
 --[[
-    Returns the MapArea object of the area with the corresponding
-    area ID
-
-    Params:
-        areaID: number - area ID to index <self.areas>
-    Returns:
-        table: MapArea object
-]]
-function Map:getAreaDefinition(areaID)
-    return self.areas[areaID]
-end
-
---[[
     Generates the MapArea objects that form the Map. Also responsible 
     for generating interactive game objects including Entity and PowerUp 
     instances for the Player object to interact with, as well the games
@@ -106,6 +93,21 @@ function Map:generateLevel(systemManager)
     systemManager.enemySystem:spawnTurrets()
 end
 
+-- ========================= GETTERS =========================
+
+--[[
+    Returns the MapArea object of the area with the corresponding
+    area ID
+
+    Params:
+        areaID: number - area ID to index <self.areas>
+    Returns:
+        table: MapArea object
+]]
+function Map:getAreaDefinition(areaID)
+    return self.areas[areaID]
+end
+
 --[[
     Gets the starting areas to spwn grunt type Entity objects in
     when the game level is generated
@@ -146,6 +148,8 @@ function Map:getAreaAdjacencies(areaID)
     return areas
 end
 
+-- ========================= SETTERS =========================
+
 --[[
     Checks where the corridor is located (L, R, T, B) and sets the corridor
     area coordinates based off one of the areas it is joined to as defined
@@ -160,16 +164,16 @@ function Map:getCorridorCoordinates(area)
     -- just use frst table in self.joins to get the coordinates
     if area.joins[1][2] == 'L' then
         -- get coordinates of left corridor
-        return self:getLeftCorridorCoordinates(GMapAreaDefinitions[area.joins[1][1]], area)
+        return self:setLeftCorridorCoordinates(GMapAreaDefinitions[area.joins[1][1]], area)
     elseif area.joins[1][2] == 'R' then
         -- get coordinates of right corridor
-        return self:getRightCorridorCoordinates(GMapAreaDefinitions[area.joins[1][1]])
+        return self:setRightCorridorCoordinates(GMapAreaDefinitions[area.joins[1][1]])
     elseif area.joins[1][2] == 'T' then
         -- get coordinates of top corridor
-        return self:getTopCorridorCoordinates(GMapAreaDefinitions[area.joins[1][1]], area)
+        return self:setTopCorridorCoordinates(GMapAreaDefinitions[area.joins[1][1]], area)
     elseif area.joins[1][2] == 'B' then
         -- get coordinates of bottom corridor
-        return self:getBottomCorridorCoordinates(GMapAreaDefinitions[area.joins[1][1]])
+        return self:setBottomCorridorCoordinates(GMapAreaDefinitions[area.joins[1][1]])
     end
 end
 
@@ -184,7 +188,7 @@ end
         number: x - the x coordeinate the corridor will be rendered at
         number: y - the y coordeinate the corridor will be rendered at
 ]]
-function Map:getLeftCorridorCoordinates(area, corridor)
+function Map:setLeftCorridorCoordinates(area, corridor)
     -- corridor definition required to calculate corridor width offset
     -- left edge of area minus the pixel width of the corridor
     local x = area.x - (corridor.width * FLOOR_TILE_WIDTH)
@@ -203,7 +207,7 @@ end
         number: x - the x coordeinate the corridor will be rendered at
         number: y - the y coordeinate the corridor will be rendered at
 ]]
-function Map:getRightCorridorCoordinates(area)
+function Map:setRightCorridorCoordinates(area)
     -- right edge of the area
     local x = area.x + (area.width * FLOOR_TILE_WIDTH)
     -- half the height of the area
@@ -222,7 +226,7 @@ end
         number: x - the x coordeinate the corridor will be rendered at
         number: y - the y coordeinate the corridor will be rendered at
 ]]
-function Map:getTopCorridorCoordinates(area, corridor)
+function Map:setTopCorridorCoordinates(area, corridor)
     -- corridor definition required to calculate corridor height offset
     -- half the width of the area
     local x = area.x + (area.width * FLOOR_TILE_WIDTH / 2) - FLOOR_TILE_HEIGHT
@@ -241,7 +245,7 @@ end
         number: x - the x coordeinate the corridor will be rendered at
         number: y - the y coordeinate the corridor will be rendered at
 ]]
-function Map:getBottomCorridorCoordinates(area)
+function Map:setBottomCorridorCoordinates(area)
     -- half the width of the area
     local x = area.x + (area.width * FLOOR_TILE_WIDTH / 2) - FLOOR_TILE_HEIGHT
     -- bottom edge of the area
