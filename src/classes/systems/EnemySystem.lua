@@ -36,6 +36,10 @@ function EnemySystem:init(gruntSpriteBatch, systemManager)
     self.boss = nil
     self.gruntID = 1
     self.turretID = 1
+    -- local copies of game definitions to update
+    self.gruntDef = Copy(GGruntDefinition)
+    self.turretDef = Copy(GTurretDefinition)
+    self.bossDef = Copy(GBossDefinition)
 end
 
 --[[
@@ -144,7 +148,7 @@ end
 ]]
 function EnemySystem:spawnGrunts(numGrunts, area)
     for _ = 1, numGrunts do
-        local grunt = Grunt(self.gruntID, GAnimationDefintions['grunt'], Copy(GGruntDefinition))
+        local grunt = Grunt(self.gruntID, GAnimationDefintions['grunt'], self.gruntDef)
         -- set ID
         -- set random (x, y) within the area
         grunt.x = math.random(area.x, area.x + (area.width * FLOOR_TILE_WIDTH) - ENTITY_WIDTH)
@@ -257,7 +261,7 @@ end
         nil
 ]]
 function EnemySystem:spawnTurretsHelper(x, y, areaID)
-    local turret = Turret(self.turretID, GAnimationDefintions['turret'], Copy(GTurretDefinition))
+    local turret = Turret(self.turretID, GAnimationDefintions['turret'], self.turretDef)
     turret.x = x
     turret.y = y
     turret.areaID = areaID
@@ -281,7 +285,7 @@ end
         nil
 ]]
 function EnemySystem:spawnBoss(area)
-    self.boss = Boss(GAnimationDefintions['boss'], Copy(GBossDefinition))
+    self.boss = Boss(GAnimationDefintions['boss'], self.bossDef)
     -- set random starting direction
     self.boss.direction = DIRECTIONS[math.random(1, 8)]
     self.boss.stateMachine = StateMachine {
@@ -457,12 +461,12 @@ end
 ]]
 function EnemySystem:increaseStats()
     -- grunts
-    GGruntDefinition.health = GGruntDefinition.health + 5
-    GGruntDefinition.damage = GGruntDefinition.damage + 2
+    self.gruntDef.health = self.gruntDef.health + 5
+    self.gruntDef.damage = self.gruntDef.damage + 2
     -- turrets
-    GTurretDefinition.health = GTurretDefinition.health + 25
-    GTurretDefinition.damage = GTurretDefinition.damage + 2
+    self.turretDef.health = self.turretDef.health + 25
+    self.turretDef.damage = self.turretDef.damage + 2
     -- boss
-    GBossDefinition.health = GBossDefinition.health + 50
-    GBossDefinition.damage = GBossDefinition.damage + 2
+    self.bossDef.health = self.bossDef.health + 50
+    self.bossDef.damage = self.bossDef.damage + 2
 end

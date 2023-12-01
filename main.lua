@@ -52,8 +52,7 @@ function love.load()
     GStateMachine:change('menu', {
         highScores = LoadHighScores()
     })
-    GAudio['theme']:play()
-    GAudio['theme']:setLooping(true)
+    Audio_PlayTheme()
     love.keyboard.keysPressed = {}
 end
 

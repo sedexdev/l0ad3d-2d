@@ -57,3 +57,114 @@ function Copy(orig)
     end
     return copy
 end
+
+
+-- ========================= SOUND EFFECTS =========================
+
+--[[
+    Plays the sound clip for the theme music 
+    
+    Params:
+        none
+    Returns:
+        nil
+]]
+function Audio_PlayTheme()
+    GAudio['theme']:play()
+    GAudio['theme']:setLooping(true)
+end
+
+--[[
+    Plays the sound clip for menu option selection 
+    
+    Params:
+        none
+    Returns:
+        nil
+]]
+function Audio_MenuOption()
+    GAudio['select']:stop()
+    GAudio['select']:play()
+end
+
+--[[
+    Plays the sound clip for menu error - used during
+    character selection 
+    
+    Params:
+        none
+    Returns:
+        nil
+]]
+function Audio_MenuError()
+    GAudio['error']:play()
+end
+
+--[[
+    Plays the sound clip of the Players weapon being
+    fired
+    
+    Params:
+        none
+    Returns:
+        nil
+]]
+function Audio_PlayerShot()
+    GAudio['gunshot']:stop()
+    GAudio['gunshot']:play()
+end
+
+--[[
+    Plays the sound clip of the Turrets weapon being
+    fired
+    
+    Params:
+        none
+    Returns:
+        nil
+]]
+function Audio_TurretShot()
+    GAudio['canon']:stop()
+    GAudio['canon']:play()
+end
+
+--[[
+    Plays the sound clip of the Boss' weapon being
+    fired
+    
+    Params:
+        none
+    Returns:
+        nil
+]]
+function Audio_BossShot()
+    GAudio['laser']:stop()
+    GAudio['laser']:play()
+end
+
+--[[
+    Plays the sound clip of an explosion
+    
+    Params:
+        none
+    Returns:
+        nil
+]]
+function Audio_Explosion()
+    GAudio['explosion']:stop()
+    GAudio['explosion']:play()
+end
+
+--[[
+    Plays the sound clip of blood splatter when a Grunt
+    is killed
+    
+    Params:
+        none
+    Returns:
+        nil
+]]
+function Audio_GruntDeath()
+    GAudio['grunt-death']:stop()
+    GAudio['grunt-death']:play()
+end

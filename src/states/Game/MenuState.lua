@@ -51,8 +51,7 @@ function MenuState:init()
         Timer.after(i * 0.3, function ()
             -- set rendered to true so the graphic can be drawn to the screen
             self.bulletOffsets[i].rendered = true
-            GAudio['gunshot']:stop()
-            GAudio['gunshot']:play()
+            Audio_PlayerShot()
         end)
     end
     Timer.after(1.2, function ()
@@ -77,19 +76,16 @@ end
 function MenuState:update(dt)
     if not self.pauseInput then
         if love.keyboard.wasPressed('up') then
-            GAudio['select']:stop()
-            GAudio['select']:play()
+            Audio_MenuOption()
             self.selected = self.selected <= 1 and 3 or self.selected - 1
         end
         if love.keyboard.wasPressed('down') then
-            GAudio['select']:stop()
-            GAudio['select']:play()
+            Audio_MenuOption()
             self.selected = self.selected >= 3 and 1 or self.selected + 1
         end
         -- handle user selection
         if love.keyboard.wasPressed('enter') or love.keyboard.wasPressed('return') then
-            GAudio['select']:stop()
-            GAudio['gunshot']:play()
+            Audio_PlayerShot()
             if self.selected == 1 then
                 GStateMachine:change('select', {
                     highScores = self.highScores

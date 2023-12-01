@@ -51,7 +51,6 @@ function PlayState:init()
     -- event listeners
     Event.on('levelComplete', function ()
         Event.dispatch('score', 2000 * self.level)
-        self.player:reset()
         self.systemManager.enemySystem:increaseStats()
         GStateMachine:change('complete', {
             highScores = self.highScores,
@@ -216,19 +215,16 @@ end
 ]]
 function PlayState:processPauseMenuInput()
     if love.keyboard.wasPressed('up') then
-        GAudio['select']:stop()
-        GAudio['select']:play()
+        Audio_MenuOption()
         self.selected = self.selected <= 1 and 3 or self.selected - 1
     end
     if love.keyboard.wasPressed('down') then
-        GAudio['select']:stop()
-        GAudio['select']:play()
+        Audio_MenuOption()
         self.selected = self.selected >= 3 and 1 or self.selected + 1
     end
 
     if love.keyboard.wasPressed('enter') or love.keyboard.wasPressed('return') then
-        GAudio['select']:stop()
-        GAudio['gunshot']:play()
+        Audio_PlayerShot()
         if self.selected == 1 then
             -- continue game with all player data
             self.paused = false

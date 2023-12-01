@@ -68,26 +68,23 @@ function SelectCharacterState:update(dt)
     if love.keyboard.wasPressed('right') then
         -- play error if right avatar already selected
         if self.selected == 2 then
-            GAudio['error']:play()
+            Audio_MenuError()
         else
-            GAudio['select']:stop()
-            GAudio['select']:play()
+            Audio_MenuOption()
             self.selected = self.selected + 1
         end
     elseif love.keyboard.wasPressed('left') then
         -- play error if left avatar already selected
         if self.selected == 1 then
-            GAudio['error']:play()
+            Audio_MenuError()
         else
-            GAudio['select']:stop()
-            GAudio['select']:play()
+            Audio_MenuOption()
             self.selected = self.selected - 1
         end
     end
 
     if love.keyboard.wasPressed('enter') or love.keyboard.wasPressed('return') then
-        GAudio['select']:stop()
-        GAudio['gunshot']:play()
+        Audio_PlayerShot()
         local map = Map()
         local player = Player(
             self.selected,

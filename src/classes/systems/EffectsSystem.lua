@@ -39,16 +39,13 @@ function EffectsSystem:init(systemManager)
     self.spawnBullet = Event.on('shotFired', function (entity)
         table.insert(self.shots, Shot(entity))
         if entity.type == 'character' then
-            GAudio['gunshot']:stop()
-            GAudio['gunshot']:play()
+            Audio_PlayerShot()
         end
         if entity.type == 'turret' then
-            GAudio['canon']:stop()
-            GAudio['canon']:play()
+            Audio_TurretShot()
         end
         if entity.type == 'boss' then
-            GAudio['laser']:stop()
-            GAudio['laser']:play()
+            Audio_BossShot()
         end
         local bullet =  Bullet(self.bulletID, entity)
         table.insert(self.bullets, bullet)
