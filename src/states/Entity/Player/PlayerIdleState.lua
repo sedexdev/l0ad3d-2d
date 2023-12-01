@@ -54,7 +54,7 @@ end
         nil
 ]]
 function PlayerIdleState:render()
-    if self.player.powerups.invincible then
+    if self.player.invulnerable or self.player.powerups.invincible then
         love.graphics.setColor(1, 1, 1, 100/255)
     else
         love.graphics.setColor(1, 1, 1, 1)

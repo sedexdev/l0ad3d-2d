@@ -72,6 +72,12 @@ function PlayState:init()
     Event.on('score', function (points)
         self.score = self.score + points
     end)
+    Event.on('gruntAttack', function (grunt)
+        self.player:takeDamage(grunt.damage)
+        if self.player.isDead then
+            Event.dispatch('gameOver')
+        end
+    end)
 end
 
 --[[
@@ -304,4 +310,5 @@ function PlayState:displayPlayerData()
     love.graphics.print('Direction: ' .. self.player.direction, self.cameraX + 50, self.cameraY + 540)
     love.graphics.print('Boss spawned: ' .. tostring(self.systemManager.enemySystem.bossSpawned), self.cameraX + 50, self.cameraY + 580)
     love.graphics.print('Level: ' .. tostring(self.level), self.cameraX + 50, self.cameraY + 620)
+    love.graphics.print('Invulnerable: ' .. tostring(self.player.invulnerable), self.cameraX + 50, self.cameraY + 660)
 end

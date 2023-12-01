@@ -30,15 +30,17 @@ end
 
 --[[
     GruntAttackingState update function. Checks to see if the Player
-    object has moved away from the grunt Entity by 150px and changes 
-    the state to rushing if so
-
-    Params:
+        object has moved away from the grunt Entity by 150px and changes 
+        the state to rushing if so
+        
+        Params:
         dt: number - deltatime counter for current frame rate
-    Returns:
+        Returns:
         nil
-]]
+        ]]
 function GruntAttackingState:update(dt)
+    -- dispatch attack event
+    Event.dispatch('gruntAttack', self.grunt)
     -- call the Animation instance's update function 
     self.grunt.animations['attacking-'..self.grunt.direction]:update(dt)
     -- check for wall collisions

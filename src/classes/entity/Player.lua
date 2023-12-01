@@ -33,11 +33,13 @@ function Player:init(id, animations, def)
     self.currentWeapon = def['character'..tostring(self.id)].currentWeapon
     self.direction = def.direction
     self.lastDirection = def.lastDirection
+    self.invulnerable = def.invulnerable
     self.powerups = def.powerups
     self.keys = def.keys
     -- defines the current area of the player: {id = areaID, type = 'area' | 'corridor'}
     self.currentArea = {id = START_AREA_ID, type = 'area'}
     -- powerup timers
+    self.invulnerableTimer = 0
     self.invicibleTimer = 0
     self.doubleSpeedTimer = 0
     self.isDead = false
@@ -61,6 +63,13 @@ function Player:update(dt)
         self:fire()
     end
     -- update timers if powerups are true
+    if self.invulnerable then
+        self.invulnerableTimer = self.invulnerableTimer + dt
+        if self.invulnerableTimer > INVULNERABLE_DURATION then
+            self.invulnerable = false
+            self.invulnerableTimer = 0
+        end
+    end
     if self.powerups.invincible then
         self.invicibleTimer = self.invicibleTimer + dt
         if self.invicibleTimer > INVINCIBLE_DURATION then
@@ -164,18 +173,20 @@ end
         nil
 ]]
 function Player:takeDamage(damage)
-    -- only take damage if the Player is not invincible
-    if not self.powerups.invincible then
-        self.health = self.health - damage
-        if self.health <= 0 then
-            self.isDead = true
-        end
+    -- only take damage if the Player is not invulnerable or invincible
+    if self.invulnerable or self.powerups.invincible then
+        return
+    end
+    self.health = self.health - damage
+    -- go invulnerable temporarily
+    self.invulnerable = true
+    if self.health <= 0 then
+        self.isDead = true
     end
 end
 
 --[[
-    Makes the Player invincible for the passed in number
-    of seconds
+    Makes the Player invincible for INVINCIBLE_DURATION seconds
 
     Params:
         none
