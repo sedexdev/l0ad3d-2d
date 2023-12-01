@@ -359,7 +359,7 @@ function ObjectSystem:removePowerUp(object, name)
             break
         end
     end
-    if index ~= nil then 
+    if index ~= nil then
         self.powerups[index] = nil
         table.remove(self.powerups[name], index)
     end
