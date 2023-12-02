@@ -77,6 +77,16 @@ function Map:generateLevel(systemManager)
             GMapAreaDefinitions[i].doors,
             GMapAreaDefinitions[i].adjacentAreas
         ))
+        -- insert invincibility powerup up in area 26
+        if i == INVINCIBLE_AREA then
+            local powerupX = GMapAreaDefinitions[i].x + (GMapAreaDefinitions[i].width * FLOOR_TILE_WIDTH / 2) - POWERUP_WIDTH / 2
+            local powerupY = GMapAreaDefinitions[i].y + (GMapAreaDefinitions[i].height * FLOOR_TILE_HEIGHT / 2) - POWERUP_HEIGHT / 2
+            table.insert(systemManager.objectSystem.powerups['invincible'],
+                PowerUp:factory(POWERUP_IDS['invincible'],
+                i,
+                powerupX, powerupY)
+            )
+        end
     end
     for _, area in pairs(self.areas) do
         -- generate the tiles for each area

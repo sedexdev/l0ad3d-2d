@@ -138,6 +138,9 @@ POWERUP_HEIGHT = 64 * 2.5
 KEY_WIDTH = 64 * 2.5
 KEY_HEIGHT = 64 * 2.5
 
+-- area ID for invincibility powerup
+INVINCIBLE_AREA = 26
+
 -- correction for Player to collide with crates
 CRATE_CORRECTION = 160
 

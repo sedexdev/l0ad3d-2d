@@ -203,7 +203,7 @@ function ObjectSystem:spawnPowerUp(x, y, areaID)
         table.insert(self.powerups['doubleSpeed'], PowerUp:factory(POWERUP_IDS['doubleSpeed'], areaID, x, y))
         return
     end
-    local invincible = math.random(20) == 1 and true or false
+    local invincible = math.random(25) == 1 and true or false
     if invincible then
         table.insert(self.powerups['invincible'], PowerUp:factory(POWERUP_IDS['invincible'], areaID, x, y))
         return
@@ -299,7 +299,7 @@ function ObjectSystem:handleKeyCollision(key)
             break
         end
     end
-    if index ~= nil then 
+    if index ~= nil then
         self.keys[index] = nil
         table.remove(self.keys, index)
     end
