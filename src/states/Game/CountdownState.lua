@@ -85,7 +85,7 @@ end
         nil
 ]]
 function CountdownState:render()
-    love.graphics.setFont(GFonts['funkrocker-count'])
+    love.graphics.setFont(GFonts['funkrocker-large'])
     love.graphics.setColor(1, 1, 1, 1)
     -- draw shadow
     love.graphics.printf(tostring(self.count), 2, (WINDOW_HEIGHT / 3) + 2, WINDOW_WIDTH, 'center')

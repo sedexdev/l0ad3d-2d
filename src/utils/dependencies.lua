@@ -23,7 +23,7 @@ GFonts = {
     ['funkrocker-small'] = love.graphics.newFont('fonts/Funkrocker.ttf', 48),
     ['funkrocker-menu'] = love.graphics.newFont('fonts/Funkrocker.ttf', 64),
     ['funkrocker-medium'] = love.graphics.newFont('fonts/Funkrocker.ttf', 108),
-    ['funkrocker-count'] = love.graphics.newFont('fonts/Funkrocker.ttf', 192),
+    ['funkrocker-large'] = love.graphics.newFont('fonts/Funkrocker.ttf', 192),
     ['blood-title'] = love.graphics.newFont('fonts/HoMicIDE EFfeCt.ttf', 170)
 }
 

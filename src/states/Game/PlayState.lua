@@ -48,6 +48,7 @@ function PlayState:init()
     -- pause gameplay
     self.paused = false
     self.selected = 1
+    self.confirm = false
     -- event listeners
     Event.on('levelComplete', function ()
         Event.dispatch('score', 2000 * self.level)
@@ -148,9 +149,12 @@ function PlayState:render()
     -- debug data
     self:displayFPS()
     self:displayPlayerData()
-    -- show menu if paused
-    if self.paused then
+    -- show menu if paused and not selecting restart
+    if self.paused and not self.confirm then
         self:renderPauseMenu()
+    end
+    if self.confirm then
+        self:renderConfirmMenu()
     end
 end
 
@@ -180,6 +184,42 @@ function PlayState:renderPauseMenu()
     self:renderOption('CONTINUE', 1, 200)
     self:renderOption('RESTART', 2, 300)
     self:renderOption('QUIT', 3, 400)
+end
+
+--[[
+    Renders the confirm menu after the use has chosen to
+    restart the game. Restarting wipes all current game
+    data and starts from scratch
+
+    Params:
+        none
+    Returns:
+        nil
+]]
+function PlayState:renderConfirmMenu()
+    -- draw dark background  
+    love.graphics.setColor(10/255, 10/255, 10/255, 150/255)
+    -- to keep things centered with the translation add the values to the (cameraX, cameraY) vector
+    love.graphics.rectangle('fill', self.cameraX, self.cameraY, WINDOW_WIDTH, WINDOW_HEIGHT)
+    -- display Paused
+    love.graphics.setFont(GFonts['funkrocker-medium'])
+    love.graphics.setColor(10/255, 10/255, 10/255, 1)
+    love.graphics.printf('CONFIRM RESTART', self.cameraX + 2, (self.cameraY + WINDOW_HEIGHT / 4) + 2, WINDOW_WIDTH, 'center')
+    love.graphics.printf('CONFIRM RESTART', self.cameraX + 2, (self.cameraY + WINDOW_HEIGHT / 4) + 2, WINDOW_WIDTH, 'center')
+    love.graphics.setColor(1, 0/255, 0/255, 1)
+    love.graphics.printf('CONFIRM RESTART', self.cameraX, (self.cameraY + WINDOW_HEIGHT / 4), WINDOW_WIDTH, 'center')
+    -- draw menu
+    love.graphics.setFont(GFonts['funkrocker-menu'])
+    self:renderOption('YES', 1, 200)
+    self:renderOption('NO', 2, 300)
+    -- draw warning at bottom
+    local warning = 'Restarting will wipe all current game data'
+    love.graphics.setFont(GFonts['funkrocker-small'])
+    love.graphics.setColor(10/255, 10/255, 10/255, 1)
+    love.graphics.printf(warning, self.cameraX + 2, self.cameraY + (WINDOW_HEIGHT - 200) + 2, WINDOW_WIDTH, 'center')
+    love.graphics.printf(warning, self.cameraX + 2, self.cameraY + (WINDOW_HEIGHT - 200) + 2, WINDOW_WIDTH, 'center')
+    love.graphics.setColor(1, 0/255, 0/255, 1)
+    love.graphics.printf(warning, self.cameraX, self.cameraY + (WINDOW_HEIGHT - 200), WINDOW_WIDTH, 'center')
 end
 
 --[[
@@ -214,21 +254,55 @@ end
         nil
 ]]
 function PlayState:processPauseMenuInput()
-    if love.keyboard.wasPressed('up') then
-        Audio_MenuOption()
-        self.selected = self.selected <= 1 and 3 or self.selected - 1
+    if self.confirm then
+        self:processConfirmMenuInput()
+    else
+        if love.keyboard.wasPressed('up') then
+            Audio_MenuOption()
+            self.selected = self.selected <= 1 and 3 or self.selected - 1
+        end
+        if love.keyboard.wasPressed('down') then
+            Audio_MenuOption()
+            self.selected = self.selected >= 3 and 1 or self.selected + 1
+        end
+        -- handle selection
+        if love.keyboard.wasPressed('enter') or love.keyboard.wasPressed('return') then
+            Audio_PlayerShot()
+            if self.selected == 1 then
+                -- continue game with all player data
+                self.paused = false
+            elseif self.selected == 2 then
+                -- set selected option and confirm to true
+                self.selected = 1
+                self.confirm = true
+            else
+                -- quit to MenuState
+                GStateMachine:change('menu', {
+                    highScores = self.highScores
+                })
+            end
+        end
     end
-    if love.keyboard.wasPressed('down') then
-        Audio_MenuOption()
-        self.selected = self.selected >= 3 and 1 or self.selected + 1
-    end
+end
 
+--[[
+    Checks Player input and updates the game depending on
+    the pause menu options selected
+
+    Params:
+        none
+    Returns:
+        nil
+]]
+function PlayState:processConfirmMenuInput()
+    if love.keyboard.wasPressed('up') or love.keyboard.wasPressed('down') then
+        Audio_MenuOption()
+        self.selected = self.selected == 1 and 2 or 1
+    end
+    -- handle selection
     if love.keyboard.wasPressed('enter') or love.keyboard.wasPressed('return') then
         Audio_PlayerShot()
         if self.selected == 1 then
-            -- continue game with all player data
-            self.paused = false
-        elseif self.selected == 2 then
             -- restart game with fresh data
             self.player = nil
             self.map = nil
@@ -238,10 +312,9 @@ function PlayState:processPauseMenuInput()
                 highScores = self.highScores,
             })
         else
-            -- quit to MenuState
-            GStateMachine:change('menu', {
-                highScores = self.highScores
-            })
+            -- reset selected options and confirm to false
+            self.selected = 1
+            self.confirm = false
         end
     end
 end
