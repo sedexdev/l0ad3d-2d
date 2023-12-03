@@ -22,20 +22,19 @@ Grunt = Class{__includes = Entity}
 ]]
 function Grunt:init(id, animations, def)
     Entity.init(self, def)
-    self.id = id
-    self.texture = animations.texture
-    self.animations = animations.animations
-    self.direction = def.direction
-    self.health = def.health
+    self.id            = id
+    self.texture       = animations.texture
+    self.animations    = animations.animations
+    self.direction     = def.direction
+    self.health        = def.health
     self.powerUpChance = def.powerUpChance
-    self.damage = def.damage
+    self.damage        = def.damage
     -- boolean flag to detect if this Grunt is dead
-    self.isDead = false
+    self.isDead        = false
 end
 
 --[[
-    Grunt update function. Calls Entity parent update function,
-    passing <self> and <dt> as arguments
+    Grunt update function
 
     Params:
         dt: number - deltatime counter for current frame rate
@@ -47,8 +46,7 @@ function Grunt:update(dt)
 end
 
 --[[
-    Grunt render function. Calls Entity parent render function,
-    passing <self> as an arguments
+    Grunt render function
 
     Params:
         none

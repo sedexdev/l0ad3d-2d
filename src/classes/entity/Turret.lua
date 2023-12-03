@@ -22,26 +22,25 @@ Turret = Class{__includes = Entity}
 ]]
 function Turret:init(id, animations, def)
     Entity.init(self, def)
-    self.id = id
-    self.texture = animations.texture
-    self.fireShot = animations.fireShot
-    self.direction = def.direction
-    self.health = def.health
-    self.damage = def.damage
+    self.id             = id
+    self.texture        = animations.texture
+    self.fireShot       = animations.fireShot
+    self.direction      = def.direction
+    self.health         = def.health
+    self.damage         = def.damage
     -- random angle in degrees to draw turret
     self.startDirection = math.random(1, 8)
-    self.direction = DIRECTIONS[self.startDirection]
+    self.direction      = DIRECTIONS[self.startDirection]
     -- starting degrees - if equal to 0 set as North (360)
-    self.degrees = (self.startDirection - 1) * 45 == 0 and 360 or (self.startDirection - 1) * 45
+    self.degrees        = (self.startDirection - 1) * 45 == 0 and 360 or (self.startDirection - 1) * 45
     -- angle in radians
-    self.angle = 0
+    self.angle          = 0
     -- boolean flag to detect if the Turret is dead
-    self.isDead = false
+    self.isDead         = false
 end
 
 --[[
-    Turret update function. Calls Entity parent update function,
-    passing <self> and <dt> as arguments
+    Turret update function
 
     Params:
         dt: number - deltatime counter for current frame rate
@@ -53,8 +52,7 @@ function Turret:update(dt)
 end
 
 --[[
-    Turret render function. Calls Entity parent render function,
-    passing <self> as an arguments
+    Turret render function
 
     Params:
         none

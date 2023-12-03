@@ -21,19 +21,18 @@ Boss = Class{__includes = Entity}
 ]]
 function Boss:init(animations, def)
     Entity.init(self, def)
-    self.texture = animations.texture
-    self.fireShot = animations.fireShot
+    self.texture    = animations.texture
+    self.fireShot   = animations.fireShot
     self.animations = animations.animations
-    self.direction = def.direction
-    self.health = def.health
-    self.damage = def.damage
+    self.direction  = def.direction
+    self.health     = def.health
+    self.damage     = def.damage
     -- boolean flag to detect if the Boss is dead
     self.isDead = false
 end
 
 --[[
-    Boss update function. Calls Entity parent update function,
-    passing <self> and <dt> as arguments
+    Boss update function
 
     Params:
         dt: number - deltatime counter for current frame rate
@@ -45,8 +44,7 @@ function Boss:update(dt)
 end
 
 --[[
-    Boss render function. Calls Entity parent render function,
-    passing <self> as an arguments
+    Boss render function
 
     Params:
         none

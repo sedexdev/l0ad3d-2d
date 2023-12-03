@@ -19,16 +19,16 @@ Animation = Class{}
         nil
 ]]
 function Animation:init(frames, interval)
-    self.frames = frames
-    self.interval = interval
+    self.frames       = frames
+    self.interval     = interval
     self.currentFrame = 1
-    self.timer = 0
+    self.timer        = 0
 end
 
 --[[
     Animation update function. If more than 1 frame is present
     in <self.frames> then increment <self.timer> by <dt> on every
-    frame processed by the enigine. Once <self.timer> passes
+    frame processed by the engine. Once <self.timer> passes
     <self.interval> change the current frame to the next in the
     table or switch back to the first one 
 
@@ -48,7 +48,7 @@ function Animation:update(dt)
 end
 
 --[[
-    Returns the number value of the current frame being
+    Returns the index value of the current frame being
     animated
 
     Params:

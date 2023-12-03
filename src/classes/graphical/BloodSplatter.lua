@@ -19,10 +19,10 @@ BloodSplatter = Class{}
         nil
 ]]
 function BloodSplatter:init(x, y, direction)
-    self.x = x + (ENTITY_WIDTH / 2)
-    self.y = y + (ENTITY_HEIGHT / 2)
+    self.x       = x + (ENTITY_WIDTH / 2)
+    self.y       = y + (ENTITY_HEIGHT / 2)
     self.texture = GTextures['blood-splatter']
-    self.angle = ENTITY_ANGLES[direction]
+    self.angle   = ENTITY_ANGLES[direction]
 end
 
 --[[

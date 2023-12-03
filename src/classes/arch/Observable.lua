@@ -13,7 +13,7 @@
 Observable = Class{}
 
 --[[
-    Simulates an interface or abstract class with functions
+    Simulates an interface or abstract class with function
     definitions that have no implementation. This allows all
     Observable classes to call the base functions regardless of
     whether the concrete class overrides the function

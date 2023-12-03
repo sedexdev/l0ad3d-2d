@@ -15,19 +15,19 @@ Entity = Class{}
     Boss constructor
 
     Params:
-        def: table - tEntity definition defined in src/utils/definitions.lua
+        def: table - Entity definition defined in src/utils/definitions.lua
     Returns:
         nil
 ]]
 function Entity:init(def)
-    self.type = def.type
-    self.x = def.x
-    self.y = def.y
-    self.dx = def.dx
-    self.dy = def.dy
-    self.width = def.width
-    self.height = def.height
-    self.areaID = def.areaID
+    self.type         = def.type
+    self.x            = def.x
+    self.y            = def.y
+    self.dx           = def.dx
+    self.dy           = def.dy
+    self.width        = def.width
+    self.height       = def.height
+    self.areaID       = def.areaID
     self.stateMachine = def.stateMachine
 end
 

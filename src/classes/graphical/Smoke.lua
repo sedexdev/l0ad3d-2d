@@ -20,10 +20,10 @@ Smoke = Class{}
         nil
 ]]
 function Smoke:init(texture, animations, x, y)
-    self.texture = texture
+    self.texture    = texture
     self.animations = animations
-    self.x = x
-    self.y = y
+    self.x          = x
+    self.y          = y
 end
 
 --[[
@@ -54,8 +54,8 @@ function Smoke:render()
 end
 
 --[[
-    Creates and returns an Animation instance for rendering
-    an Smoke
+    Creates and returns a Smoke instance using the given
+    arguments
 
     Params:
         x: number - x coordinate

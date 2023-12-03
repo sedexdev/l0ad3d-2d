@@ -20,12 +20,12 @@ Key = Class{}
         nil
 ]]
 function Key:init(id, areaID, x, y)
-    self.id = id
+    self.id     = id
     self.areaID = areaID
-    self.x = x
-    self.y = y
-    self.type = 'key'
-    self.width = KEY_WIDTH
+    self.x      = x
+    self.y      = y
+    self.type   = 'key'
+    self.width  = KEY_WIDTH
     self.height = KEY_HEIGHT
 end
 
@@ -48,7 +48,8 @@ function Key:render()
 end
 
 --[[
-    Factory method for returning instances of Key
+    Creates and returns an instance of Key using
+    the given arguments
 
     Params:
         id:     number - crate ID

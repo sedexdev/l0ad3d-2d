@@ -20,10 +20,10 @@ Explosion = Class{}
         nil
 ]]
 function Explosion:init(texture, animations, x, y)
-    self.texture = texture
+    self.texture    = texture
     self.animations = animations
-    self.x = x
-    self.y = y
+    self.x          = x
+    self.y          = y
 end
 
 --[[
@@ -59,8 +59,8 @@ function Explosion:render()
 end
 
 --[[
-    Creates and returns an Animation instance for rendering
-    an explosion
+    Creates and returns an instance of Explosion using
+    the given arguments
 
     Params:
         object: table - object that has exploded

@@ -20,16 +20,16 @@ PowerUp = Class{}
         nil
 ]]
 function PowerUp:init(id, areaID, x, y)
-    self.id = id
-    self.areaID = areaID
-    self.x = x
-    self.y = y
-    self.type = 'powerup'
-    self.width = POWERUP_WIDTH
-    self.height = POWERUP_HEIGHT
+    self.id      = id
+    self.areaID  = areaID
+    self.x       = x
+    self.y       = y
+    self.type    = 'powerup'
+    self.width   = POWERUP_WIDTH
+    self.height  = POWERUP_HEIGHT
     -- rotational values
     self.degrees = math.random(1, 359)
-    self.angle = 0
+    self.angle   = 0
 end
 
 --[[

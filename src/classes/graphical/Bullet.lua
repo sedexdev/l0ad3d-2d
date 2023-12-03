@@ -1,6 +1,8 @@
 --[[
     Bullet: class
 
+    Includes: Obervable - parent class for observers
+
     Description:
         Creates a Bullet that travels across the (x, y) plane
         after a Shot instance has been created and 'fired'
@@ -12,18 +14,18 @@ Bullet = Class{__includes = Observable}
     Bullet constructor
 
     Params:
-        id:      number - id of this Bullet
-        entity:  table  - Entity object
+        id:     number - id of this Bullet
+        entity: table  - Entity object
     Returns:
         nil
 ]]
 function Bullet:init(id, entity)
-    self.id = id
-    self.entity = entity
-    self.x = entity.x + (ENTITY_WIDTH / 2)
-    self.y = entity.y + (ENTITY_WIDTH / 2)
-    self.dx = entity.type == 'character' and BULLET_SPEED or ENEMY_BULLET_SPEED
-    self.dy = entity.type == 'character' and BULLET_SPEED or ENEMY_BULLET_SPEED
+    self.id        = id
+    self.entity    = entity
+    self.x         = entity.x + (ENTITY_WIDTH / 2)
+    self.y         = entity.y + (ENTITY_WIDTH / 2)
+    self.dx        = entity.type == 'character' and BULLET_SPEED or ENEMY_BULLET_SPEED
+    self.dy        = entity.type == 'character' and BULLET_SPEED or ENEMY_BULLET_SPEED
     self.direction = entity.direction
     -- observers table
     self.observers = {}
@@ -110,9 +112,9 @@ function Bullet:notify()
     for _, observer in pairs(self.observers) do
         observer:message({
             source = 'Bullet',
-            id = self.id,
-            x = self.x,
-            y = self.y,
+            id     = self.id,
+            x      = self.x,
+            y      = self.y,
             entity = self.entity
         })
     end

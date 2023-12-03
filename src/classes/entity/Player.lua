@@ -22,28 +22,28 @@ Player = Class{__includes = Entity}
 ]]
 function Player:init(id, animations, def)
     Entity.init(self, def)
-    self.id = id
-    self.texture = animations.texture
-    self.fireShot = animations.fireShot
-    self.animations = animations.animations
-    self.health = def.health
-    self.ammo = def.ammo
-    self.shotFired = def.shotFired
-    self.weapons = def['character'..tostring(self.id)].weapons
-    self.currentWeapon = def['character'..tostring(self.id)].currentWeapon
-    self.direction = def.direction
-    self.lastDirection = def.lastDirection
-    self.invulnerable = def.invulnerable
-    self.lives = def.lives
-    self.powerups = def.powerups
-    self.keys = def.keys
+    self.id                = id
+    self.texture           = animations.texture
+    self.fireShot          = animations.fireShot
+    self.animations        = animations.animations
+    self.health            = def.health
+    self.ammo              = def.ammo
+    self.shotFired         = def.shotFired
+    self.weapons           = def['character'..tostring(self.id)].weapons
+    self.currentWeapon     = def['character'..tostring(self.id)].currentWeapon
+    self.direction         = def.direction
+    self.lastDirection     = def.lastDirection
+    self.invulnerable      = def.invulnerable
+    self.lives             = def.lives
+    self.powerups          = def.powerups
+    self.keys              = def.keys
     -- defines the current area of the player: {id = areaID, type = 'area' | 'corridor'}
-    self.currentArea = {id = START_AREA_ID, type = 'area'}
+    self.currentArea       = {id = START_AREA_ID, type = 'area'}
     -- powerup timers
     self.invulnerableTimer = 0
-    self.invicibleTimer = 0
-    self.doubleSpeedTimer = 0
-    self.isDead = false
+    self.invicibleTimer    = 0
+    self.doubleSpeedTimer  = 0
+    self.isDead            = false
     -- even listener for grunt attacks
     Event.on('gruntAttack', function (grunt)
         self:takeDamage(grunt.damage)
@@ -54,9 +54,9 @@ function Player:init(id, animations, def)
 end
 
 --[[
-    Player update function. Calls Entity parent update function,
-    passing <self> and <dt> as arguments. Also defines user interaction
-    keys and renders out shots as the player fires their weapon.
+    Player update function. Defines input for firing the Players
+    weapon and applys the effects of time depenedant powerups and
+    temporary invulnerability after taking damage
 
     Key bindings:
         space: fire weapon - self:fire() called
@@ -98,9 +98,7 @@ function Player:update(dt)
 end
 
 --[[
-    Player render function. Calls Entity parent render function,
-    passing <self> as an arguments. Also renders each Shot object
-    inserted into the <self.shots> table
+    Player render function
 
     Params:
         none
@@ -113,10 +111,10 @@ end
 
 --[[
     Called when an end user fires the Players weapon using
-    the space key. A new instance of Shot is inserted into
-    <self.shots> and the GAudio['gunshot'] is played. Also
-    checks if the character has more than one weapon and updates
-    the <self.currentWeapon> attribute so shots can be rendered
+    the space key. A 'shotFired' event is dispatched to the
+    PlayState to handle the shot fired. Also checks if the 
+    character has more than one weapon and updates the 
+    <self.currentWeapon> attribute so shots can be rendered
     from alternating weapons
 
     Params:
@@ -136,16 +134,16 @@ function Player:fire()
 end
 
 --[[
-    Updates the location of the player so proper collision detection
-    can be implemented in the location the Player is currently in
+    Updates the location of the Player object so area-specific
+    checks can be performed as the game progresses
 
     Params:
-        map:   table - Map object
+        map: table - Map object
     Returns:
         nil
 ]]
 function Player:setCurrentArea(map)
-    -- <areas> includes both areas and corridors
+    -- areas includes both areas and corridors
     for _, area in pairs(map.areas) do
         local areaWidth = area.x + (area.width * FLOOR_TILE_WIDTH) + WALL_OFFSET
         local areaHeight = area.y + (area.height * FLOOR_TILE_HEIGHT) + WALL_OFFSET
@@ -190,6 +188,7 @@ function Player:takeDamage(damage)
     self.invulnerable = true
     if self.health <= 0 then
         if self.lives > 1 then
+            -- dispatch lostLife event to show remaining lives
             Event.dispatch('lostLife')
             self.lives = self.lives - 1
             self.health = MAX_HEALTH
@@ -212,7 +211,7 @@ function Player:makeInvicible()
 end
 
 --[[
-    Doubles the speed of the Player for a 20s duration
+    Doubles the speed of the Player for X2_SPEED_DURATION seconds
 
     Params:
         none

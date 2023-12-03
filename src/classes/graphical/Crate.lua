@@ -19,12 +19,12 @@ Crate = Class{}
         nil
 ]]
 function Crate:init(id, areaID, x, y)
-    self.id = id
+    self.id     = id
     self.areaID = areaID
-    self.x = x
-    self.y = y
-    self.type = 'crate'
-    self.width = CRATE_WIDTH
+    self.x      = x
+    self.y      = y
+    self.type   = 'crate'
+    self.width  = CRATE_WIDTH
     self.height = CRATE_HEIGHT
 end
 
@@ -47,7 +47,8 @@ function Crate:render()
 end
 
 --[[
-    Factory method for returning instances of Crate
+    Creates and returns an instance of Crate using
+    the given arguments
 
     Params:
         id:     number - crate ID

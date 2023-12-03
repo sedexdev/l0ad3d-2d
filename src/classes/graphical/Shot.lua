@@ -19,11 +19,11 @@ Shot = Class{}
         nil
 ]]
 function Shot:init(entity)
-    self.entity = entity
-    self.shotGraphic = entity.fireShot
-    self.shotTimer = 0
+    self.entity       = entity
+    self.shotGraphic  = entity.fireShot
+    self.shotTimer    = 0
     self.shotInterval = 0.1
-    self.renderShot = true
+    self.renderShot   = true
 end
 
 --[[
@@ -81,9 +81,9 @@ end
 
 --[[
     Set's the (x, y) coordinate of the shot graphic so it
-    renders correctly by appearing to eminate from the Entitys
+    renders correctly by appearing to eminate from the Entity's
     weapon. This function handles shot rendering at right angles. 
-    Angles with multiples of 45 degrees are handled in the helper 
+    Angles at 45, 135, 225, and 315 degrees are handled in the helper 
     function below
 
     Params:
@@ -130,8 +130,7 @@ end
 --[[
     Set's the (x, y) coordinate of the shot graphic so it
     renders correctly by appearing to enimate from the Players
-    weapon. This function handles shot rendering at multiples
-    of 45 degrees
+    weapon
 
     Params:
         x: number - current x coordinate
@@ -195,29 +194,28 @@ end
         number: shot y coordinate
 ]]
 function Shot:setTurretCoordinates()
-    local offset = 120
     if self.entity.direction == 'north' then
-        return self.entity.x - (offset * 2), self.entity.y - TURRET_HEIGHT + offset
+        return self.entity.x - (TURRET_OFFSET * 2), self.entity.y - TURRET_HEIGHT + TURRET_OFFSET
     end
     if self.entity.direction == 'north-east' then
-        return self.entity.x - offset, self.entity.y - (offset * 2)
+        return self.entity.x - TURRET_OFFSET, self.entity.y - (TURRET_OFFSET * 2)
     end
     if self.entity.direction == 'east' then
-        return self.entity.x + TURRET_WIDTH - offset, self.entity.y - (ENEMY_SHOT_PX / 2) - offset
+        return self.entity.x + TURRET_WIDTH - TURRET_OFFSET, self.entity.y - (ENEMY_SHOT_PX / 2) - TURRET_OFFSET
     end
     if self.entity.direction == 'south-east' then
-        return self.entity.x + TURRET_WIDTH, self.entity.y - offset
+        return self.entity.x + TURRET_WIDTH, self.entity.y - TURRET_OFFSET
     end
     if self.entity.direction == 'south' then
-        return self.entity.x + (offset * 2.5), self.entity.y + offset
+        return self.entity.x + (TURRET_OFFSET * 2.5), self.entity.y + TURRET_OFFSET
     end
     if self.entity.direction == 'south-west' then
-        return self.entity.x + offset, self.entity.y + TURRET_HEIGHT
+        return self.entity.x + TURRET_OFFSET, self.entity.y + TURRET_HEIGHT
     end
     if self.entity.direction == 'west' then
-        return self.entity.x - offset, self.entity.y + TURRET_HEIGHT
+        return self.entity.x - TURRET_OFFSET, self.entity.y + TURRET_HEIGHT
     end
     if self.entity.direction == 'north-west' then
-        return self.entity.x - (offset * 2), self.entity.y + offset
+        return self.entity.x - (TURRET_OFFSET * 2), self.entity.y + TURRET_OFFSET
     end
 end
