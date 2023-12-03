@@ -78,7 +78,6 @@ function BossIdleState:update(dt)
         self.duration = math.random(15, 20)
         self.interval = 0
     end
-    -- TODO: start rushing when Player enters Boss area
     if self.systemManager.enemySystem:checkProximity(self.boss) then
         self.boss.stateMachine:change('rushing')
     end
