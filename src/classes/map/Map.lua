@@ -15,7 +15,7 @@ Map = Class{}
 
 --[[
     Map constructor. Defines tables for storing area and corridor
-    objects, as well as defining the starting area
+    objects
 
     Params:
         none
@@ -44,9 +44,9 @@ end
 
 --[[
     Generates the MapArea objects that form the Map. Also responsible 
-    for generating interactive game objects including Entity and PowerUp 
-    instances for the Player object to interact with, as well the games
-    door system
+    for calling functions for generating interactive game objects 
+    including Entity and PowerUp instances for the Player object to 
+    interact with, as well the games door system
 
 
     Params:
@@ -119,7 +119,7 @@ function Map:getAreaDefinition(areaID)
 end
 
 --[[
-    Gets the starting areas to spwn grunt type Entity objects in
+    Gets the starting areas to spawn grunt type Entity objects in
     when the game level is generated
 
     Params:

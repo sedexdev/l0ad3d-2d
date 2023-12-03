@@ -34,20 +34,20 @@ MapArea = Class{}
         nil
 ]]
 function MapArea:init(id, x, y, width, height, type, orientation, bends, joins, doors, adjacentAreas)
-    self.id = id
-    self.x = x
-    self.y = y
-    self.width = width
-    self.height = height
-    self.type = type
-    self.orientation = orientation
-    self.bends = bends
-    self.joins = joins
-    self.doors = doors
+    self.id            = id
+    self.x             = x
+    self.y             = y
+    self.width         = width
+    self.height        = height
+    self.type          = type
+    self.orientation   = orientation
+    self.bends         = bends
+    self.joins         = joins
+    self.doors         = doors
     self.adjacentAreas = adjacentAreas
-    self.floorTiles = {}
-    self.wallTiles = {}
-    self.bendWall = {}
+    self.floorTiles    = {}
+    self.wallTiles     = {}
+    self.bendWall      = {}
 end
 
 --[[
