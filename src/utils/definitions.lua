@@ -107,6 +107,7 @@ GCharacterDefinition = {
     direction = 'north',
     lastDirection = 'north',
     invulnerable = false,
+    lives = 3,
     powerups = {
         invincible = false,
         doubleSpeed = false,

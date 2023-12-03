@@ -49,6 +49,10 @@ function PlayState:init()
     self.paused = false
     self.selected = 1
     self.confirm = false
+    -- life lost message
+    self.fontHeight = GFonts['funkrocker-medium']:getHeight()
+    self.messageY = -self.fontHeight
+    self.duration = 2
     -- event listeners
     Event.on('levelComplete', function ()
         Event.dispatch('score', 2000 * self.level)
@@ -73,6 +77,19 @@ function PlayState:init()
     Event.on('score', function (points)
         self.score = self.score + points
     end)
+    Event.on('lostLife', function ()
+        Timer.tween(self.duration, {
+            [self] = {messageY = (WINDOW_HEIGHT / 2) - (self.fontHeight / 2)}
+        }):finish(function ()
+            Timer.after(self.duration, function ()
+                Timer.tween(self.duration, {
+                    [self] = {messageY = (WINDOW_HEIGHT + self.fontHeight)}
+                }):finish(function ()
+                    self.messageY = -self.fontHeight
+                end)
+            end)
+        end)
+    end)
 end
 
 --[[
@@ -96,6 +113,7 @@ function PlayState:update(dt)
     else
         self:processPauseMenuInput()
     end
+    Timer.update(dt)
 end
 
 --[[
@@ -149,6 +167,8 @@ function PlayState:render()
     -- debug data
     self:displayFPS()
     self:displayPlayerData()
+    -- display life lost message
+    self:renderLifeLostMessage()
     -- show menu if paused and not selecting restart
     if self.paused and not self.confirm then
         self:renderPauseMenu()
@@ -156,6 +176,27 @@ function PlayState:render()
     if self.confirm then
         self:renderConfirmMenu()
     end
+end
+
+--[[
+    Tweens a message down the screen to inform the player that
+    a life was lost and how many lives they have left
+
+    Params:
+        none
+    Returns:
+        nil
+]]
+function PlayState:renderLifeLostMessage()
+    local message = 'REMAINING LIVES: ' .. self.player.lives
+    love.graphics.setFont(GFonts['funkrocker-medium'])
+    -- print text shadow
+    love.graphics.setColor(0/255, 0/255, 0/255, 1)
+    love.graphics.printf(message, self.cameraX + 2, self.cameraY + self.messageY + 2, WINDOW_WIDTH, 'center')
+    love.graphics.printf(message, self.cameraX + 2, self.cameraY + self.messageY + 2, WINDOW_WIDTH, 'center')
+    -- print message
+    love.graphics.setColor(1, 0/255, 0/255, 1)
+    love.graphics.printf(message, self.cameraX, self.cameraY + self.messageY, WINDOW_WIDTH, 'center')
 end
 
 --[[
@@ -378,4 +419,5 @@ function PlayState:displayPlayerData()
     love.graphics.print('Boss spawned: ' .. tostring(self.systemManager.enemySystem.bossSpawned), self.cameraX + 50, self.cameraY + 580)
     love.graphics.print('Level: ' .. tostring(self.level), self.cameraX + 50, self.cameraY + 620)
     love.graphics.print('Invulnerable: ' .. tostring(self.player.invulnerable), self.cameraX + 50, self.cameraY + 660)
+    love.graphics.print('Lives: ' .. tostring(self.player.lives), self.cameraX + 50, self.cameraY + 700)
 end

@@ -34,6 +34,7 @@ function Player:init(id, animations, def)
     self.direction = def.direction
     self.lastDirection = def.lastDirection
     self.invulnerable = def.invulnerable
+    self.lives = def.lives
     self.powerups = def.powerups
     self.keys = def.keys
     -- defines the current area of the player: {id = areaID, type = 'area' | 'corridor'}
@@ -151,7 +152,7 @@ function Player:setCurrentArea(map)
         if area.type == 'area' then
             -- if player within area/corridor x coordinate boundary
             if (self.x > area.x - WALL_OFFSET) and (self.x + self.width) < areaWidth then
-                -- if player within area/corridor y coordinate boundary
+                -- if player within a rea/corridor y coordinate boundary
                 if (self.y > area.y - WALL_OFFSET) and (self.y + self.height) < areaHeight then
                     -- player current area updated
                     self.currentArea.id = area.id
@@ -188,7 +189,13 @@ function Player:takeDamage(damage)
     -- go invulnerable temporarily
     self.invulnerable = true
     if self.health <= 0 then
-        self.isDead = true
+        if self.lives > 1 then
+            Event.dispatch('lostLife')
+            self.lives = self.lives - 1
+            self.health = MAX_HEALTH
+        else
+            self.isDead = true
+        end
     end
 end
 
