@@ -22,22 +22,22 @@ GruntAttackingState = Class{__includes = BaseState}
         nil
 ]]
 function GruntAttackingState:init(area, grunt, gruntSpriteBatch, systemManager)
-    self.area = area
+    self.area             = area
     self.gruntSpriteBatch = gruntSpriteBatch
-    self.grunt = grunt
-    self.systemManager = systemManager
+    self.grunt            = grunt
+    self.systemManager    = systemManager
 end
 
 --[[
     GruntAttackingState update function. Checks to see if the Player
-        object has moved away from the grunt Entity by 150px and changes 
-        the state to rushing if so
+    object has moved away from the grunt Entity by 150px and changes 
+    the state to rushing if so
         
-        Params:
+    Params:
         dt: number - deltatime counter for current frame rate
-        Returns:
+    Returns:
         nil
-        ]]
+]]
 function GruntAttackingState:update(dt)
     -- dispatch attack event after 1 second to allow PLayer to pass grunt without taking damage
     Event.dispatch('gruntAttack', self.grunt)

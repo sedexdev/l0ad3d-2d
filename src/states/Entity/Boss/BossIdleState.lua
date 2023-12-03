@@ -23,11 +23,11 @@ BossIdleState = Class{__includes = BaseState}
         nil
 ]]
 function BossIdleState:init(area, boss, systemManager)
-    self.area = area
-    self.boss = boss
+    self.area          = area
+    self.boss          = boss
     self.systemManager = systemManager
-    self.interval = 0
-    self.duration = math.random(4, 6)
+    self.interval      = 0
+    self.duration      = math.random(4, 6)
 end
 
 --[[

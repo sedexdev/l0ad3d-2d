@@ -1,7 +1,8 @@
 --[[
     PlayerWalkingState: class
 
-    Includes: BaseState - provides base functions for state classes
+    Includes: BaseState  - provides base functions for state classes
+              Observable - provides base functions for Obervables
 
     Description:
         Implements the animations for the Player object when
@@ -20,8 +21,8 @@ PlayerWalkingState = Class{__includes = BaseState, Observable}
         nil
 ]]
 function PlayerWalkingState:init(player, map)
-    self.player = player
-    self.map = map
+    self.player    = player
+    self.map       = map
     -- observers table
     self.observers = {}
 end
@@ -188,9 +189,9 @@ function PlayerWalkingState:notify()
     for _, observer in pairs(self.observers) do
         observer:message({
             source = 'PlayerWalkingState',
-            x = self.player.x,
-            y = self.player.y,
-            type = self.player.type,
+            x      = self.player.x,
+            y      = self.player.y,
+            type   = self.player.type,
             areaID = self.player.currentArea.id
         })
     end

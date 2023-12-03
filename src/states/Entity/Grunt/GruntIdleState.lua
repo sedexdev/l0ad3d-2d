@@ -20,17 +20,17 @@ GruntIdleState = Class{__includes = BaseState}
         grunt:            table       - Grunt object whose state will be updated
         gruntSpriteBatch: SpriteBatch - list of Grunt quads for rendering
         systemManager:    table       - SystemManager object
-        enemySystem:      table       - EnemySystem object
     Returns:
         nil
 ]]
 function GruntIdleState:init(area, grunt, gruntSpriteBatch, systemManager)
-    self.area = area
-    self.grunt = grunt
+    self.area             = area
+    self.grunt            = grunt
     self.gruntSpriteBatch = gruntSpriteBatch
-    self.systemManager = systemManager
-    self.interval = 0
-    self.duration = math.random(15, 20)
+    self.systemManager    = systemManager
+    -- random direction change interval
+    self.interval         = 0
+    self.duration         = math.random(15, 20)
 end
 
 --[[

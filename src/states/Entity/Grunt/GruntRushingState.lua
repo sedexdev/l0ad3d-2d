@@ -22,10 +22,10 @@ GruntRushingState = Class{__includes = BaseState}
         nil
 ]]
 function GruntRushingState:init(area, grunt, gruntSpriteBatch, systemManager)
-    self.area = area
-    self.grunt = grunt
+    self.area             = area
+    self.grunt            = grunt
     self.gruntSpriteBatch = gruntSpriteBatch
-    self.systemManager = systemManager
+    self.systemManager    = systemManager
 end
 
 --[[

@@ -26,12 +26,12 @@ function StateMachine:init(states)
     self.coreState = {
         render = function () end,
         update = function (_, dt) end,
-        enter = function (_, params) end,
-        exit = function () end,
+        enter  = function (_, params) end,
+        exit   = function () end,
     }
-    self.states = states or {}
+    self.states  = states or {}
     self.current = self.coreState
-    self.name = nil
+    self.name    = nil
 end
 
 --[[

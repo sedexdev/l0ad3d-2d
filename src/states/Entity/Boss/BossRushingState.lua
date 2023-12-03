@@ -21,20 +21,18 @@ BossRushingState = Class{__includes = BaseState}
         nil
 ]]
 function BossRushingState:init(area, boss, systemManager)
-    self.area = area
-    self.boss = boss
+    self.area          = area
+    self.boss          = boss
     self.systemManager = systemManager
     -- shot timer values
-    self.timer = 0
-    self.shotInterval = 3
+    self.timer         = 0
+    self.shotInterval  = 3
 end
 
 --[[
     BossRushingState update function. Compares the location of the 
-    <self.boss> object to the location of the <self.systemManager.player> object
-    and forces the boss to track the Players movement
-
-    TODO: make boss circle Player
+    <self.boss> object to the location of the <self.systemManager.player> 
+    object and forces the boss to track the Players movement
 
     Params:
         dt: number - deltatime counter for current frame rate

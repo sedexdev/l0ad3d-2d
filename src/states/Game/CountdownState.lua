@@ -22,20 +22,20 @@ CountdownState = Class{__includes = BaseState}
         nil
 ]]
 function CountdownState:enter(params)
-    self.highScores = params.highScores
-    self.player = params.player
-    self.map = params.map
+    self.highScores    = params.highScores
+    self.player        = params.player
+    self.map           = params.map
     self.systemManager = params.systemManager
-    self.level = params.level
-    self.score = params.score
+    self.level         = params.level
+    self.score         = params.score
     Timer.after(3, function()
         GStateMachine:change('playing', {
-            highScores = self.highScores,
-            player = self.player,
-            map = self.map,
+            highScores    = self.highScores,
+            player        = self.player,
+            map           = self.map,
             systemManager = self.systemManager,
-            level = self.level,
-            score = self.score
+            level         = self.level,
+            score         = self.score
         })
     end)
 end
@@ -66,12 +66,10 @@ end
 ]]
 function CountdownState:update(dt)
     self.timer = self.timer + dt
-
     if self.timer >= 1 then
         self.count = self.count - 1
         self.timer = 0
     end
-
     Timer.update(dt)
 end
 

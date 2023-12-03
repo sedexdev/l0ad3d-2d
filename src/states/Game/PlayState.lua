@@ -23,12 +23,12 @@ PlayState = Class{__includes = BaseState}
         nil
 ]]
 function PlayState:enter(params)
-    self.highScores = params.highScores
-    self.player = params.player
-    self.map = params.map
+    self.highScores    = params.highScores
+    self.player        = params.player
+    self.map           = params.map
     self.systemManager = params.systemManager
-    self.level = params.level
-    self.score = params.score
+    self.level         = params.level
+    self.score         = params.score
     self.map:generateLevel(self.systemManager)
 end
 
@@ -43,16 +43,16 @@ end
         nil
 ]]
 function PlayState:init()
-    self.cameraX = 0
-    self.cameraY = 0
+    self.cameraX    = 0
+    self.cameraY    = 0
     -- pause gameplay
-    self.paused = false
-    self.selected = 1
-    self.confirm = false
+    self.paused     = false
+    self.selected   = 1
+    self.confirm    = false
     -- life lost message
     self.fontHeight = GFonts['funkrocker-medium']:getHeight()
-    self.messageY = -self.fontHeight
-    self.duration = 2
+    self.messageY   = -self.fontHeight
+    self.duration   = 2
     -- event listeners
     Event.on('levelComplete', function ()
         Event.dispatch('score', 2000 * self.level)
@@ -315,7 +315,7 @@ function PlayState:processPauseMenuInput()
             elseif self.selected == 2 then
                 -- set selected option and confirm to true
                 self.selected = 1
-                self.confirm = true
+                self.confirm  = true
             else
                 -- quit to MenuState
                 GStateMachine:change('menu', {
@@ -345,8 +345,8 @@ function PlayState:processConfirmMenuInput()
         Audio_PlayerShot()
         if self.selected == 1 then
             -- restart game with fresh data
-            self.player = nil
-            self.map = nil
+            self.player        = nil
+            self.map           = nil
             self.systemManager = nil
             collectgarbage('collect')
             GStateMachine:change('select', {
@@ -355,7 +355,7 @@ function PlayState:processConfirmMenuInput()
         else
             -- reset selected options and confirm to false
             self.selected = 1
-            self.confirm = false
+            self.confirm  = false
         end
     end
 end

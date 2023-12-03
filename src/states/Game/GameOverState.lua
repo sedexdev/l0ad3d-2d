@@ -4,10 +4,10 @@
     Includes: BaseState - provides base functions for state classes
 
     Description:
-        Displays the 'Game Over' message to the player and their
-        score. If a highscore is obtained the player is directd to
-        enter their highscore by changing to the EnterHighScoreState, 
-        otherwise an option is displayed to go back to the MenuState 
+        Displays the GAME OVER message to the player. If a highscore 
+        is obtained the player is directd to enter their highscore by 
+        changing to the EnterHighScoreState, otherwise changing to the
+        MenuState 
 ]]
 
 GameOverState = Class{__includes = BaseState}
@@ -24,9 +24,9 @@ GameOverState = Class{__includes = BaseState}
 ]]
 function GameOverState:enter(params)
     self.highScores = params.highScores
-    self.map = params.map
-    self.level = params.level
-    self.score = params.score
+    self.map        = params.map
+    self.level      = params.level
+    self.score      = params.score
     -- tween message in
     Timer.tween(self.duration, {
         [self] = {y = (WINDOW_HEIGHT / 2) - (self.fontHeight / 2)}
@@ -54,8 +54,8 @@ end
 ]]
 function GameOverState:init()
     self.fontHeight = GFonts['funkrocker-medium']:getHeight()
-    self.y = -self.fontHeight
-    self.duration = 2
+    self.y          = -self.fontHeight
+    self.duration   = 2
 end
 
 

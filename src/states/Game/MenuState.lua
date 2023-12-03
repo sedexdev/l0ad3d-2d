@@ -41,9 +41,9 @@ end
 function MenuState:init()
     self.selected = 1
     self.bulletOffsets = {
-        [1] = {x = 1, y = 55, rendered = false},
+        [1] = {x = 1, y = 55,  rendered = false},
         [2] = {x = 3, y = -50, rendered = false},
-        [3] = {x = 4, y = 45, rendered = false},
+        [3] = {x = 4, y = 45,  rendered = false},
         [4] = {x = 6, y = -20, rendered = false},
     }
     self.pauseInput = true

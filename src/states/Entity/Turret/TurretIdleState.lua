@@ -27,7 +27,7 @@ function TurretIdleState:init(turret, player)
 end
 
 --[[
-    TurretAttackingState update function.
+    TurretIdleState update function.
 
     Params:
         dt: number - deltatime counter for current frame rate

@@ -54,7 +54,7 @@ function HighScoreState:render()
     love.graphics.setFont(GFonts['funkrocker-medium'])
     love.graphics.setColor(1, 0/255, 0/255, 1)
     love.graphics.printf('HIGH SCORES', 0, 80, WINDOW_WIDTH, 'center')
-
+    -- print scores
     love.graphics.setFont(GFonts['funkrocker-small'])
     love.graphics.setColor(1, 1, 1, 1)
     for i = 1, 10 do
@@ -62,7 +62,7 @@ function HighScoreState:render()
         love.graphics.printf(self.highScores[i].name, -140, 215 + (i * 65), WINDOW_WIDTH, 'center')
         love.graphics.printf(self.highScores[i].score, 250, 215 + (i * 65), WINDOW_WIDTH, 'center')
     end
-
+    -- print escape message
     love.graphics.setColor(1, 0/255, 0/255, 1)
     love.graphics.setFont(GFonts['funkrocker-smaller'])
     love.graphics.printf('Press escape to go back', 0, WINDOW_HEIGHT - 100, WINDOW_WIDTH, 'center')

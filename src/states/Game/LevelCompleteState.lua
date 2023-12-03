@@ -25,12 +25,12 @@ LevelCompleteState = Class{__includes = BaseState}
         nil
 ]]
 function LevelCompleteState:enter(params)
-    self.highScores = params.highScores
-    self.player = params.player
-    self.map = params.map
+    self.highScores    = params.highScores
+    self.player        = params.player
+    self.map           = params.map
     self.systemManager = params.systemManager
-    self.score = params.score
-    self.level = params.level
+    self.score         = params.score
+    self.level         = params.level
     -- tween message in
     Timer.tween(self.duration, {
         [self] = {y = (WINDOW_HEIGHT / 2) - (self.fontHeight / 2)}
@@ -40,12 +40,12 @@ function LevelCompleteState:enter(params)
                 [self] = {y = WINDOW_HEIGHT + self.fontHeight}
             }):finish(function ()
                 GStateMachine:change('countdown', {
-                    highScores = self.highScores,
-                    player = self.player,
-                    map = self.map,
+                    highScores    = self.highScores,
+                    player        = self.player,
+                    map           = self.map,
                     systemManager = self.systemManager,
-                    score = self.score,
-                    level = self.level + 1
+                    score         = self.score,
+                    level         = self.level + 1
                 })
             end)
         end)
@@ -62,8 +62,8 @@ end
 ]]
 function LevelCompleteState:init()
     self.fontHeight = GFonts['funkrocker-medium']:getHeight()
-    self.y = -self.fontHeight
-    self.duration = 2
+    self.y          = -self.fontHeight
+    self.duration   = 2
 end
 
 --[[

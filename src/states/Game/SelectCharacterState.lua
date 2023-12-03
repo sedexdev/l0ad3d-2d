@@ -94,7 +94,7 @@ function SelectCharacterState:update(dt)
         local systemManager = SystemManager(map, player)
         -- Player stateMachine
         player.stateMachine = StateMachine {
-            ['idle'] = function () return PlayerIdleState(player) end,
+            ['idle']    = function () return PlayerIdleState(player) end,
             ['walking'] = function ()
                 local walkingState = PlayerWalkingState(player, map)
                 walkingState:subscribe(systemManager)
@@ -108,12 +108,12 @@ function SelectCharacterState:update(dt)
         }
         player.stateMachine:change('idle')
         GStateMachine:change('countdown', {
-            highScores = self.highScores,
-            player = player,
-            map = map,
+            highScores    = self.highScores,
+            player        = player,
+            map           = map,
             systemManager = systemManager,
-            score = 0,
-            level = 1
+            score         = 0,
+            level         = 1
         })
     end
 end
