@@ -1,6 +1,8 @@
 --[[
     EnemySystem: class
 
+    Includes: Observer - parent class for observers
+
     Description:
         An enemy system is responsible for spawning and removing
         enemy (Entity) objects from the Map. As enemies are killed
@@ -25,21 +27,21 @@ EnemySystem = Class{__includes = Observer}
 ]]
 function EnemySystem:init(gruntSpriteBatch, systemManager)
     self.gruntSpriteBatch = gruntSpriteBatch
-    self.systemManager = systemManager
-    self.playerX = PLAYER_STARTING_X
-    self.playerY = PLAYER_STARTING_Y
-    self.currentAreaID = START_AREA_ID
-    self.grunts = {}
-    self.turrets = {}
+    self.systemManager    = systemManager
+    self.playerX          = PLAYER_STARTING_X
+    self.playerY          = PLAYER_STARTING_Y
+    self.currentAreaID    = START_AREA_ID
+    self.grunts           = {}
+    self.turrets          = {}
     -- boss tracker flag and object
-    self.bossSpawned = false
-    self.boss = nil
-    self.gruntID = 1
-    self.turretID = 1
+    self.bossSpawned      = false
+    self.boss             = nil
+    self.gruntID          = 1
+    self.turretID         = 1
     -- local copies of game definitions to update
-    self.gruntDef = Copy(GGruntDefinition)
-    self.turretDef = Copy(GTurretDefinition)
-    self.bossDef = Copy(GBossDefinition)
+    self.gruntDef         = Copy(GGruntDefinition)
+    self.turretDef        = Copy(GTurretDefinition)
+    self.bossDef          = Copy(GBossDefinition)
 end
 
 --[[
@@ -109,8 +111,8 @@ end
 ]]
 function EnemySystem:message(data)
     if data.source == 'PlayerWalkingState' then
-        self.playerX = data.x
-        self.playerY = data.y
+        self.playerX       = data.x
+        self.playerY       = data.y
         self.currentAreaID = data.areaID
     end
 end
@@ -148,20 +150,20 @@ end
 ]]
 function EnemySystem:spawnGrunts(numGrunts, area)
     for _ = 1, numGrunts do
-        local grunt = Grunt(self.gruntID, GAnimationDefintions['grunt'], self.gruntDef)
+        local grunt        = Grunt(self.gruntID, GAnimationDefintions['grunt'], self.gruntDef)
         -- set ID
         -- set random (x, y) within the area
-        grunt.x = math.random(area.x, area.x + (area.width * FLOOR_TILE_WIDTH) - ENTITY_WIDTH)
-        grunt.y = math.random(area.y, area.y + (area.height * FLOOR_TILE_HEIGHT) - ENTITY_HEIGHT)
+        grunt.x            = math.random(area.x, area.x + (area.width * FLOOR_TILE_WIDTH) - ENTITY_WIDTH)
+        grunt.y            = math.random(area.y, area.y + (area.height * FLOOR_TILE_HEIGHT) - ENTITY_HEIGHT)
         -- give Grunts different speeds
-        grunt.dx = math.random(200, 300)
-        grunt.dy = grunt.dx
+        grunt.dx           = math.random(200, 300)
+        grunt.dy           = grunt.dx
         -- set random starting direction
-        grunt.direction = DIRECTIONS[math.random(1, 8)]
-        grunt.areaID = area.id
+        grunt.direction    = DIRECTIONS[math.random(1, 8)]
+        grunt.areaID       = area.id
         grunt.stateMachine = StateMachine {
-            ['idle'] = function () return GruntIdleState(area, grunt, self.gruntSpriteBatch, self.systemManager) end,
-            ['rushing'] = function () return GruntRushingState(area, grunt, self.gruntSpriteBatch, self.systemManager) end,
+            ['idle']      = function () return GruntIdleState(area, grunt, self.gruntSpriteBatch, self.systemManager) end,
+            ['rushing']   = function () return GruntRushingState(area, grunt, self.gruntSpriteBatch, self.systemManager) end,
             ['attacking'] = function () return GruntAttackingState(area, grunt, self.gruntSpriteBatch, self.systemManager) end,
         }
         grunt.stateMachine:change('idle')
@@ -206,8 +208,8 @@ end
 ]]
 function EnemySystem:spawn2Turrets(i, areaDef)
     -- spawn vertically in the area
-    local centre = areaDef.y + (areaDef.height * FLOOR_TILE_HEIGHT) / 2
-    local xOffset = areaDef.x + (areaDef.width * FLOOR_TILE_WIDTH) / 2 - (TURRET_WIDTH * 2.5 / 2)
+    local centre   = areaDef.y + (areaDef.height * FLOOR_TILE_HEIGHT) / 2
+    local xOffset  = areaDef.x + (areaDef.width * FLOOR_TILE_WIDTH) / 2 - (TURRET_WIDTH * 2.5 / 2)
     local yOffsets = {
         [1] = centre - 500 - (TURRET_HEIGHT * 2.5 / 2),
         [2] = centre + 500 - (TURRET_HEIGHT * 2.5 / 2)
@@ -229,7 +231,7 @@ end
 ]]
 function EnemySystem:spawn4Turrets(i, areaDef)
     -- spawn vertically in the area
-    local centre = areaDef.y + (areaDef.height * FLOOR_TILE_HEIGHT) / 2
+    local centre   = areaDef.y + (areaDef.height * FLOOR_TILE_HEIGHT) / 2
     local xOffsets = {
         [1] = areaDef.x + (areaDef.width / 4 * FLOOR_TILE_WIDTH) - (TURRET_WIDTH * 2.5 / 2),
         [2] = areaDef.x + ((areaDef.width / 4 * 3) * FLOOR_TILE_WIDTH) - (TURRET_WIDTH * 2.5 / 2)
@@ -261,13 +263,13 @@ end
         nil
 ]]
 function EnemySystem:spawnTurretsHelper(x, y, areaID)
-    local turret = Turret(self.turretID, GAnimationDefintions['turret'], self.turretDef)
-    turret.x = x
-    turret.y = y
-    turret.areaID = areaID
-    turret.direction = DIRECTIONS[math.random(1, 8)]
+    local turret        = Turret(self.turretID, GAnimationDefintions['turret'], self.turretDef)
+    turret.x            = x
+    turret.y            = y
+    turret.areaID       = areaID
+    turret.direction    = DIRECTIONS[math.random(1, 8)]
     turret.stateMachine = StateMachine {
-        ['idle'] = function () return TurretIdleState(turret, self.systemManager.player) end,
+        ['idle']      = function () return TurretIdleState(turret, self.systemManager.player) end,
         ['attacking'] = function () return TurretAttackingState(turret, self.systemManager.player) end
     }
     turret.stateMachine:change('idle')
@@ -285,11 +287,11 @@ end
         nil
 ]]
 function EnemySystem:spawnBoss(area)
-    self.boss = Boss(GAnimationDefintions['boss'], self.bossDef)
+    self.boss              = Boss(GAnimationDefintions['boss'], self.bossDef)
     -- set random starting direction
-    self.boss.direction = DIRECTIONS[math.random(1, 8)]
+    self.boss.direction    = DIRECTIONS[math.random(1, 8)]
     self.boss.stateMachine = StateMachine {
-        ['idle'] = function () return BossIdleState(area, self.boss, self.systemManager) end,
+        ['idle']    = function () return BossIdleState(area, self.boss, self.systemManager) end,
         ['rushing'] = function () return BossRushingState(area, self.boss, self.systemManager) end
     }
     self.boss.stateMachine:change('idle')
@@ -461,12 +463,12 @@ end
 ]]
 function EnemySystem:increaseStats()
     -- grunts
-    self.gruntDef.health = self.gruntDef.health + 5
-    self.gruntDef.damage = self.gruntDef.damage + 2
+    self.gruntDef.health  = self.gruntDef.health + 5
+    self.gruntDef.damage  = self.gruntDef.damage + 2
     -- turrets
     self.turretDef.health = self.turretDef.health + 25
     self.turretDef.damage = self.turretDef.damage + 2
     -- boss
-    self.bossDef.health = self.bossDef.health + 50
-    self.bossDef.damage = self.bossDef.damage + 2
+    self.bossDef.health   = self.bossDef.health + 50
+    self.bossDef.damage   = self.bossDef.damage + 2
 end

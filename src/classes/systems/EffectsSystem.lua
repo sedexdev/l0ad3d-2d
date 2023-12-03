@@ -4,7 +4,7 @@
     Description:
         The effects system is responsible for updating and rendering out 
         the graphical effects within the game. This includes explosions, 
-        shots fired, powerup rotation physics, and particle systems
+        shots fired, and rotation physics
 ]]
 
 EffectsSystem = Class{__includes = Observer}
@@ -20,23 +20,23 @@ EffectsSystem = Class{__includes = Observer}
 ]]
 function EffectsSystem:init(systemManager)
     self.systemManager = systemManager
-    self.playerX = PLAYER_STARTING_X
-    self.playerY = PLAYER_STARTING_Y
+    self.playerX       = PLAYER_STARTING_X
+    self.playerY       = PLAYER_STARTING_Y
     self.currentAreaID = START_AREA_ID
     -- explosions table
-    self.explosions = {}
+    self.explosions    = {}
     -- shots table keeps track of Shot objects so they can be 
     -- instantiated and removed after the assigned interval
-    self.shots = {}
+    self.shots         = {}
     -- bullet management table
-    self.bulletID = 1
-    self.bullets = {}
+    self.bulletID      = 1
+    self.bullets       = {}
     -- blood stains
-    self.bloodStains = {}
+    self.bloodStains   = {}
     -- smoke effects
-    self.smokeEffects = {}
+    self.smokeEffects  = {}
     -- bullet fired event
-    self.spawnBullet = Event.on('shotFired', function (entity)
+    Event.on('shotFired', function (entity)
         table.insert(self.shots, Shot(entity))
         if entity.type == 'character' then
             Audio_PlayerShot()
@@ -147,8 +147,8 @@ end
 ]]
 function EffectsSystem:message(data)
     if data.source == 'PlayerWalkingState' then
-        self.playerX = data.x
-        self.playerY = data.y
+        self.playerX       = data.x
+        self.playerY       = data.y
         self.currentAreaID = data.areaID
     end
 end

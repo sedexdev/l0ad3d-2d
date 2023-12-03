@@ -1,8 +1,10 @@
 --[[
     CollisionSystem: class
 
+    Includes: Observer - parent class for observers
+
     Description:
-        A collision system checks for and handles collisions for Entity
+        The collision system checks for and handles collisions for Entity
         objects (Player, Grunt, Boss) and also PowerUp objects within 
         the Map. Having a separate system for checking collisions reduces 
         bulk in individual classes and centralises collision behaviour to 
@@ -12,19 +14,17 @@
 CollisionSystem = Class{__includes = Observer}
 
 --[[
-    CollisionSystem constructor. Requires the Player object to
-    run checks against and the SystemManager to allow the Player
-    to pass through wall segments in areas with doors defined 
+    CollisionSystem constructor
 
     Params:
-    systemManager: table - SystemManager object
+        systemManager: table - SystemManager object
     Returns:
         nil
 ]]
 function CollisionSystem:init(systemManager)
     self.systemManager = systemManager
-    self.playerX = PLAYER_STARTING_X
-    self.playerY = PLAYER_STARTING_Y
+    self.playerX       = PLAYER_STARTING_X
+    self.playerY       = PLAYER_STARTING_Y
     self.currentAreaID = START_AREA_ID
 end
 
@@ -39,8 +39,8 @@ end
 ]]
 function CollisionSystem:message(data)
     if data.source == 'PlayerWalkingState' then
-        self.playerX = data.x
-        self.playerY = data.y
+        self.playerX       = data.x
+        self.playerY       = data.y
         self.currentAreaID = data.areaID
     end
 end
@@ -61,18 +61,18 @@ end
 function CollisionSystem:checkWallCollision(area, entity)
     -- booleans for stating whether Player object has hit the area boundary
     local conditions = {
-        leftCollision = entity.x < area.x - WALL_OFFSET,
-        rightCollision = entity.x + ENTITY_WIDTH > area.x + (area.width * FLOOR_TILE_WIDTH) + WALL_OFFSET,
-        topCollision = entity.y < area.y - WALL_OFFSET,
+        leftCollision   = entity.x < area.x - WALL_OFFSET,
+        rightCollision  = entity.x + ENTITY_WIDTH > area.x + (area.width * FLOOR_TILE_WIDTH) + WALL_OFFSET,
+        topCollision    = entity.y < area.y - WALL_OFFSET,
         bottomCollision = entity.y + ENTITY_HEIGHT > area.y + (area.height * FLOOR_TILE_HEIGHT) + WALL_OFFSET,
-        leftHorizontal = area.x + (area.width * FLOOR_TILE_WIDTH / 2) - H_DOOR_WIDTH,
+        leftHorizontal  = area.x + (area.width * FLOOR_TILE_WIDTH / 2) - H_DOOR_WIDTH,
         rightHorizontal = area.x + (area.width * FLOOR_TILE_WIDTH / 2) + H_DOOR_WIDTH,
-        topVertical = area.y + (area.height * FLOOR_TILE_HEIGHT / 2) - V_DOOR_HEIGHT,
-        bottomVertical = area.y + (area.height * FLOOR_TILE_HEIGHT / 2) + V_DOOR_HEIGHT
+        topVertical     = area.y + (area.height * FLOOR_TILE_HEIGHT / 2) - V_DOOR_HEIGHT,
+        bottomVertical  = area.y + (area.height * FLOOR_TILE_HEIGHT / 2) + V_DOOR_HEIGHT
     }
     -- set Player (x, y) comparison
     conditions['horizontalDoorway'] = self.playerX + ENTITY_CORRECTION > conditions.leftHorizontal and (self.playerX + ENTITY_WIDTH) - ENTITY_CORRECTION < conditions.rightHorizontal
-    conditions['verticalDoorway'] = self.playerY + ENTITY_CORRECTION > conditions.topVertical and (self.playerY + ENTITY_HEIGHT) - ENTITY_CORRECTION < conditions.bottomVertical
+    conditions['verticalDoorway']   = self.playerY + ENTITY_CORRECTION > conditions.topVertical and (self.playerY + ENTITY_HEIGHT) - ENTITY_CORRECTION < conditions.bottomVertical
     -- if the area is a corridor then allow the player to pass through each end
     if area.type == 'corridor' then
         return self:corridorBoundary(area, conditions)
@@ -252,7 +252,7 @@ end
     that have bends. The Player should not be able to escape off the
     end of the corridor the bend is located at, and they should be
     able to move freely between the 2 corridor type MapArea objects
-    when the bend meets
+    when the bends meet
 
     Params:
         orientation: string  - corridor type mapArea orientation 
@@ -310,9 +310,9 @@ end
 ]]
 function CollisionSystem:handlePlayerWallCollision(area, edge)
     -- declare corrections for readability of the if/elseif statements below
-    local leftCorrection = area.x - WALL_OFFSET
-    local rightCorrection = area.x + (area.width * FLOOR_TILE_WIDTH) - ENTITY_WIDTH + WALL_OFFSET
-    local topCorrection = area.y - WALL_OFFSET
+    local leftCorrection   = area.x - WALL_OFFSET
+    local rightCorrection  = area.x + (area.width * FLOOR_TILE_WIDTH) - ENTITY_WIDTH + WALL_OFFSET
+    local topCorrection    = area.y - WALL_OFFSET
     local bottomCorrection = area.y + (area.height * FLOOR_TILE_HEIGHT) - ENTITY_HEIGHT + WALL_OFFSET
     -- for single wall collisions just update x or y
     if edge == 'L' then
@@ -417,9 +417,9 @@ function CollisionSystem:detectAreaDoorway(area, door, conditions)
         -- if Player is in the doorway and the door is not locked then allow through
         local detectionCondition, doorID = self:detectAdjacentDoorway(area, door.areaID)
         if detectionCondition then
-            local leftCondition = self.playerX > area.x - V_DOOR_WIDTH
-            local rightCondition = (self.playerX + ENTITY_WIDTH) < area.x + (area.width * FLOOR_TILE_WIDTH) + V_DOOR_WIDTH
-            local topCondition = self.playerY > area.y - H_DOOR_HEIGHT
+            local leftCondition   = self.playerX > area.x - V_DOOR_WIDTH
+            local rightCondition  = (self.playerX + ENTITY_WIDTH) < area.x + (area.width * FLOOR_TILE_WIDTH) + V_DOOR_WIDTH
+            local topCondition    = self.playerY > area.y - H_DOOR_HEIGHT
             local bottomCondition = (self.playerY + ENTITY_HEIGHT) < area.y + (area.height * FLOOR_TILE_HEIGHT) + H_DOOR_HEIGHT
             -- door ID required to fix bug allowing Player to pass through wall opposite adjacent doorway 
             if doorID == 1 then
@@ -467,22 +467,22 @@ function CollisionSystem:detectAdjacentDoorway(area, adjacentAreaID)
     for _, adjacentArea in pairs(area.adjacentAreas) do
         if adjacentArea.doorID == 1 or adjacentArea.doorID == 3 then -- left or right
             -- use area y coordinates to find doorway
-            local adjacentAreaDef = GMapAreaDefinitions[adjacentAreaID]
-            local yDiff = area.y - adjacentAreaDef.y
+            local adjacentAreaDef    = GMapAreaDefinitions[adjacentAreaID]
+            local yDiff              = area.y - adjacentAreaDef.y
             local adjacentAreaCenter = adjacentAreaDef.height * FLOOR_TILE_HEIGHT / 2
-            local topDoorOffset = area.y - yDiff + (adjacentAreaCenter - V_DOOR_HEIGHT)
-            local bottomDoorOffset = area.y - yDiff + (adjacentAreaCenter + V_DOOR_HEIGHT)
+            local topDoorOffset      = area.y - yDiff + (adjacentAreaCenter - V_DOOR_HEIGHT)
+            local bottomDoorOffset   = area.y - yDiff + (adjacentAreaCenter + V_DOOR_HEIGHT)
             -- doorway condition
             local detectionCondition = self.playerY + ENTITY_CORRECTION > topDoorOffset and (self.playerY + ENTITY_HEIGHT) - ENTITY_CORRECTION < bottomDoorOffset
             return detectionCondition, adjacentArea.doorID
         end
         if adjacentArea.doorID == 2 or adjacentArea.doorID == 4 then -- top or bottom
             -- use area x coordinates to find doorway
-            local adjacentAreaDef = GMapAreaDefinitions[adjacentAreaID]
-            local xDiff = area.x - adjacentAreaDef.x
+            local adjacentAreaDef    = GMapAreaDefinitions[adjacentAreaID]
+            local xDiff              = area.x - adjacentAreaDef.x
             local adjacentAreaCenter = adjacentAreaDef.width * FLOOR_TILE_WIDTH / 2
-            local leftDoorOffset = area.x - xDiff + (adjacentAreaCenter - H_DOOR_WIDTH)
-            local rightDoorOffset = area.x - xDiff + (adjacentAreaCenter + H_DOOR_WIDTH)
+            local leftDoorOffset     = area.x - xDiff + (adjacentAreaCenter - H_DOOR_WIDTH)
+            local rightDoorOffset    = area.x - xDiff + (adjacentAreaCenter + H_DOOR_WIDTH)
             -- doorway condition
             local detectionCondition = self.playerX + ENTITY_CORRECTION > leftDoorOffset and (self.playerX + ENTITY_WIDTH) - ENTITY_CORRECTION < rightDoorOffset
             return detectionCondition, adjacentArea.doorID
@@ -567,7 +567,7 @@ function CollisionSystem:crateCollision(crate, entity)
     -- true collision conditions
     local edge
     local horizontalGap = (entity.x + CRATE_CORRECTION > crate.x) and (entity.x + ENTITY_WIDTH - CRATE_CORRECTION) < crate.x + CRATE_WIDTH
-    local verticalGap = (entity.y + CRATE_CORRECTION > crate.y) and (entity.y + ENTITY_HEIGHT - CRATE_CORRECTION) < crate.y + CRATE_HEIGHT
+    local verticalGap   = (entity.y + CRATE_CORRECTION > crate.y) and (entity.y + ENTITY_HEIGHT - CRATE_CORRECTION) < crate.y + CRATE_HEIGHT
     if (entity.x + ENTITY_WIDTH - ENTITY_CORRECTION > crate.x) and (entity.x + ENTITY_WIDTH < crate.x + CRATE_WIDTH) and verticalGap then
         edge = 'L'
     end

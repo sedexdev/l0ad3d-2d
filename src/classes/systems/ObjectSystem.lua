@@ -1,6 +1,8 @@
 --[[
     ObjectSystem: class
 
+    Includes: Observer - parent class for observers
+
     TODO: crates and powerups need to be replaced as the level goes on
 
     Description:
@@ -18,22 +20,22 @@ ObjectSystem = Class{__includes = Observer}
     and also manages keys
 
     Params:
-    systemManager: table - SystemManager object
+        systemManager: table - SystemManager object
     Returns:
         nil
 ]]
 function ObjectSystem:init(systemManager)
     self.systemManager = systemManager
     self.currentAreaID = START_AREA_ID
-    self.powerups = {
-        ['ammo'] = {},
-        ['health'] = {},
-        ['invincible'] = {},
-        ['doubleSpeed'] = {},
+    self.powerups      = {
+        ['ammo']            = {},
+        ['health']          = {},
+        ['invincible']      = {},
+        ['doubleSpeed']     = {},
         ['oneShotBossKill'] = {}
     }
-    self.crates = {}
-    self.keys = {}
+    self.crates        = {}
+    self.keys          = {}
     self.locationCount = 1
 end
 
@@ -46,7 +48,7 @@ end
         nil
 ]]
 function ObjectSystem:update(dt)
-    for k, category in pairs(self.powerups) do
+    for _, category in pairs(self.powerups) do
         for _, powerup in pairs(category) do
             powerup:update(dt)
         end
@@ -444,9 +446,9 @@ end
 function ObjectSystem:getCrateXYCoordinates(edge, areaID, areaDef, edgeOffset)
     -- set door table for checking if a wall has a door
     local doors = {
-        leftDoor = false,
-        topDoor = false,
-        rightDoor = false,
+        leftDoor   = false,
+        topDoor    = false,
+        rightDoor  = false,
         bottomDoor = false
     }
     local areaDoors = self.systemManager.doorSystem:getAreaDoors(areaID)
@@ -488,14 +490,14 @@ end
 function ObjectSystem:setDoorLocations(doors, areaDoors, areaID)
     for _, door in pairs(areaDoors) do
         if door.areaID ~= areaID then
-            if door.id == 1 then doors.rightDoor = true end
+            if door.id == 1 then doors.rightDoor  = true end
             if door.id == 2 then doors.bottomDoor = true end
-            if door.id == 3 then doors.leftDoor = true end
-            if door.id == 4 then doors.topDoor = true end
+            if door.id == 3 then doors.leftDoor   = true end
+            if door.id == 4 then doors.topDoor    = true end
         else
-            if door.id == 1 then doors.leftDoor = true end
-            if door.id == 2 then doors.topDoor = true end
-            if door.id == 3 then doors.rightDoor = true end
+            if door.id == 1 then doors.leftDoor   = true end
+            if door.id == 2 then doors.topDoor    = true end
+            if door.id == 3 then doors.rightDoor  = true end
             if door.id == 4 then doors.bottomDoor = true end
         end
     end
@@ -515,9 +517,9 @@ function ObjectSystem:getCrateXCoordinateHelper(areaDef, doorEdge)
     -- define edge offset to stop crates touching walls
     local edgeOffset = 100
     -- MapArea x conditions
-    local xLeft = areaDef.x + edgeOffset
+    local xLeft   = areaDef.x + edgeOffset
     local xCenter = areaDef.x + (areaDef.width * FLOOR_TILE_WIDTH / 2)
-    local xRight = areaDef.x + (areaDef.width * FLOOR_TILE_WIDTH) - edgeOffset
+    local xRight  = areaDef.x + (areaDef.width * FLOOR_TILE_WIDTH) - edgeOffset
     -- declare x but don't initialise
     local x
     -- check if edge has a door
@@ -549,7 +551,7 @@ function ObjectSystem:getCrateYCoordinateHelper(areaDef, doorEdge)
     -- define edge offset to stop crates touching walls
     local edgeOffset = 100
     -- define y boundarys
-    local yTop = areaDef.y + edgeOffset
+    local yTop    = areaDef.y + edgeOffset
     local yCenter = areaDef.y + (areaDef.height * FLOOR_TILE_HEIGHT / 2)
     local yBottom = areaDef.y + (areaDef.height * FLOOR_TILE_HEIGHT) - edgeOffset
     -- declare y but don't initialise

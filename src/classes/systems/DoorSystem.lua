@@ -1,8 +1,10 @@
 --[[
     DoorSystem: class
 
+    Includes: Observer - parent class for observers
+
     Description:
-        A door system is an independent mechanism for handling how
+        The door system is an independent mechanism for handling how
         doors behave when the Player object interacts wth them. The
         door system controls opening and closing doors, and unlocking
         doors
@@ -21,12 +23,12 @@ DoorSystem = Class{__includes = Observer}
         nil
 ]]
 function DoorSystem:init(map, player)
-    self.map = map
-    self.player = player
-    self.playerX = PLAYER_STARTING_X
-    self.playerY = PLAYER_STARTING_Y
+    self.map           = map
+    self.player        = player
+    self.playerX       = PLAYER_STARTING_X
+    self.playerY       = PLAYER_STARTING_Y
     self.currentAreaID = START_AREA_ID
-    self.doors = {}
+    self.doors         = {}
 end
 
 --[[
@@ -70,8 +72,8 @@ end
 ]]
 function DoorSystem:message(data)
     if data.source == 'PlayerWalkingState' then
-        self.playerX = data.x
-        self.playerY = data.y
+        self.playerX       = data.x
+        self.playerY       = data.y
         self.currentAreaID = data.areaID
     end
 end
@@ -89,13 +91,13 @@ function DoorSystem:initialiseDoors(areas)
     for _, area in pairs(areas) do
         if area.doors then
             -- area dimensions in px
-            local areaWidth = area.width * FLOOR_TILE_WIDTH
+            local areaWidth  = area.width * FLOOR_TILE_WIDTH
             local areaHeight = area.height * FLOOR_TILE_HEIGHT
             -- offsets for vertical doors
-            local verticalTopDoorOffset = (areaHeight / 2) - V_DOOR_HEIGHT
+            local verticalTopDoorOffset    = (areaHeight / 2) - V_DOOR_HEIGHT
             local verticalBottomDoorOffset = areaHeight / 2
             -- offsets for horizontal doors
-            local horizontalLeftDoorOffset = (areaWidth / 2) - H_DOOR_WIDTH
+            local horizontalLeftDoorOffset  = (areaWidth / 2) - H_DOOR_WIDTH
             local horizontalRightDoorOffset = areaWidth / 2
             -- create Doors objects based on location in area
             if area.doors.L then
@@ -348,9 +350,9 @@ end
 -- ========================== TWEEN DOORS OPEN/CLOSED ==========================
 
 --[[
-    Tweening function for reducing the pixel size of the doors
-    to 0 based on their orientation. This will give the effect
-    that the doors have opened
+    Tweening function for moving the Door objects either up, down,
+    left, or right depending on the orientation and location of the
+    doors. This will give the effect of the doors opening
 
     Params:
         door: table - Door object for the door being opened
@@ -375,9 +377,9 @@ function DoorSystem:open(door)
 end
 
 --[[
-    Tweening function for increasing the pixel size of the doors
-    to 32 based on their orientation. This will give the effect
-    that the doors have closed
+    Tweening function for moving the Door objects either up, down,
+    left, or right depending on the orientation and location of the
+    doors. This will give the effect of the doors closing
 
     Params:
         door: table - Door object for the door being closed

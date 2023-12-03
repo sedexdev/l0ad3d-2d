@@ -1,6 +1,8 @@
 --[[
     SystemManager: class
 
+    Includes: Observer - parent class for observers
+
     Description:
         The system manager initialises, updates and renders 
         all game systems
@@ -18,24 +20,24 @@ SystemManager = Class{__includes = Observer}
         nil
 ]]
 function SystemManager:init(map, player)
-    self.map = map
-    self.player = player
+    self.map              = map
+    self.player           = player
     -- create a DoorSystem
-    self.doorSystem = DoorSystem(self.map, player)
+    self.doorSystem       = DoorSystem(self.map, player)
     -- create a CollisionSystem
-    self.collisionSystem = CollisionSystem(self)
+    self.collisionSystem  = CollisionSystem(self)
     -- create a ObjectSystem
-    self.objectSystem = ObjectSystem(self)
+    self.objectSystem     = ObjectSystem(self)
     -- create an instance of SpriteBatch for Grunt Entity objects
     self.gruntSpriteBatch = SpriteBatcher(GTextures['grunt'])
     -- create an EnemySystem
-    self.enemySystem = EnemySystem(self.gruntSpriteBatch, self)
+    self.enemySystem      = EnemySystem(self.gruntSpriteBatch, self)
     -- crate an EffectsSystem
-    self.effectsSystem = EffectsSystem(self)
+    self.effectsSystem    = EffectsSystem(self)
     -- playerData table
-    self.playerData = {}
+    self.playerData       = {}
     -- bulletData table
-    self.bulletData = {}
+    self.bulletData       = {}
 end
 
 --[[
@@ -120,7 +122,7 @@ end
     of a collision
 
     Params:
-        currentAreaID: number - ID of the current area
+        none
     Returns:
         nil
 ]]
@@ -176,7 +178,7 @@ end
     querying the relevant systems for updates
     
     Params:
-        area: table - MapArea object
+        none
     Returns:
         nil 
 ]]
@@ -206,11 +208,11 @@ function SystemManager:checkMap()
 end
 
 --[[
-    Check the area adjacencies for the area ID passed in and
+    Check the area adjacencies for the current Player area ID and
     spawns more grunts in those areas if the current count is 0
 
     Params:
-        currentAreaID: number MapArea ID
+        none
     Returns:
         nil
 ]]
@@ -220,7 +222,8 @@ function SystemManager:checkGrunts()
 end
 
 --[[
-    Checks ton see if we need to spawn the Boss
+    Checks to see if the Player has entered the area defined by
+    BOSS_SPAWN_AREA_ID and spawns the Boss Entity object if so
 
     Params:
         none
@@ -374,9 +377,10 @@ function SystemManager:turretHelper()
 end
 
 --[[
-    Description
-
-    TODO: implement Boss hit
+    Checks to see if the Boss has been spawned by checking 
+    it is not nil, then handles a Bullet collision with the
+    Boss if one occurred. Killing the Boss dispatches a
+    levelComplete event 
 
     Params:
         none
@@ -403,8 +407,7 @@ end
 
 --[[
     Checks for the moment when the bullet hits the area boundary wall
-    and removes the bullet and emits a particle system effect at that
-    location
+    and removes the bullet and emits a Smoke instance animation
 
     Params:
         none
