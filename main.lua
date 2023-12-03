@@ -28,8 +28,8 @@ function InitialiseWindow()
     love.window.setTitle('L0ad3d-2D')
     love.window.setMode(0, 0, {
         fullscreen = true,
-        vsync = true,
-        resizable = false
+        vsync      = true,
+        resizable  = false
     })
     love.graphics.setBackgroundColor(10/255, 10/255, 10/255, 255/255)
     love.graphics.setDefaultFilter('nearest', 'nearest')
