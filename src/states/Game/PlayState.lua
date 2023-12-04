@@ -27,6 +27,7 @@ function PlayState:enter(params)
     self.player        = params.player
     self.map           = params.map
     self.systemManager = params.systemManager
+    self.hud           = params.hud
     self.level         = params.level
     self.score         = params.score
     self.map:generateLevel(self.systemManager)
@@ -58,20 +59,21 @@ function PlayState:init()
         Event.dispatch('score', 2000 * self.level)
         self.systemManager.enemySystem:increaseStats()
         GStateMachine:change('complete', {
-            highScores = self.highScores,
-            player = self.player,
-            map = self.map,
+            highScores    = self.highScores,
+            player        = self.player,
+            map           = self.map,
             systemManager = self.systemManager,
-            score = self.score,
-            level = self.level
+            hud           = self.hud,
+            score         = self.score,
+            level         = self.level
         })
     end)
     Event.on('gameOver', function ()
         GStateMachine:change('gameover', {
             highScores = self.highScores,
-            map = self.map,
-            score = self.score,
-            level = self.level
+            map        = self.map,
+            score      = self.score,
+            level      = self.level
         })
     end)
     Event.on('score', function (points)
@@ -129,6 +131,8 @@ function PlayState:runGameLoop(dt)
     self.systemManager:update(dt)
     -- update Player
     self.player:update(dt)
+    -- update HUD
+    self.hud:update(dt)
     -- update the camera to track the Player
     self:updateCamera()
 end
@@ -162,11 +166,9 @@ function PlayState:render()
     love.graphics.translate(-math.floor(self.cameraX), -math.floor(self.cameraY))
     self.map:render()
     self.systemManager:render()
+    self.hud:render(self.cameraX, self.cameraY)
     self.player:render()
     self:displayScore()
-    -- debug data
-    self:displayFPS()
-    self:displayPlayerData()
     -- display life lost message
     self:renderLifeLostMessage()
     -- show menu if paused and not selecting restart
@@ -348,6 +350,7 @@ function PlayState:processConfirmMenuInput()
             self.player        = nil
             self.map           = nil
             self.systemManager = nil
+            self.hud           = nil
             collectgarbage('collect')
             GStateMachine:change('select', {
                 highScores = self.highScores,
@@ -376,48 +379,4 @@ function PlayState:displayScore()
     love.graphics.setColor(1, 0/255, 0/255, 255/255)
     love.graphics.print('Score: ' .. tostring(self.score), self.cameraX + (WINDOW_WIDTH - 300), self.cameraY + 50)
     love.graphics.setColor(1, 1, 1, 1)
-end
-
---[[
-    Renders the current FPS
-
-    Params:
-        none
-    Returns:
-        nil
-]]
-function PlayState:displayFPS()
-    -- simple FPS display across all states
-    love.graphics.setFont(GFonts['funkrocker-small'])
-    love.graphics.setColor(1, 0/255, 0/255, 255/255)
-    love.graphics.print('FPS: ' .. tostring(love.timer.getFPS()), self.cameraX + 50, self.cameraY + 50)
-    love.graphics.setColor(1, 1, 1, 1)
-end
-
---[[
-    Displays player data on the screen
-
-    Params:
-        none
-    Retuns:
-        nil
-]]
-function PlayState:displayPlayerData()
-    love.graphics.setFont(GFonts['funkrocker-smaller'])
-    love.graphics.setColor(0/255, 1, 0/255, 1)
-    love.graphics.print('Health: ' .. tostring(self.player.health), self.cameraX + 50, self.cameraY + 140)
-    love.graphics.print('Ammo: ' .. tostring(self.player.ammo), self.cameraX + 50, self.cameraY + 180)
-    love.graphics.print('Red key: ' .. tostring(self.player.keys['red']), self.cameraX + 50, self.cameraY + 220)
-    love.graphics.print('Green key: ' .. tostring(self.player.keys['green']), self.cameraX + 50, self.cameraY + 260)
-    love.graphics.print('Blue key: ' .. tostring(self.player.keys['blue']), self.cameraX + 50, self.cameraY + 300)
-    love.graphics.print('Invincible: ' .. tostring(self.player.powerups.invincible), self.cameraX + 50, self.cameraY + 340)
-    love.graphics.print('Double speed: ' .. tostring(self.player.powerups.doubleSpeed), self.cameraX + 50, self.cameraY + 380)
-    love.graphics.print('One shot Boss kill: ' .. tostring(self.player.powerups.oneShotBossKill), self.cameraX + 50, self.cameraY + 420)
-    love.graphics.print('X: ' .. tostring(self.player.x), self.cameraX + 50, self.cameraY + 460)
-    love.graphics.print('Y: ' .. tostring(self.player.y), self.cameraX + 50, self.cameraY + 500)
-    love.graphics.print('Direction: ' .. self.player.direction, self.cameraX + 50, self.cameraY + 540)
-    love.graphics.print('Boss spawned: ' .. tostring(self.systemManager.enemySystem.bossSpawned), self.cameraX + 50, self.cameraY + 580)
-    love.graphics.print('Level: ' .. tostring(self.level), self.cameraX + 50, self.cameraY + 620)
-    love.graphics.print('Invulnerable: ' .. tostring(self.player.invulnerable), self.cameraX + 50, self.cameraY + 660)
-    love.graphics.print('Lives: ' .. tostring(self.player.lives), self.cameraX + 50, self.cameraY + 700)
 end

@@ -112,6 +112,7 @@ function SelectCharacterState:update(dt)
             player        = player,
             map           = map,
             systemManager = systemManager,
+            hud           = HUD(player),
             score         = 0,
             level         = 1
         })

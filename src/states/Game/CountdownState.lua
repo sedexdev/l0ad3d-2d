@@ -26,6 +26,7 @@ function CountdownState:enter(params)
     self.player        = params.player
     self.map           = params.map
     self.systemManager = params.systemManager
+    self.hud           = params.hud
     self.level         = params.level
     self.score         = params.score
     Timer.after(3, function()
@@ -34,6 +35,7 @@ function CountdownState:enter(params)
             player        = self.player,
             map           = self.map,
             systemManager = self.systemManager,
+            hud           = self.hud,
             level         = self.level,
             score         = self.score
         })

@@ -49,6 +49,7 @@ GTextures = {
     ['powerups']          = love.graphics.newImage('graphics/powerups.png'),
     ['keys']              = love.graphics.newImage('graphics/keys.png'),
     ['smoke']             = love.graphics.newImage('graphics/smoke.png'),
+    ['hud']               = love.graphics.newImage('graphics/hud.png'),
 }
 
 GAudio = {
@@ -147,4 +148,5 @@ GQuads = {
     ['powerups']         = GenerateQuads(GTextures['powerups'], 64, 64),
     ['keys']             = GenerateQuads(GTextures['keys'], 64, 64),
     ['smoke']            = GenerateQuads(GTextures['smoke'], 128, 128),
+    ['hud']              = GenerateQuads(GTextures['hud'], 256, 256),
 }
