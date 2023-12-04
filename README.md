@@ -80,5 +80,3 @@ your friends will compete to have the most points!</p>
 <h2>LICENSE</h2>
 
 <a href="https://github.com/sedexdev/l0ad3d-2d/blob/main/LICENSE">MIT<a>
-
-<p>TEST</p>
