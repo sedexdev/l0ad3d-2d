@@ -46,14 +46,14 @@ end
         nil
 ]]
 function HUD:render(cameraX, cameraY)
+    local cornerOffset = 75
     -- render HUD display with shadow
     love.graphics.setColor(20/255, 20/255, 20/255, 200/255)
-    love.graphics.draw(GTextures['hud'], GQuads['hud'][1], cameraX + 75 + 5, cameraY + 75 + 5)
-    love.graphics.draw(GTextures['hud'], GQuads['hud'][1], cameraX + 75 + 5, cameraY + 75 + 5)
+    love.graphics.draw(GTextures['hud'], GQuads['hud'][1], cameraX + cornerOffset + 5, cameraY + cornerOffset + 5)
+    love.graphics.draw(GTextures['hud'], GQuads['hud'][1], cameraX + cornerOffset + 5, cameraY + cornerOffset + 5)
     love.graphics.setColor(1, 1, 1, 1)
-    love.graphics.draw(GTextures['hud'], GQuads['hud'][1], cameraX + 75, cameraY + 75)
-    love.graphics.draw(GTextures['hud'], GQuads['hud'][1], cameraX + 75, cameraY + 75)
-
+    love.graphics.draw(GTextures['hud'], GQuads['hud'][1], cameraX + cornerOffset, cameraY + cornerOffset)
+    love.graphics.draw(GTextures['hud'], GQuads['hud'][1], cameraX + cornerOffset, cameraY + cornerOffset)
     -- render health
     love.graphics.setFont(GFonts['funkrocker-smaller'])
     self:renderStatBar(cameraX, cameraY, self.player.health, 4, 150, 165, 130)
@@ -70,8 +70,9 @@ end
         nil
 ]]
 function HUD:renderStatBar(cameraX, cameraY, stat, quadID, quadY, barY, valueY)
-    local x       = 125
-    local xOffset = quadID == 4 and 60 or 35
+    local x         = 125
+    local xOffset   = quadID == 4 and 60 or 35
+    local ammoCount = (self.player.ammo * 100) / MAX_AMMO
     if quadID == 4 then
         -- health = red
         love.graphics.setColor(1, 0/255, 0/255, 1)
@@ -79,8 +80,8 @@ function HUD:renderStatBar(cameraX, cameraY, stat, quadID, quadY, barY, valueY)
         -- ammo = blue
         love.graphics.setColor(0/255, 0/255, 1, 1)
     end
-    -- stat bar
-    love.graphics.rectangle('fill', cameraX + 125 + self.barStart, cameraY + barY, 100, 20)
+    -- stat bar - width set by quadID
+    love.graphics.rectangle('fill', cameraX + 125 + self.barStart, cameraY + barY, (quadID == 3 and ammoCount or self.player.health), 20)
     love.graphics.setColor(20/255, 20/255, 20/255, 200/255)
     -- stat value
     love.graphics.print(tostring(stat), cameraX + x + self.barStart + xOffset + 2, cameraY + valueY + 2)

@@ -324,8 +324,16 @@ function ObjectSystem:handlePowerUpCollision(powerup)
         self.systemManager.player:setOneShotBossKill()
         self:removePowerUp(powerup, 'oneShotBossKill')
     elseif powerup.id == 3 then
-        self.systemManager.player.ammo = self.systemManager.player.ammo + 1000
-        self:removePowerUp(powerup, 'ammo')
+        if self.systemManager.player.ammo < MAX_AMMO then
+            local ammoIncrease = 500
+            local currentAmmoDiff = MAX_AMMO - self.systemManager.player.ammo
+            if currentAmmoDiff < ammoIncrease then
+                self.systemManager.player.ammo = self.systemManager.player.ammo + currentAmmoDiff
+            else
+                self.systemManager.player.ammo = self.systemManager.player.ammo + ammoIncrease
+            end
+            self:removePowerUp(powerup, 'ammo')
+        end
     elseif powerup.id == 4 then
         if self.systemManager.player.health < MAX_HEALTH then
             local healthIncrease = 25
