@@ -35,10 +35,20 @@ function GameOverState:enter(params)
             Timer.tween(self.duration, {
                 [self] = {y = WINDOW_HEIGHT + self.fontHeight}
             }):finish(function ()
-                -- TODO: implement Player score and change to high scores or menu
-                GStateMachine:change('menu', {
-                    highScores = self.highScores
-                })
+                local index = CheckHighScore(self.highScores, self.score)
+                if index ~= nil then
+                    GStateMachine:change('enter-highscores', {
+                        highScores = self.highScores,
+                        map        = self.map,
+                        score      = self.score,
+                        level      = self.level,
+                        index      = index,
+                    })
+                else
+                    GStateMachine:change('menu', {
+                        highScores = self.highScores
+                    })
+                end
             end)
         end)
     end)
