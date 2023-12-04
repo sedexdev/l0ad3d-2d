@@ -98,7 +98,30 @@ end
 ]]
 function EffectsSystem:render()
     love.graphics.setColor(1, 1, 1, 1)
-    -- explosions
+    -- only Smoke instances are rendered from here
+    local index = nil
+    for i = 1, #self.smokeEffects do
+        self.smokeEffects[i]:render()
+        if self.smokeEffects[i].animations:getCurrentFrame() == 8 then
+            index = i
+            break
+        end
+    end
+    if index ~= nil then
+        self.smokeEffects[index] = nil
+        table.remove(self.smokeEffects, index)
+    end
+end
+
+--[[
+    Renders explosions
+
+    Params:
+        none
+    Returns:
+        nil
+]]
+function EffectsSystem:renderExplosions()
     local index
     for i = 1, #self.explosions do
         self.explosions[i]:render()
@@ -111,24 +134,31 @@ function EffectsSystem:render()
         self.explosions[index] = nil
         table.remove(self.explosions, index)
     end
-    -- smoke
-    index = nil
-    for i = 1, #self.smokeEffects do
-        self.smokeEffects[i]:render()
-        if self.smokeEffects[i].animations:getCurrentFrame() == 8 then
-            index = i
-            break
-        end
-    end
-    if index ~= nil then
-        self.smokeEffects[index] = nil
-        table.remove(self.smokeEffects, index)
-    end
-    -- blood stains
+end
+
+--[[
+    Renders blood stains
+
+    Params:
+        none
+    Returns:
+        nil
+]]
+function EffectsSystem:renderBloodStains()
     for _, stain in pairs(self.bloodStains) do
         stain:render()
     end
-    -- shots
+end
+
+--[[
+    Renders shots
+
+    Params:
+        none
+    Returns:
+        nil
+]]
+function EffectsSystem:renderShots()
     for _, shot in pairs(self.shots) do
         if shot.renderShot then
             shot:render()

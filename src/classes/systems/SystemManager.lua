@@ -56,7 +56,9 @@ function SystemManager:update(dt)
 end
 
 --[[
-    SystemManager render function 
+    SystemManager render function. manages the order in which
+    systems render their components. Blood stains should be
+    rendered underneath crates for example
 
     Params:
         none
@@ -65,9 +67,16 @@ end
 ]]
 function SystemManager:render()
     self.doorSystem:render()
+    -- blood on top of Map but under everything else
+    self.effectsSystem:renderBloodStains()
     self.objectSystem:render()
+    --  explosions over objects
+    self.effectsSystem:renderExplosions()
+    -- smoke over objects
     self.effectsSystem:render()
     self.enemySystem:render()
+    -- shots over everything
+    self.effectsSystem:renderShots()
 end
 
 --[[
