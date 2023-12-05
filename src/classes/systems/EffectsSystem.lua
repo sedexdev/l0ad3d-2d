@@ -30,9 +30,9 @@ function EffectsSystem:init(systemManager)
     self.smokeEffects  = {}
     -- effect ID tracker
     self.effectIDs     = {
-        bulletID = 1,
-        bloodID = 1,
-        smokeID = 1,
+        bulletID    = 1,
+        bloodID     = 1,
+        smokeID     = 1,
         explosionID = 1,
     }
     -- bullet fired event
