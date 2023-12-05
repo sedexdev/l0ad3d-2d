@@ -376,7 +376,7 @@ function EnemySystem:getAreaTurrets()
     local turrets = {}
     for _, turret in pairs(self.turrets) do
         if turret.areaID == self.currentAreaID then
-            table.insert(turret, turrets)
+            table.insert(turrets, turret)
         end
     end
     return turrets
