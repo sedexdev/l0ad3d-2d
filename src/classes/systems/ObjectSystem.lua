@@ -401,9 +401,8 @@ end
 -- =========================== CRATE (X, Y) HELPERS ===========================
 
 --[[
-    Determines an (x, y) coordinate for a crate type PowerUp
-    object based on the area of a MapArea object and the location
-    of its doors
+    Determines an (x, y) coordinate for a Crate object based on 
+    the area of a MapArea object and the location of its doors
 
     Params:
         areaID:        number - ID of the MapArea to get door information
@@ -412,7 +411,7 @@ end
         table: (x, y) coordinates of crate
 ]]
 function ObjectSystem:setCrateXYCoordinates(areaID, prevLocations)
-    local edgeOffset = 150
+    local edgeOffset = 50
     local x, y
     local edges = {'L', 'T', 'R', 'B'}
     local edge = edges[math.random(1, 4)]
@@ -522,7 +521,7 @@ end
         number: x coordinate of the crate
 ]]
 function ObjectSystem:getCrateXCoordinateHelper(areaDef, doorEdge)
-    -- define edge offset to stop crates touching walls
+    -- define edge offset to stop crates overlapping doors
     local edgeOffset = 100
     -- MapArea x conditions
     local xLeft   = areaDef.x + edgeOffset
@@ -556,7 +555,7 @@ end
         number: y coordinate of the crate
 ]]
 function ObjectSystem:getCrateYCoordinateHelper(areaDef, doorEdge)
-    -- define edge offset to stop crates touching walls
+    -- define edge offset to stop crates overlapping doors
     local edgeOffset = 100
     -- define y boundarys
     local yTop    = areaDef.y + edgeOffset
