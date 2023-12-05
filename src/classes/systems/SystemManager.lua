@@ -302,9 +302,9 @@ function SystemManager:crateHelper()
         if self.collisionSystem:bulletCollision(self.bulletData, crate) then
             Audio_Explosion()
             -- remove the Bullet on hit to avoid it continuing to update
-            self.effectsSystem:removeBullet(self.bulletData.id)
-            self.objectSystem:removeCrate(crate.id)
-            table.insert(self.effectsSystem.explosions, Explosion:factory(crate))
+            Remove(self.effectsSystem.bullets, self.bulletData.bullet)
+            self.effectsSystem:insertExplosion(crate)
+            Remove(self.objectSystem.crates, crate)
             return true
         end
     end
@@ -328,23 +328,17 @@ function SystemManager:gruntHelper()
     for _, grunt in pairs(grunts) do
         if self.collisionSystem:bulletCollision(self.bulletData, grunt) then
             -- remove the Bullet on hit to avoid it continuing to update
-            self.effectsSystem:removeBullet(self.bulletData.id)
+            Remove(self.effectsSystem.bullets, self.bulletData.bullet)
             grunt:takeDamage()
             if grunt.isDead then
                 Audio_GruntDeath()
-                local bloodStain = BloodSplatter:factory(grunt.x, grunt.y, grunt.direction)
-                table.insert(self.effectsSystem.bloodStains, bloodStain)
-                Timer.after(BLOOD_STAIN_INTERVAL, function ()
-                    bloodStain = nil
-                    -- pass 1 as the index to always remove the first one rendered
-                    table.remove(self.effectsSystem.bloodStains, 1)
-                end)
+                self.effectsSystem:insertBlood(grunt)
                 -- set 1/10 chance to drop a powerup
                 local powerUpChance = math.random(1, 10) == 1 and true or false
                 if powerUpChance then
                     self.objectSystem:spawnPowerUp(grunt.areaID, grunt.x, grunt.y)
                 end
-                self.enemySystem:removeGrunt(grunt.id)
+                Remove(self.enemySystem.grunts, grunt)
                 Event.dispatch('score', 25)
                 break
             end
@@ -370,12 +364,12 @@ function SystemManager:turretHelper()
     for _, turret in pairs(turrets) do
         if self.collisionSystem:bulletCollision(self.bulletData, turret) then
             -- remove the Bullet on hit to avoid it continuing to update
-            self.effectsSystem:removeBullet(self.bulletData.id)
+            Remove(self.effectsSystem.bullets, self.bulletData.bullet)
             turret:takeDamage()
             if turret.isDead then
                 Audio_Explosion()
-                self.enemySystem:removeTurret(turret.id)
-                table.insert(self.effectsSystem.explosions, Explosion:factory(turret))
+                self.effectsSystem:insertExplosion(turret)
+                Remove(self.enemySystem.turrets, turret)
                 Event.dispatch('score', 100)
                 break
             end
@@ -400,10 +394,9 @@ function SystemManager:bossHelper()
     if self.enemySystem.boss ~= nil then
         if self.collisionSystem:bulletCollision(self.bulletData, self.enemySystem.boss) then
             -- remove the Bullet on hit to avoid it continuing to update
-            self.effectsSystem:removeBullet(self.bulletData.id)
+            Remove(self.effectsSystem.bullets, self.bulletData.bullet)
             self.enemySystem.boss:takeDamage()
             if self.enemySystem.boss.isDead then
-                -- TODO: play level complete audio
                 self.enemySystem.boss = nil
                 Event.dispatch('score', 1000)
                 Event.dispatch('levelComplete')
@@ -429,9 +422,9 @@ function SystemManager:boundaryHelper()
         local x = self.bulletData.x
         local y = self.bulletData.y
         -- remove bullet
-        self.effectsSystem:removeBullet(self.bulletData.id)
+        Remove(self.effectsSystem.bullets, self.bulletData.bullet)
         -- use stored (x, y) to instantiate smoke effect
-        table.insert(self.effectsSystem.smokeEffects, Smoke:factory(x, y))
+        self.effectsSystem:insertSmoke(x, y)
     end
 end
 
@@ -447,7 +440,7 @@ end
 function SystemManager:playerHelper()
     if self.collisionSystem:bulletCollision(self.bulletData, self.player) then
         self.player:takeDamage(self.bulletData.entity.damage)
-        self.effectsSystem:removeBullet(self.bulletData.id)
+        Remove(self.effectsSystem.bullets, self.bulletData.bullet)
         if self.player.isDead then
             Event.dispatch('gameOver')
         end

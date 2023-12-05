@@ -12,6 +12,7 @@ Smoke = Class{}
     Smoke constructor
 
     Params:
+        id:         number - ID of this animation
         texture:    Image  - Smoke PNG Image file
         animations: table  - animation idices for rendering
         x:          number - x cordinate 
@@ -19,11 +20,13 @@ Smoke = Class{}
     Returns:
         nil
 ]]
-function Smoke:init(texture, animations, x, y)
-    self.texture    = texture
-    self.animations = animations
+function Smoke:init(id, animations, x, y)
+    self.id         = id
+    self.texture    = animations.texture
+    self.animations = animations.animations
     self.x          = x
     self.y          = y
+    self.finalFrame = 8
 end
 
 --[[
@@ -51,23 +54,4 @@ function Smoke:render()
     local currentFrame = self.animations:getCurrentFrame()
     love.graphics.setColor(1, 1, 1, 1)
     love.graphics.draw(self.texture, GQuads['smoke'][currentFrame], self.x, self.y, 0, 2, 2)
-end
-
---[[
-    Creates and returns a Smoke instance using the given
-    arguments
-
-    Params:
-        x: number - x coordinate
-        y: number - y coordinate
-    Returns:
-        table: Animation instance
-]]
-function Smoke:factory(x, y)
-    local frames = {}
-    for i = 1, 8 do table.insert(frames, i) end
-    return Smoke(GTextures['smoke'],
-        Animation(frames, SMOKE_INTERVAL),
-        x, y
-    )
 end
