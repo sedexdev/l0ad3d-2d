@@ -60,21 +60,25 @@ end
         nil
 ]]
 function EffectsSystem:update(dt)
-    for _, explosion in pairs(self.explosions) do
-        explosion:update(dt)
+    for _, shot in pairs(self.shots) do
+        shot:update(dt)
+        if shot.remove then
+            Remove(self.shots, shot)
+        end
     end
     for _, bullet in pairs(self.bullets) do
         bullet:update(dt)
     end
-    for _, effect in pairs(self.smokeEffects) do
-        effect:update(dt)
+    for _, explosion in pairs(self.explosions) do
+        explosion:update(dt)
+        if explosion.remove then
+            Remove(self.explosions, explosion)
+        end
     end
-    for i = 1, #self.shots do
-        -- update the shot animation
-        self.shots[i]:update(dt)
-        if not self.shots[i].renderShot then
-            Remove(self.shots, self.shots[i])
-            break
+    for _, smoke in pairs(self.smokeEffects) do
+        smoke:update(dt)
+        if smoke.remove then
+            Remove(self.smokeEffects, smoke)
         end
     end
 end
@@ -88,14 +92,9 @@ end
         none
 ]]
 function EffectsSystem:render()
-    love.graphics.setColor(1, 1, 1, 1)
     -- only Smoke instances are rendered from here
-    for i = 1, #self.smokeEffects do
-        self.smokeEffects[i]:render()
-        if self.smokeEffects[i].animations:getCurrentFrame() == self.smokeEffects[i].finalFrame then
-            Remove(self.smokeEffects, self.smokeEffects[i])
-            break
-        end
+    for _, smoke in pairs(self.smokeEffects) do
+        smoke:render()
     end
 end
 
@@ -108,12 +107,8 @@ end
         nil
 ]]
 function EffectsSystem:renderExplosions()
-    for i = 1, #self.explosions do
-        self.explosions[i]:render()
-        if self.explosions[i].animations:getCurrentFrame() == self.explosions[i].finalFrame then
-            Remove(self.explosions, self.explosions[i])
-            break
-        end
+    for _, explosion in pairs(self.explosions) do
+        explosion:render()
     end
 end
 
@@ -141,7 +136,7 @@ end
 ]]
 function EffectsSystem:renderShots()
     for _, shot in pairs(self.shots) do
-        if shot.renderShot then
+        if not shot.remove then
             shot:render()
         end
     end
@@ -164,28 +159,6 @@ function EffectsSystem:message(data)
     end
 end
 
---[[
-    Removes a Bullet from <self.bullets>
-
-    Params:
-        id: number - Bullet object ID
-    Returns:
-        nil
-]]
-function EffectsSystem:removeBullet(id)
-    local index
-    for i = 1, #self.bullets do
-        if self.bullets[i].id == id then
-            index = i
-            break
-        end
-    end
-    if index ~= nil then
-        self.bullets[index] = nil
-        table.remove(self.bullets, index)
-    end
-end
-
 -- ======================== INSERTION FUNCTIONS ========================
 
 --[[
@@ -199,7 +172,7 @@ end
 function EffectsSystem:insertExplosion(object)
     table.insert(
         self.explosions,
-        Explosion(self.effectIDs.explosionID, GAnimationDefintions['explosion'], object.x, object.y)
+        Explosion(self.effectIDs.explosionID, GTextures['explosion'], object.x, object.y)
     )
     self.effectIDs.explosionID = self.effectIDs.explosionID + 1
 end
@@ -232,8 +205,6 @@ function EffectsSystem:insertBlood(grunt)
     table.insert(self.bloodStains, bloodStain)
     self.effectIDs.bloodID = self.effectIDs.bloodID + 1
     Timer.after(BLOOD_STAIN_INTERVAL, function ()
-        bloodStain = nil
-        -- pass 1 as the index to always remove the first one rendered
         Remove(self.bloodStains, bloodStain)
     end)
 end
@@ -250,7 +221,7 @@ end
 function EffectsSystem:insertSmoke(x, y)
     table.insert(
         self.smokeEffects,
-        Explosion(self.effectIDs.smokeID, GAnimationDefintions['smoke'], x, y)
+        Smoke(self.effectIDs.smokeID, GTextures['smoke'], x, y)
     )
     self.effectIDs.smokeID = self.effectIDs.smokeID + 1
 end

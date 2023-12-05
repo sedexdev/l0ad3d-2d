@@ -12,20 +12,20 @@ Explosion = Class{}
     Explosion constructor
 
     Params:
-        id:         number - ID of this animation
-        animations: table  - GAnimationDefinitions definition
-        x:          number - x cordinate 
-        y:          number - y cordinate
+        id:      number - ID of this animation
+        texture: Image  - texture of this animation
+        x:       number - x cordinate 
+        y:       number - y cordinate
     Returns:
         nil
 ]]
-function Explosion:init(id, animations, x, y)
+function Explosion:init(id, texture, x, y)
     self.id         = id
-    self.texture    = animations.texture
-    self.animations = animations.animations
+    self.texture    = texture
     self.x          = x
     self.y          = y
-    self.finalFrame = 16
+    self.animations = Animation({1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16}, EXPLOSION_INTERVAL)
+    self.remove     = false
 end
 
 --[[
@@ -39,6 +39,9 @@ end
 ]]
 function Explosion:update(dt)
     self.animations:update(dt)
+    if self.animations:getCurrentFrame() == 16 then
+        self.remove = true
+    end
 end
 
 --[[

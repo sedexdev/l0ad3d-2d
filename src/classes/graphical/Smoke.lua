@@ -12,21 +12,20 @@ Smoke = Class{}
     Smoke constructor
 
     Params:
-        id:         number - ID of this animation
-        texture:    Image  - Smoke PNG Image file
-        animations: table  - animation idices for rendering
-        x:          number - x cordinate 
-        y:          number - y cordinate
+        id:      number - ID of this animation
+        texture: Image  - Smoke PNG Image file
+        x:       number - x cordinate 
+        y:       number - y cordinate
     Returns:
         nil
 ]]
-function Smoke:init(id, animations, x, y)
+function Smoke:init(id, texture, x, y)
     self.id         = id
-    self.texture    = animations.texture
-    self.animations = animations.animations
+    self.texture    = texture
     self.x          = x
     self.y          = y
-    self.finalFrame = 8
+    self.animations = Animation({1, 2, 3, 4, 5, 6, 7, 8}, SMOKE_INTERVAL)
+    self.remove     = false
 end
 
 --[[
@@ -40,6 +39,9 @@ end
 ]]
 function Smoke:update(dt)
     self.animations:update(dt)
+    if self.animations:getCurrentFrame() == 8 then
+        self.remove = true
+    end
 end
 
 --[[
