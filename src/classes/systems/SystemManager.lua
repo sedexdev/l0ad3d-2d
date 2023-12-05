@@ -425,9 +425,13 @@ end
 ]]
 function SystemManager:boundaryHelper()
     if self.collisionSystem:bulletHitBoundary(self.bulletData.x, self.bulletData.y) then
-        table.insert(self.effectsSystem.smokeEffects, Smoke:factory(self.bulletData.x, self.bulletData.y))
+        -- store bullet (x, y)
+        local x = self.bulletData.x
+        local y = self.bulletData.y
         -- remove bullet
         self.effectsSystem:removeBullet(self.bulletData.id)
+        -- use stored (x, y) to instantiate smoke effect
+        table.insert(self.effectsSystem.smokeEffects, Smoke:factory(x, y))
     end
 end
 
