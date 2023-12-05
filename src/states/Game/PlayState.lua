@@ -374,9 +374,9 @@ end
 function PlayState:displayScore()
     love.graphics.setFont(GFonts['funkrocker-small'])
     love.graphics.setColor(0/255, 0/255, 0/255, 255/255)
-    love.graphics.print('Score: ' .. tostring(self.score), self.cameraX + (WINDOW_WIDTH - 300) + 2, self.cameraY + 50 + 2)
-    love.graphics.print('Score: ' .. tostring(self.score), self.cameraX + (WINDOW_WIDTH - 300) + 2, self.cameraY + 50 + 2)
+    love.graphics.print('Score: ' .. tostring(self.score), self.cameraX + (WINDOW_WIDTH - 330) + 2, self.cameraY + 60 + 2)
+    love.graphics.print('Score: ' .. tostring(self.score), self.cameraX + (WINDOW_WIDTH - 330) + 2, self.cameraY + 60 + 2)
     love.graphics.setColor(1, 0/255, 0/255, 255/255)
-    love.graphics.print('Score: ' .. tostring(self.score), self.cameraX + (WINDOW_WIDTH - 300), self.cameraY + 50)
+    love.graphics.print('Score: ' .. tostring(self.score), self.cameraX + (WINDOW_WIDTH - 330), self.cameraY + 60)
     love.graphics.setColor(1, 1, 1, 1)
 end

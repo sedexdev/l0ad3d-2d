@@ -29,6 +29,7 @@ function LevelCompleteState:enter(params)
     self.player        = params.player
     self.map           = params.map
     self.systemManager = params.systemManager
+    self.hud           = params.hud
     self.score         = params.score
     self.level         = params.level
     -- tween message in
@@ -44,6 +45,7 @@ function LevelCompleteState:enter(params)
                     player        = self.player,
                     map           = self.map,
                     systemManager = self.systemManager,
+                    hud           = self.hud,
                     score         = self.score,
                     level         = self.level + 1
                 })

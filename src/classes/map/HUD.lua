@@ -22,6 +22,24 @@ function HUD:init(player)
     self.player = player
     -- positional data for bars
     self.barStart = 64 * 0.8
+    -- key colours
+    self.keyColours = {
+        ['red'] = {
+            r = 1,
+            g = 0/255,
+            b = 0/255
+        },
+        ['green'] = {
+            r = 41/255,
+            g = 181/255,
+            b = 5/255
+        },
+        ['blue'] = {
+            r = 95/255,
+            g = 209/255,
+            b = 232/255
+        },
+    }
 end
 
 --[[
@@ -46,11 +64,21 @@ end
         nil
 ]]
 function HUD:render(cameraX, cameraY)
+    -- render key colours first so they are beind the HUD
+    if self.player.keys.red then
+        self:renderKeyColour(cameraX, cameraY, 'red', 130)
+    end
+    if self.player.keys.green then
+        self:renderKeyColour(cameraX, cameraY, 'green', 180)
+    end
+    if self.player.keys.blue then
+        self:renderKeyColour(cameraX, cameraY, 'blue', 230)
+    end
     local cornerOffset = 75
     -- render HUD display with shadow
     love.graphics.setColor(20/255, 20/255, 20/255, 200/255)
-    love.graphics.draw(GTextures['hud'], GQuads['hud'][1], cameraX + cornerOffset + 5, cameraY + cornerOffset + 5)
-    love.graphics.draw(GTextures['hud'], GQuads['hud'][1], cameraX + cornerOffset + 5, cameraY + cornerOffset + 5)
+    love.graphics.draw(GTextures['hud'], GQuads['hud'][1], cameraX + cornerOffset + 2, cameraY + cornerOffset + 2)
+    love.graphics.draw(GTextures['hud'], GQuads['hud'][1], cameraX + cornerOffset + 2, cameraY + cornerOffset + 2)
     love.graphics.setColor(1, 1, 1, 1)
     love.graphics.draw(GTextures['hud'], GQuads['hud'][1], cameraX + cornerOffset, cameraY + cornerOffset)
     love.graphics.draw(GTextures['hud'], GQuads['hud'][1], cameraX + cornerOffset, cameraY + cornerOffset)
@@ -59,6 +87,24 @@ function HUD:render(cameraX, cameraY)
     self:renderStatBar(cameraX, cameraY, self.player.health, 4, 150, 165, 130)
     -- render ammo
     self:renderStatBar(cameraX, cameraY, self.player.ammo, 3, 210, 225, 190)
+end
+
+--[[
+    Renders out different colour blocks that represent
+    which keys the Player has collected
+
+    Params:
+        cameraX: number - x location of game camera
+        cameraY: number - y location of game camera
+        colour:  string - colour of this key
+        yOffset: number - y coordinate
+    Returns:
+        nil
+]]
+function HUD:renderKeyColour(cameraX, cameraY, colour, yOffset)
+    local x = 310
+    love.graphics.setColor(self.keyColours[colour].r, self.keyColours[colour].g, self.keyColours[colour].b, 1)
+    love.graphics.rectangle('fill', cameraX + x, cameraY + yOffset, 20, 50)
 end
 
 --[[
