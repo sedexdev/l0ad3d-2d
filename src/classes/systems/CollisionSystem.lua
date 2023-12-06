@@ -536,10 +536,10 @@ end
         boolean: true if collision detected
 ]]
 function CollisionSystem:objectCollision(object)
-    if (self.playerX > object.x + object.width) or (object.x > self.playerX + ENTITY_WIDTH) then
+    if (self.playerX + ENTITY_CORRECTION > object.x + object.width) or (object.x > self.playerX + ENTITY_WIDTH - ENTITY_CORRECTION) then
         return false
     end
-    if (self.playerY > object.y + object.height) or (object.y > self.playerY + ENTITY_HEIGHT) then
+    if (self.playerY + ENTITY_CORRECTION > object.y + object.height) or (object.y > self.playerY + ENTITY_HEIGHT - ENTITY_CORRECTION) then
         return false
     end
     return true
