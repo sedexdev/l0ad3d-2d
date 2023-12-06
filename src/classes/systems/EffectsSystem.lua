@@ -30,6 +30,7 @@ function EffectsSystem:init(systemManager)
     self.smokeEffects  = {}
     -- effect ID tracker
     self.effectIDs     = {
+        shotID      = 1,
         bulletID    = 1,
         bloodID     = 1,
         smokeID     = 1,
@@ -37,7 +38,7 @@ function EffectsSystem:init(systemManager)
     }
     -- bullet fired event
     Event.on('shotFired', function (entity)
-        table.insert(self.shots, Shot(entity))
+        self:insertShot(entity)
         if entity.type == 'character' then
             Audio_PlayerShot()
         end
@@ -136,9 +137,7 @@ end
 ]]
 function EffectsSystem:renderShots()
     for _, shot in pairs(self.shots) do
-        if not shot.remove then
-            shot:render()
-        end
+        shot:render()
     end
 end
 
@@ -160,6 +159,19 @@ function EffectsSystem:message(data)
 end
 
 -- ======================== INSERTION FUNCTIONS ========================
+
+--[[
+    Inserts are Shot object into the <self.shots> table
+
+    Params:
+        entity: table - Entity object that fired the shot
+    Returns:
+        nil
+]]
+function EffectsSystem:insertShot(entity)
+    table.insert(self.shots, Shot(self.effectIDs.shotID, entity))
+    self.effectIDs.shotID = self.effectIDs.shotID + 1
+end
 
 --[[
     Inserts an Explosion object into the <self.explosions> table
@@ -219,9 +231,6 @@ end
         nil
 ]]
 function EffectsSystem:insertSmoke(x, y)
-    table.insert(
-        self.smokeEffects,
-        Smoke(self.effectIDs.smokeID, GTextures['smoke'], x, y)
-    )
+    table.insert(self.smokeEffects, Smoke(self.effectIDs.smokeID, GTextures['smoke'], x, y))
     self.effectIDs.smokeID = self.effectIDs.smokeID + 1
 end

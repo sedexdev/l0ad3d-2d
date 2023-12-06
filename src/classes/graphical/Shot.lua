@@ -14,11 +14,13 @@ Shot = Class{}
     used to determine if the shot should still be rendered
 
     Params:
-        entity: table - Entity object
+        id:     number - ID of this animation
+        entity: table  - Entity object
     Returns:
         nil
 ]]
-function Shot:init(entity)
+function Shot:init(id, entity)
+    self.id           = id
     self.entity       = entity
     self.shotGraphic  = entity.fireShot
     self.shotTimer    = 0
