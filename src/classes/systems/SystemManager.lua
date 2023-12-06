@@ -342,7 +342,7 @@ function SystemManager:gruntHelper()
                 Audio_GruntDeath()
                 self.effectsSystem:insertBlood(grunt)
                 -- set 1/10 chance to drop a powerup
-                local powerUpChance = math.random(1, 2) == 1 and true or false
+                local powerUpChance = math.random(1, 4) == 1 and true or false
                 if powerUpChance then
                     self.objectSystem:spawnPowerUp(grunt.x, grunt.y, grunt.areaID)
                 end

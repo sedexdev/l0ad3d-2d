@@ -151,7 +151,7 @@ function ObjectSystem:spawnCrates()
             table.insert(self.objects[i].crates, Crate(self.objectIDs.crateID, i, x, y))
             self.objectIDs.crateID = self.objectIDs.crateID + 1
             -- set a random chance of hiding a powerup under the crate
-            local powerUpChance = math.random(1, 2) == 1 and true or false
+            local powerUpChance = math.random(1, 4) == 1 and true or false
             -- assign same (x, y) as the crate
             if powerUpChance then
                 self:spawnPowerUp(x, y, i)
@@ -195,31 +195,31 @@ function ObjectSystem:spawnPowerUp(x, y, areaID)
     x = x + (CRATE_WIDTH - POWERUP_WIDTH) / 2
     y = y + (CRATE_HEIGHT - POWERUP_HEIGHT) / 2
     -- set random chance of finding each powerup
-    local health = math.random(2) == 1 and true or false
+    local health = math.random(3) == 1 and true or false
     if health then
         table.insert(self.objects[areaID].powerups, PowerUp(self.objectIDs.powerupID, 'health', areaID, x, y))
         self.objectIDs.powerupID = self.objectIDs.powerupID + 1
         return
     end
-    local ammo = math.random(2) == 1 and true or false
+    local ammo = math.random(4) == 1 and true or false
     if ammo then
         table.insert(self.objects[areaID].powerups, PowerUp(self.objectIDs.powerupID, 'ammo', areaID, x, y))
         self.objectIDs.powerupID = self.objectIDs.powerupID + 1
         return
     end
-    local doubleSpeed = math.random(2) == 1 and true or false
+    local doubleSpeed = math.random(5) == 1 and true or false
     if doubleSpeed then
         table.insert(self.objects[areaID].powerups, PowerUp(self.objectIDs.powerupID, 'doubleSpeed', areaID, x, y))
         self.objectIDs.powerupID = self.objectIDs.powerupID + 1
         return
     end
-    local invincible = math.random(2) == 1 and true or false
+    local invincible = math.random(15) == 1 and true or false
     if invincible then
         table.insert(self.objects[areaID].powerups, PowerUp(self.objectIDs.powerupID, 'invincible', areaID, x, y))
         self.objectIDs.powerupID = self.objectIDs.powerupID + 1
         return
     end
-    local oneShotBossKill = math.random(2) == 1 and true or false
+    local oneShotBossKill = math.random(20) == 1 and true or false
     if oneShotBossKill then
         table.insert(self.objects[areaID].powerups, PowerUp(self.objectIDs.powerupID, 'oneShotBossKill', areaID, x, y))
         self.objectIDs.powerupID = self.objectIDs.powerupID + 1
