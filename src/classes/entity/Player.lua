@@ -261,9 +261,12 @@ end
         nil
 ]]
 function Player:setDoubleSpeed()
-    self.powerups.doubleSpeed = true
-    self.dx = self.dx * 2
-    self.dy = self.dy * 2
+    -- only increase speed once
+    if not self.powerups.doubleSpeed then
+        self.powerups.doubleSpeed = true
+        self.dx = self.dx * 2
+        self.dy = self.dy * 2
+    end
 end
 
 --[[
