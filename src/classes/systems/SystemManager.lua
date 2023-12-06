@@ -130,7 +130,8 @@ end
 --[[
     Checks the appropriate systems for collisions with crate
     type PowerUp objects and calls the handler in the event
-    of a collision
+    of a collision. Also respawns Crates in adjacent areas
+    that have had all the Crates destroyed
 
     Params:
         none
@@ -159,6 +160,15 @@ function SystemManager:checkCrates()
             local bossCollision = self.collisionSystem:crateCollision(crate, self.enemySystem.boss)
             if bossCollision.detected then
                 self.collisionSystem:handleEnemyCrateCollision(self.enemySystem.boss, bossCollision.edge)
+            end
+        end
+    end
+    -- check if more crates need to be spawned if Player in an area - exclude corridors
+    if self.currentAreaID >= START_AREA_ID then
+        local areaIDs = GAreaAdjacencyDefinitions[self.currentAreaID]
+        for _, id in pairs(areaIDs) do
+            if id >= START_AREA_ID and Length(self.objectSystem.objects[id].crates) == 0 then
+                self.objectSystem:spawnCrate(id)
             end
         end
     end
@@ -228,12 +238,14 @@ end
         nil
 ]]
 function SystemManager:checkGrunts()
-    -- get the adjacent area IDs
-    local areaIDs = GAreaAdjacencyDefinitions[self.currentAreaID]
-    for _, id in pairs(areaIDs) do
-        -- check if any of the areas have 0 grunts in
-        if id >= START_AREA_ID and Length(self.enemySystem.enemies[id].grunts) == 0 then
-            self.enemySystem:spawn(self.map:getAreaDefinition(id))
+    if self.currentAreaID >= START_AREA_ID then
+        -- get the adjacent area IDs
+        local areaIDs = GAreaAdjacencyDefinitions[self.currentAreaID]
+        for _, id in pairs(areaIDs) do
+            -- check if any of the areas have 0 grunts in
+            if id >= START_AREA_ID and Length(self.enemySystem.enemies[id].grunts) == 0 then
+                self.enemySystem:spawn(self.map:getAreaDefinition(id))
+            end
         end
     end
 end

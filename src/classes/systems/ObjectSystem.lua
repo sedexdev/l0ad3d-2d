@@ -110,7 +110,9 @@ end
         nil
 ]]
 function ObjectSystem:spawn()
-    self:spawnCrates()
+    for i = START_AREA_ID, #GMapAreaDefinitions do
+        self:spawnCrate(i)
+    end
     self:spawnKeys()
 end
 
@@ -119,25 +121,23 @@ end
     have a random chance of spawning a PowerUp underneath them
 
     Params:
-        none
+        areaID: number - area ID to spawn the Crate in
     Returns:
         nil
 ]]
-function ObjectSystem:spawnCrates()
-    for i = START_AREA_ID, #GMapAreaDefinitions do
-        local startCount, endCount = self:getCrateLimits(i)
-        local numCrates = math.random(startCount, endCount)
-        for _ = 1, numCrates do
-            -- determine an (x, y) for the crate based on room size
-            local x, y = self:setCrateXYCoordinates(i)
-            table.insert(self.objects[i].crates, Crate(self.objectIDs.crateID, i, x, y))
-            self.objectIDs.crateID = self.objectIDs.crateID + 1
-            -- set a random chance of hiding a powerup under the crate
-            local powerUpChance = math.random(1, 4) == 1 and true or false
-            -- assign same (x, y) as the crate
-            if powerUpChance then
-                self:spawnPowerUp(x, y, i)
-            end
+function ObjectSystem:spawnCrate(areaID)
+    local startCount, endCount = self:getCrateLimits(areaID)
+    local numCrates = math.random(startCount, endCount)
+    for _ = 1, numCrates do
+        -- determine an (x, y) for the crate based on room size
+        local x, y = self:setCrateXYCoordinates(areaID)
+        table.insert(self.objects[areaID].crates, Crate(self.objectIDs.crateID, areaID, x, y))
+        self.objectIDs.crateID = self.objectIDs.crateID + 1
+        -- set a random chance of hiding a powerup under the crate
+        local powerUpChance = math.random(1, 4) == 1 and true or false
+        -- assign same (x, y) as the crate
+        if powerUpChance then
+            self:spawnPowerUp(x, y, areaID)
         end
     end
 end
@@ -148,14 +148,14 @@ end
     based on the size of the area
 
     Params:
-        i: number - GMapAreaDefinitions index
+        areaID: number - area ID to spawn the Crate in
     Returns:
         number: start of range
         number: end of range
 ]]
-function ObjectSystem:getCrateLimits(i)
+function ObjectSystem:getCrateLimits(areaID)
     -- get the area of the area
-    local roomArea = GMapAreaDefinitions[i].width * GMapAreaDefinitions[i].height
+    local roomArea = GMapAreaDefinitions[areaID].width * GMapAreaDefinitions[areaID].height
     -- generate a random number of crates dependent on room size
     local startCount, endCount, numCrates
     if roomArea < 64 then
