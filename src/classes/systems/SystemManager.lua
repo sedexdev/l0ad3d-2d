@@ -403,7 +403,7 @@ function SystemManager:bossHelper()
         if self.collisionSystem:bulletCollision(self.bulletData, self.enemySystem.boss) then
             -- remove the Bullet on hit to avoid it continuing to update
             Remove(self.effectsSystem.bullets, self.bulletData.bullet)
-            self.enemySystem.boss:takeDamage()
+            self.enemySystem.boss:takeDamage(self.player)
             if self.enemySystem.boss.isDead then
                 self.enemySystem.boss = nil
                 Event.dispatch('score', 1000)

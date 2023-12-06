@@ -71,13 +71,17 @@ end
     Handles damage dealt from the Player
 
     Params:
-        none
+        player: table - Player object
     Returns:
         nil
 ]]
-function Boss:takeDamage()
-    self.health = self.health - PLAYER_DAMAGE
-    if self.health <= 0 then
+function Boss:takeDamage(player)
+    if player.powerups.oneShotBossKill then
         self.isDead = true
+    else
+        self.health = self.health - PLAYER_DAMAGE
+        if self.health <= 0 then
+            self.isDead = true
+        end
     end
 end
