@@ -333,24 +333,12 @@ function ObjectSystem:handlePowerUpCollision(powerup)
         powerup.remove = true
     elseif powerup.type == 'ammo' then
         if self.systemManager.player.ammo < MAX_AMMO then
-            local ammoIncrease = 500
-            local currentAmmoDiff = MAX_AMMO - self.systemManager.player.ammo
-            if currentAmmoDiff < ammoIncrease then
-                self.systemManager.player.ammo = self.systemManager.player.ammo + currentAmmoDiff
-            else
-                self.systemManager.player.ammo = self.systemManager.player.ammo + ammoIncrease
-            end
+            self.systemManager.player:increaseAmmo()
             powerup.remove = true
         end
     elseif powerup.type == 'health' then
         if self.systemManager.player.health < MAX_HEALTH then
-            local healthIncrease = 25
-            local currentHealthDiff = MAX_HEALTH - self.systemManager.player.health
-            if currentHealthDiff < healthIncrease then
-                self.systemManager.player.health = self.systemManager.player.health + currentHealthDiff
-            else
-                self.systemManager.player.health = self.systemManager.player.health + healthIncrease
-            end
+            self.systemManager.player:increaseHealth()
             powerup.remove = true
         end
     elseif powerup.type == 'invincible' then
