@@ -3,8 +3,6 @@
 
     Includes: Observer - parent class for observers
 
-    TODO: crates and powerups need to be replaced as the level goes on
-
     Description:
         The object system is responsible for spawning powerups and
         handling collisions after detection with the Player so they can 
