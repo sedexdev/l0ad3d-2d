@@ -36,6 +36,7 @@ function SystemManager:init(map, player)
     self.effectsSystem    = EffectsSystem(self)
     -- playerData table
     self.playerData       = {}
+    self.currentAreaID    = START_AREA_ID
     -- bulletData table
     self.bulletData       = {}
 end
@@ -50,9 +51,9 @@ end
 ]]
 function SystemManager:update(dt)
     self.doorSystem:update(dt)
+    self.objectSystem:update(dt)
     self.enemySystem:update(dt)
     self.effectsSystem:update(dt)
-    self.objectSystem:update(dt)
 end
 
 --[[
@@ -92,7 +93,8 @@ end
 ]]
 function SystemManager:message(data)
     if data.source == 'PlayerWalkingState' then
-        self.playerData = data
+        self.playerData    = data
+        self.currentAreaID = self.playerData.areaID
         self:checkKeys()
         self:checkCrates()
         self:checkPowerUps()
@@ -117,7 +119,7 @@ end
         nil
 ]]
 function SystemManager:checkKeys()
-    local keys = self.objectSystem.objects[self.playerData.areaID].keys
+    local keys = self.objectSystem.objects[self.currentAreaID].keys
     if keys[1] ~= nil then
         if self.collisionSystem:objectCollision(keys[1]) then
             self.objectSystem:handleKeyCollision(keys[1])
@@ -136,7 +138,7 @@ end
         nil
 ]]
 function SystemManager:checkCrates()
-    local crates = self.objectSystem.objects[self.playerData.areaID].crates
+    local crates = self.objectSystem.objects[self.currentAreaID].crates
     for _, crate in pairs(crates) do
         -- check for Player collisions if playerData has been sent by the Observable
         local playerCollision = self.collisionSystem:crateCollision(crate, self.playerData)
@@ -144,8 +146,8 @@ function SystemManager:checkCrates()
             self.collisionSystem:handlePlayerCrateCollision(crate, playerCollision.edge)
         end
         -- check for grunt collisions
-        for _, grunt in pairs(self.enemySystem.grunts) do
-            if grunt.areaID == self.playerData.areaID then
+        for _, grunt in pairs(self.enemySystem.enemies[self.currentAreaID].grunts) do
+            if grunt.areaID == self.currentAreaID then
                 local gruntCollision = self.collisionSystem:crateCollision(crate, grunt)
                 if gruntCollision.detected then
                     self.collisionSystem:handleEnemyCrateCollision(grunt, gruntCollision.edge)
@@ -173,7 +175,7 @@ end
         nil
 ]]
 function SystemManager:checkPowerUps()
-    local powerups = self.objectSystem.objects[self.playerData.areaID].powerups
+    local powerups = self.objectSystem.objects[self.currentAreaID].powerups
     -- check for powerup collisions in the current area
     for _, powerup in pairs(powerups) do
         if self.collisionSystem:objectCollision(powerup) then
@@ -192,7 +194,7 @@ end
         nil 
 ]]
 function SystemManager:checkMap()
-    local area = self.map:getAreaDefinition(self.playerData.areaID)
+    local area = self.map:getAreaDefinition(self.currentAreaID)
     -- check if the player has collided with the wall in this area
     local wallCollision = self.collisionSystem:checkWallCollision(area, self.playerData)
     if wallCollision.detected then
@@ -226,8 +228,14 @@ end
         nil
 ]]
 function SystemManager:checkGrunts()
-    -- will only spawn grunts in adjacent areas that have 0 grunts in
-    self.enemySystem:spawn(self.map:getAreaAdjacencies(self.playerData.areaID))
+    -- get the adjacent area IDs
+    local areaIDs = GAreaAdjacencyDefinitions[self.currentAreaID]
+    for _, id in pairs(areaIDs) do
+        -- check if any of the areas have 0 grunts in
+        if id >= START_AREA_ID and Length(self.enemySystem.enemies[id].grunts) == 0 then
+            self.enemySystem:spawn(self.map:getAreaDefinition(id))
+        end
+    end
 end
 
 --[[
@@ -241,7 +249,7 @@ end
 ]]
 function SystemManager:checkBoss()
     -- spawn Boss if we are in the spawn area and not yet spawned
-    if self.playerData.areaID == BOSS_SPAWN_AREA_ID and not self.enemySystem.bossSpawned then
+    if self.currentAreaID == BOSS_SPAWN_AREA_ID and not self.enemySystem.bossSpawned then
         -- Boss is then spawned in the defined area
         self.enemySystem:spawnBoss(self.map:getAreaDefinition(BOSS_AREA_ID))
         self.enemySystem.bossSpawned = true
@@ -297,14 +305,14 @@ end
         boolean: true if bullet hit a Crate object
 ]]
 function SystemManager:crateHelper()
-    local crates = self.objectSystem.objects[self.playerData.areaID].crates
+    local crates = self.objectSystem.objects[self.currentAreaID].crates
     for _, crate in pairs(crates) do
         if self.collisionSystem:bulletCollision(self.bulletData, crate) then
             Audio_Explosion()
             -- remove the Bullet on hit to avoid it continuing to update
             Remove(self.effectsSystem.bullets, self.bulletData.bullet)
             self.effectsSystem:insertExplosion(crate)
-            Remove(self.objectSystem.objects[self.playerData.areaID].crates, crate)
+            Remove(self.objectSystem.objects[self.currentAreaID].crates, crate)
             return true
         end
     end
@@ -324,7 +332,7 @@ end
         boolean: true if bullet hit a Grunt object
 ]]
 function SystemManager:gruntHelper()
-    local grunts = self.enemySystem:getAreaGrunts()
+    local grunts = self.enemySystem.enemies[self.currentAreaID].grunts
     for _, grunt in pairs(grunts) do
         if self.collisionSystem:bulletCollision(self.bulletData, grunt) then
             -- remove the Bullet on hit to avoid it continuing to update
@@ -338,7 +346,7 @@ function SystemManager:gruntHelper()
                 if powerUpChance then
                     self.objectSystem:spawnPowerUp(grunt.x, grunt.y, grunt.areaID)
                 end
-                Remove(self.enemySystem.grunts, grunt)
+                Remove(self.enemySystem.enemies[self.currentAreaID].grunts, grunt)
                 Event.dispatch('score', 25)
                 break
             end
@@ -360,7 +368,7 @@ end
         boolean: true if bullet hit a Turret object
 ]]
 function SystemManager:turretHelper()
-    local turrets = self.enemySystem:getAreaTurrets()
+    local turrets = self.enemySystem.enemies[self.currentAreaID].turrets
     for _, turret in pairs(turrets) do
         if self.collisionSystem:bulletCollision(self.bulletData, turret) then
             -- remove the Bullet on hit to avoid it continuing to update
@@ -369,7 +377,7 @@ function SystemManager:turretHelper()
             if turret.isDead then
                 Audio_Explosion()
                 self.effectsSystem:insertExplosion(turret)
-                Remove(self.enemySystem.turrets, turret)
+                Remove(self.enemySystem.enemies[self.currentAreaID].turrets, turret)
                 Event.dispatch('score', 100)
                 break
             end

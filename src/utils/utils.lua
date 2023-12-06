@@ -88,6 +88,22 @@ function Remove(t, object)
     t[#t] = nil
 end
 
+--[[
+    Gets the length of a given table and returns it
+    
+    Params:
+        t: table - table to check
+    Returns:
+        number: length of the table
+]]
+function Length(t)
+    local count = 0
+    for _ in pairs(t) do
+        count = count + 1
+    end
+    return count
+end
+
 -- ========================= SOUND EFFECTS =========================
 
 --[[
