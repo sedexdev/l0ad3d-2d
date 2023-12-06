@@ -127,27 +127,11 @@ end
 ]]
 function ObjectSystem:spawnCrates()
     for i = START_AREA_ID, #GMapAreaDefinitions do
-        -- get the area of the area
-        local roomArea = GMapAreaDefinitions[i].width * GMapAreaDefinitions[i].height
-        -- generate a random number of crates dependent on room size
-        local startCount, endCount, numCrates
-        if roomArea < 64 then
-            startCount = 1
-            endCount = 3
-        elseif roomArea == 64 then
-            startCount = 4
-            endCount = 6
-        else
-            startCount = 6
-            endCount = 8
-        end
-        numCrates = math.random(startCount, endCount)
-        local prevLocations = {[1] = {x = nil, y = nil}}
-        -- reset the number of spawned locations before setting the crate (x, y) 
-        self.locationCount = 1
+        local startCount, endCount = self:getCrateLimits(i)
+        local numCrates = math.random(startCount, endCount)
         for _ = 1, numCrates do
             -- determine an (x, y) for the crate based on room size
-            local x, y = self:setCrateXYCoordinates(i, prevLocations)
+            local x, y = self:setCrateXYCoordinates(i)
             table.insert(self.objects[i].crates, Crate(self.objectIDs.crateID, i, x, y))
             self.objectIDs.crateID = self.objectIDs.crateID + 1
             -- set a random chance of hiding a powerup under the crate
@@ -158,6 +142,35 @@ function ObjectSystem:spawnCrates()
             end
         end
     end
+end
+
+--[[
+    Gets the start and end values for the random number
+    generated to decide on the number of crates to insert
+    based on the size of the area
+
+    Params:
+        i: number - GMapAreaDefinitions index
+    Returns:
+        number: start of range
+        number: end of range
+]]
+function ObjectSystem:getCrateLimits(i)
+    -- get the area of the area
+    local roomArea = GMapAreaDefinitions[i].width * GMapAreaDefinitions[i].height
+    -- generate a random number of crates dependent on room size
+    local startCount, endCount, numCrates
+    if roomArea < 64 then
+        startCount = 1
+        endCount = 3
+    elseif roomArea == 64 then
+        startCount = 4
+        endCount = 6
+    else
+        startCount = 6
+        endCount = 8
+    end
+    return startCount, endCount
 end
 
 --[[
@@ -227,68 +240,6 @@ function ObjectSystem:spawnPowerUp(x, y, areaID)
     end
 end
 
--- =========================== COLLISIONS HANDLERS ===========================
-
---[[
-    Handles a key collision by removing the key from memory 
-    and then adding the key to the Player objects keys table
-
-    Params:
-        key: table - key type PowerUp object to detect
-    Returns:
-        nil
-]]
-function ObjectSystem:handleKeyCollision(key)
-    if key.id == 1 then
-        self.systemManager.player.keys['red'] = true
-    end
-    if key.id == 2 then
-        self.systemManager.player.keys['blue'] = true
-    end
-    if key.id == 3 then
-        self.systemManager.player.keys['green'] = true
-    end
-    -- remove this key
-    key.remove = true
-    for _, k in pairs(self.objects[self.currentAreaID].keys) do
-        if k.remove then
-            Remove(self.objects[self.currentAreaID].keys, k)
-        end
-    end
-end
-
---[[
-    Handles a powerup collision by removing the powerup from memory 
-    and then adding the powerup to the Player objects powerups table
-
-    Params:
-        powerup: table - powerup type PowerUp object to detect
-    Returns:
-        nil
-]]
-function ObjectSystem:handlePowerUpCollision(powerup)
-    if powerup.type == 'doubleSpeed' then
-        self.systemManager.player:setDoubleSpeed()
-        powerup.remove = true
-    elseif powerup.type == 'oneShotBossKill' then
-        self.systemManager.player:setOneShotBossKill()
-        powerup.remove = true
-    elseif powerup.type == 'ammo' then
-        if self.systemManager.player.ammo < MAX_AMMO then
-            self.systemManager.player:increaseAmmo()
-            powerup.remove = true
-        end
-    elseif powerup.type == 'health' then
-        if self.systemManager.player.health < MAX_HEALTH then
-            self.systemManager.player:increaseHealth()
-            powerup.remove = true
-        end
-    elseif powerup.type == 'invincible' then
-        self.systemManager.player:makeInvicible()
-        powerup.remove = true
-    end
-end
-
 -- =========================== CRATE (X, Y) HELPERS ===========================
 
 --[[
@@ -296,35 +247,26 @@ end
     the area of a MapArea object and the location of its doors
 
     Params:
-        areaID:        number - ID of the MapArea to get door information
-        prevLocations: table  - (x, y) of the last generated crate
+        areaID: number - ID of the MapArea to get door information
     Returns:
         table: (x, y) coordinates of crate
 ]]
-function ObjectSystem:setCrateXYCoordinates(areaID, prevLocations)
+function ObjectSystem:setCrateXYCoordinates(areaID)
     local edgeOffset = 50
     local x, y
     local edges = {'L', 'T', 'R', 'B'}
     local edge = edges[math.random(1, 4)]
-    -- if this is the first crate
-    if #prevLocations == 1 then
-        x, y = self:getCrateXYCoordinates(edge, areaID, GMapAreaDefinitions[areaID], edgeOffset)
-        self.locationCount = self.locationCount + 1
-    else
-        x, y = self:getCrateXYCoordinates(edge, areaID, GMapAreaDefinitions[areaID], edgeOffset)
-        -- if a crate location has already been spawned check random (x, y) doesn't overlap previous crate
-        for _, location in pairs(prevLocations) do
-            if not location.x or not location.y then goto continue end
-            local xOverlap = (location.x < x and x < location.x + CRATE_WIDTH) or (location.x < x + CRATE_WIDTH and x + CRATE_WIDTH < location.x + CRATE_WIDTH)
-            local yOverlap = (location.y < y and y < location.y + CRATE_HEIGHT) or (location.y < y + CRATE_HEIGHT and y + CRATE_HEIGHT < location.y + CRATE_HEIGHT)
-            if xOverlap or yOverlap then
-                return self:setCrateXYCoordinates(areaID, prevLocations)
-            end
-            ::continue::
+    x, y = self:getCrateXYCoordinates(edge, areaID, GMapAreaDefinitions[areaID], edgeOffset)
+    -- check (x, y) doesn't overlap any previous crates in this area
+    for _, crate in pairs(self.objects[areaID].crates) do
+        -- test for overlap of new crate
+        local xOverlap = (crate.x < x and x < crate.x + CRATE_WIDTH) or (crate.x < x + CRATE_WIDTH and x + CRATE_WIDTH < crate.x + CRATE_WIDTH)
+        local yOverlap = (crate.y < y and y < crate.y + CRATE_HEIGHT) or (crate.y < y + CRATE_HEIGHT and y + CRATE_HEIGHT < crate.y + CRATE_HEIGHT)
+        if xOverlap or yOverlap then
+            -- recursivley start again if an overlap occurs
+            return self:setCrateXYCoordinates(areaID)
         end
-        self.locationCount = self.locationCount + 1
     end
-    prevLocations[self.locationCount] = {x = x, y = y}
     return x, y
 end
 
@@ -467,4 +409,66 @@ function ObjectSystem:getCrateYCoordinateHelper(areaDef, doorEdge)
         y = math.random(yTop, yBottom - CRATE_HEIGHT)
     end
     return y
+end
+
+-- =========================== COLLISIONS HANDLERS ===========================
+
+--[[
+    Handles a key collision by removing the key from memory 
+    and then adding the key to the Player objects keys table
+
+    Params:
+        key: table - key type PowerUp object to detect
+    Returns:
+        nil
+]]
+function ObjectSystem:handleKeyCollision(key)
+    if key.id == 1 then
+        self.systemManager.player.keys['red'] = true
+    end
+    if key.id == 2 then
+        self.systemManager.player.keys['blue'] = true
+    end
+    if key.id == 3 then
+        self.systemManager.player.keys['green'] = true
+    end
+    -- remove this key
+    key.remove = true
+    for _, k in pairs(self.objects[self.currentAreaID].keys) do
+        if k.remove then
+            Remove(self.objects[self.currentAreaID].keys, k)
+        end
+    end
+end
+
+--[[
+    Handles a powerup collision by removing the powerup from memory 
+    and then adding the powerup to the Player objects powerups table
+
+    Params:
+        powerup: table - powerup type PowerUp object to detect
+    Returns:
+        nil
+]]
+function ObjectSystem:handlePowerUpCollision(powerup)
+    if powerup.type == 'doubleSpeed' then
+        self.systemManager.player:setDoubleSpeed()
+        powerup.remove = true
+    elseif powerup.type == 'oneShotBossKill' then
+        self.systemManager.player:setOneShotBossKill()
+        powerup.remove = true
+    elseif powerup.type == 'ammo' then
+        if self.systemManager.player.ammo < MAX_AMMO then
+            self.systemManager.player:increaseAmmo()
+            powerup.remove = true
+        end
+    elseif powerup.type == 'health' then
+        if self.systemManager.player.health < MAX_HEALTH then
+            self.systemManager.player:increaseHealth()
+            powerup.remove = true
+        end
+    elseif powerup.type == 'invincible' then
+        self.systemManager.player:makeInvicible()
+        powerup.remove = true
+    end
 end
