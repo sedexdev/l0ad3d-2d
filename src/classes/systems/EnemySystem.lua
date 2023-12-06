@@ -31,17 +31,26 @@ function EnemySystem:init(gruntSpriteBatch, systemManager)
     self.playerX          = PLAYER_STARTING_X
     self.playerY          = PLAYER_STARTING_Y
     self.currentAreaID    = START_AREA_ID
-    self.grunts           = {}
-    self.turrets          = {}
     -- boss tracker flag and object
     self.bossSpawned      = false
     self.boss             = nil
-    self.gruntID          = 1
-    self.turretID         = 1
+    -- track IDs for spawned enemies
+    self.enemyIDs = {
+        gruntID  = 1,
+        turretID = 1
+    }
+    -- uses area IDs as keys
+    self.enemies = {}
+    -- populate keys and sub-tables in self.enemies
+    for i = 1, #GMapAreaDefinitions do
+        self.enemies[i]         = {}
+        self.enemies[i].grunts  = {}
+        self.enemies[i].turrets = {}
+    end
     -- local copies of game definitions to update
-    self.gruntDef         = Copy(GGruntDefinition)
-    self.turretDef        = Copy(GTurretDefinition)
-    self.bossDef          = Copy(GBossDefinition)
+    self.gruntDef  = Copy(GGruntDefinition)
+    self.turretDef = Copy(GTurretDefinition)
+    self.bossDef   = Copy(GBossDefinition)
 end
 
 --[[
@@ -55,16 +64,17 @@ end
         nil
 ]]
 function EnemySystem:update(dt)
-    for _, grunt in pairs(self.grunts) do
-        for _, adjacentID in pairs(GAreaAdjacencyDefinitions[self.currentAreaID]) do
-            if grunt.areaID == self.currentAreaID or grunt.areaID == adjacentID then
-                grunt:update(dt)
-                -- jump out of loop to save processing further areas
-                break
-            end
+    -- update grunts in the current area
+    for _, grunt in pairs(self.enemies[self.currentAreaID].grunts) do
+        grunt:update(dt)
+    end
+    -- update grunts in adjacent areas
+    for _, adjacentID in pairs(GAreaAdjacencyDefinitions[self.currentAreaID]) do
+        for _, grunt in pairs(self.enemies[adjacentID].grunts) do
+            grunt:update(dt)
         end
     end
-    for _, turret in pairs(self.turrets) do
+    for _, turret in pairs(self.enemies[self.currentAreaID].turrets) do
         turret:update(dt)
     end
     if self.boss then
@@ -83,17 +93,18 @@ end
         none
 ]]
 function EnemySystem:render()
-    for _, turret in pairs(self.turrets) do
-        turret:render()
+    -- render grunts in the current area
+    for _, grunt in pairs(self.enemies[self.currentAreaID].grunts) do
+        grunt:render()
     end
-    for _, grunt in pairs(self.grunts) do
-        for _, adjacentID in pairs(GAreaAdjacencyDefinitions[self.currentAreaID]) do
-            if grunt.areaID == self.currentAreaID or grunt.areaID == adjacentID then
-                grunt:render()
-                goto continue
-            end
+    -- render grunts in adjacent areas
+    for _, adjacentID in pairs(GAreaAdjacencyDefinitions[self.currentAreaID]) do
+        for _, grunt in pairs(self.enemies[adjacentID].grunts) do
+            grunt:render()
         end
-        ::continue::
+    end
+    for _, turret in pairs(self.enemies[self.currentAreaID].turrets) do
+        turret:render()
     end
     if self.boss then
         self.boss:render()
@@ -128,14 +139,36 @@ end
     Returns:
         nil
 ]]
-function EnemySystem:spawn(areas)
-    for _, area in pairs(areas) do
-        if self:getGruntCount(area.id) == 0 then
-            local startCount, endCount = self:getGruntLimits(area)
-            local numGrunts = math.random(startCount, endCount)
-            self:spawnGrunts(numGrunts, area)
-        end
+function EnemySystem:spawn(area)
+    local startCount, endCount = self:getGruntLimits(area)
+    local numGrunts = math.random(startCount, endCount)
+    self:spawnGrunts(numGrunts, area)
+end
+
+--[[
+    Gets a startCount number and an endCount number to use to then
+    generate a random number of Grunts dependent on area size
+
+    Params:
+        area: table - area to calculate size of
+    Returns
+        number: start number
+        number: end number
+]]
+function EnemySystem:getGruntLimits(area)
+    local roomArea = area.width * area.height
+    local startCount, endCount
+    if roomArea < 64 then
+        startCount = 2
+        endCount = 3
+    elseif roomArea == 64 then
+        startCount = 4
+        endCount = 8
+    else
+        startCount = 9
+        endCount = 12
     end
+    return startCount, endCount
 end
 
 --[[
@@ -150,7 +183,7 @@ end
 ]]
 function EnemySystem:spawnGrunts(numGrunts, area)
     for _ = 1, numGrunts do
-        local grunt        = Grunt(self.gruntID, GAnimationDefintions['grunt'], self.gruntDef)
+        local grunt        = Grunt(self.enemyIDs.gruntID, GAnimationDefintions['grunt'], self.gruntDef)
         -- set ID
         -- set random (x, y) within the area
         grunt.x            = math.random(area.x, area.x + (area.width * FLOOR_TILE_WIDTH) - ENTITY_WIDTH)
@@ -167,8 +200,8 @@ function EnemySystem:spawnGrunts(numGrunts, area)
             ['attacking'] = function () return GruntAttackingState(area, grunt, self.gruntSpriteBatch, self.systemManager) end,
         }
         grunt.stateMachine:change('idle')
-        table.insert(self.grunts, grunt)
-        self.gruntID = self.gruntID + 1
+        table.insert(self.enemies[area.id].grunts, grunt)
+        self.enemyIDs.gruntID = self.enemyIDs.gruntID + 1
     end
 end
 
@@ -263,7 +296,7 @@ end
         nil
 ]]
 function EnemySystem:spawnTurretsHelper(x, y, areaID)
-    local turret        = Turret(self.turretID, GAnimationDefintions['turret'], self.turretDef)
+    local turret        = Turret(self.enemyIDs.turretID, GAnimationDefintions['turret'], self.turretDef)
     turret.x            = x
     turret.y            = y
     turret.areaID       = areaID
@@ -273,8 +306,8 @@ function EnemySystem:spawnTurretsHelper(x, y, areaID)
         ['attacking'] = function () return TurretAttackingState(turret, self.systemManager.player) end
     }
     turret.stateMachine:change('idle')
-    table.insert(self.turrets, turret)
-    self.turretID = self.turretID + 1
+    table.insert(self.enemies[areaID].turrets, turret)
+    self.enemyIDs.turretID = self.enemyIDs.turretID + 1
 end
 
 --[[
@@ -295,137 +328,6 @@ function EnemySystem:spawnBoss(area)
         ['rushing'] = function () return BossRushingState(area, self.boss, self.systemManager) end
     }
     self.boss.stateMachine:change('idle')
-end
-
---[[
-    Gets a startCount number and an endCount number to use to then
-    generate a random number of Grunts dependent on area size
-
-    Params:
-        area: table - area to calculate size of
-    Returns
-        number: start number
-        number: end number
-]]
-function EnemySystem:getGruntLimits(area)
-    local roomArea = area.width * area.height
-    local startCount, endCount
-    if roomArea < 64 then
-        startCount = 2
-        endCount = 3
-    elseif roomArea == 64 then
-        startCount = 4
-        endCount = 8
-    else
-        startCount = 9
-        endCount = 12
-    end
-    return startCount, endCount
-end
-
--- ========================== GET ENEMY OBJECTS ==========================
-
---[[
-    Gets a count of the number of grunt type Entity in
-    an area
-
-    Params:
-        areaID: number - ID of th current area
-    Returns:
-        number: number of grunts in the area
-]]
-function EnemySystem:getGruntCount(areaID)
-    local count = 0
-    for _, grunt in pairs(self.grunts) do
-        if grunt.areaID == areaID then
-            count = count + 1
-        end
-    end
-    return count
-end
-
---[[
-    Gets all the grunt type Entity objects in the
-    current area
-
-    Params:
-        none
-    Returns:
-        nil
-]]
-function EnemySystem:getAreaGrunts()
-    local grunts = {}
-    for _, grunt in pairs(self.grunts) do
-        if grunt.areaID == self.currentAreaID then
-            table.insert(grunts, grunt)
-        end
-    end
-    return grunts
-end
-
---[[
-    Gets all the turret type Entity objects in the
-    current area
-
-    Params:
-        none
-    Returns:
-        nil
-]]
-function EnemySystem:getAreaTurrets()
-    local turrets = {}
-    for _, turret in pairs(self.turrets) do
-        if turret.areaID == self.currentAreaID then
-            table.insert(turrets, turret)
-        end
-    end
-    return turrets
-end
-
--- ========================== REMOVE ENEMY OBJECTS ==========================
-
---[[
-    Removes a grunt after its <isDead> attribute is set to true
-
-    Params:
-        gruntID: number - ID of the grunt to remove
-    Returns:
-        nil
-]]
-function EnemySystem:removeGrunt(gruntID)
-    local index
-    for i = 1, #self.grunts do
-        if self.grunts[i].id == gruntID then
-            index = i
-            break
-        end
-    end
-    if index ~= nil then
-        self.grunts[index] = nil
-        table.remove(self.grunts, index)
-    end
-end
-
---[[
-    Removes a turret after its <isDead> attribute is set to true
-
-    Params:
-        turretID: number - ID of the turret to remove
-    Returns:
-        nil
-]]
-function EnemySystem:removeTurret(turretID)
-    local index
-    for i = 1, #self.turrets do
-        if self.turrets[i].id == turretID then
-            index = i
-            break
-        end
-    end
-    if index ~= nil then
-        self.turrets[index] = nil
-        table.remove(self.turrets, index)
-    end
 end
 
 -- ========================== ENEMY PROXIMITY ==========================

@@ -36,6 +36,7 @@ ENTITY_AXIS_PROXIMITY  = 10
 BOSS_PROXIMITY         = 500
 TURRET_OFFSET          = 120
 START_AREA_ID          = 17
+STARTING_AREAS         = {17, 18, 33}
 -- Boss is spawned when PLayer enters area 4
 BOSS_SPAWN_AREA_ID     = 4
 -- Boss is spawned in area 27
@@ -120,15 +121,6 @@ AREA_DOOR_IDS = {
     [2] = 'T',
     [3] = 'R',
     [4] = 'B',
-}
-
--- powerup object IDs
-POWERUP_IDS = {
-    ['doubleSpeed']     = 1,
-    ['oneShotBossKill'] = 2,
-    ['ammo']            = 3,
-    ['health']          = 4,
-    ['invincible']      = 5,
 }
 
 -- powerup width and height

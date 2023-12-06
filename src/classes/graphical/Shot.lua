@@ -14,23 +14,25 @@ Shot = Class{}
     used to determine if the shot should still be rendered
 
     Params:
-        entity: table - Entity object
+        id:     number - ID of this animation
+        entity: table  - Entity object
     Returns:
         nil
 ]]
-function Shot:init(entity)
+function Shot:init(id, entity)
+    self.id           = id
     self.entity       = entity
     self.shotGraphic  = entity.fireShot
     self.shotTimer    = 0
     self.shotInterval = 0.1
-    self.renderShot   = true
+    self.remove       = false
 end
 
 --[[
     Shot update function. Increments the <self.timer> attribute by
     <dt> on every frame update of the engine and checks if <self.timer>
-    has passed <self.interval>. If it has <self.renderShot> is set to
-    false and <self.timer> is reset
+    has passed <self.interval>. If it has <self.remove> is set to
+    true and <self.timer> is reset
 
     Params:
         dt: number - deltatime counter for current frame rate
@@ -41,7 +43,7 @@ function Shot:update(dt)
     self.shotTimer = self.shotTimer + dt
     if self.shotTimer > self.shotInterval then
         self.shotTimer = self.shotTimer % self.shotInterval
-        self.renderShot = false
+        self.remove    = true
     end
 end
 

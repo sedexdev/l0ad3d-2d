@@ -24,9 +24,9 @@ function Key:init(id, areaID, x, y)
     self.areaID = areaID
     self.x      = x
     self.y      = y
-    self.type   = 'key'
     self.width  = KEY_WIDTH
     self.height = KEY_HEIGHT
+    self.remove = false
 end
 
 --[[
@@ -45,20 +45,4 @@ function Key:render()
         0,
         2.5, 2.5
     )
-end
-
---[[
-    Creates and returns an instance of Key using
-    the given arguments
-
-    Params:
-        id:     number - crate ID
-        areaID: number - area ID
-        x:      number - x coordinate
-        y:      number - y coordinate
-    Returns:
-        table: PowerUp instance
-]]
-function Key:factory(id, areaID, x, y)
-    return Key(id, areaID, x, y)
 end

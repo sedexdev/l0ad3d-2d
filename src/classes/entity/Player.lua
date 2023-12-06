@@ -199,6 +199,48 @@ function Player:takeDamage(damage)
 end
 
 --[[
+    Increase Player health after collecting a 'health' type
+    PowerUp object. Health is only increased by enough to 
+    bring it up to MAX_HEALTH. If Player is already at 
+    MAX_HEALTH then <self.health> is unchanged
+        
+    Params:
+        none
+    Returns:
+        nil
+]]
+function Player:increaseHealth()
+    local healthIncrease = 25
+    local currentHealthDiff = MAX_HEALTH - self.health
+    if currentHealthDiff < healthIncrease then
+        self.health = self.health + currentHealthDiff
+    else
+        self.health = self.health + healthIncrease
+    end
+end
+
+--[[
+    Increase Player ammo after collecting a 'ammo' type
+    PowerUp object. Ammo is only increased by enough to 
+    bring it up to MAX_AMMO. If Player is already at 
+    MAX_AMMO then <self.ammo> is unchanged
+        
+    Params:
+        none
+    Returns:
+        nil
+]]
+function Player:increaseAmmo()
+    local ammoIncrease = 500
+    local currentAmmoDiff = MAX_AMMO - self.ammo
+    if currentAmmoDiff < ammoIncrease then
+        self.ammo = self.ammo + currentAmmoDiff
+    else
+        self.ammo = self.ammo + ammoIncrease
+    end
+end
+
+--[[
     Makes the Player invincible for INVINCIBLE_DURATION seconds
 
     Params:
@@ -219,9 +261,12 @@ end
         nil
 ]]
 function Player:setDoubleSpeed()
-    self.powerups.doubleSpeed = true
-    self.dx = self.dx * 2
-    self.dy = self.dy * 2
+    -- only increase speed once
+    if not self.powerups.doubleSpeed then
+        self.powerups.doubleSpeed = true
+        self.dx = self.dx * 2
+        self.dy = self.dy * 2
+    end
 end
 
 --[[

@@ -49,7 +49,7 @@ GAnimationDefintions = {
         }
     },
     ['grunt'] = {
-        texture = GTextures['grunt'],
+        texture    = GTextures['grunt'],
         animations = {
             ['walking-north']        = Animation({1, 9}, GRUNT_WALK_INTERVAL),
             ['walking-east']         = Animation({3, 11}, GRUNT_WALK_INTERVAL),
@@ -70,8 +70,8 @@ GAnimationDefintions = {
         }
     },
     ['boss'] = {
-        texture = GTextures['boss'],
-        fireShot = GTextures['boss-gun-flash'],
+        texture    = GTextures['boss'],
+        fireShot   = GTextures['boss-gun-flash'],
         animations = {
             ['walking-north']      = Animation({1, 9}, BOSS_WALK_INTERVAL),
             ['walking-east']       = Animation({3, 11}, BOSS_WALK_INTERVAL),

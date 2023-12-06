@@ -58,6 +58,51 @@ function Copy(orig)
     return copy
 end
 
+--[[
+    Removes an element from a table once its flag has been
+    set to true 
+
+    Params:
+        t:      table - the table to remove from
+        object: table - the object to remove
+    Returns:
+        nil
+]]
+function Remove(t, object)
+    local n = #t
+    -- set element being removed to nil
+    for i = 1, n do
+        if t[i].id == object.id then
+            t[i] = nil
+        end
+    end
+    -- shift all elements towards the front to fill gaps
+    local j = 0
+    for i = 1, n do
+        if t[i] ~= nil then
+            j = j + 1
+            t[j] = t[i]
+        end
+    end
+    -- set last element to nil
+    t[#t] = nil
+end
+
+--[[
+    Gets the length of a given table and returns it
+    
+    Params:
+        t: table - table to check
+    Returns:
+        number: length of the table
+]]
+function Length(t)
+    local count = 0
+    for _ in pairs(t) do
+        count = count + 1
+    end
+    return count
+end
 
 -- ========================= SOUND EFFECTS =========================
 

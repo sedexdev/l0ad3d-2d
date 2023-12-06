@@ -81,10 +81,9 @@ function Map:generateLevel(systemManager)
         if i == INVINCIBLE_AREA then
             local powerupX = GMapAreaDefinitions[i].x + (GMapAreaDefinitions[i].width * FLOOR_TILE_WIDTH / 2) - POWERUP_WIDTH / 2
             local powerupY = GMapAreaDefinitions[i].y + (GMapAreaDefinitions[i].height * FLOOR_TILE_HEIGHT / 2) - POWERUP_HEIGHT / 2
-            table.insert(systemManager.objectSystem.powerups['invincible'],
-                PowerUp:factory(POWERUP_IDS['invincible'],
-                i,
-                powerupX, powerupY)
+            table.insert(systemManager.objectSystem.objects[i].powerups,
+            -- set ID of 0 to make it unique from other powerups that start at ID == 1
+                PowerUp(0, 'invincible', i, powerupX, powerupY)
             )
         end
     end
@@ -98,7 +97,9 @@ function Map:generateLevel(systemManager)
     -- spawn powerups, crates, and keys
     systemManager.objectSystem:spawn()
     -- spawn enemies in area 17 and it's adjacent areas at the start
-    systemManager.enemySystem:spawn(self:getStartingAreas())
+    for _, area in pairs(self:getStartingAreas()) do
+        systemManager.enemySystem:spawn(area)
+    end
     -- spawn the turrets in each area
     systemManager.enemySystem:spawnTurrets()
 end
@@ -131,26 +132,6 @@ function Map:getStartingAreas()
     local areas = {}
     table.insert(areas, self.areas[START_AREA_ID])
     for _, id in pairs(GAreaAdjacencyDefinitions[START_AREA_ID]) do
-        if id >= START_AREA_ID then
-            table.insert(areas, self.areas[id])
-        end
-    end
-    return areas
-end
-
---[[
-    Gets the adjacent MapArea objects that Grunt Entity objects will
-    be spawned in as the game proceeds. Area adjacencies are defined
-    in GAreaAdjacencyDefinitions in src/utils/definitions.lua
-
-    Params:
-        areaID: number - area ID
-    Returns:
-        table: list of MapArea objects
-]]
-function Map:getAreaAdjacencies(areaID)
-    local areas = {}
-    for _, id in pairs(GAreaAdjacencyDefinitions[areaID]) do
         if id >= START_AREA_ID then
             table.insert(areas, self.areas[id])
         end

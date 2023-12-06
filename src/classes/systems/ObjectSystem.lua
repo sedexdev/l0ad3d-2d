@@ -27,15 +27,19 @@ ObjectSystem = Class{__includes = Observer}
 function ObjectSystem:init(systemManager)
     self.systemManager = systemManager
     self.currentAreaID = START_AREA_ID
-    self.powerups      = {
-        ['ammo']            = {},
-        ['health']          = {},
-        ['invincible']      = {},
-        ['doubleSpeed']     = {},
-        ['oneShotBossKill'] = {}
+    -- uses area IDs as keys
+    self.objects       = {}
+    -- populate keys and sub-tables in self.objects
+    for i = 1, #GMapAreaDefinitions do
+        self.objects[i]          = {}
+        self.objects[i].powerups = {}
+        self.objects[i].crates   = {}
+        self.objects[i].keys     = {}
+    end
+    self.objectIDs = {
+        powerupID = 1,
+        crateID   = 1
     }
-    self.crates        = {}
-    self.keys          = {}
     self.locationCount = 1
 end
 
@@ -48,9 +52,12 @@ end
         nil
 ]]
 function ObjectSystem:update(dt)
-    for _, category in pairs(self.powerups) do
-        for _, powerup in pairs(category) do
+    for areaID, _ in pairs(self.objects) do
+        for _, powerup in pairs(self.objects[areaID].powerups) do
             powerup:update(dt)
+            if powerup.remove then
+                Remove(self.objects[areaID].powerups, powerup)
+            end
         end
     end
 end
@@ -65,19 +72,16 @@ end
         none
 ]]
 function ObjectSystem:render()
-    -- keys
-    for _, key in pairs(self.keys) do
-        key:render()
-    end
-    -- powerups
-    for _, category in pairs(self.powerups) do
-        for _, powerup in pairs(category) do
+    for _, areaID in pairs(self.objects) do
+        for _, powerup in pairs(areaID.powerups) do
             powerup:render()
         end
-    end
-    -- crates
-    for _, crate in pairs(self.crates) do
-        crate:render()
+        for _, crate in pairs(areaID.crates) do
+            crate:render()
+        end
+        for _, key in pairs(areaID.keys) do
+            key:render()
+        end
     end
 end
 
@@ -122,9 +126,7 @@ end
         nil
 ]]
 function ObjectSystem:spawnCrates()
-    local crateID = 1
-    local startAreaID = 17
-    for i = startAreaID, #GMapAreaDefinitions do
+    for i = START_AREA_ID, #GMapAreaDefinitions do
         -- get the area of the area
         local roomArea = GMapAreaDefinitions[i].width * GMapAreaDefinitions[i].height
         -- generate a random number of crates dependent on room size
@@ -146,8 +148,8 @@ function ObjectSystem:spawnCrates()
         for _ = 1, numCrates do
             -- determine an (x, y) for the crate based on room size
             local x, y = self:setCrateXYCoordinates(i, prevLocations)
-            table.insert(self.crates, Crate:factory(crateID, i, x, y))
-            crateID = crateID + 1
+            table.insert(self.objects[i].crates, Crate(self.objectIDs.crateID, i, x, y))
+            self.objectIDs.crateID = self.objectIDs.crateID + 1
             -- set a random chance of hiding a powerup under the crate
             local powerUpChance = math.random(1, 4) == 1 and true or false
             -- assign same (x, y) as the crate
@@ -168,7 +170,7 @@ end
 ]]
 function ObjectSystem:spawnKeys()
     for i = 1, #GKeyDefinitions do
-        table.insert(self.keys, Key:factory(
+        table.insert(self.objects[GKeyDefinitions[i].areaID].keys, Key(
             i,
             GKeyDefinitions[i].areaID,
             GKeyDefinitions[i].x,
@@ -189,88 +191,40 @@ end
         nil
 ]]
 function ObjectSystem:spawnPowerUp(x, y, areaID)
+    -- set (x, y) based on crate
+    x = x + (CRATE_WIDTH - POWERUP_WIDTH) / 2
+    y = y + (CRATE_HEIGHT - POWERUP_HEIGHT) / 2
     -- set random chance of finding each powerup
     local health = math.random(3) == 1 and true or false
     if health then
-        table.insert(self.powerups['health'], PowerUp:factory(POWERUP_IDS['health'], areaID, x, y))
+        table.insert(self.objects[areaID].powerups, PowerUp(self.objectIDs.powerupID, 'health', areaID, x, y))
+        self.objectIDs.powerupID = self.objectIDs.powerupID + 1
         return
     end
-    local ammo = math.random(5) == 1 and true or false
+    local ammo = math.random(4) == 1 and true or false
     if ammo then
-        table.insert(self.powerups['ammo'], PowerUp:factory(POWERUP_IDS['ammo'], areaID, x, y))
+        table.insert(self.objects[areaID].powerups, PowerUp(self.objectIDs.powerupID, 'ammo', areaID, x, y))
+        self.objectIDs.powerupID = self.objectIDs.powerupID + 1
         return
     end
-    local doubleSpeed = math.random(15) == 1 and true or false
+    local doubleSpeed = math.random(5) == 1 and true or false
     if doubleSpeed then
-        table.insert(self.powerups['doubleSpeed'], PowerUp:factory(POWERUP_IDS['doubleSpeed'], areaID, x, y))
+        table.insert(self.objects[areaID].powerups, PowerUp(self.objectIDs.powerupID, 'doubleSpeed', areaID, x, y))
+        self.objectIDs.powerupID = self.objectIDs.powerupID + 1
         return
     end
-    local invincible = math.random(25) == 1 and true or false
+    local invincible = math.random(15) == 1 and true or false
     if invincible then
-        table.insert(self.powerups['invincible'], PowerUp:factory(POWERUP_IDS['invincible'], areaID, x, y))
+        table.insert(self.objects[areaID].powerups, PowerUp(self.objectIDs.powerupID, 'invincible', areaID, x, y))
+        self.objectIDs.powerupID = self.objectIDs.powerupID + 1
         return
     end
-    local oneShotBossKill = math.random(25) == 1 and true or false
+    local oneShotBossKill = math.random(20) == 1 and true or false
     if oneShotBossKill then
-        table.insert(self.powerups['oneShotBossKill'], PowerUp:factory(POWERUP_IDS['oneShotBossKill'], areaID, x, y))
+        table.insert(self.objects[areaID].powerups, PowerUp(self.objectIDs.powerupID, 'oneShotBossKill', areaID, x, y))
+        self.objectIDs.powerupID = self.objectIDs.powerupID + 1
         return
     end
-end
-
--- =========================== GET AREA OBJECTS ===========================
-
---[[
-    Gets a Key object if one exists in the current area
-
-    Params:
-        none
-    Returns:
-        table: Key object
-]]
-function ObjectSystem:getAreaKey()
-    for _, key in pairs(self.keys) do
-        if key.areaID == self.currentAreaID then
-            return key
-        end
-    end
-end
-
---[[
-    Gets all Crate objects in the current area
-
-    Params:
-        none
-    Returns:
-        table: Crate object list
-]]
-function ObjectSystem:getAreaCrates()
-    local crates = {}
-    for _, crate in pairs(self.crates) do
-        if crate.areaID == self.currentAreaID then
-            table.insert(crates, crate)
-        end
-    end
-    return crates
-end
-
---[[
-    Gets all PowerUp objects in the current area
-
-    Params:
-        none
-    Returns:
-        table: PowerUp object list
-]]
-function ObjectSystem:getAreaPowerUps()
-    local powerups = {}
-    for _, category in pairs(self.powerups) do
-        for _, powerup in pairs(category) do
-            if powerup.areaID == self.currentAreaID then
-                table.insert(powerups, powerup)
-            end
-        end
-    end
-    return powerups
 end
 
 -- =========================== COLLISIONS HANDLERS ===========================
@@ -294,16 +248,12 @@ function ObjectSystem:handleKeyCollision(key)
     if key.id == 3 then
         self.systemManager.player.keys['green'] = true
     end
-    local index
-    for i = 1, #self.keys do
-        if self.keys[i].id == key.id then
-            index = i
-            break
+    -- remove this key
+    key.remove = true
+    for _, k in pairs(self.objects[self.currentAreaID].keys) do
+        if k.remove then
+            Remove(self.objects[self.currentAreaID].keys, k)
         end
-    end
-    if index ~= nil then
-        self.keys[index] = nil
-        table.remove(self.keys, index)
     end
 end
 
@@ -317,84 +267,25 @@ end
         nil
 ]]
 function ObjectSystem:handlePowerUpCollision(powerup)
-    if powerup.id == 1 then
+    if powerup.type == 'doubleSpeed' then
         self.systemManager.player:setDoubleSpeed()
-        self:removePowerUp(powerup, 'doubleSpeed')
-    elseif powerup.id == 2 then
+        powerup.remove = true
+    elseif powerup.type == 'oneShotBossKill' then
         self.systemManager.player:setOneShotBossKill()
-        self:removePowerUp(powerup, 'oneShotBossKill')
-    elseif powerup.id == 3 then
+        powerup.remove = true
+    elseif powerup.type == 'ammo' then
         if self.systemManager.player.ammo < MAX_AMMO then
-            local ammoIncrease = 500
-            local currentAmmoDiff = MAX_AMMO - self.systemManager.player.ammo
-            if currentAmmoDiff < ammoIncrease then
-                self.systemManager.player.ammo = self.systemManager.player.ammo + currentAmmoDiff
-            else
-                self.systemManager.player.ammo = self.systemManager.player.ammo + ammoIncrease
-            end
-            self:removePowerUp(powerup, 'ammo')
+            self.systemManager.player:increaseAmmo()
+            powerup.remove = true
         end
-    elseif powerup.id == 4 then
+    elseif powerup.type == 'health' then
         if self.systemManager.player.health < MAX_HEALTH then
-            local healthIncrease = 25
-            local currentHealthDiff = MAX_HEALTH - self.systemManager.player.health
-            if currentHealthDiff < healthIncrease then
-                self.systemManager.player.health = self.systemManager.player.health + currentHealthDiff
-            else
-                self.systemManager.player.health = self.systemManager.player.health + healthIncrease
-            end
-            self:removePowerUp(powerup, 'health')
+            self.systemManager.player:increaseHealth()
+            powerup.remove = true
         end
-    elseif powerup.id == 5 then
+    elseif powerup.type == 'invincible' then
         self.systemManager.player:makeInvicible()
-        self:removePowerUp(powerup, 'invincible')
-    end
-end
-
---[[
-    Removes a powerup type PowerUp object from memory after a 
-    Player collision
-
-    Params:
-        object: table  - PowerUp object to remove
-        name:   string - name of the PowerUp object
-    Returns:
-        nil
-]]
-function ObjectSystem:removePowerUp(object, name)
-    local index
-    for i = 1, #self.powerups[name] do
-        if self.powerups[name][i].x == object.x and self.powerups[name][i].y == object.y then
-            index = i
-            break
-        end
-    end
-    if index ~= nil then
-        self.powerups[index] = nil
-        table.remove(self.powerups[name], index)
-    end
-end
-
---[[
-    Removes a Crate from <self.crates> after a collision is
-    detected with a Bullet object
-
-    Params:
-        crateID: number - ID of the Crate to remove
-    Returns:
-        nil
-]]
-function ObjectSystem:removeCrate(crateID)
-    local index
-    for i = 1, #self.crates do
-        if self.crates[i].id == crateID then
-            index = i
-            break
-        end
-    end
-    if index ~= nil then
-        self.crates[index] = nil
-        table.remove(self.crates, index)
+        powerup.remove = true
     end
 end
 

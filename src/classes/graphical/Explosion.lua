@@ -12,18 +12,20 @@ Explosion = Class{}
     Explosion constructor
 
     Params:
-        texture:    Image  - explosion PNG Image file
-        animations: table  - animation idices for rendering
-        x:          number - x cordinate 
-        y:          number - y cordinate
+        id:      number - ID of this animation
+        texture: Image  - texture of this animation
+        x:       number - x cordinate 
+        y:       number - y cordinate
     Returns:
         nil
 ]]
-function Explosion:init(texture, animations, x, y)
+function Explosion:init(id, texture, x, y)
+    self.id         = id
     self.texture    = texture
-    self.animations = animations
     self.x          = x
     self.y          = y
+    self.animations = Animation({1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16}, EXPLOSION_INTERVAL)
+    self.remove     = false
 end
 
 --[[
@@ -37,6 +39,9 @@ end
 ]]
 function Explosion:update(dt)
     self.animations:update(dt)
+    if self.animations:getCurrentFrame() == 16 then
+        self.remove = true
+    end
 end
 
 --[[
@@ -55,24 +60,5 @@ function Explosion:render()
         self.x - EXPLOSION_OFFSET, self.y - EXPLOSION_OFFSET,
         0,
         5, 5
-    )
-end
-
---[[
-    Creates and returns an instance of Explosion using
-    the given arguments
-
-    Params:
-        object: table - object that has exploded
-    Returns:
-        table: Animation instance
-]]
-function Explosion:factory(object)
-    local frames = {}
-    for i = 1, 16 do table.insert(frames, i) end
-    return Explosion(GTextures['explosion'],
-        Animation(frames, EXPLOSION_INTERVAL),
-        object.x,
-        object.y
     )
 end

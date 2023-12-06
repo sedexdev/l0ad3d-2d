@@ -12,13 +12,15 @@ BloodSplatter = Class{}
     BloodSplatter constructor
 
     Params:
+        id:        number - id of this Bullet
         x:         number - x coordinate of texture
         y:         number - y coordinate of texture
         direction: string - direction of object
     Returns:
         nil
 ]]
-function BloodSplatter:init(x, y, direction)
+function BloodSplatter:init(id, x, y, direction)
+    self.id      = id
     self.x       = x + (ENTITY_WIDTH / 2)
     self.y       = y + (ENTITY_HEIGHT / 2)
     self.texture = GTextures['blood-splatter']
@@ -42,18 +44,4 @@ function BloodSplatter:render()
         ENTITY_WIDTH / 2,
         ENTITY_HEIGHT / 2
     )
-end
-
---[[
-    Factory method for returning instances of BloodSplatter
-
-    Params:
-        x:         number - x coordinate of texture
-        y:         number - y coordinate of texture
-        direction: string - direction of object
-    Returns:
-        table: PowerUp instance
-]]
-function BloodSplatter:factory(x, y, direction)
-    return BloodSplatter(x, y, direction)
 end

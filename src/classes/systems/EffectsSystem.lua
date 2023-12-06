@@ -23,21 +23,22 @@ function EffectsSystem:init(systemManager)
     self.playerX       = PLAYER_STARTING_X
     self.playerY       = PLAYER_STARTING_Y
     self.currentAreaID = START_AREA_ID
-    -- explosions table
-    self.explosions    = {}
-    -- shots table keeps track of Shot objects so they can be 
-    -- instantiated and removed after the assigned interval
     self.shots         = {}
-    -- bullet management table
-    self.bulletID      = 1
+    self.explosions    = {}
     self.bullets       = {}
-    -- blood stains
     self.bloodStains   = {}
-    -- smoke effects
     self.smokeEffects  = {}
+    -- effect ID tracker
+    self.effectIDs     = {
+        shotID      = 1,
+        bulletID    = 1,
+        bloodID     = 1,
+        smokeID     = 1,
+        explosionID = 1,
+    }
     -- bullet fired event
     Event.on('shotFired', function (entity)
-        table.insert(self.shots, Shot(entity))
+        self:insertShot(entity)
         if entity.type == 'character' then
             Audio_PlayerShot()
         end
@@ -47,10 +48,7 @@ function EffectsSystem:init(systemManager)
         if entity.type == 'boss' then
             Audio_BossShot()
         end
-        local bullet =  Bullet(self.bulletID, entity)
-        table.insert(self.bullets, bullet)
-        self.bulletID = self.bulletID + 1
-        bullet:subscribe(self.systemManager)
+        self:insertBullet(entity)
     end)
 end
 
@@ -63,28 +61,26 @@ end
         nil
 ]]
 function EffectsSystem:update(dt)
-    for _, explosion in pairs(self.explosions) do
-        explosion:update(dt)
+    for _, shot in pairs(self.shots) do
+        shot:update(dt)
+        if shot.remove then
+            Remove(self.shots, shot)
+        end
     end
     for _, bullet in pairs(self.bullets) do
         bullet:update(dt)
     end
-    for _, effect in pairs(self.smokeEffects) do
-        effect:update(dt)
-    end
-    local index
-    for i = 1, #self.shots do
-        -- update the shot animation
-        self.shots[i]:update(dt)
-        if not self.shots[i].renderShot then
-            index = i
-            break
+    for _, explosion in pairs(self.explosions) do
+        explosion:update(dt)
+        if explosion.remove then
+            Remove(self.explosions, explosion)
         end
     end
-    if index ~= nil then
-        self.shots[index] = nil
-        -- remove shots once their interval has passed
-        table.remove(self.shots, index)
+    for _, smoke in pairs(self.smokeEffects) do
+        smoke:update(dt)
+        if smoke.remove then
+            Remove(self.smokeEffects, smoke)
+        end
     end
 end
 
@@ -97,19 +93,9 @@ end
         none
 ]]
 function EffectsSystem:render()
-    love.graphics.setColor(1, 1, 1, 1)
     -- only Smoke instances are rendered from here
-    local index = nil
-    for i = 1, #self.smokeEffects do
-        self.smokeEffects[i]:render()
-        if self.smokeEffects[i].animations:getCurrentFrame() == 8 then
-            index = i
-            break
-        end
-    end
-    if index ~= nil then
-        self.smokeEffects[index] = nil
-        table.remove(self.smokeEffects, index)
+    for _, smoke in pairs(self.smokeEffects) do
+        smoke:render()
     end
 end
 
@@ -122,17 +108,8 @@ end
         nil
 ]]
 function EffectsSystem:renderExplosions()
-    local index
-    for i = 1, #self.explosions do
-        self.explosions[i]:render()
-        if self.explosions[i].animations:getCurrentFrame() == 16 then
-            index = i
-            break
-        end
-    end
-    if index ~= nil then
-        self.explosions[index] = nil
-        table.remove(self.explosions, index)
+    for _, explosion in pairs(self.explosions) do
+        explosion:render()
     end
 end
 
@@ -160,9 +137,7 @@ end
 ]]
 function EffectsSystem:renderShots()
     for _, shot in pairs(self.shots) do
-        if shot.renderShot then
-            shot:render()
-        end
+        shot:render()
     end
 end
 
@@ -183,24 +158,79 @@ function EffectsSystem:message(data)
     end
 end
 
+-- ======================== INSERTION FUNCTIONS ========================
+
 --[[
-    Removes a Bullet from <self.bullets>
+    Inserts are Shot object into the <self.shots> table
 
     Params:
-        id: number - Bullet object ID
+        entity: table - Entity object that fired the shot
     Returns:
         nil
 ]]
-function EffectsSystem:removeBullet(id)
-    local index
-    for i = 1, #self.bullets do
-        if self.bullets[i].id == id then
-            index = i
-            break
-        end
-    end
-    if index ~= nil then
-        self.bullets[index] = nil
-        table.remove(self.bullets, index)
-    end
+function EffectsSystem:insertShot(entity)
+    table.insert(self.shots, Shot(self.effectIDs.shotID, entity))
+    self.effectIDs.shotID = self.effectIDs.shotID + 1
+end
+
+--[[
+    Inserts an Explosion object into the <self.explosions> table
+
+    Params:
+        object: table - object that has exploded
+    Returns:
+        nil
+]]
+function EffectsSystem:insertExplosion(object)
+    table.insert(
+        self.explosions,
+        Explosion(self.effectIDs.explosionID, GTextures['explosion'], object.x, object.y)
+    )
+    self.effectIDs.explosionID = self.effectIDs.explosionID + 1
+end
+
+--[[
+    Inserts a Bullet object into the <self.bullets> table
+
+    Params:
+        entity: table - Entity object that fired the Bullet
+    Returns:
+        nil
+]]
+function EffectsSystem:insertBullet(entity)
+    local bullet = Bullet(self.effectIDs.bulletID, entity)
+    bullet:subscribe(self.systemManager)
+    table.insert(self.bullets, bullet)
+    self.effectIDs.bulletID = self.effectIDs.bulletID + 1
+end
+
+--[[
+    Inserts a BloodSplatter object into the <self.bloodStains> table
+
+    Params:
+        object: table - object that has exploded
+    Returns:
+        nil
+]]
+function EffectsSystem:insertBlood(grunt)
+    local bloodStain = BloodSplatter(self.effectIDs.bloodID, grunt.x, grunt.y, grunt.direction)
+    table.insert(self.bloodStains, bloodStain)
+    self.effectIDs.bloodID = self.effectIDs.bloodID + 1
+    Timer.after(BLOOD_STAIN_INTERVAL, function ()
+        Remove(self.bloodStains, bloodStain)
+    end)
+end
+
+--[[
+    Inserts a Smoke object into the <self.smokeEffects> table
+
+    Params:
+        x: number - x coordinate
+        y: number - y coordinate
+    Returns:
+        nil
+]]
+function EffectsSystem:insertSmoke(x, y)
+    table.insert(self.smokeEffects, Smoke(self.effectIDs.smokeID, GTextures['smoke'], x, y))
+    self.effectIDs.smokeID = self.effectIDs.smokeID + 1
 end
