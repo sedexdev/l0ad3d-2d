@@ -27,16 +27,19 @@ ObjectSystem = Class{__includes = Observer}
 function ObjectSystem:init(systemManager)
     self.systemManager = systemManager
     self.currentAreaID = START_AREA_ID
-    self.powerupID     = 1
-    self.powerups      = {
-        ['ammo']            = {},
-        ['health']          = {},
-        ['invincible']      = {},
-        ['doubleSpeed']     = {},
-        ['oneShotBossKill'] = {}
+    -- uses area IDs as keys
+    self.objects       = {}
+    -- populate keys and sub-tables in self.objects
+    for i = 1, #GMapAreaDefinitions do
+        self.objects[i]          = {}
+        self.objects[i].powerups = {}
+        self.objects[i].crates   = {}
+        self.objects[i].keys     = {}
+    end
+    self.objectIDs = {
+        powerupID = 1,
+        crateID   = 1
     }
-    self.crates        = {}
-    self.keys          = {}
     self.locationCount = 1
 end
 
@@ -49,11 +52,11 @@ end
         nil
 ]]
 function ObjectSystem:update(dt)
-    for _, category in pairs(self.powerups) do
-        for _, powerup in pairs(category) do
+    for areaID, _ in pairs(self.objects) do
+        for _, powerup in pairs(self.objects[areaID].powerups) do
             powerup:update(dt)
             if powerup.remove then
-                Remove(category, powerup)
+                Remove(self.objects[areaID].powerups, powerup)
             end
         end
     end
@@ -69,19 +72,16 @@ end
         none
 ]]
 function ObjectSystem:render()
-    -- keys
-    for _, key in pairs(self.keys) do
-        key:render()
-    end
-    -- powerups
-    for _, category in pairs(self.powerups) do
-        for _, powerup in pairs(category) do
+    for _, areaID in pairs(self.objects) do
+        for _, powerup in pairs(areaID.powerups) do
             powerup:render()
         end
-    end
-    -- crates
-    for _, crate in pairs(self.crates) do
-        crate:render()
+        for _, crate in pairs(areaID.crates) do
+            crate:render()
+        end
+        for _, key in pairs(areaID.keys) do
+            key:render()
+        end
     end
 end
 
@@ -126,9 +126,7 @@ end
         nil
 ]]
 function ObjectSystem:spawnCrates()
-    local crateID = 1
-    local startAreaID = 17
-    for i = startAreaID, #GMapAreaDefinitions do
+    for i = START_AREA_ID, #GMapAreaDefinitions do
         -- get the area of the area
         local roomArea = GMapAreaDefinitions[i].width * GMapAreaDefinitions[i].height
         -- generate a random number of crates dependent on room size
@@ -150,8 +148,8 @@ function ObjectSystem:spawnCrates()
         for _ = 1, numCrates do
             -- determine an (x, y) for the crate based on room size
             local x, y = self:setCrateXYCoordinates(i, prevLocations)
-            table.insert(self.crates, Crate:factory(crateID, i, x, y))
-            crateID = crateID + 1
+            table.insert(self.objects[i].crates, Crate(self.objectIDs.crateID, i, x, y))
+            self.objectIDs.crateID = self.objectIDs.crateID + 1
             -- set a random chance of hiding a powerup under the crate
             local powerUpChance = math.random(1, 2) == 1 and true or false
             -- assign same (x, y) as the crate
@@ -172,7 +170,7 @@ end
 ]]
 function ObjectSystem:spawnKeys()
     for i = 1, #GKeyDefinitions do
-        table.insert(self.keys, Key:factory(
+        table.insert(self.objects[GKeyDefinitions[i].areaID].keys, Key(
             i,
             GKeyDefinitions[i].areaID,
             GKeyDefinitions[i].x,
@@ -199,90 +197,34 @@ function ObjectSystem:spawnPowerUp(x, y, areaID)
     -- set random chance of finding each powerup
     local health = math.random(2) == 1 and true or false
     if health then
-        table.insert(self.powerups['health'], PowerUp(self.powerupID, 'health', areaID, x, y))
-        self.powerupID = self.powerupID + 1
+        table.insert(self.objects[areaID].powerups, PowerUp(self.objectIDs.powerupID, 'health', areaID, x, y))
+        self.objectIDs.powerupID = self.objectIDs.powerupID + 1
         return
     end
     local ammo = math.random(2) == 1 and true or false
     if ammo then
-        table.insert(self.powerups['ammo'], PowerUp(self.powerupID, 'ammo', areaID, x, y))
-        self.powerupID = self.powerupID + 1
+        table.insert(self.objects[areaID].powerups, PowerUp(self.objectIDs.powerupID, 'ammo', areaID, x, y))
+        self.objectIDs.powerupID = self.objectIDs.powerupID + 1
         return
     end
     local doubleSpeed = math.random(2) == 1 and true or false
     if doubleSpeed then
-        table.insert(self.powerups['doubleSpeed'], PowerUp(self.powerupID, 'doubleSpeed', areaID, x, y))
-        self.powerupID = self.powerupID + 1
+        table.insert(self.objects[areaID].powerups, PowerUp(self.objectIDs.powerupID, 'doubleSpeed', areaID, x, y))
+        self.objectIDs.powerupID = self.objectIDs.powerupID + 1
         return
     end
     local invincible = math.random(2) == 1 and true or false
     if invincible then
-        table.insert(self.powerups['invincible'], PowerUp(self.powerupID, 'invincible', areaID, x, y))
-        self.powerupID = self.powerupID + 1
+        table.insert(self.objects[areaID].powerups, PowerUp(self.objectIDs.powerupID, 'invincible', areaID, x, y))
+        self.objectIDs.powerupID = self.objectIDs.powerupID + 1
         return
     end
     local oneShotBossKill = math.random(2) == 1 and true or false
     if oneShotBossKill then
-        table.insert(self.powerups['oneShotBossKill'], PowerUp(self.powerupID, 'oneShotBossKill', areaID, x, y))
-        self.powerupID = self.powerupID + 1
+        table.insert(self.objects[areaID].powerups, PowerUp(self.objectIDs.powerupID, 'oneShotBossKill', areaID, x, y))
+        self.objectIDs.powerupID = self.objectIDs.powerupID + 1
         return
     end
-end
-
--- =========================== GET AREA OBJECTS ===========================
-
---[[
-    Gets a Key object if one exists in the current area
-
-    Params:
-        none
-    Returns:
-        table: Key object
-]]
-function ObjectSystem:getAreaKey()
-    for _, key in pairs(self.keys) do
-        if key.areaID == self.currentAreaID then
-            return key
-        end
-    end
-end
-
---[[
-    Gets all Crate objects in the current area
-
-    Params:
-        none
-    Returns:
-        table: Crate object list
-]]
-function ObjectSystem:getAreaCrates()
-    local crates = {}
-    for _, crate in pairs(self.crates) do
-        if crate.areaID == self.currentAreaID then
-            table.insert(crates, crate)
-        end
-    end
-    return crates
-end
-
---[[
-    Gets all PowerUp objects in the current area
-
-    Params:
-        none
-    Returns:
-        table: PowerUp object list
-]]
-function ObjectSystem:getAreaPowerUps()
-    local powerups = {}
-    for _, category in pairs(self.powerups) do
-        for _, powerup in pairs(category) do
-            if powerup.areaID == self.currentAreaID then
-                table.insert(powerups, powerup)
-            end
-        end
-    end
-    return powerups
 end
 
 -- =========================== COLLISIONS HANDLERS ===========================
@@ -308,9 +250,9 @@ function ObjectSystem:handleKeyCollision(key)
     end
     -- remove this key
     key.remove = true
-    for _, k in pairs(self.keys) do
+    for _, k in pairs(self.objects[self.currentAreaID].keys) do
         if k.remove then
-            Remove(self.keys, k)
+            Remove(self.objects[self.currentAreaID].keys, k)
         end
     end
 end

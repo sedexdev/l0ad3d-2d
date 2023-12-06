@@ -23,7 +23,6 @@ function Crate:init(id, areaID, x, y)
     self.areaID = areaID
     self.x      = x
     self.y      = y
-    self.type   = 'crate'
     self.width  = CRATE_WIDTH
     self.height = CRATE_HEIGHT
 end
@@ -44,20 +43,4 @@ function Crate:render()
         0,
         2.7, 2.7
     )
-end
-
---[[
-    Creates and returns an instance of Crate using
-    the given arguments
-
-    Params:
-        id:     number - crate ID
-        areaID: number - area ID
-        x:      number - x coordinate
-        y:      number - y coordinate
-    Returns:
-        table: PowerUp instance
-]]
-function Crate:factory(id, areaID, x, y)
-    return Crate(id, areaID, x, y)
 end

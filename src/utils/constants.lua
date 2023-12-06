@@ -36,6 +36,7 @@ ENTITY_AXIS_PROXIMITY  = 10
 BOSS_PROXIMITY         = 500
 TURRET_OFFSET          = 120
 START_AREA_ID          = 17
+STARTING_AREAS         = {17, 18, 33}
 -- Boss is spawned when PLayer enters area 4
 BOSS_SPAWN_AREA_ID     = 4
 -- Boss is spawned in area 27

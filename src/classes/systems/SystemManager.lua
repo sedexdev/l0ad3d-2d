@@ -117,10 +117,10 @@ end
         nil
 ]]
 function SystemManager:checkKeys()
-    local key = self.objectSystem:getAreaKey()
-    if key then
-        if self.collisionSystem:objectCollision(key) then
-            self.objectSystem:handleKeyCollision(key)
+    local keys = self.objectSystem.objects[self.playerData.areaID].keys
+    if keys[1] ~= nil then
+        if self.collisionSystem:objectCollision(keys[1]) then
+            self.objectSystem:handleKeyCollision(keys[1])
         end
     end
 end
@@ -136,7 +136,7 @@ end
         nil
 ]]
 function SystemManager:checkCrates()
-    local crates = self.objectSystem:getAreaCrates()
+    local crates = self.objectSystem.objects[self.playerData.areaID].crates
     for _, crate in pairs(crates) do
         -- check for Player collisions if playerData has been sent by the Observable
         local playerCollision = self.collisionSystem:crateCollision(crate, self.playerData)
@@ -145,7 +145,7 @@ function SystemManager:checkCrates()
         end
         -- check for grunt collisions
         for _, grunt in pairs(self.enemySystem.grunts) do
-            if grunt.areaID == self.playerData.currentAreaID then
+            if grunt.areaID == self.playerData.areaID then
                 local gruntCollision = self.collisionSystem:crateCollision(crate, grunt)
                 if gruntCollision.detected then
                     self.collisionSystem:handleEnemyCrateCollision(grunt, gruntCollision.edge)
@@ -173,7 +173,7 @@ end
         nil
 ]]
 function SystemManager:checkPowerUps()
-    local powerups = self.objectSystem:getAreaPowerUps()
+    local powerups = self.objectSystem.objects[self.playerData.areaID].powerups
     -- check for powerup collisions in the current area
     for _, powerup in pairs(powerups) do
         if self.collisionSystem:objectCollision(powerup) then
@@ -297,14 +297,14 @@ end
         boolean: true if bullet hit a Crate object
 ]]
 function SystemManager:crateHelper()
-    local crates = self.objectSystem:getAreaCrates()
+    local crates = self.objectSystem.objects[self.playerData.areaID].crates
     for _, crate in pairs(crates) do
         if self.collisionSystem:bulletCollision(self.bulletData, crate) then
             Audio_Explosion()
             -- remove the Bullet on hit to avoid it continuing to update
             Remove(self.effectsSystem.bullets, self.bulletData.bullet)
             self.effectsSystem:insertExplosion(crate)
-            Remove(self.objectSystem.crates, crate)
+            Remove(self.objectSystem.objects[self.playerData.areaID].crates, crate)
             return true
         end
     end
@@ -336,7 +336,7 @@ function SystemManager:gruntHelper()
                 -- set 1/10 chance to drop a powerup
                 local powerUpChance = math.random(1, 2) == 1 and true or false
                 if powerUpChance then
-                    self.objectSystem:spawnPowerUp(grunt.areaID, grunt.x, grunt.y)
+                    self.objectSystem:spawnPowerUp(grunt.x, grunt.y, grunt.areaID)
                 end
                 Remove(self.enemySystem.grunts, grunt)
                 Event.dispatch('score', 25)
