@@ -27,6 +27,7 @@ function Key:init(id, areaID, x, y)
     self.type   = 'key'
     self.width  = KEY_WIDTH
     self.height = KEY_HEIGHT
+    self.remove = false
 end
 
 --[[

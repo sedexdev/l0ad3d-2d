@@ -122,15 +122,6 @@ AREA_DOOR_IDS = {
     [4] = 'B',
 }
 
--- powerup object IDs
-POWERUP_IDS = {
-    ['doubleSpeed']     = 1,
-    ['oneShotBossKill'] = 2,
-    ['ammo']            = 3,
-    ['health']          = 4,
-    ['invincible']      = 5,
-}
-
 -- powerup width and height
 CRATE_WIDTH    = 85 * 2.7
 CRATE_HEIGHT   = 85 * 2.7

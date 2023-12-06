@@ -82,9 +82,8 @@ function Map:generateLevel(systemManager)
             local powerupX = GMapAreaDefinitions[i].x + (GMapAreaDefinitions[i].width * FLOOR_TILE_WIDTH / 2) - POWERUP_WIDTH / 2
             local powerupY = GMapAreaDefinitions[i].y + (GMapAreaDefinitions[i].height * FLOOR_TILE_HEIGHT / 2) - POWERUP_HEIGHT / 2
             table.insert(systemManager.objectSystem.powerups['invincible'],
-                PowerUp:factory(POWERUP_IDS['invincible'],
-                i,
-                powerupX, powerupY)
+            -- set ID of 0 to make it unique from other powerups that start at ID == 1
+                PowerUp(0, 'invincible', i, powerupX, powerupY)
             )
         end
     end

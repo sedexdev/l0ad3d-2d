@@ -12,24 +12,34 @@ PowerUp = Class{}
     PowerUp constructor
 
     Params:
-        id:     number - ID number of thsi PowerUp object
+        id:     number - ID number of this PowerUp object
+        type:   string - powerup type
         areaID: number - area ID the powerup will spawn in
         x:      number - x coordinate
         y:      number - y coordinate
     Returns:
         nil
 ]]
-function PowerUp:init(id, areaID, x, y)
+function PowerUp:init(id, type, areaID, x, y)
     self.id      = id
+    self.type    = type
     self.areaID  = areaID
     self.x       = x
     self.y       = y
-    self.type    = 'powerup'
     self.width   = POWERUP_WIDTH
     self.height  = POWERUP_HEIGHT
+    self.remove  = false
     -- rotational values
     self.degrees = math.random(1, 359)
     self.angle   = 0
+    -- quadID table
+    self.quadIDs = {
+        ['doubleSpeed']     = 1,
+        ['oneShotBossKill'] = 2,
+        ['ammo']            = 3,
+        ['health']          = 4,
+        ['invincible']      = 5,
+    }
 end
 
 --[[
@@ -70,28 +80,10 @@ end
 function PowerUp:render()
     love.graphics.setColor(1, 1, 1, 1)
     love.graphics.draw(GTextures['powerups'],
-        GQuads['powerups'][self.id],
+        GQuads['powerups'][self.quadIDs[self.type]],
         self.x + (self.width / 2), self.y + (self.height / 2),
         self.angle,
         2.5, 2.5,
         (self.width / 4) - 8, (self.height / 4) - 8
     )
-end
-
---[[
-    Factory method for returning instances of PowerUp
-
-    Params:
-        id:     number - crate ID
-        areaID: number - area ID
-        x:      number - x coordinate
-        y:      number - y coordinate
-    Returns:
-        table: PowerUp instance
-]]
-function PowerUp:factory(id, areaID, x, y)
-    -- center PowerUp with Crate
-    x = x + (CRATE_WIDTH - POWERUP_WIDTH) / 2
-    y = y + (CRATE_HEIGHT - POWERUP_HEIGHT) / 2
-    return PowerUp(id, areaID, x, y)
 end
