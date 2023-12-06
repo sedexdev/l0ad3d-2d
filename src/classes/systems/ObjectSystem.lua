@@ -252,11 +252,7 @@ end
         table: (x, y) coordinates of crate
 ]]
 function ObjectSystem:setCrateXYCoordinates(areaID)
-    local edgeOffset = 50
-    local x, y
-    local edges = {'L', 'T', 'R', 'B'}
-    local edge = edges[math.random(1, 4)]
-    x, y = self:getCrateXYCoordinates(edge, areaID, GMapAreaDefinitions[areaID], edgeOffset)
+    local x, y = self:getCrateXYCoordinates(areaID)
     -- check (x, y) doesn't overlap any previous crates in this area
     for _, crate in pairs(self.objects[areaID].crates) do
         -- test for overlap of new crate
@@ -276,139 +272,30 @@ end
     getter helper functions
 
     Params:
-        edge:       string - wall edge to place the crate against
-        areaID:     number - ID of this MapArea definition
-        areaDef:    table  - MapArea definition
-        edgeOffset: number - wall offset for palcing the crate
+        areaID: number - ID of the area
     Returns:
         table: (x, y) coordinates of the crate
 ]]
-function ObjectSystem:getCrateXYCoordinates(edge, areaID, areaDef, edgeOffset)
-    -- set door table for checking if a wall has a door
-    local doors = {
-        leftDoor   = false,
-        topDoor    = false,
-        rightDoor  = false,
-        bottomDoor = false
+function ObjectSystem:getCrateXYCoordinates(areaID)
+    local areaDef = GMapAreaDefinitions[areaID]
+    local edgeOffset = 50
+    local wallEdges = {
+        [1] = areaDef.x + edgeOffset,                                                      -- left
+        [2] = areaDef.x + (areaDef.width * FLOOR_TILE_WIDTH) - CRATE_WIDTH - edgeOffset,   -- right
+        [3] = areaDef.y + edgeOffset,                                                      -- top
+        [4] = areaDef.y + (areaDef.height * FLOOR_TILE_HEIGHT) - CRATE_HEIGHT - edgeOffset -- bottom
     }
-    local areaDoors = self.systemManager.doorSystem:getAreaDoors(areaID)
-    -- update the boolean table
-    self:setDoorLocations(doors, areaDoors, areaID)
-    local x, y
-    if edge == 'L' or edge == 'R' then
-        -- x will be constant for each crate dependent on edge
-        x = edge == 'L' and areaDef.x + edgeOffset or areaDef.x + (areaDef.width * FLOOR_TILE_WIDTH) - CRATE_WIDTH - edgeOffset
-        if edge == 'L' then
-            y = self:getCrateYCoordinateHelper(areaDef, doors.leftDoor)
-        elseif edge == 'R' then
-            y = self:getCrateYCoordinateHelper(areaDef, doors.rightDoor)
-        end
+    local edgeID = math.random(1, 4)
+    -- if this is a vertical edge an x coordinate is returned
+    if edgeID == 1 or edgeID == 2 then
+        -- get random y to make an (x, y) vector
+        return wallEdges[edgeID], math.random(wallEdges[3], wallEdges[4])
     end
-    if edge == 'T' or edge == 'B' then
-        -- y will be constant for each crate dependent on edge
-        y = edge == 'T' and areaDef.y + edgeOffset or areaDef.y + (areaDef.height * FLOOR_TILE_HEIGHT) - CRATE_HEIGHT - edgeOffset
-        if edge == 'T' then
-            x = self:getCrateXCoordinateHelper(areaDef, doors.topDoor)
-        elseif edge == 'B' then
-            x = self:getCrateXCoordinateHelper(areaDef, doors.bottomDoor)
-        end
+    -- if this is a horizontal edge a y coordinate is returned
+    if edgeID == 3 or edgeID == 4 then
+        -- get random x to make an (x, y) vector
+        return math.random(wallEdges[1], wallEdges[2]), wallEdges[edgeID]
     end
-    return x, y
-end
-
---[[
-    Updates a table of doors to help set area crates (x, y) so they
-    don't get in the way of doorways
-
-    Params:
-        doors:     table  - booleans stating if door is present in area
-        areaDoors: table  - all the Door objects in this MapArea
-        areaID:    number - MapArea ID
-    Returns:
-        nil
-]]
-function ObjectSystem:setDoorLocations(doors, areaDoors, areaID)
-    for _, door in pairs(areaDoors) do
-        if door.areaID ~= areaID then
-            if door.id == 1 then doors.rightDoor  = true end
-            if door.id == 2 then doors.bottomDoor = true end
-            if door.id == 3 then doors.leftDoor   = true end
-            if door.id == 4 then doors.topDoor    = true end
-        else
-            if door.id == 1 then doors.leftDoor   = true end
-            if door.id == 2 then doors.topDoor    = true end
-            if door.id == 3 then doors.rightDoor  = true end
-            if door.id == 4 then doors.bottomDoor = true end
-        end
-    end
-end
-
---[[
-    Helper function to get x crate coordinate to reduce
-    bulk in the getCrateXYCoordinates function
-        
-    Params:
-        areaDef:  table  - definition of the MapArea object
-        doorEdge: string - area edge the crate will be spawned against
-    Returns:
-        number: x coordinate of the crate
-]]
-function ObjectSystem:getCrateXCoordinateHelper(areaDef, doorEdge)
-    -- define edge offset to stop crates overlapping doors
-    local edgeOffset = 100
-    -- MapArea x conditions
-    local xLeft   = areaDef.x + edgeOffset
-    local xCenter = areaDef.x + (areaDef.width * FLOOR_TILE_WIDTH / 2)
-    local xRight  = areaDef.x + (areaDef.width * FLOOR_TILE_WIDTH) - edgeOffset
-    -- declare x but don't initialise
-    local x
-    -- check if edge has a door
-    if doorEdge then
-        -- don't include door location in x coordinate
-        local xLocations = {
-            math.random(xLeft, xCenter - CRATE_WIDTH - edgeOffset),
-            math.random(xCenter + CRATE_WIDTH + edgeOffset, xRight - CRATE_WIDTH)
-        }
-        -- pick random location either left or right of door
-        x = xLocations[math.random(2)]
-    else
-        x = math.random(xLeft, xRight - CRATE_WIDTH)
-    end
-    return x
-end
-
---[[
-    Helper function to get y crate coordinate to reduce
-    bulk in the getCrateXYCoordinates function
-        
-    Params:
-        areaDef:  table  - definition of the MapArea object
-        doorEdge: string - area edge the crate will be spawned against
-    Returns:
-        number: y coordinate of the crate
-]]
-function ObjectSystem:getCrateYCoordinateHelper(areaDef, doorEdge)
-    -- define edge offset to stop crates overlapping doors
-    local edgeOffset = 100
-    -- define y boundarys
-    local yTop    = areaDef.y + edgeOffset
-    local yCenter = areaDef.y + (areaDef.height * FLOOR_TILE_HEIGHT / 2)
-    local yBottom = areaDef.y + (areaDef.height * FLOOR_TILE_HEIGHT) - edgeOffset
-    -- declare y but don't initialise
-    local y
-    -- check if the edge has a door
-    if doorEdge then
-        -- don't include door location in y coordinate
-        local yLocations = {
-            math.random(yTop, yCenter - CRATE_HEIGHT - edgeOffset),
-            math.random(yCenter + CRATE_HEIGHT + edgeOffset, yBottom - CRATE_HEIGHT)
-        }
-        -- pick random location either side of the door
-        y = yLocations[math.random(2)]
-    else
-        y = math.random(yTop, yBottom - CRATE_HEIGHT)
-    end
-    return y
 end
 
 -- =========================== COLLISIONS HANDLERS ===========================
