@@ -361,6 +361,7 @@ end
 ]]
 function DoorSystem:open(door)
     if not door.isOpen then
+        Audio_Door()
         if door.orientation == 'horizontal' then
             -- tween callback function for opening/closing doors
             Timer.tween(0.2, {
@@ -388,6 +389,7 @@ end
 ]]
 function DoorSystem:close(door)
     if door.isOpen then
+        Audio_Door()
         if door.orientation == 'horizontal' then
             -- tween callback function for opening/closing doors
             Timer.tween(0.2, {

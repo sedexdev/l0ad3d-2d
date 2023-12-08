@@ -308,6 +308,7 @@ end
         nil
 ]]
 function ObjectSystem:handleKeyCollision(key)
+    Audio_KeyPickup()
     if key.id == 1 then
         self.systemManager.player.keys['red'] = true
     end
@@ -347,13 +348,15 @@ function ObjectSystem:handlePowerUpCollision(powerup)
             self.systemManager.player:increaseAmmo()
             powerup.remove = true
         end
-    elseif powerup.type == 'health' then
+    elseif powerup.type == 'health' then        
         if self.systemManager.player.health < MAX_HEALTH then
             self.systemManager.player:increaseHealth()
             powerup.remove = true
         end
     elseif powerup.type == 'invincible' then
-        self.systemManager.player:makeInvicible()
-        powerup.remove = true
+        if not self.systemManager.player.powerups.invincible then
+            self.systemManager.player:makeInvicible()
+            powerup.remove = true
+        end
     end
 end

@@ -210,6 +210,7 @@ end
         nil
 ]]
 function Player:increaseHealth()
+    Audio_HealthPickup()
     local healthIncrease = 25
     local currentHealthDiff = MAX_HEALTH - self.health
     if currentHealthDiff < healthIncrease then
@@ -231,6 +232,7 @@ end
         nil
 ]]
 function Player:increaseAmmo()
+    Audio_AmmoPickup()
     local ammoIncrease = 500
     local currentAmmoDiff = MAX_AMMO - self.ammo
     if currentAmmoDiff < ammoIncrease then
@@ -249,7 +251,10 @@ end
         nil
 ]]
 function Player:makeInvicible()
-    self.powerups.invincible = true
+    if not self.powerups.invincible then
+        Audio_InvinciblePickup()
+        self.powerups.invincible = true
+    end
 end
 
 --[[
@@ -263,6 +268,7 @@ end
 function Player:setDoubleSpeed()
     -- only increase speed once
     if not self.powerups.doubleSpeed then
+        Audio_DoubleSpeedPickup()
         self.powerups.doubleSpeed = true
         self.dx = self.dx * 2
         self.dy = self.dy * 2
@@ -278,5 +284,8 @@ end
         nil
 ]]
 function Player:setOneShotBossKill()
-    self.powerups.oneShotBossKill = true
+    if not self.powerups.oneShotBossKill then
+        Audio_OneShotBossKillPickup()
+        self.powerups.oneShotBossKill = true
+    end
 end

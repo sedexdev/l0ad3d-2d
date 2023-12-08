@@ -84,6 +84,7 @@ end
         nil
 ]]
 function Turret:takeDamage()
+    Audio_TurretHit()
     self.health = self.health - PLAYER_DAMAGE
     if self.health <= 0 then
         self.isDead = true

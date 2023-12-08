@@ -27,6 +27,7 @@ LevelCompleteState = Class{__includes = BaseState}
 function LevelCompleteState:enter(params)
     self.highScores    = params.highScores
     self.player        = params.player
+    self.map           = params.map
     self.hud           = params.hud
     self.score         = params.score
     self.level         = params.level
@@ -38,6 +39,7 @@ function LevelCompleteState:enter(params)
             Timer.tween(self.duration, {
                 [self] = {y = WINDOW_HEIGHT + self.fontHeight}
             }):finish(function ()
+                self.map = nil
                 -- create new instances to clear existing game state
                 local map           = Map()
                 local systemManager = SystemManager(map, self.player)

@@ -53,14 +53,26 @@ GTextures = {
 }
 
 GAudio = {
-    ['theme']       = love.audio.newSource('audio/theme.mp3', 'static'),
-    ['gunshot']     = love.audio.newSource('audio/gunshot.wav', 'static'),
-    ['canon']       = love.audio.newSource('audio/canon.wav', 'static'),
-    ['laser']       = love.audio.newSource('audio/laser.wav', 'static'),
-    ['select']      = love.audio.newSource('audio/select.wav', 'static'),
-    ['error']       = love.audio.newSource('audio/error.wav', 'static'),
-    ['explosion']   = love.audio.newSource('audio/explosion.wav', 'static'),
-    ['grunt-death'] = love.audio.newSource('audio/grunt_splat.wav', 'static'),
+    ['theme']           = love.audio.newSource('audio/theme.mp3', 'static'),
+    ['select']          = love.audio.newSource('audio/select.wav', 'static'),
+    ['error']           = love.audio.newSource('audio/error.wav', 'static'),
+    ['gunshot']         = love.audio.newSource('audio/gunshot.wav', 'static'),
+    ['canon']           = love.audio.newSource('audio/canon.wav', 'static'),
+    ['laser']           = love.audio.newSource('audio/laser.wav', 'static'),
+    ['explosion']       = love.audio.newSource('audio/explosion.wav', 'static'),
+    ['turret-hit']      = love.audio.newSource('audio/turret_hit.wav', 'static'),
+    ['grunt-death']     = love.audio.newSource('audio/grunt_splat.wav', 'static'),
+    ['boss-death']      = love.audio.newSource('audio/boss_death.wav', 'static'),
+    ['player-death']    = love.audio.newSource('audio/player_dead.wav', 'static'),
+    ['key']             = love.audio.newSource('audio/key.wav', 'static'),
+    ['ammo']            = love.audio.newSource('audio/ammo.wav', 'static'),
+    ['invincible']      = love.audio.newSource('audio/invincible.wav', 'static'),
+    ['health']          = love.audio.newSource('audio/health.wav', 'static'),
+    ['oneShotBossKill'] = love.audio.newSource('audio/one_shot_kill.wav', 'static'),
+    ['doubleSpeed']     = love.audio.newSource('audio/speed.wav', 'static'),
+    ['door']            = love.audio.newSource('audio/door.wav', 'static'),
+    ['level-complete']  = love.audio.newSource('audio/level_complete.wav', 'static'),
+    ['game-over']       = love.audio.newSource('audio/game_over.wav', 'static'),
 }
 
 -- classes

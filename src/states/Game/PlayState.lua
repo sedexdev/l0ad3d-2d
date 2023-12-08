@@ -45,7 +45,6 @@ end
 ]]
 function PlayState:exit(event)
     if event == 'levelComplete' then
-        self.map           = nil
         self.systemManager = nil
     end
     if event == 'gameOver' then
@@ -81,18 +80,21 @@ function PlayState:init()
     self.duration   = 2
     -- event listeners
     Event.on('levelComplete', function ()
+        Audio_LevelComplete()
         Event.dispatch('score', 2000 * self.level)
         self:exit('levelComplete')
         IncreaseStats()
         GStateMachine:change('complete', {
             highScores    = self.highScores,
             player        = self.player,
+            map           = self.map,
             hud           = self.hud,
             score         = self.score,
             level         = self.level
         })
     end)
     Event.on('gameOver', function ()
+        Audio_GameOver()
         self:exit('gameOver')
         GStateMachine:change('gameover', {
             highScores = self.highScores,
@@ -105,6 +107,7 @@ function PlayState:init()
         self.score = self.score + points
     end)
     Event.on('lostLife', function ()
+        Audio_PlayerDeath()
         Timer.tween(self.duration, {
             [self] = {messageY = (WINDOW_HEIGHT / 2) - (self.fontHeight / 2)}
         }):finish(function ()

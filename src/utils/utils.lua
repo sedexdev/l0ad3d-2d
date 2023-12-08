@@ -237,3 +237,159 @@ function Audio_GruntDeath()
     GAudio['grunt-death']:stop()
     GAudio['grunt-death']:play()
 end
+
+--[[
+    Plays the sound clip of a monster grunting on Boss kill
+    
+    Params:
+        none
+    Returns:
+        nil
+]]
+function Audio_BossDeath()
+    GAudio['boss-death']:stop()
+    GAudio['boss-death']:play()
+end
+
+--[[
+    Plays the sound clip of Player losing a life ir dying
+    
+    Params:
+        none
+    Returns:
+        nil
+]]
+function Audio_PlayerDeath()
+    GAudio['player-death']:stop()
+    GAudio['player-death']:play()
+end
+
+--[[
+    Plays the sound clip of a bulet hitting a Turret
+    
+    Params:
+        none
+    Returns:
+        nil
+]]
+function Audio_TurretHit()
+    GAudio['turret-hit']:stop()
+    GAudio['turret-hit']:play()
+end
+
+--[[
+    Plays the sound clip of picking up a Key
+    
+    Params:
+        none
+    Returns:
+        nil
+]]
+function Audio_KeyPickup()
+    GAudio['key']:stop()
+    GAudio['key']:play()
+end
+
+--[[
+    Plays the sound clip of picking up ammo
+    
+    Params:
+        none
+    Returns:
+        nil
+]]
+function Audio_AmmoPickup()
+    GAudio['ammo']:stop()
+    GAudio['ammo']:play()
+end
+
+--[[
+    Plays the sound clip of picking up an invicible PowerUp
+    
+    Params:
+        none
+    Returns:
+        nil
+]]
+function Audio_InvinciblePickup()
+    GAudio['invincible']:stop()
+    GAudio['invincible']:play()
+end
+
+--[[
+    Plays the sound clip of picking up health
+    
+    Params:
+        none
+    Returns:
+        nil
+]]
+function Audio_HealthPickup()
+    GAudio['health']:stop()
+    GAudio['health']:play()
+end
+
+--[[
+    Plays the sound clip of picking up a one shot boss kill PowerUp
+    
+    Params:
+        none
+    Returns:
+        nil
+]]
+function Audio_OneShotBossKillPickup()
+    GAudio['oneShotBossKill']:stop()
+    GAudio['oneShotBossKill']:play()
+end
+
+--[[
+    Plays the sound clip of picking up a doubleSpeed Powerup
+    
+    Params:
+        none
+    Returns:
+        nil
+]]
+function Audio_DoubleSpeedPickup()
+    GAudio['doubleSpeed']:stop()
+    GAudio['doubleSpeed']:play()
+end
+
+--[[
+    Plays the sound clip of a door opening or closing
+    
+    Params:
+        none
+    Returns:
+        nil
+]]
+function Audio_Door()
+    GAudio['door']:stop()
+    GAudio['door']:play()
+end
+
+--[[
+    Plays the sound clip of level completion
+    
+    Params:
+        none
+    Returns:
+        nil
+]]
+function Audio_LevelComplete()
+    GAudio['level-complete']:stop()
+    GAudio['level-complete']:play()
+end
+
+--[[
+    Plays the sound clip of game over
+    
+    Params:
+        none
+    Returns:
+        nil
+]]
+function Audio_GameOver()
+    GAudio['game-over']:stop()
+    GAudio['game-over']:play()
+end
