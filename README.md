@@ -61,6 +61,17 @@ your friends will compete to have the most points!</p>
             <li>Explosion           - https://freesound.org/people/derplayer/sounds/587183/></li>
             <li>Canon fire          - https://freesound.org/people/inferno/sounds/18391/></li>
             <li>Grunt death         - https://www.zapsplat.com/music/body-impact-splat/></li>
+            <li>Player death        - https://freesound.org/people/Hoggington/sounds/536603/</li>
+            <li>Boss death          - https://freesound.org/people/ThePig01/sounds/588657/</li>
+            <li>Turret hit          - https://freesound.org/people/wilhellboy/sounds/351371/</li>
+            <li>Invincible          - https://freesound.org/people/MATRIXXX_/sounds/523745/</li>
+            <li>Ammo                - https://freesound.org/people/EminYILDIRIM/sounds/543927/</li>
+            <li>Health              - https://freesound.org/people/Rickplayer/sounds/530488/</li>
+            <li>Speed               - https://freesound.org/people/Eponn/sounds/420998/</li>
+            <li>One shot kill       - https://freesound.org/people/SuperPhat/sounds/514228/</li>
+            <li>Level complete      - https://freesound.org/people/deleteCookies/sounds/376009/</li>
+            <li>Game over           - https://freesound.org/people/MATRIXXX_/sounds/435202/</li>
+            <li>Key                 - https://freesound.org/people/MATRIXXX_/sounds/657939/</li>
         </ul>
     <li>Graphics:</li>
         <ul>
