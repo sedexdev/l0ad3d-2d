@@ -74,6 +74,8 @@ function HUD:render(cameraX, cameraY)
     if self.player.keys.blue then
         self:renderKeyColour(cameraX, cameraY, 'blue', 230)
     end
+    -- render life indicators behind HUD
+    self:renderLives(cameraX, cameraY)
     local cornerOffset = 75
     -- render HUD display with shadow
     love.graphics.setColor(20/255, 20/255, 20/255, 200/255)
@@ -111,7 +113,13 @@ end
     Renders out the health and ammo bars in the HUD
 
     Params:
-        ...
+        cameraX: number - x location of game camera
+        cameraY: number - y location of game camera
+        stat:    number - value of stat
+        quadID:  number - ID to use to ref GQuads['powerups']
+        quadY:   number - y coordinate of the stat quad image
+        barY:    number - y coordinate of the stat bar
+        valueY:  number - y coordinate of the stat value
     Returns:
         nil
 ]]
@@ -137,4 +145,44 @@ function HUD:renderStatBar(cameraX, cameraY, stat, quadID, quadY, barY, valueY)
     -- powerup icon
     love.graphics.setColor(1, 1, 1, 1)
     love.graphics.draw(GTextures['powerups'], GQuads['powerups'][quadID], cameraX + x, cameraY + quadY, 0, 0.8, 0.8)
+end
+
+--[[
+    Renders Player objects remaining lives as red bars around the 
+    HUD display
+
+    Params:
+        cameraX: number - x location of game camera
+        cameraY: number - y location of game camera
+    Returns:
+        nil
+]]
+function HUD:renderLives(cameraX, cameraY)
+    love.graphics.setColor(155/255, 23/255, 23/255, 200/255)
+    if self.player.lives == 3 then
+        love.graphics.rectangle('fill', cameraX + 110, cameraY + 90, 180, 20)  -- top
+        love.graphics.rectangle('fill', cameraX + 80, cameraY + 120, 20, 170)  -- left
+        love.graphics.rectangle('fill', cameraX + 120, cameraY + 300, 170, 20) -- bottom
+    end
+    if self.player.lives == 2 then
+        love.graphics.rectangle('fill', cameraX + 80, cameraY + 120, 20, 170)  -- left
+        love.graphics.rectangle('fill', cameraX + 120, cameraY + 300, 170, 20) -- bottom
+    end
+    if self.player.lives == 1 then
+        love.graphics.rectangle('fill', cameraX + 120, cameraY + 300, 170, 20) -- bottom
+    end
+end
+
+--[[
+    Renders the one shot Boss kill powerup icon if the Player
+    owns that powerup
+
+    Params:
+        cameraX: number - x location of game camera
+        cameraY: number - y location of game camera
+    Returns:
+        nil
+]]
+function HUD:renderOneShotBossKill(cameraX, cameraY)
+    
 end
