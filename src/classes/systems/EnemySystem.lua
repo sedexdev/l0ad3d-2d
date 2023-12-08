@@ -89,8 +89,12 @@ function EnemySystem:render()
             grunt:render()
         end
     end
-    for _, turret in pairs(self.enemies[self.currentAreaID].turrets) do
-        turret:render()
+    for i = START_AREA_ID, #GMapAreaDefinitions do
+        if GMapAreaDefinitions[i].turrets then
+            for _, turret in pairs(self.enemies[i].turrets) do
+                turret:render()
+            end
+        end
     end
     if self.boss then
         self.boss:render()
