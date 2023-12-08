@@ -27,8 +27,6 @@ LevelCompleteState = Class{__includes = BaseState}
 function LevelCompleteState:enter(params)
     self.highScores    = params.highScores
     self.player        = params.player
-    self.map           = params.map
-    self.systemManager = params.systemManager
     self.hud           = params.hud
     self.score         = params.score
     self.level         = params.level
@@ -40,11 +38,14 @@ function LevelCompleteState:enter(params)
             Timer.tween(self.duration, {
                 [self] = {y = WINDOW_HEIGHT + self.fontHeight}
             }):finish(function ()
+                -- create new instances to clear existing game state
+                local map           = Map()
+                local systemManager = SystemManager(map, self.player)
                 GStateMachine:change('countdown', {
                     highScores    = self.highScores,
                     player        = self.player,
-                    map           = self.map,
-                    systemManager = self.systemManager,
+                    map           = map,
+                    systemManager = systemManager,
                     hud           = self.hud,
                     score         = self.score,
                     level         = self.level + 1

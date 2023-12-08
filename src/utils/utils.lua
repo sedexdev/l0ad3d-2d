@@ -104,6 +104,30 @@ function Length(t)
     return count
 end
 
+
+-- ========================== ON LEVEL COMPLETE ==========================
+
+--[[
+    Raises the stats of enemy type Entity objects when the 
+    Player completes a level
+
+    Params:
+        none
+    Returns:
+        nil
+]]
+function IncreaseStats()
+    -- grunts
+    GGruntDefinition.health  = GGruntDefinition.health + 5
+    GGruntDefinition.damage  = GGruntDefinition.damage + 2
+    -- turrets
+    GTurretDefinition.health = GTurretDefinition.health + 25
+    GTurretDefinition.damage = GTurretDefinition.damage + 2
+    -- boss
+    GBossDefinition.health   = GBossDefinition.health + 50
+    GBossDefinition.damage   = GBossDefinition.damage + 2
+end
+
 -- ========================= SOUND EFFECTS =========================
 
 --[[

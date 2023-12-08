@@ -47,10 +47,6 @@ function EnemySystem:init(gruntSpriteBatch, systemManager)
         self.enemies[i].grunts  = {}
         self.enemies[i].turrets = {}
     end
-    -- local copies of game definitions to update
-    self.gruntDef  = Copy(GGruntDefinition)
-    self.turretDef = Copy(GTurretDefinition)
-    self.bossDef   = Copy(GBossDefinition)
 end
 
 --[[
@@ -69,9 +65,11 @@ function EnemySystem:update(dt)
         grunt:update(dt)
     end
     -- update grunts in adjacent areas
-    for _, adjacentID in pairs(GAreaAdjacencyDefinitions[self.currentAreaID]) do
-        for _, grunt in pairs(self.enemies[adjacentID].grunts) do
-            grunt:update(dt)
+    if self.currentAreaID >= START_AREA_ID then
+        for _, adjacentID in pairs(GAreaAdjacencyDefinitions[self.currentAreaID]) do
+            for _, grunt in pairs(self.enemies[adjacentID].grunts) do
+                grunt:update(dt)
+            end
         end
     end
     for _, turret in pairs(self.enemies[self.currentAreaID].turrets) do
@@ -98,9 +96,11 @@ function EnemySystem:render()
         grunt:render()
     end
     -- render grunts in adjacent areas
-    for _, adjacentID in pairs(GAreaAdjacencyDefinitions[self.currentAreaID]) do
-        for _, grunt in pairs(self.enemies[adjacentID].grunts) do
-            grunt:render()
+    if self.currentAreaID >= START_AREA_ID then
+        for _, adjacentID in pairs(GAreaAdjacencyDefinitions[self.currentAreaID]) do
+            for _, grunt in pairs(self.enemies[adjacentID].grunts) do
+                grunt:render()
+            end
         end
     end
     for _, turret in pairs(self.enemies[self.currentAreaID].turrets) do
@@ -183,7 +183,7 @@ end
 ]]
 function EnemySystem:spawnGrunts(numGrunts, area)
     for _ = 1, numGrunts do
-        local grunt        = Grunt(self.enemyIDs.gruntID, GAnimationDefintions['grunt'], self.gruntDef)
+        local grunt        = Grunt(self.enemyIDs.gruntID, GAnimationDefintions['grunt'], GGruntDefinition)
         -- set ID
         -- set random (x, y) within the area
         grunt.x            = math.random(area.x, area.x + (area.width * FLOOR_TILE_WIDTH) - ENTITY_WIDTH)
@@ -296,7 +296,7 @@ end
         nil
 ]]
 function EnemySystem:spawnTurretsHelper(x, y, areaID)
-    local turret        = Turret(self.enemyIDs.turretID, GAnimationDefintions['turret'], self.turretDef)
+    local turret        = Turret(self.enemyIDs.turretID, GAnimationDefintions['turret'], GTurretDefinition)
     turret.x            = x
     turret.y            = y
     turret.areaID       = areaID
@@ -320,7 +320,7 @@ end
         nil
 ]]
 function EnemySystem:spawnBoss(area)
-    self.boss              = Boss(GAnimationDefintions['boss'], self.bossDef)
+    self.boss              = Boss(GAnimationDefintions['boss'], GBossDefinition)
     -- set random starting direction
     self.boss.direction    = DIRECTIONS[math.random(1, 8)]
     self.boss.stateMachine = StateMachine {
@@ -350,27 +350,4 @@ function EnemySystem:checkProximity(entity)
         return false
     end
     return true
-end
-
--- ========================== ON LEVEL COMPLETE ==========================
-
---[[
-    Raises the stats of enemy type Entity objects when the 
-    Player completes a level
-
-    Params:
-        none
-    Returns:
-        nil
-]]
-function EnemySystem:increaseStats()
-    -- grunts
-    self.gruntDef.health  = self.gruntDef.health + 5
-    self.gruntDef.damage  = self.gruntDef.damage + 2
-    -- turrets
-    self.turretDef.health = self.turretDef.health + 25
-    self.turretDef.damage = self.turretDef.damage + 2
-    -- boss
-    self.bossDef.health   = self.bossDef.health + 50
-    self.bossDef.damage   = self.bossDef.damage + 2
 end

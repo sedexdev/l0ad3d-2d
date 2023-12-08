@@ -34,6 +34,31 @@ function PlayState:enter(params)
 end
 
 --[[
+    PlayState exit function. Tears down game objects so the game can
+    be restarted after a gameOver event or can progress after a 
+    levelComplete event
+
+    Params:
+        event: string - event type to handle
+    Returns:
+        nil
+]]
+function PlayState:exit(event)
+    if event == 'levelComplete' then
+        self.map           = nil
+        self.systemManager = nil
+    end
+    if event == 'gameOver' then
+        self.player        = nil
+        self.map           = nil
+        self.systemManager = nil
+        self.hud           = nil
+        self.level         = nil
+        self.score         = nil
+    end
+end
+
+--[[
     PlayState constructor. Creates camera coordinate attributes
     for trcking the player in the centre of the screen as they
     move around
@@ -57,18 +82,18 @@ function PlayState:init()
     -- event listeners
     Event.on('levelComplete', function ()
         Event.dispatch('score', 2000 * self.level)
-        self.systemManager.enemySystem:increaseStats()
+        self:exit('levelComplete')
+        IncreaseStats()
         GStateMachine:change('complete', {
             highScores    = self.highScores,
             player        = self.player,
-            map           = self.map,
-            systemManager = self.systemManager,
             hud           = self.hud,
             score         = self.score,
             level         = self.level
         })
     end)
     Event.on('gameOver', function ()
+        self:exit('gameOver')
         GStateMachine:change('gameover', {
             highScores = self.highScores,
             map        = self.map,
