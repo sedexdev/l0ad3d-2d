@@ -71,14 +71,14 @@ end
 ]]
 function ObjectSystem:render()
     for _, areaID in pairs(self.objects) do
+        for _, key in pairs(areaID.keys) do
+            key:render()
+        end
         for _, powerup in pairs(areaID.powerups) do
             powerup:render()
         end
         for _, crate in pairs(areaID.crates) do
             crate:render()
-        end
-        for _, key in pairs(areaID.keys) do
-            key:render()
         end
     end
 end
