@@ -167,7 +167,7 @@ function SystemManager:checkCrates()
     if self.currentAreaID >= START_AREA_ID then
         local areaIDs = GAreaAdjacencyDefinitions[self.currentAreaID]
         for _, id in pairs(areaIDs) do
-            if id >= START_AREA_ID and Length(self.objectSystem.objects[id].crates) == 0 then
+            if Length(self.objectSystem.objects[id].crates) == 0 then
                 self.objectSystem:spawnCrate(id)
             end
         end
@@ -243,7 +243,7 @@ function SystemManager:checkGrunts()
         local areaIDs = GAreaAdjacencyDefinitions[self.currentAreaID]
         for _, id in pairs(areaIDs) do
             -- check if any of the areas have 0 grunts in
-            if id >= START_AREA_ID and Length(self.enemySystem.enemies[id].grunts) == 0 then
+            if Length(self.enemySystem.enemies[id].grunts) == 0 then
                 self.enemySystem:spawn(self.map:getAreaDefinition(id))
             end
         end

@@ -60,16 +60,9 @@ end
         nil
 ]]
 function EnemySystem:update(dt)
-    -- update grunts in the current area
-    for _, grunt in pairs(self.enemies[self.currentAreaID].grunts) do
-        grunt:update(dt)
-    end
-    -- update grunts in adjacent areas
-    if self.currentAreaID >= START_AREA_ID then
-        for _, adjacentID in pairs(GAreaAdjacencyDefinitions[self.currentAreaID]) do
-            for _, grunt in pairs(self.enemies[adjacentID].grunts) do
-                grunt:update(dt)
-            end
+    for i = START_AREA_ID, #GMapAreaDefinitions do
+        for _, grunt in pairs(self.enemies[i].grunts) do
+            grunt:update(dt)
         end
     end
     for _, turret in pairs(self.enemies[self.currentAreaID].turrets) do
@@ -91,16 +84,9 @@ end
         none
 ]]
 function EnemySystem:render()
-    -- render grunts in the current area
-    for _, grunt in pairs(self.enemies[self.currentAreaID].grunts) do
-        grunt:render()
-    end
-    -- render grunts in adjacent areas
-    if self.currentAreaID >= START_AREA_ID then
-        for _, adjacentID in pairs(GAreaAdjacencyDefinitions[self.currentAreaID]) do
-            for _, grunt in pairs(self.enemies[adjacentID].grunts) do
-                grunt:render()
-            end
+    for i = START_AREA_ID, #GMapAreaDefinitions do
+        for _, grunt in pairs(self.enemies[i].grunts) do
+            grunt:render()
         end
     end
     for _, turret in pairs(self.enemies[self.currentAreaID].turrets) do
