@@ -70,7 +70,7 @@ your friends will compete to have the most points!</p>
             <li>Speed               - https://freesound.org/people/Eponn/sounds/420998/</li>
             <li>One shot kill       - https://freesound.org/people/SuperPhat/sounds/514228/</li>
             <li>Level complete      - https://freesound.org/people/deleteCookies/sounds/376009/</li>
-            <li>Game over           - https://freesound.org/people/MATRIXXX_/sounds/435202/</li>
+            <li>Game over           - https://freesound.org/people/MATRIXXX_/sounds/524741/</li>
             <li>Key                 - https://freesound.org/people/MATRIXXX_/sounds/657939/</li>
         </ul>
     <li>Graphics:</li>
