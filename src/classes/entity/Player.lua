@@ -48,7 +48,6 @@ function Player:init(id, animations, def)
     Event.on('gruntAttack', function (grunt)
         self:takeDamage(grunt.damage)
         if self.isDead then
-            io.write('Player:init() \'gameOver\' event triggered...\n')
             Event.dispatch('gameOver')
         end
     end)

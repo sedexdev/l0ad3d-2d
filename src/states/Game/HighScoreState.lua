@@ -60,8 +60,8 @@ function HighScoreState:render()
     for i = 1, 10 do
         love.graphics.printf(tostring(i) .. '. ', -420, 215 + (i * 65), WINDOW_WIDTH, 'center')
         love.graphics.printf(self.highScores[i].name, -280, 215 + (i * 65), WINDOW_WIDTH, 'center')
-        love.graphics.printf(tostring(self.highScores[i].score), 180, 215 + (i * 65), WINDOW_WIDTH, 'center')
-        love.graphics.printf('LVL: ' .. tostring(self.highScores[i].level), 400, 215 + (i * 65), WINDOW_WIDTH, 'center')
+        love.graphics.printf(self.highScores[i].score, 180, 215 + (i * 65), WINDOW_WIDTH, 'center')
+        love.graphics.printf('LVL: ' .. self.highScores[i].level, 400, 215 + (i * 65), WINDOW_WIDTH, 'center')
     end
     -- print escape message
     love.graphics.setColor(1, 0/255, 0/255, 1)
