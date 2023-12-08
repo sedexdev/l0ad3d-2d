@@ -74,15 +74,15 @@ end
         nil
 ]]
 function MenuState:update(dt)
+    if love.keyboard.wasPressed('up') then
+        Audio_MenuOption()
+        self.selected = self.selected <= 1 and 3 or self.selected - 1
+    end
+    if love.keyboard.wasPressed('down') then
+        Audio_MenuOption()
+        self.selected = self.selected >= 3 and 1 or self.selected + 1
+    end
     if not self.pauseInput then
-        if love.keyboard.wasPressed('up') then
-            Audio_MenuOption()
-            self.selected = self.selected <= 1 and 3 or self.selected - 1
-        end
-        if love.keyboard.wasPressed('down') then
-            Audio_MenuOption()
-            self.selected = self.selected >= 3 and 1 or self.selected + 1
-        end
         -- handle user selection
         if love.keyboard.wasPressed('enter') or love.keyboard.wasPressed('return') then
             Audio_PlayerShot()

@@ -28,9 +28,10 @@ function LevelCompleteState:enter(params)
     self.highScores    = params.highScores
     self.player        = params.player
     self.map           = params.map
+    self.systemManager = params.systemManager
     self.hud           = params.hud
-    self.score         = params.score
     self.level         = params.level
+    self.score         = params.score
     -- tween message in
     Timer.tween(self.duration, {
         [self] = {y = (WINDOW_HEIGHT / 2) - (self.fontHeight / 2)}
@@ -39,16 +40,42 @@ function LevelCompleteState:enter(params)
             Timer.tween(self.duration, {
                 [self] = {y = WINDOW_HEIGHT + self.fontHeight}
             }):finish(function ()
-                self.map = nil
-                -- create new instances to clear existing game state
-                local map           = Map()
-                local systemManager = SystemManager(map, self.player)
+                -- create new instances
+                local map = Map()
+                local player = Player(
+                    self.player.id,
+                    GAnimationDefintions['character'..tostring(self.player.id)],
+                    Copy(GCharacterDefinition)
+                )
+                local systemManager = SystemManager(map, player)
+                -- Player stateMachine
+                player.stateMachine = StateMachine {
+                    ['idle']    = function () return PlayerIdleState(player) end,
+                    ['walking'] = function ()
+                        local walkingState = PlayerWalkingState(player, map)
+                        walkingState:subscribe(systemManager)
+                        walkingState:subscribe(systemManager.doorSystem)
+                        walkingState:subscribe(systemManager.collisionSystem)
+                        walkingState:subscribe(systemManager.objectSystem)
+                        walkingState:subscribe(systemManager.enemySystem)
+                        walkingState:subscribe(systemManager.effectsSystem)
+                        return walkingState
+                    end
+                }
+                player.stateMachine:change('idle')
+                -- clear game data
+                self.player        = nil
+                self.map           = nil
+                self.systemManager = nil
+                self.hud           = nil
+                -- collect nil objects before restarting in new level
+                collectgarbage('collect')
                 GStateMachine:change('countdown', {
                     highScores    = self.highScores,
-                    player        = self.player,
+                    player        = player,
                     map           = map,
                     systemManager = systemManager,
-                    hud           = self.hud,
+                    hud           = HUD(player),
                     score         = self.score,
                     level         = self.level + 1
                 })

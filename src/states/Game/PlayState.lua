@@ -34,30 +34,6 @@ function PlayState:enter(params)
 end
 
 --[[
-    PlayState exit function. Tears down game objects so the game can
-    be restarted after a gameOver event or can progress after a 
-    levelComplete event
-
-    Params:
-        event: string - event type to handle
-    Returns:
-        nil
-]]
-function PlayState:exit(event)
-    if event == 'levelComplete' then
-        self.systemManager = nil
-    end
-    if event == 'gameOver' then
-        self.player        = nil
-        self.map           = nil
-        self.systemManager = nil
-        self.hud           = nil
-        self.level         = nil
-        self.score         = nil
-    end
-end
-
---[[
     PlayState constructor. Creates camera coordinate attributes
     for trcking the player in the centre of the screen as they
     move around
@@ -82,25 +58,28 @@ function PlayState:init()
     Event.on('levelComplete', function ()
         Audio_LevelComplete()
         Event.dispatch('score', 2000 * self.level)
-        self:exit('levelComplete')
         IncreaseStats()
         GStateMachine:change('complete', {
             highScores    = self.highScores,
             player        = self.player,
             map           = self.map,
+            systemManager = self.systemManager,
             hud           = self.hud,
-            score         = self.score,
-            level         = self.level
+            level         = self.level,
+            score         = self.score
         })
     end)
     Event.on('gameOver', function ()
         Audio_GameOver()
-        self:exit('gameOver')
+        ResetStats()
         GStateMachine:change('gameover', {
-            highScores = self.highScores,
-            map        = self.map,
-            score      = self.score,
-            level      = self.level
+            highScores    = self.highScores,
+            player        = self.player,
+            map           = self.map,
+            systemManager = self.systemManager,
+            hud           = self.hud,
+            level         = self.level,
+            score         = self.score
         })
     end)
     Event.on('score', function (points)
@@ -134,7 +113,6 @@ end
         nil
 ]]
 function PlayState:update(dt)
-    collectgarbage('collect')
     if love.keyboard.wasPressed('escape') then
         self.paused = true
     end
@@ -275,14 +253,14 @@ function PlayState:renderConfirmMenu()
     -- display Paused
     love.graphics.setFont(GFonts['funkrocker-medium'])
     love.graphics.setColor(10/255, 10/255, 10/255, 1)
-    love.graphics.printf('CONFIRM RESTART', self.cameraX + 2, (self.cameraY + WINDOW_HEIGHT / 4) + 2, WINDOW_WIDTH, 'center')
-    love.graphics.printf('CONFIRM RESTART', self.cameraX + 2, (self.cameraY + WINDOW_HEIGHT / 4) + 2, WINDOW_WIDTH, 'center')
+    love.graphics.printf('CONFIRM RESTART', self.cameraX + 2, (self.cameraY + WINDOW_HEIGHT / 5) + 2, WINDOW_WIDTH, 'center')
+    love.graphics.printf('CONFIRM RESTART', self.cameraX + 2, (self.cameraY + WINDOW_HEIGHT / 5) + 2, WINDOW_WIDTH, 'center')
     love.graphics.setColor(1, 0/255, 0/255, 1)
-    love.graphics.printf('CONFIRM RESTART', self.cameraX, (self.cameraY + WINDOW_HEIGHT / 4), WINDOW_WIDTH, 'center')
+    love.graphics.printf('CONFIRM RESTART', self.cameraX, (self.cameraY + WINDOW_HEIGHT / 5), WINDOW_WIDTH, 'center')
     -- draw menu
     love.graphics.setFont(GFonts['funkrocker-menu'])
-    self:renderOption('YES', 1, 200)
-    self:renderOption('NO', 2, 300)
+    self:renderOption('YES', 1, 100)
+    self:renderOption('NO', 2, 200)
     -- draw warning at bottom
     local warning = 'Restarting will wipe all current game data'
     love.graphics.setFont(GFonts['funkrocker-small'])

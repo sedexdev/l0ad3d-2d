@@ -24,6 +24,7 @@ GameOverState = Class{__includes = BaseState}
 ]]
 function GameOverState:enter(params)
     self.highScores = params.highScores
+    self.player     = params.player
     self.map        = params.map
     self.level      = params.level
     self.score      = params.score
@@ -35,6 +36,10 @@ function GameOverState:enter(params)
             Timer.tween(self.duration, {
                 [self] = {y = WINDOW_HEIGHT + self.fontHeight}
             }):finish(function ()
+                self.player        = nil
+                self.systemManager = nil
+                self.hud           = nil
+                collectgarbage('collect')
                 local index = CheckHighScore(self.highScores, self.score)
                 if index ~= nil then
                     GStateMachine:change('enter-highscores', {
@@ -45,6 +50,13 @@ function GameOverState:enter(params)
                         index      = index,
                     })
                 else
+                    self.player        = nil
+                    self.map           = nil
+                    self.systemManager = nil
+                    self.hud           = nil
+                    self.level         = nil
+                    self.score         = nil
+                    collectgarbage('collect')
                     GStateMachine:change('menu', {
                         highScores = self.highScores
                     })

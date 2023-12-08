@@ -86,6 +86,12 @@ function EnterHighScoreState:update(dt)
         self.highScores[self.index].score = self.score
         -- write the new high score to file
         WriteHighScores(self.highScores)
+        -- clear game data
+        self.map   = nil
+        self.score = nil
+        self.level = nil
+        self.index = nil
+        collectgarbage('collect')
         -- change to highScoreState to view updated high scores table
         GStateMachine:change('highscores', {
             highScores = self.highScores

@@ -128,6 +128,27 @@ function IncreaseStats()
     GBossDefinition.damage   = GBossDefinition.damage + 2
 end
 
+--[[
+    Resets the stats of enemy type Entity objects when the 
+    Player dies and the game is over
+
+    Params:
+        none
+    Returns:
+        nil
+]]
+function ResetStats()
+    -- grunts
+    GGruntDefinition.health  = 50
+    GGruntDefinition.damage  = 5
+    -- turrets
+    GTurretDefinition.health = 200
+    GTurretDefinition.damage = 15
+    -- boss
+    GBossDefinition.health   = 1000
+    GBossDefinition.damage   = 10
+end
+
 -- ========================= SOUND EFFECTS =========================
 
 --[[
