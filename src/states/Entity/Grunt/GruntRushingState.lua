@@ -42,9 +42,18 @@ function GruntRushingState:update(dt)
     -- call the Animation instance's update function 
     self.grunt.animations['walking-'..self.grunt.direction]:update(dt)
     -- change state if we are close to the player (change to use hitboxes later)
-    if math.abs(self.systemManager.player.x - self.grunt.x) <= GRUNT_ATTACK_PROXIMITY and
-       math.abs(self.systemManager.player.y - self.grunt.y) <= GRUNT_ATTACK_PROXIMITY then
-        self.grunt.stateMachine:change('attacking')
+    if self.systemManager.player.currentArea.id == self.grunt.areaID then
+        if math.abs(self.systemManager.player.x - self.grunt.x) <= GRUNT_ATTACK_PROXIMITY and
+        math.abs(self.systemManager.player.y - self.grunt.y) <= GRUNT_ATTACK_PROXIMITY then
+            self.grunt.stateMachine:change('attacking')
+        end
+    end
+    -- check for crate collisions
+    for _, crate in pairs(self.systemManager.objectSystem.objects[self.grunt.areaID].crates) do
+        local gruntCollision = self.systemManager.collisionSystem:crateCollision(crate, self.grunt)
+        if gruntCollision.detected then
+            self.systemManager.collisionSystem:handleEnemyCrateCollision(self.grunt, gruntCollision.edge)
+        end
     end
     -- check for wall collisions
     local wallCollision = self.systemManager.collisionSystem:checkWallCollision(self.area, self.grunt)

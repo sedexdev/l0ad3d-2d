@@ -146,15 +146,6 @@ function SystemManager:checkCrates()
         if playerCollision.detected then
             self.collisionSystem:handlePlayerCrateCollision(crate, playerCollision.edge)
         end
-        -- check for grunt collisions
-        for _, grunt in pairs(self.enemySystem.enemies[self.currentAreaID].grunts) do
-            if grunt.areaID == self.currentAreaID then
-                local gruntCollision = self.collisionSystem:crateCollision(crate, grunt)
-                if gruntCollision.detected then
-                    self.collisionSystem:handleEnemyCrateCollision(grunt, gruntCollision.edge)
-                end
-            end
-        end
         -- check for boss collisions
         if self.enemySystem.boss then
             local bossCollision = self.collisionSystem:crateCollision(crate, self.enemySystem.boss)

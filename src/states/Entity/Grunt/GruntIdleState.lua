@@ -46,6 +46,13 @@ end
 function GruntIdleState:update(dt)
     -- call the Animation instance's update function 
     self.grunt.animations['walking-'..self.grunt.direction]:update(dt)
+    -- check for crate collisions
+    for _, crate in pairs(self.systemManager.objectSystem.objects[self.grunt.areaID].crates) do
+        local gruntCollision = self.systemManager.collisionSystem:crateCollision(crate, self.grunt)
+        if gruntCollision.detected then
+            self.systemManager.collisionSystem:handleEnemyCrateCollision(self.grunt, gruntCollision.edge)
+        end
+    end
     -- check for wall collisions
     local wallCollision = self.systemManager.collisionSystem:checkWallCollision(self.area, self.grunt)
     if wallCollision.detected then
@@ -82,8 +89,10 @@ function GruntIdleState:update(dt)
         self.interval = 0
     end
     -- if grunt in proximity with Player change to rushing state
-    if self.systemManager.enemySystem:checkProximity(self.grunt) then
-        self.grunt.stateMachine:change('rushing')
+    if self.systemManager.player.currentArea.id == self.grunt.areaID then
+        if self.systemManager.enemySystem:checkProximity(self.grunt) then
+            self.grunt.stateMachine:change('rushing')
+        end
     end
 end
 
