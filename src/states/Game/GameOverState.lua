@@ -51,7 +51,6 @@ function GameOverState:enter(params)
                     })
                 else
                     self.player        = nil
-                    self.map           = nil
                     self.systemManager = nil
                     self.hud           = nil
                     self.level         = nil
@@ -64,6 +63,20 @@ function GameOverState:enter(params)
             end)
         end)
     end)
+end
+
+--[[
+    GameOverState exit function. Sets the map to nil so it can
+    be recreated in the next play through
+
+    Params:
+        none
+    Returns:
+        nil
+]]
+function GameOverState:exit()
+    self.map = nil
+    collectgarbage('collect')
 end
 
 --[[
