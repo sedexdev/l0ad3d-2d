@@ -206,7 +206,7 @@ function ObjectSystem:spawnPowerUp(x, y, areaID)
     x = x + (CRATE_WIDTH - POWERUP_WIDTH) / 2
     y = y + (CRATE_HEIGHT - POWERUP_HEIGHT) / 2
     -- set random chance of finding each powerup
-    local health = math.random(3) == 1 and true or false
+    local health = math.random(4) == 1 and true or false
     if health then
         table.insert(self.objects[areaID].powerups, PowerUp(self.objectIDs.powerupID, 'health', areaID, x, y))
         self.objectIDs.powerupID = self.objectIDs.powerupID + 1
@@ -340,23 +340,32 @@ function ObjectSystem:handlePowerUpCollision(powerup)
     if powerup.type == 'doubleSpeed' then
         self.systemManager.player:setDoubleSpeed()
         powerup.remove = true
-    elseif powerup.type == 'oneShotBossKill' then
+        return
+    end
+    if powerup.type == 'oneShotBossKill' then
         self.systemManager.player:setOneShotBossKill()
         powerup.remove = true
-    elseif powerup.type == 'ammo' then
+        return
+    end
+    if powerup.type == 'ammo' then
         if self.systemManager.player.ammo < MAX_AMMO then
             self.systemManager.player:increaseAmmo()
             powerup.remove = true
+            return
         end
-    elseif powerup.type == 'health' then        
+    end
+    if powerup.type == 'health' then        
         if self.systemManager.player.health < MAX_HEALTH then
             self.systemManager.player:increaseHealth()
             powerup.remove = true
+            return
         end
-    elseif powerup.type == 'invincible' then
+    end
+    if powerup.type == 'invincible' then
         if not self.systemManager.player.powerups.invincible then
             self.systemManager.player:makeInvicible()
             powerup.remove = true
+            return
         end
     end
 end
