@@ -48,9 +48,14 @@ function LevelCompleteState:enter(params)
                     Copy(GCharacterDefinition)
                 )
                 -- create new SystemManager
-                local systemManager = SystemManager(map, player)
+                local systemManager  = SystemManager(map, player)
                 -- player lives need to carry over
-                player.lives        = self.player.lives
+                player.lives         = self.player.lives
+                -- random starting location
+                local index           = math.random(1, 3)
+                player.x              = STARING_COORDINATES[index].x
+                player.y              = STARING_COORDINATES[index].y
+                player.currentArea.id = STARTING_AREAS[index]
                 -- Player stateMachine
                 player.stateMachine = StateMachine {
                     ['idle']    = function () return PlayerIdleState(player) end,

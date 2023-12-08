@@ -36,6 +36,12 @@ ENTITY_AXIS_PROXIMITY  = 10
 BOSS_PROXIMITY         = 500
 TURRET_OFFSET          = 120
 START_AREA_ID          = 17
+STARING_COORDINATES    = {
+    -- based off src/utils/definitions.lua:GMapAreaDefinitions definitions
+    [1] = {x = -3200 + (20 * (64 * 5)) / 2, y = -1600 + (20 * (32 * 5)) / 2},
+    [2] = {x = -9920 + (16 * (64 * 5)) / 2, y = -1280 + (16 * (32 * 5)) / 2},
+    [3] = {x = 9680 + (16 * (64 * 5)) / 2,  y = -2560 + (12 * (32 * 5)) / 2},
+}
 STARTING_AREAS         = {17, 18, 33}
 -- Boss is spawned when PLayer enters area 4
 BOSS_SPAWN_AREA_ID     = 4
