@@ -172,17 +172,3 @@ function HUD:renderLives(cameraX, cameraY)
         love.graphics.rectangle('fill', cameraX + 120, cameraY + 300, 170, 20) -- bottom
     end
 end
-
---[[
-    Renders the one shot Boss kill powerup icon if the Player
-    owns that powerup
-
-    Params:
-        cameraX: number - x location of game camera
-        cameraY: number - y location of game camera
-    Returns:
-        nil
-]]
-function HUD:renderOneShotBossKill(cameraX, cameraY)
-    
-end

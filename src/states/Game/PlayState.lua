@@ -175,6 +175,9 @@ function PlayState:render()
     self.hud:render(self.cameraX, self.cameraY)
     self.player:render()
     self:displayScore()
+    if self.player.powerups.oneShotBossKill then
+        self:renderOneShotBossKill()
+    end
     -- display life lost message
     self:renderLifeLostMessage()
     -- show menu if paused and not selecting restart
@@ -385,4 +388,22 @@ function PlayState:displayScore()
     love.graphics.setColor(1, 0/255, 0/255, 255/255)
     love.graphics.print('Score: ' .. tostring(self.score), self.cameraX + (WINDOW_WIDTH - 330), self.cameraY + 60)
     love.graphics.setColor(1, 1, 1, 1)
+end
+
+--[[
+    Renders the one shot Boss kill powerup icon if the Player
+    owns that powerup
+
+    Params:
+        none
+    Returns:
+        nil
+]]
+function PlayState:renderOneShotBossKill()
+    love.graphics.draw(GTextures['powerups'],
+        GQuads['powerups'][2],
+        self.cameraX + (WINDOW_WIDTH - 400), self.cameraY + 72,
+        0,
+        0.8, 0.8
+    )
 end
