@@ -47,7 +47,10 @@ function LevelCompleteState:enter(params)
                     GAnimationDefintions['character'..tostring(self.player.id)],
                     Copy(GCharacterDefinition)
                 )
+                -- create new SystemManager
                 local systemManager = SystemManager(map, player)
+                -- player lives need to carry over
+                player.lives        = self.player.lives
                 -- Player stateMachine
                 player.stateMachine = StateMachine {
                     ['idle']    = function () return PlayerIdleState(player) end,
