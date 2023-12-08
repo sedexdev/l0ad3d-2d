@@ -47,6 +47,7 @@ function MenuState:init()
         [4] = {x = 6, y = -20, rendered = false},
     }
     self.pauseInput = true
+    self.hideMenu   = true
     for i = 1, 4 do
         Timer.after(i * 0.3, function ()
             -- set rendered to true so the graphic can be drawn to the screen
@@ -54,8 +55,9 @@ function MenuState:init()
             Audio_PlayerShot()
         end)
     end
-    Timer.after(1.2, function ()
+    Timer.after(1.5, function ()
         self.pauseInput = false
+        self.hideMenu   = false
     end)
 end
 
@@ -74,15 +76,15 @@ end
         nil
 ]]
 function MenuState:update(dt)
-    if love.keyboard.wasPressed('up') then
-        Audio_MenuOption()
-        self.selected = self.selected <= 1 and 3 or self.selected - 1
-    end
-    if love.keyboard.wasPressed('down') then
-        Audio_MenuOption()
-        self.selected = self.selected >= 3 and 1 or self.selected + 1
-    end
     if not self.pauseInput then
+        if love.keyboard.wasPressed('up') then
+            Audio_MenuOption()
+            self.selected = self.selected <= 1 and 3 or self.selected - 1
+        end
+        if love.keyboard.wasPressed('down') then
+            Audio_MenuOption()
+            self.selected = self.selected >= 3 and 1 or self.selected + 1
+        end
         -- handle user selection
         if love.keyboard.wasPressed('enter') or love.keyboard.wasPressed('return') then
             Audio_PlayerShot()
@@ -138,13 +140,15 @@ function MenuState:render()
     love.graphics.printf('L0ad3d-2D', 2, (WINDOW_HEIGHT / 4) + 2, WINDOW_WIDTH, 'center')
     love.graphics.setColor(1, 0/255, 0/255, 1)
     love.graphics.printf('L0ad3d-2D', 0, WINDOW_HEIGHT / 4, WINDOW_WIDTH, 'center')
-    -- draw menu
-    love.graphics.setFont(GFonts['funkrocker-menu'])
-    self:renderOption('LOAD UP', 1, 200)
-    self:renderOption('HIGH SCORES', 2, 300)
-    self:renderOption('QUIT', 3, 400)
-    -- reset the colour
-    love.graphics.setColor(1, 0/255, 0/255, 1)
+    if not self.hideMenu then
+        -- draw menu
+        love.graphics.setFont(GFonts['funkrocker-menu'])
+        self:renderOption('LOAD UP', 1, 200)
+        self:renderOption('HIGH SCORES', 2, 300)
+        self:renderOption('QUIT', 3, 400)
+        -- reset the colour
+        love.graphics.setColor(1, 0/255, 0/255, 1)
+    end
 end
 
 --[[
