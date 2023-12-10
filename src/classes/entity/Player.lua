@@ -50,6 +50,7 @@ function Player:init(id, animations, def)
         if self.isDead then
             Event.dispatch('gameOver')
         end
+        return false
     end)
 end
 
