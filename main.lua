@@ -9,6 +9,9 @@
     Version: 1.0
 ]]
 
+-- debugger
+-- require('lldebugger').start()
+
 -- dependencies are managed in dependencies.lua
 require 'src/utils/dependencies'
 

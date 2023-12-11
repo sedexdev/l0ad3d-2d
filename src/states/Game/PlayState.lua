@@ -68,6 +68,7 @@ function PlayState:init()
             level         = self.level,
             score         = self.score
         })
+        return false
     end)
     Event.on('gameOver', function ()
         Audio_GameOver()
@@ -81,9 +82,11 @@ function PlayState:init()
             level         = self.level,
             score         = self.score
         })
+        return false
     end)
     Event.on('score', function (points)
         self.score = self.score + points
+        return false
     end)
     Event.on('lostLife', function ()
         Audio_PlayerDeath()
@@ -98,6 +101,7 @@ function PlayState:init()
                 end)
             end)
         end)
+        return false
     end)
 end
 

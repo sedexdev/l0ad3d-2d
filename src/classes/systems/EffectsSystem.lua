@@ -49,6 +49,7 @@ function EffectsSystem:init(systemManager)
             Audio_BossShot()
         end
         self:insertBullet(entity)
+        return false
     end)
 end
 
