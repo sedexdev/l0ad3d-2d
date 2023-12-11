@@ -69,10 +69,14 @@ end
         nil
 ]]
 function Remove(t, object)
+    local last = false
     local n = #t
     -- set element being removed to nil
     for i = 1, n do
         if t[i].id == object.id then
+            if i == n then
+                last = true
+            end
             t[i] = nil
             break
         end
@@ -85,8 +89,10 @@ function Remove(t, object)
             t[j] = t[i]
         end
     end
-    -- set last element to nil
-    t[#t] = nil
+    if not last then
+        -- set last element to nil
+        t[#t] = nil
+    end
 end
 
 --[[
