@@ -369,8 +369,8 @@ function DoorSystem:checkDoorProximity(door)
                 -- if locked and has key open the door
                 door.isLocked = false
                 self:open(door)
-                if DOOR_IDS[door.colour] == 3 then self.player.keys['blue'] = false end
-                if DOOR_IDS[door.colour] == 4 then self.player.keys['red'] = false end
+                if DOOR_IDS[door.colour] == 3 then self.player.keys['blue']  = false end
+                if DOOR_IDS[door.colour] == 4 then self.player.keys['red']   = false end
                 if DOOR_IDS[door.colour] == 5 then self.player.keys['green'] = false end
             end
         end
