@@ -381,64 +381,6 @@ function DoorSystem:checkDoorProximity(door)
     end
 end
 
--- ========================== TWEEN DOORS OPEN/CLOSED ==========================
-
---[[
-    Tweening function for moving the Door objects either up, down,
-    left, or right depending on the orientation and location of the
-    doors. This will give the effect of the doors opening
-
-    Params:
-        door: table - Door object for the door being opened
-    Returns:
-        nil
-]]
-function DoorSystem:open(door)
-    if not door.isOpen then
-        Audio_Door()
-        if door.orientation == 'horizontal' then
-            -- tween callback function for opening/closing doors
-            Timer.tween(0.2, {
-                [door] = {leftX = door.leftX - H_DOOR_WIDTH, rightX = door.rightX + H_DOOR_WIDTH}
-            })
-            door.isOpen = true
-        else
-            Timer.tween(0.2, {
-                [door] = {leftY = door.leftY + V_DOOR_HEIGHT, rightY = door.rightY - V_DOOR_HEIGHT}
-            })
-            door.isOpen = true
-        end
-    end
-end
-
---[[
-    Tweening function for moving the Door objects either up, down,
-    left, or right depending on the orientation and location of the
-    doors. This will give the effect of the doors closing
-
-    Params:
-        door: table - Door object for the door being closed
-    Returns:
-        nil
-]]
-function DoorSystem:close(door)
-    if door.isOpen then
-        Audio_Door()
-        if door.orientation == 'horizontal' then
-            -- tween callback function for opening/closing doors
-            Timer.tween(0.2, {
-                [door] = {leftX = door.leftX + H_DOOR_WIDTH, rightX = door.rightX - H_DOOR_WIDTH}
-            })
-            door.isOpen = false
-        else
-            Timer.tween(0.2, {
-                [door] = {leftY = door.leftY - V_DOOR_HEIGHT, rightY = door.rightY + V_DOOR_HEIGHT}
-            })
-            door.isOpen = false
-        end
-    end
-end
-
 --[[
     Corrects Player object (x, y) if the door is locked
 
@@ -466,6 +408,64 @@ function DoorSystem:handleLockedDoor(door)
     if door.playerLocation == 'below' then
         if self.player.y < door.leftY then
             self.player.y = door.lefty
+        end
+    end
+end
+
+-- ========================== TWEEN DOORS OPEN/CLOSED ==========================
+
+--[[
+    Tweening function for moving the Door objects either up, down,
+    left, or right depending on the orientation and location of the
+    doors. This will give the effect of the doors opening
+
+    Params:
+        door: table - Door object for the door being opened
+    Returns:
+        nil
+]]
+function DoorSystem:open(door)
+    if not door.isOpen then
+        Audio_Door()
+        if door.orientation == 'horizontal' then
+            -- tween callback function for opening/closing doors
+            Timer.tween(0.1, {
+                [door] = {leftX = door.leftX - H_DOOR_WIDTH, rightX = door.rightX + H_DOOR_WIDTH}
+            })
+            door.isOpen = true
+        else
+            Timer.tween(0.1, {
+                [door] = {leftY = door.leftY + V_DOOR_HEIGHT, rightY = door.rightY - V_DOOR_HEIGHT}
+            })
+            door.isOpen = true
+        end
+    end
+end
+
+--[[
+    Tweening function for moving the Door objects either up, down,
+    left, or right depending on the orientation and location of the
+    doors. This will give the effect of the doors closing
+
+    Params:
+        door: table - Door object for the door being closed
+    Returns:
+        nil
+]]
+function DoorSystem:close(door)
+    if door.isOpen then
+        Audio_Door()
+        if door.orientation == 'horizontal' then
+            -- tween callback function for opening/closing doors
+            Timer.tween(0.1, {
+                [door] = {leftX = door.leftX + H_DOOR_WIDTH, rightX = door.rightX - H_DOOR_WIDTH}
+            })
+            door.isOpen = false
+        else
+            Timer.tween(0.1, {
+                [door] = {leftY = door.leftY - V_DOOR_HEIGHT, rightY = door.rightY + V_DOOR_HEIGHT}
+            })
+            door.isOpen = false
         end
     end
 end
