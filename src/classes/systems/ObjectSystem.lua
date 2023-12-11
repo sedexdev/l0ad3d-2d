@@ -206,19 +206,19 @@ function ObjectSystem:spawnPowerUp(x, y, areaID)
     x = x + (CRATE_WIDTH - POWERUP_WIDTH) / 2
     y = y + (CRATE_HEIGHT - POWERUP_HEIGHT) / 2
     -- set random chance of finding each powerup
-    local health = math.random(4) == 1 and true or false
+    local health = math.random(5) == 1 and true or false
     if health then
         table.insert(self.objects[areaID].powerups, PowerUp(self.objectIDs.powerupID, 'health', areaID, x, y))
         self.objectIDs.powerupID = self.objectIDs.powerupID + 1
         return
     end
-    local ammo = math.random(4) == 1 and true or false
+    local ammo = math.random(5) == 1 and true or false
     if ammo then
         table.insert(self.objects[areaID].powerups, PowerUp(self.objectIDs.powerupID, 'ammo', areaID, x, y))
         self.objectIDs.powerupID = self.objectIDs.powerupID + 1
         return
     end
-    local doubleSpeed = math.random(5) == 1 and true or false
+    local doubleSpeed = math.random(6) == 1 and true or false
     if doubleSpeed then
         table.insert(self.objects[areaID].powerups, PowerUp(self.objectIDs.powerupID, 'doubleSpeed', areaID, x, y))
         self.objectIDs.powerupID = self.objectIDs.powerupID + 1
@@ -338,34 +338,33 @@ end
 ]]
 function ObjectSystem:handlePowerUpCollision(powerup)
     if powerup.type == 'doubleSpeed' then
-        self.systemManager.player:setDoubleSpeed()
-        powerup.remove = true
-        return
+        if not self.systemManager.player.powerups.doubleSpeed then
+            self.systemManager.player:setDoubleSpeed()
+            powerup.remove = true
+        end
     end
     if powerup.type == 'oneShotBossKill' then
-        self.systemManager.player:setOneShotBossKill()
-        powerup.remove = true
-        return
+        if not self.systemManager.player.powerups.oneShotBossKill then
+            self.systemManager.player:setOneShotBossKill()
+            powerup.remove = true
+        end
     end
     if powerup.type == 'ammo' then
         if self.systemManager.player.ammo < MAX_AMMO then
             self.systemManager.player:increaseAmmo()
             powerup.remove = true
-            return
         end
     end
-    if powerup.type == 'health' then        
+    if powerup.type == 'health' then
         if self.systemManager.player.health < MAX_HEALTH then
             self.systemManager.player:increaseHealth()
             powerup.remove = true
-            return
         end
     end
     if powerup.type == 'invincible' then
         if not self.systemManager.player.powerups.invincible then
             self.systemManager.player:makeInvicible()
             powerup.remove = true
-            return
         end
     end
 end
