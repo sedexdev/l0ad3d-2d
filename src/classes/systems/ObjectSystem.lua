@@ -340,31 +340,27 @@ function ObjectSystem:handlePowerUpCollision(powerup)
     if powerup.type == 'doubleSpeed' then
         if not self.systemManager.player.powerups.doubleSpeed then
             self.systemManager.player:setDoubleSpeed()
-            powerup.remove = true
         end
     end
     if powerup.type == 'oneShotBossKill' then
         if not self.systemManager.player.powerups.oneShotBossKill then
             self.systemManager.player:setOneShotBossKill()
-            powerup.remove = true
         end
     end
     if powerup.type == 'ammo' then
         if self.systemManager.player.ammo < MAX_AMMO then
             self.systemManager.player:increaseAmmo()
-            powerup.remove = true
         end
     end
     if powerup.type == 'health' then
         if self.systemManager.player.health < MAX_HEALTH then
             self.systemManager.player:increaseHealth()
-            powerup.remove = true
         end
     end
     if powerup.type == 'invincible' then
         if not self.systemManager.player.powerups.invincible then
             self.systemManager.player:makeInvicible()
-            powerup.remove = true
         end
     end
+    powerup.remove = true
 end
