@@ -51,7 +51,11 @@ your friends will compete to have the most points!</p>
         </ul>
     <li>Music:</li>
         <ul>
-            <li>Heavy metal theme   - https://freemusicarchive.org/music/alex-productions/</li>
+            <li>Heavy metal theme   - https://freemusicarchive.org/music/lite-saturation/aggressive-metal/aggressive-metal/</li>
+            <li>Source: Free Music Archive</li>
+            <li>Title: Aggressive Metal</li>
+            <li>Artist: Lite Saturation</li>
+            <li>LICENSE: CC BY-ND</li>
         </ul>
     <li>Sounds:</li>
         <ul>

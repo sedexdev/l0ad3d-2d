@@ -26,7 +26,9 @@ function BossRushingState:init(area, boss, systemManager)
     self.systemManager = systemManager
     -- shot timer values
     self.timer         = 0
-    self.shotInterval  = 3
+    self.shotInterval  = 2
+    -- change velocity timer
+    self.velocityTimer = 0
 end
 
 --[[
@@ -42,6 +44,10 @@ end
 function BossRushingState:update(dt)
     -- call the Animation instance's update function 
     self.boss.animations['walking-'..self.boss.direction]:update(dt)
+    -- change back to idle state if player leaves the area
+    if self.systemManager.player.currentArea.id ~= BOSS_AREA_ID then
+        self.boss.stateMachine:change('idle')
+    end
     -- fire weapon on shotInterval
     self.timer = self.timer + dt
     if self.timer > self.shotInterval then
@@ -52,6 +58,23 @@ function BossRushingState:update(dt)
     if wallCollision.detected then
         -- handle the wall collision
         self.systemManager.collisionSystem:handleEnemyWallCollision(self.boss, wallCollision.edge)
+    end
+    -- set boss conditions ordered north -> north-west round the dial
+    local conditions = {
+        [1] = (math.abs(self.boss.x - self.systemManager.player.x) <= ENTITY_AXIS_PROXIMITY) and (self.systemManager.player.y < self.boss.y),
+        [2] = (self.systemManager.player.x > self.boss.x) and (self.systemManager.player.y < self.boss.y),
+        [3] = (self.systemManager.player.x > self.boss.x) and (math.abs(self.boss.y - self.systemManager.player.y) <= ENTITY_AXIS_PROXIMITY),
+        [4] = (self.systemManager.player.x > self.boss.x) and (self.systemManager.player.y > self.boss.y),
+        [5] = (math.abs(self.boss.x - self.systemManager.player.x) <= ENTITY_AXIS_PROXIMITY) and (self.systemManager.player.y > self.boss.y),
+        [6] = (self.systemManager.player.x < self.boss.x) and (self.systemManager.player.y > self.boss.y),
+        [7] = (self.systemManager.player.x < self.boss.x) and (math.abs(self.boss.y - self.systemManager.player.y) <= ENTITY_AXIS_PROXIMITY),
+        [8] = (self.systemManager.player.x < self.boss.x) and (self.systemManager.player.y < self.boss.y),
+    }
+    -- set boss direction
+    for index, condition in ipairs(conditions) do
+        if condition then
+            self.boss.direction = DIRECTIONS[index]
+        end
     end
     -- determine the direction the player is relative to the boss
     if (self.systemManager.player.x < self.boss.x) and (self.systemManager.player.y < self.boss.y) then

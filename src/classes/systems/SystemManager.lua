@@ -408,6 +408,7 @@ function SystemManager:bossHelper()
             Remove(self.effectsSystem.bullets, self.bulletData.bullet)
             self.enemySystem.boss:takeDamage(self.player)
             if self.enemySystem.boss.isDead then
+                Audio_BossDeath()
                 self.enemySystem.boss = nil
                 Event.dispatch('score', 1000)
                 Event.dispatch('levelComplete')
