@@ -347,6 +347,40 @@ function DoorSystem:getCorridorDoors(areaID)
     return areaDoors
 end
 
+-- ========================== DOOR PROXIMITY ==========================
+
+--[[
+    Checks for Player proximity to a Door object and opens
+    the door if it is not locked. If it is locked it checks
+    if the Player as the key
+
+    Params:
+        door: table - Door object the Player is in proximity to
+    Returns:
+        nil
+]]
+function DoorSystem:checkDoorProximity(door)
+    if door:proximity(self.playerX, self.playerY) then
+        -- check if door is locked
+        if not door.isLocked then
+            self:open(door)
+        else
+            if self.player.keys[door.colour] then
+                -- if locked and has key open the door
+                door.isLocked = false
+                self:open(door)
+                if DOOR_IDS[door.colour] == 3 then self.player.keys['blue'] = false end
+                if DOOR_IDS[door.colour] == 4 then self.player.keys['red'] = false end
+                if DOOR_IDS[door.colour] == 5 then self.player.keys['green'] = false end
+            end
+        end
+        return true
+    else
+        self:close(door)
+        return false
+    end
+end
+
 -- ========================== TWEEN DOORS OPEN/CLOSED ==========================
 
 --[[

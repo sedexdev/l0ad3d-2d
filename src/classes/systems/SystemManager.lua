@@ -211,7 +211,7 @@ function SystemManager:checkMap()
     end
     if doors then
         for _, door in pairs(doors) do
-            local proximity = self.collisionSystem:checkDoorProximity(door)
+            local proximity = self.doorSystem:checkDoorProximity(door)
             if proximity and door.isLocked then
                 self.doorSystem:handleLockedDoor(door)
             end

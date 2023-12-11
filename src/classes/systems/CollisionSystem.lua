@@ -364,40 +364,6 @@ function CollisionSystem:handleEnemyWallCollision(entity, edge)
     end
 end
 
--- ========================== DOOR COLLISIONS ==========================
-
---[[
-    Checks for Player proximity to a Door object and opens
-    the door if it is not locked. If it is locked it checks
-    if the Player as the key
-
-    Params:
-        door: table - Door object the Player is in proximity to
-    Returns:
-        nil
-]]
-function CollisionSystem:checkDoorProximity(door)
-    if door:proximity(self.playerX, self.playerY) then
-        -- check if door is locked
-        if not door.isLocked then
-            self.systemManager.doorSystem:open(door)
-        else
-            if self.systemManager.player.keys[door.colour] then
-                -- if locked and has key open the door
-                door.isLocked = false
-                self.systemManager.doorSystem:open(door)
-                if DOOR_IDS[door.colour] == 3 then self.systemManager.player.keys['blue'] = false end
-                if DOOR_IDS[door.colour] == 4 then self.systemManager.player.keys['red'] = false end
-                if DOOR_IDS[door.colour] == 5 then self.systemManager.player.keys['green'] = false end
-            end
-        end
-        return true
-    else
-        self.systemManager.doorSystem:close(door)
-        return false
-    end
-end
-
 -- ========================== DOORWAY DETECTION HELPER FUNCTIONS ==========================
 
 --[[
