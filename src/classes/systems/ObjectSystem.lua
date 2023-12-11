@@ -218,19 +218,19 @@ function ObjectSystem:spawnPowerUp(x, y, areaID)
         self.objectIDs.powerupID = self.objectIDs.powerupID + 1
         return
     end
-    local doubleSpeed = math.random(6) == 1 and true or false
+    local doubleSpeed = math.random(10) == 1 and true or false
     if doubleSpeed then
         table.insert(self.objects[areaID].powerups, PowerUp(self.objectIDs.powerupID, 'doubleSpeed', areaID, x, y))
         self.objectIDs.powerupID = self.objectIDs.powerupID + 1
         return
     end
-    local invincible = math.random(15) == 1 and true or false
+    local invincible = math.random(25) == 1 and true or false
     if invincible then
         table.insert(self.objects[areaID].powerups, PowerUp(self.objectIDs.powerupID, 'invincible', areaID, x, y))
         self.objectIDs.powerupID = self.objectIDs.powerupID + 1
         return
     end
-    local oneShotBossKill = math.random(20) == 1 and true or false
+    local oneShotBossKill = math.random(30) == 1 and true or false
     if oneShotBossKill then
         table.insert(self.objects[areaID].powerups, PowerUp(self.objectIDs.powerupID, 'oneShotBossKill', areaID, x, y))
         self.objectIDs.powerupID = self.objectIDs.powerupID + 1
