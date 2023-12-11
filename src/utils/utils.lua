@@ -74,6 +74,7 @@ function Remove(t, object)
     for i = 1, n do
         if t[i].id == object.id then
             t[i] = nil
+            break
         end
     end
     -- shift all elements towards the front to fill gaps
