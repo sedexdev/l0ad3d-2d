@@ -203,20 +203,7 @@ function SystemManager:checkMap()
         self.collisionSystem:handlePlayerWallCollision(area, wallCollision.edge)
     end
     -- check for any area door collisions
-    local doors = nil
-    if area.type == 'area' then
-        doors = self.doorSystem:getAreaDoors(area.id)
-    else
-        doors = self.doorSystem:getCorridorDoors(area.id)
-    end
-    if doors then
-        for _, door in pairs(doors) do
-            local proximity = self.doorSystem:checkDoorProximity(door)
-            if proximity and door.isLocked then
-                self.doorSystem:handleLockedDoor(door)
-            end
-        end
-    end
+    self.doorSystem:checkDoors(area)
 end
 
 --[[

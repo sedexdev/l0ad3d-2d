@@ -350,6 +350,33 @@ end
 -- ========================== DOOR PROXIMITY ==========================
 
 --[[
+    Checks the doors in the given area for proximity using the
+    helper functions within the door system. If the Player is
+    in proximity and the door is locked this is also handled
+
+    Params:
+        area: table - MapArea object
+    Returns:
+        nil
+]]
+function DoorSystem:checkDoors(area)
+    local doors = nil
+    if area.type == 'area' then
+        doors = self:getAreaDoors(area.id)
+    else
+        doors = self:getCorridorDoors(area.id)
+    end
+    if doors then
+        for _, door in pairs(doors) do
+            local proximity = self:checkDoorProximity(door)
+            if proximity and door.isLocked then
+                self:handleLockedDoor(door)
+            end
+        end
+    end
+end
+
+--[[
     Checks for Player proximity to a Door object and opens
     the door if it is not locked. If it is locked it checks
     if the Player as the key
