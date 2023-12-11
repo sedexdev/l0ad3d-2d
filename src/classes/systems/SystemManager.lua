@@ -315,7 +315,7 @@ function SystemManager:crateHelper()
             -- remove the Bullet on hit to avoid it continuing to update
             Remove(self.effectsSystem.bullets, self.bulletData.bullet)
             self.effectsSystem:insertExplosion(crate)
-            Remove(self.objectSystem.objects[self.currentAreaID].crates, crate)
+            Remove(crates, crate)
             return true
         end
     end
@@ -349,7 +349,7 @@ function SystemManager:gruntHelper()
                 if powerUpChance then
                     self.objectSystem:spawnPowerUp(grunt.x, grunt.y, grunt.areaID)
                 end
-                Remove(self.enemySystem.enemies[self.currentAreaID].grunts, grunt)
+                Remove(grunts, grunt)
                 Event.dispatch('score', 25)
                 break
             end
@@ -380,7 +380,7 @@ function SystemManager:turretHelper()
             if turret.isDead then
                 Audio_Explosion()
                 self.effectsSystem:insertExplosion(turret)
-                Remove(self.enemySystem.enemies[self.currentAreaID].turrets, turret)
+                Remove(turrets, turret)
                 Event.dispatch('score', 100)
                 break
             end
