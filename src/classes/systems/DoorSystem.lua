@@ -104,10 +104,16 @@ function DoorSystem:initialiseDoors(areas)
                 table.insert(self.doors, Door(
                     -- doorID, areaID, door colour, orientation
                     1, area.id, area.doors.L, 'vertical',
-                    -- leftX, rightX
-                    area.x - WALL_OFFSET, area.x - WALL_OFFSET,
-                    -- leftY, rightY
-                    area.y + verticalBottomDoorOffset, area.y + verticalTopDoorOffset,
+                    {
+                        leftX      = area.x - WALL_OFFSET,
+                        rightX     = area.x - WALL_OFFSET,
+                        leftY      = area.y + verticalBottomDoorOffset,
+                        rightY     = area.y + verticalTopDoorOffset,
+                        openLeftX  = area.x - WALL_OFFSET,
+                        openRightX = area.x - WALL_OFFSET,
+                        openLeftY  = area.y + verticalBottomDoorOffset + V_DOOR_HEIGHT,
+                        openRightY = area.y + verticalTopDoorOffset - V_DOOR_HEIGHT
+                    },
                     -- width and height
                     V_DOOR_WIDTH, V_DOOR_HEIGHT
                 ))
@@ -115,24 +121,48 @@ function DoorSystem:initialiseDoors(areas)
             if area.doors.T then
                 table.insert(self.doors, Door(
                     2, area.id, area.doors.T, 'horizontal',
-                    area.x + horizontalLeftDoorOffset, area.x + horizontalRightDoorOffset,
-                    area.y - WALL_OFFSET, area.y - WALL_OFFSET,
+                    {
+                        leftX      = area.x + horizontalLeftDoorOffset,
+                        rightX     = area.x + horizontalRightDoorOffset,
+                        leftY      = area.y - WALL_OFFSET,
+                        rightY     = area.y - WALL_OFFSET,
+                        openLeftX  = area.x + horizontalLeftDoorOffset - H_DOOR_WIDTH,
+                        openRightX = area.x + horizontalRightDoorOffset + H_DOOR_WIDTH,
+                        openLeftY  = area.y - WALL_OFFSET,
+                        openRightY = area.y - WALL_OFFSET
+                    },
                     H_DOOR_WIDTH, H_DOOR_HEIGHT
                 ))
             end
             if area.doors.R then
                 table.insert(self.doors, Door(
                     3, area.id, area.doors.R, 'vertical',
-                    area.x + areaWidth, area.x + areaWidth,
-                    area.y + verticalBottomDoorOffset, area.y + verticalTopDoorOffset,
+                    {
+                        leftX      = area.x + areaWidth,
+                        rightX     = area.x + areaWidth,
+                        leftY      = area.y + verticalBottomDoorOffset,
+                        rightY     = area.y + verticalTopDoorOffset,
+                        openLeftX  = area.x + areaWidth,
+                        openRightX = area.x + areaWidth,
+                        openLeftY  = area.y + verticalBottomDoorOffset + V_DOOR_HEIGHT,
+                        openRightY = area.y + verticalTopDoorOffset - V_DOOR_HEIGHT
+                    },
                     V_DOOR_WIDTH, V_DOOR_HEIGHT
                 ))
             end
             if area.doors.B then
                 table.insert(self.doors, Door(
                     4, area.id, area.doors.B, 'horizontal',
-                    area.x + horizontalLeftDoorOffset, area.x + horizontalRightDoorOffset,
-                    area.y + areaHeight, area.y + areaHeight,
+                    {
+                        leftX      = area.x + horizontalLeftDoorOffset,
+                        rightX     = area.x + horizontalRightDoorOffset,
+                        leftY      = area.y + areaHeight,
+                        rightY     = area.y + areaHeight,
+                        openLeftX  = area.x + horizontalLeftDoorOffset - H_DOOR_WIDTH,
+                        openRightX = area.x + horizontalRightDoorOffset + H_DOOR_WIDTH,
+                        openLeftY  = area.y + areaHeight,
+                        openRightY = area.y + areaHeight
+                    },
                     H_DOOR_WIDTH, H_DOOR_HEIGHT
                 ))
             end
@@ -458,11 +488,11 @@ function DoorSystem:open(door)
         if door.orientation == 'horizontal' then
             -- tween callback function for opening/closing doors
             Timer.tween(0.1, {
-                [door] = {leftX = door.leftX - H_DOOR_WIDTH, rightX = door.rightX + H_DOOR_WIDTH}
+                [door] = {leftX = door.openLeftX, rightX = door.openRightX}
             })
         else
             Timer.tween(0.1, {
-                [door] = {leftY = door.leftY + V_DOOR_HEIGHT, rightY = door.rightY - V_DOOR_HEIGHT}
+                [door] = {leftY = door.openLeftY, rightY = door.openRightY}
             })
         end
     end
@@ -483,13 +513,13 @@ function DoorSystem:close(door)
         door.isOpen = false
         Audio_Door()
         if door.orientation == 'horizontal' then
-            -- tween callback function for opening/closing doors
+            -- tween callback function for opening/closing doors - reuse under door values
             Timer.tween(0.1, {
-                [door] = {leftX = door.leftX + H_DOOR_WIDTH, rightX = door.rightX - H_DOOR_WIDTH}
+                [door] = {leftX = door.underLeftX, rightX = door.underRightX}
             })
         else
             Timer.tween(0.1, {
-                [door] = {leftY = door.leftY - V_DOOR_HEIGHT, rightY = door.rightY + V_DOOR_HEIGHT}
+                [door] = {leftY = door.underLeftY, rightY = door.underRightY}
             })
         end
     end

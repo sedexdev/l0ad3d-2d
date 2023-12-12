@@ -16,30 +16,33 @@ Door = Class{}
         colour:         string - colour of the doors
         orientation:    string - orientation of these doors
         playerLocation: string - side of this door the Player is on
-        leftX:          number - x coordinate of the left door in the pair 
-        rightX:         number - x coordinate of the right door in the pair
-        leftY:          number - y coordinate of the left door in the pair
-        rightY:         number - y coordinate of the right door in the pair
+        coordinates:    table  - (x, y) coordinates for each door pair (open and closed)
         width:          number - y coordinate of the left door in the pair
         heigt:          number - y coordinate of the right door in the pair
     Returns:
         nil
 ]]
-function Door:init(id, areaID, colour, orientation, leftX, rightX, leftY, rightY, width, height)
+function Door:init(id, areaID, colour, orientation, coordinates, width, height)
     self.id             = id
     self.areaID         = areaID
     self.colour         = colour
     self.orientation    = orientation
     -- set left and right (x, y) for under doors so they aren't effected by tweening
-    self.underLeftX     = leftX
-    self.underRightX    = rightX
-    self.underLeftY     = leftY
-    self.underRightY    = rightY
-    -- set left and right (x, y) for coloured doors
-    self.leftX          = leftX
-    self.rightX         = rightX
-    self.leftY          = leftY
-    self.rightY         = rightY
+    self.underLeftX     = coordinates.leftX
+    self.underRightX    = coordinates.rightX
+    self.underLeftY     = coordinates.leftY
+    self.underRightY    = coordinates.rightY
+    -- set closed left and right (x, y) for coloured doors
+    self.leftX          = coordinates.leftX
+    self.rightX         = coordinates.rightX
+    self.leftY          = coordinates.leftY
+    self.rightY         = coordinates.rightY
+    -- set open left and right (x, y) for coloured doors
+    self.openLeftX      = coordinates.openLeftX
+    self.openRightX     = coordinates.openRightX
+    self.openLeftY      = coordinates.openLeftY
+    self.openRightY     = coordinates.openRightY
+    -- width/height
     self.width          = width
     self.height         = height
     -- flag to check if the door is open
