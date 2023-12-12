@@ -14,16 +14,20 @@ below)</p>
 
 <h2>Running the code</h2>
 
-<p>This project currently requires a local install of the LOVE2D game engine to run.
-A fully working executable will be published in the <code>bin</code> directory
-when the game is finished, which will be packaged with the required libraries</p>
-
-<p>LOVE can be downloaded and installed from <a href="https://www.love2d.org/">their 
+<p>You can clone the repo and then install a local copy of the LOVE2D game engine to run
+the source code. LOVE can be downloaded and installed from <a href="https://www.love2d.org/">their 
 website here</a></p>
 
 <p>Once LOVE2D is installed add the LOVE directory to the system path for your OS. Then 
 navigate to the root of the project and run <code>love .</code> or <code>lovec .</code> 
 on Windows</p>
+
+<h2>Executables</h2>
+
+<p>Or.... if you're on Windows you can download a fully working executable from the <code>bin</code> 
+directory which is packaged with the required libraries :)</p>
+
+<p>PS. Mac OS and Linux versions to come soon!</p>
 
 <h2>Gameplay</h2>
 
