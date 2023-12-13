@@ -24,10 +24,8 @@ on Windows</p>
 
 <h2>Executables</h2>
 
-<p>Or.... if you're on Windows you can download a fully working executable from the <code>bin</code> 
-directory which is packaged with the required libraries :)</p>
-
-<p>PS. Mac OS and Linux versions to come soon!</p>
+<p>Or.... if you're on Windows or Linux you can download a fully working executable from the 
+<code>bin</code> directory which is packaged with the required libraries :) enjoy!</p>
 
 <h2>Gameplay</h2>
 
