@@ -20,7 +20,7 @@ EnemySystem = Class{__includes = Observer}
     Params:
         player:           table       - Player object
         gruntSpriteBatch: SpriteBatch - collection of Grunt Entity quads
-        systemManager:    table         - SystemManager object
+        systemManager:    table       - SystemManager object
     Returns:
         nil
 ]]
