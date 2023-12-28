@@ -14,14 +14,13 @@
 EnemySystem = Class{__includes = Observer}
 
 --[[
-    EnemySystem constructor. Creates a store for the doors in the
-    system, tracks locked doors, and knows which door the Player
-    is currently interacting with 
+    EnemySystem constructor. Initialises and tracks enemy
+    Entity objects throughout each MapArea location
 
     Params:
         player:           table       - Player object
         gruntSpriteBatch: SpriteBatch - collection of Grunt Entity quads
-        systemManager:  table         - SystemManager object
+        systemManager:    table         - SystemManager object
     Returns:
         nil
 ]]
