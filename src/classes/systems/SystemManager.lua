@@ -423,7 +423,7 @@ function SystemManager:boundaryHelper()
         -- remove bullet
         Remove(self.effectsSystem.bullets, self.bulletData.bullet)
         -- use stored (x, y) to instantiate smoke effect
-        self.effectsSystem:insertSmoke(x, y)
+        self.effectsSystem:insertSmoke(x, y, self.player.direction)
     end
 end
 

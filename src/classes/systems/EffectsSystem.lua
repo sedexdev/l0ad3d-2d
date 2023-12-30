@@ -226,12 +226,13 @@ end
     Inserts a Smoke object into the <self.smokeEffects> table
 
     Params:
-        x: number - x coordinate
-        y: number - y coordinate
+        x:         number - x coordinate
+        y:         number - y coordinate
+        direction: string - direction the Player is facing
     Returns:
         nil
 ]]
-function EffectsSystem:insertSmoke(x, y)
-    table.insert(self.smokeEffects, Smoke(self.effectIDs.smokeID, GTextures['smoke'], x, y))
+function EffectsSystem:insertSmoke(x, y, direction)
+    table.insert(self.smokeEffects, Smoke(self.effectIDs.smokeID, GTextures['smoke'], x, y, direction))
     self.effectIDs.smokeID = self.effectIDs.smokeID + 1
 end

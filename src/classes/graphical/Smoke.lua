@@ -12,18 +12,20 @@ Smoke = Class{}
     Smoke constructor
 
     Params:
-        id:      number - ID of this animation
-        texture: Image  - Smoke PNG Image file
-        x:       number - x cordinate 
-        y:       number - y cordinate
+        id:        number - ID of this animation
+        texture:   Image  - Smoke PNG Image file
+        x:         number - x cordinate 
+        y:         number - y cordinate
+        direction: string - direction the Player is facing 
     Returns:
         nil
 ]]
-function Smoke:init(id, texture, x, y)
+function Smoke:init(id, texture, x, y, direction)
     self.id         = id
     self.texture    = texture
     self.x          = x
     self.y          = y
+    self.direction  = direction
     self.animations = Animation({1, 2, 3, 4, 5, 6, 7, 8}, SMOKE_INTERVAL)
     self.remove     = false
 end
@@ -54,6 +56,14 @@ end
 ]]
 function Smoke:render()
     local currentFrame = self.animations:getCurrentFrame()
+    local xOffset = 0
+    local yOffset = 0
+    if self.direction == "east" or self.direction == "west" then
+        yOffset = SMOKE_OFFSET
+    end
+    if self.direction == "north" or self.direction == "south" then
+        xOffset = SMOKE_OFFSET
+    end
     love.graphics.setColor(1, 1, 1, 1)
-    love.graphics.draw(self.texture, GQuads['smoke'][currentFrame], self.x, self.y, 0, 2, 2)
+    love.graphics.draw(self.texture, GQuads['smoke'][currentFrame], self.x - xOffset, self.y - yOffset, 0, 2, 2)
 end
