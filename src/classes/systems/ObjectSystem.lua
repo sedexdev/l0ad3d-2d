@@ -62,7 +62,7 @@ end
 
 --[[
     ObjectSystem render function. Calls the render function
-    of each powerup in the system
+    of each object in the system
 
     Params:
         none
@@ -101,8 +101,8 @@ end
 -- =========================== SPAWN OBJECTS ===========================
 
 --[[
-    Calls all the initialisation functions below for
-    inistialising PowerUp objects
+    Calls all the spawn functions below for inistialising Crate 
+    and Key objects
 
     Params:
         none

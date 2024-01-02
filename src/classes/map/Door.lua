@@ -9,7 +9,7 @@
 Door = Class{}
 
 --[[
-    Doors constructor
+    Door constructor
 
     Params:
         id:             number - ID of this door pair
@@ -54,7 +54,7 @@ function Door:init(id, areaID, colour, orientation, coordinates, width, height)
 end
 
 --[[
-    Doors render function. Renders out the 2 doors that form this
+    Door render function. Renders out the 2 doors that form this
     door pair, along with the under door graphic
 
     Params:

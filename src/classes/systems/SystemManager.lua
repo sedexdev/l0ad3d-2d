@@ -57,7 +57,7 @@ function SystemManager:update(dt)
 end
 
 --[[
-    SystemManager render function. manages the order in which
+    SystemManager render function. Manages the order in which
     systems render their components. Blood stains should be
     rendered underneath crates for example
 
@@ -109,9 +109,8 @@ function SystemManager:message(data)
 end
 
 --[[
-    Checks the appropriate systems for collisions with key
-    type PowerUp objects and calls the handler in the event
-    of a collision
+    Checks the appropriate systems for collisions with Key 
+    objects and calls the handler in the event of a collision
 
     Params:
         none
@@ -128,10 +127,10 @@ function SystemManager:checkKeys()
 end
 
 --[[
-    Checks the appropriate systems for collisions with crate
-    type PowerUp objects and calls the handler in the event
-    of a collision. Also respawns Crates in adjacent areas
-    that have had all the Crates destroyed
+    Checks the appropriate systems for collisions with Crate 
+    objects and calls the handler in the event of a collision. 
+    Also respawns Crates in adjacent areas that have had all 
+    the Crates destroyed
 
     Params:
         none
@@ -166,9 +165,8 @@ function SystemManager:checkCrates()
 end
 
 --[[
-    Checks the appropriate systems for collisions with powerup
-    type PowerUp objects and calls the handler in the event
-    of a collision
+    Checks the appropriate systems for collisions without PowerUp 
+    objects and calls the handler in the event of a collision
 
     Params:
         none

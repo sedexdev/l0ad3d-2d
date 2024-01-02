@@ -162,7 +162,7 @@ end
 -- ======================== INSERTION FUNCTIONS ========================
 
 --[[
-    Inserts are Shot object into the <self.shots> table
+    Inserts a Shot object into the <self.shots> table
 
     Params:
         entity: table - Entity object that fired the shot

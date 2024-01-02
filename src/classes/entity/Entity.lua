@@ -12,7 +12,7 @@
 Entity = Class{}
 
 --[[
-    Boss constructor
+    Entity constructor
 
     Params:
         def: table - Entity definition defined in src/utils/definitions.lua

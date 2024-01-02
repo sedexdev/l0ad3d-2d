@@ -49,8 +49,8 @@ function EnemySystem:init(gruntSpriteBatch, systemManager)
 end
 
 --[[
-    EnemySystem update function. Only updates Grunt Entity
-    objects in the current and adjacent areas as defined in
+    EnemySystem update function. Updates Entity objects in the 
+    current and adjacent areas as defined in
     <definitions.lua:GAreaAdjacencyDefinitions>
 
     Params:
@@ -73,8 +73,8 @@ function EnemySystem:update(dt)
 end
 
 --[[
-    EnemySystem render function. Only renders Grunt Entity
-    objects in the current and adjacent areas as defined in
+    EnemySystem render function. Renders Entity objects in the 
+    current and adjacent areas as defined in
     <definitions.lua:GAreaAdjacencyDefinitions>
 
     Params:
@@ -242,7 +242,7 @@ function EnemySystem:spawn2Turrets(i, areaDef)
 end
 
 --[[
-    Spawns 2 turrets in the MapArea location defined by
+    Spawns 4 turrets in the MapArea location defined by
     GMapAreaDefinitions[i]
 
     Params:
