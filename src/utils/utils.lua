@@ -267,6 +267,19 @@ function Audio_GruntDeath()
 end
 
 --[[
+    Plays the sound clip of a grunts on Boss hit
+    
+    Params:
+        none
+    Returns:
+        nil
+]]
+function Audio_BossHit()
+    GAudio['boss-hit']:stop()
+    GAudio['boss-hit']:play()
+end
+
+--[[
     Plays the sound clip of a monster grunting on Boss kill
     
     Params:
@@ -280,7 +293,7 @@ function Audio_BossDeath()
 end
 
 --[[
-    Plays the sound clip of Player losing a life ir dying
+    Plays the sound clip of Player losing a life or dying
     
     Params:
         none
@@ -293,7 +306,7 @@ function Audio_PlayerDeath()
 end
 
 --[[
-    Plays the sound clip of a bulet hitting a Turret
+    Plays the sound clip of a bullet hitting a Turret
     
     Params:
         none
@@ -303,6 +316,19 @@ end
 function Audio_TurretHit()
     GAudio['turret-hit']:stop()
     GAudio['turret-hit']:play()
+end
+
+--[[
+    Plays the sound clip of a bullet hitting a wall
+    
+    Params:
+        none
+    Returns:
+        nil
+]]
+function Audio_BulletWallHit()
+    GAudio['bullet-wall']:stop()
+    GAudio['bullet-wall']:play()
 end
 
 --[[

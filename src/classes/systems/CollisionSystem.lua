@@ -388,18 +388,10 @@ function CollisionSystem:detectAreaDoorway(area, door, conditions)
             local topCondition    = self.playerY > area.y - H_DOOR_HEIGHT
             local bottomCondition = (self.playerY + ENTITY_HEIGHT) < area.y + (area.height * FLOOR_TILE_HEIGHT) + H_DOOR_HEIGHT
             -- door ID required to fix bug allowing Player to pass through wall opposite adjacent doorway 
-            if doorID == 1 then
-                return leftCondition
-            end
-            if doorID == 2 then
-                return topCondition
-            end
-            if doorID == 3 then
-                return rightCondition
-            end
-            if doorID == 4 then
-                return bottomCondition
-            end
+            if doorID == 1 then return leftCondition end
+            if doorID == 2 then return topCondition end
+            if doorID == 3 then return rightCondition end
+            if doorID == 4 then return bottomCondition end
         end
     end
     -- detect standard area doorways and Player object proximity

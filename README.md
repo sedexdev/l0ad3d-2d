@@ -70,8 +70,10 @@ your friends will compete to have the most points!</p>
             <li>Canon fire          - https://freesound.org/people/inferno/sounds/18391/></li>
             <li>Grunt death         - https://www.zapsplat.com/music/body-impact-splat/></li>
             <li>Player death        - https://freesound.org/people/Hoggington/sounds/536603/</li>
+            <li>Boss hit            - https://freesound.org/people/InspectorJ/sounds/414074/</li>
             <li>Boss death          - https://freesound.org/people/ThePig01/sounds/588657/</li>
             <li>Turret hit          - https://freesound.org/people/wilhellboy/sounds/351371/</li>
+            <li>Wall hit            - https://freesound.org/people/reapersrealmsrp/sounds/710175/</li>
             <li>Invincible          - https://freesound.org/people/MATRIXXX_/sounds/523745/</li>
             <li>Ammo                - https://freesound.org/people/EminYILDIRIM/sounds/543927/</li>
             <li>Health              - https://freesound.org/people/Rickplayer/sounds/530488/</li>

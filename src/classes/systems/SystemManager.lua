@@ -389,6 +389,7 @@ end
 function SystemManager:bossHelper()
     if self.enemySystem.boss ~= nil then
         if self.collisionSystem:bulletCollision(self.bulletData, self.enemySystem.boss) then
+            Audio_BossHit()
             -- remove the Bullet on hit to avoid it continuing to update
             Remove(self.effectsSystem.bullets, self.bulletData.bullet)
             self.enemySystem.boss:takeDamage(self.player)
@@ -415,6 +416,7 @@ end
 ]]
 function SystemManager:boundaryHelper()
     if self.collisionSystem:bulletHitBoundary(self.bulletData.x, self.bulletData.y) then
+        Audio_BulletWallHit()
         -- store bullet (x, y)
         local x = self.bulletData.x
         local y = self.bulletData.y
