@@ -458,7 +458,8 @@ end
 
 --[[
     Helper function for ascertaining if the Player is within a doorway
-    leading to an area type MapArea object from a corridor
+    situated within a corridor type MapArea object. This does not include
+    the doors at either end of the corridor
 
     Params:
         area:       table - the current area type MapArea object
@@ -467,26 +468,30 @@ end
         boolean: true if doorway detected
 ]]
 function CollisionSystem:detectCorridorDoorways(area, conditions)
-    -- check for door proximity to allow the Player object to pass through the wall at that point
-    for _, door in pairs(self.systemManager.doorSystem:getCorridorDoors(area.id)) do
-        if door.id == 1 and door:proximity(self.playerX, self.playerY) and conditions.verticalDoorway then
-            if not conditions.rightCollision then
-                return true
-            end
-        elseif door.id == 3 and door:proximity(self.playerX, self.playerY) and conditions.verticalDoorway then
-            if not conditions.leftCollision then
-                return true
-            end
-        elseif door.id == 2 and door:proximity(self.playerX, self.playerY) and conditions.horizontalDoorway then
-            if not conditions.bottomCollision then
-                return true
-            end
-        elseif door.id == 4 and door:proximity(self.playerX, self.playerY) and conditions.horizontalDoorway then
-            if not conditions.topCollision then
-                return true
-            end
+    local door
+    -- get the door in the centre of the corridor
+    for _, d in pairs(self.systemManager.doorSystem:getCorridorDoors(area.id)) do
+        if GMapAreaDefinitions[area.id].doors.L and d.id == 1 then door = d break end
+        if GMapAreaDefinitions[area.id].doors.T and d.id == 2 then door = d break end
+        if GMapAreaDefinitions[area.id].doors.R and d.id == 3 then door = d break end
+        if GMapAreaDefinitions[area.id].doors.B and d.id == 4 then door = d break end
+    end
+    -- set the condition to stop Player from passing through opposite wall
+    local oppositeConditions = {
+        [1] = conditions.rightCollision,
+        [2] = conditions.bottomCollision,
+        [3] = conditions.leftCollision,
+        [4] = conditions.topCollision
+    }
+    -- set condition for vertical or horizontal doorway
+    local orientationCondition = (door.id == 1 or door.id == 3) and conditions.verticalDoorway or conditions.horizontalDoorway
+    -- check proximity with door to allow through
+    if door:proximity(self.playerX, self.playerY) and orientationCondition then
+        if not oppositeConditions[door.id] then
+            return true
         end
     end
+    return false
 end
 
 -- ========================== CRATE/KEY/POWERUP/ENTITY COLLISIONS ==========================
