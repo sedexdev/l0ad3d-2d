@@ -176,8 +176,8 @@ end
         area:     table - GMapAreaDefinitions definition
         corridor: table - GMapAreaDefinitions definition
     Returns
-        number: x - the x coordeinate the corridor will be rendered at
-        number: y - the y coordeinate the corridor will be rendered at
+        number: x - the x coordinate the corridor will be rendered at
+        number: y - the y coordinate the corridor will be rendered at
 ]]
 function Map:setLeftCorridorCoordinates(area, corridor)
     -- corridor definition required to calculate corridor width offset
@@ -195,8 +195,8 @@ end
     Params:
         area: table - GMapAreaDefinitions definition
     Returns
-        number: x - the x coordeinate the corridor will be rendered at
-        number: y - the y coordeinate the corridor will be rendered at
+        number: x - the x coordinate the corridor will be rendered at
+        number: y - the y coordinate the corridor will be rendered at
 ]]
 function Map:setRightCorridorCoordinates(area)
     -- right edge of the area
@@ -214,8 +214,8 @@ end
         area:     table - GMapAreaDefinitions definition
         corridor: table - GMapAreaDefinitions definition
     Returns
-        number: x - the x coordeinate the corridor will be rendered at
-        number: y - the y coordeinate the corridor will be rendered at
+        number: x - the x coordinate the corridor will be rendered at
+        number: y - the y coordinate the corridor will be rendered at
 ]]
 function Map:setTopCorridorCoordinates(area, corridor)
     -- corridor definition required to calculate corridor height offset
@@ -233,8 +233,8 @@ end
     Params:
         area: table - GMapAreaDefinitions definition
     Returns
-        number: x - the x coordeinate the corridor will be rendered at
-        number: y - the y coordeinate the corridor will be rendered at
+        number: x - the x coordinate the corridor will be rendered at
+        number: y - the y coordinate the corridor will be rendered at
 ]]
 function Map:setBottomCorridorCoordinates(area)
     -- half the width of the area

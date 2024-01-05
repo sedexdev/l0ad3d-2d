@@ -14,11 +14,12 @@ HUD = Class{}
     HUD constructor
 
     Params:
-        player: table - Player object
+        player:  table - Player object
+        miniMap: table - MiniMap object
     Returns:
         nil
 ]]
-function HUD:init(player)
+function HUD:init(player, miniMap)
     self.player = player
     -- positional data for bars
     self.barStart = 64 * 0.8
@@ -40,18 +41,25 @@ function HUD:init(player)
             b = 232/255
         },
     }
+    self.miniMap      = miniMap
+    self.hideMiniMap  = true
 end
 
 --[[
     HUD update function
 
+    Key bindings:
+        "m" - display / hide minimap 
     Params:
         dt: number - deltatime counter for current frame rate
     Returns:
         nil
 ]]
 function HUD:update(dt)
-    
+    if love.keyboard.wasPressed("m") then
+        self.hideMiniMap = self.hideMiniMap == false and true or false
+    end
+    self.miniMap:update(dt)
 end
 
 --[[
@@ -64,6 +72,10 @@ end
         nil
 ]]
 function HUD:render(cameraX, cameraY)
+    -- render minimap if not hidden
+    if not self.hideMiniMap then
+        self.miniMap:render(cameraX, cameraY)
+    end
     -- render key colours first so they are beind the HUD
     if self.player.keys.red then
         self:renderKeyColour(cameraX, cameraY, 'red', 130)
@@ -86,9 +98,12 @@ function HUD:render(cameraX, cameraY)
     love.graphics.draw(GTextures['hud'], GQuads['hud'][1], cameraX + cornerOffset, cameraY + cornerOffset)
     -- render health
     love.graphics.setFont(GFonts['funkrocker-smaller'])
-    self:renderStatBar(cameraX, cameraY, self.player.health, 4, 150, 165, 130)
-    -- render ammo
-    self:renderStatBar(cameraX, cameraY, self.player.ammo, 3, 210, 225, 190)
+    -- render health and ammo if the minimap is hidden 
+    if self.hideMiniMap then
+        self:renderStatBar(cameraX, cameraY, self.player.health, 4, 150, 165, 130)
+        -- render ammo
+        self:renderStatBar(cameraX, cameraY, self.player.ammo, 3, 210, 225, 190)
+    end
 end
 
 --[[

@@ -150,3 +150,6 @@ BLOOD_STAIN_INTERVAL = 180
 
 -- set offset to centre explosions
 EXPLOSION_OFFSET = 50
+
+-- minimap scale
+MINIMAP_SCALE = 0.05

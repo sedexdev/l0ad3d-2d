@@ -251,7 +251,7 @@ GMapAreaDefinitions = {
 GKeyDefinitions = {
     [1] = {areaID = 37, x = 20700,  y = 4140},  -- red
     [2] = {areaID = 35, x = 15460,  y = 9038},  -- blue
-    [3] = {areaID = 25, x = -15580, y = -2560} -- green
+    [3] = {areaID = 25, x = -15580, y = -2560}  -- green
 }
 
 --[[

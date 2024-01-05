@@ -49,6 +49,9 @@ function LevelCompleteState:enter(params)
                 )
                 -- create new SystemManager
                 local systemManager  = SystemManager(map, player)
+                -- create new minimap and HUD
+                local minimap        = MiniMap()
+                local hud            = HUD(player, minimap)
                 -- player lives need to carry over
                 player.lives         = self.player.lives
                 -- random starting location
@@ -67,6 +70,7 @@ function LevelCompleteState:enter(params)
                         walkingState:subscribe(systemManager.objectSystem)
                         walkingState:subscribe(systemManager.enemySystem)
                         walkingState:subscribe(systemManager.effectsSystem)
+                        walkingState:subscribe(minimap)
                         return walkingState
                     end
                 }
@@ -83,7 +87,7 @@ function LevelCompleteState:enter(params)
                     player        = player,
                     map           = map,
                     systemManager = systemManager,
-                    hud           = HUD(player),
+                    hud           = hud,
                     score         = self.score,
                     level         = self.level + 1
                 })

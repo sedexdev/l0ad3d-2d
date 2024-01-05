@@ -92,6 +92,8 @@ function SelectCharacterState:update(dt)
             Copy(GCharacterDefinition)
         )
         local systemManager = SystemManager(map, player)
+        local minimap       = MiniMap()
+        local hud           = HUD(player, minimap)
         -- Player stateMachine
         player.stateMachine = StateMachine {
             ['idle']    = function () return PlayerIdleState(player) end,
@@ -103,6 +105,7 @@ function SelectCharacterState:update(dt)
                 walkingState:subscribe(systemManager.objectSystem)
                 walkingState:subscribe(systemManager.enemySystem)
                 walkingState:subscribe(systemManager.effectsSystem)
+                walkingState:subscribe(minimap)
                 return walkingState
             end
         }
@@ -112,7 +115,7 @@ function SelectCharacterState:update(dt)
             player        = player,
             map           = map,
             systemManager = systemManager,
-            hud           = HUD(player),
+            hud           = hud,
             score         = 0,
             level         = 1
         })
