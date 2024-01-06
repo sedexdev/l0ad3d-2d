@@ -59,7 +59,6 @@ function HUD:update(dt)
     if love.keyboard.wasPressed("m") then
         self.hideMiniMap = self.hideMiniMap == false and true or false
     end
-    self.miniMap:update(dt)
 end
 
 --[[
@@ -98,12 +97,9 @@ function HUD:render(cameraX, cameraY)
     love.graphics.draw(GTextures['hud'], GQuads['hud'][1], cameraX + cornerOffset, cameraY + cornerOffset)
     -- render health
     love.graphics.setFont(GFonts['funkrocker-smaller'])
-    -- render health and ammo if the minimap is hidden 
-    if self.hideMiniMap then
-        self:renderStatBar(cameraX, cameraY, self.player.health, 4, 150, 165, 130)
-        -- render ammo
-        self:renderStatBar(cameraX, cameraY, self.player.ammo, 3, 210, 225, 190)
-    end
+    self:renderStatBar(cameraX, cameraY, self.player.health, 4, 150, 165, 130)
+    -- render ammo
+    self:renderStatBar(cameraX, cameraY, self.player.ammo, 3, 210, 225, 190)
 end
 
 --[[

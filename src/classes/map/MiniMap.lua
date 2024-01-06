@@ -19,27 +19,10 @@ MiniMap = Class{includes = Observer}
         nil
 ]]
 function MiniMap:init()
-    self.cameraX       = 0
-    self.cameraY       = 0
-    self.width         = 190
-    self.height        = 185
-    self.canvas        = love.graphics.newCanvas(self.width, self.height)
-    self.playerMarkerX = self.width / 2
-    self.playerMarkerY = self.height / 2
-    self:setCanvas()
-end
-
---[[
-    MiniMap update function
-
-    Params:
-        dt: number - deltatime counter for current frame rate
-    Returns:
-        nil
-]]
-function MiniMap:update(dt)
-    self:updateCamera()
-    self:setCanvas()
+    self.width          = WINDOW_WIDTH / 2
+    self.height         = WINDOW_HEIGHT / 2
+    self.playerMarkerX  = self.width
+    self.playerMarkerY  = self.height
 end
 
 --[[
@@ -52,7 +35,11 @@ end
         nil
 ]]
 function MiniMap:render(cameraX, cameraY)
-    love.graphics.draw(self.canvas, cameraX + 105, cameraY + 105)
+    local offset = WINDOW_HEIGHT / 3
+    love.graphics.setColor(0/255, 1, 0/255, 0.8)
+    self:drawCorridors(cameraX, cameraY, offset)
+    self:drawAreas(cameraX, cameraY, offset)
+    self:drawPlayerMarker(cameraX, cameraY, offset)
 end
 
 --[[
@@ -73,45 +60,6 @@ function MiniMap:message(data)
     end
 end
 
---[[
-    Sets up the canvas for drawing
-
-    Params:
-        none
-    Returns:
-        nil
-]]
-function MiniMap:setCanvas()
-    love.graphics.setCanvas(self.canvas)
-    -- clear must be called to let the canvas update
-    love.graphics.clear()
-    -- light green background
-    love.graphics.setColor(0/255, 1, 0/255, 0.8)
-    love.graphics.rectangle("fill", (-19000 * MINIMAP_SCALE), (-3600 * MINIMAP_SCALE), self.width * 2.3, self.height * 1.4)
-    -- darker green for the areas
-    love.graphics.setColor(0/255, 102/255, 0/255, 0.8)
-    self:drawCorridors()
-    self:drawAreas()
-    self:drawPlayerMarker()
-    love.graphics.setCanvas()
-end
-
---[[
-    Updates the location of the 'camera' so that the canvas is 
-    translated in relation to the Player marker. The translation
-    is based off the players position minus the pixel value of the
-    center of the canvas
-
-    Params:
-        none
-    Returns:
-        nil
-]]
-function MiniMap:updateCamera()
-    self.cameraX = self.playerMarkerX - (self.width / 2)
-    self.cameraY = self.playerMarkerY - (self.height / 2)
-end
-
 -- ========================= DRAW FUNCTIONS =========================
 
 --[[
@@ -120,11 +68,13 @@ end
     GMapAreaDefinitions
 
     Params:
-        none
+        cameraX: number - x location of game camera
+        cameraY: number - y location of game camera
+        offset:  number - pixel offset for minimap
     Returns:
         nil
 ]]
-function MiniMap:drawCorridors()
+function MiniMap:drawCorridors(cameraX, cameraY, offset)
     for i = 1, 16 do
         local x, y = self:getCorridorCoordinates(GMapAreaDefinitions[i])
         -- add corrections to make sure corridors touch the nearby area
@@ -134,8 +84,8 @@ function MiniMap:drawCorridors()
         if i == 13 then x = x + 100 end
         if i == 15 then x = x - 100 end
         love.graphics.rectangle("fill",
-            x * MINIMAP_SCALE,
-            y * MINIMAP_SCALE,
+            (cameraX + self.width) + x * MINIMAP_SCALE,
+            (cameraY + self.height - offset) + y * MINIMAP_SCALE,
             (GMapAreaDefinitions[i].width * FLOOR_TILE_WIDTH) * MINIMAP_SCALE,
             (GMapAreaDefinitions[i].height * FLOOR_TILE_HEIGHT) * MINIMAP_SCALE
         )
@@ -148,15 +98,17 @@ end
     GMapAreaDefinitions
 
     Params:
-        none
+        cameraX: number - x location of game camera
+        cameraY: number - y location of game camera
+        offset:  number - pixel offset for minimap
     Returns:
         nil
 ]]
-function MiniMap:drawAreas()
+function MiniMap:drawAreas(cameraX, cameraY, offset)
     for i = 17, #GMapAreaDefinitions do
         love.graphics.rectangle("fill",
-            GMapAreaDefinitions[i].x * MINIMAP_SCALE,
-            GMapAreaDefinitions[i].y * MINIMAP_SCALE,
+            (cameraX + self.width) + GMapAreaDefinitions[i].x * MINIMAP_SCALE,
+            (cameraY + self.height - offset) + GMapAreaDefinitions[i].y * MINIMAP_SCALE,
             (GMapAreaDefinitions[i].width * FLOOR_TILE_WIDTH) * MINIMAP_SCALE,
             (GMapAreaDefinitions[i].height * FLOOR_TILE_HEIGHT) * MINIMAP_SCALE
         )
@@ -168,16 +120,18 @@ end
     in the main Map
 
     Params:
-        none
+        cameraX: number - x location of game camera
+        cameraY: number - y location of game camera
+        offset:  number - pixel offset for minimap
     Returns:
         nil
 ]]
-function MiniMap:drawPlayerMarker()
-    love.graphics.translate(-math.floor(self.cameraX), -math.floor(self.cameraY))
+function MiniMap:drawPlayerMarker(cameraX, cameraY, offset)
     love.graphics.setColor(1, 0/255, 0/255)
     love.graphics.rectangle(
         "fill",
-        self.playerMarkerX, self.playerMarkerY,
+        (cameraX + self.width) + self.playerMarkerX,
+        (cameraY + self.height - offset) + self.playerMarkerY,
         10, 10
     )
 end
