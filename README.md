@@ -41,6 +41,7 @@ your friends will compete to have the most points!</p>
 
 <p>Movement: WASD or up, down, left, right keys</p>
 <p>Shooting: Space bar</p>
+<p>Display map: M</p>
 <p>Pause: Escape key</p>
 <p>Menu select: Up, down keys and Enter to select</p>
 <p>Enter high score: Up, down keys and Enter to select</p>
