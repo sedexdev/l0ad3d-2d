@@ -150,9 +150,9 @@ function Player:setCurrentArea(map)
         local areaHeight = area.y + (area.height * FLOOR_TILE_HEIGHT) + WALL_OFFSET
         if area.type == 'area' then
             -- if player within area/corridor x coordinate boundary
-            if (self.x > area.x - WALL_OFFSET) and (self.x + self.width) < areaWidth then
+            if (self.x + ENTITY_CORRECTION > area.x - WALL_OFFSET) and (self.x + self.width - ENTITY_CORRECTION) < areaWidth then
                 -- if player within a rea/corridor y coordinate boundary
-                if (self.y > area.y - WALL_OFFSET) and (self.y + self.height) < areaHeight then
+                if (self.y + ENTITY_CORRECTION > area.y - WALL_OFFSET) and (self.y + self.height - ENTITY_CORRECTION) < areaHeight then
                     -- player current area updated
                     self.currentArea.id = area.id
                     self.currentArea.type = area.type
