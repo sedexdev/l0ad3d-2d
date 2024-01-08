@@ -10,7 +10,19 @@ were created by me using GIMP (unless otherwise credited
 below)</p>
 
 <p>Author: Andrew Macmillan</p>
-<p>Version: 1.0</p>
+<p>Version: 1.1</p>
+
+<h2>Change Log</h2>
+
+<p>Version 1.1 includes the following updates:</p>
+
+<ul>
+    <li>The 'm' key now brings up a minimap of the whole level which tracks the players movement</li>
+    <li>Smoke effect when bullet hits wall is centered</li>
+    <li>Corridor wall correction glitch fixed</li>
+    <li>Player correction when passing through a doorway between adjacent areas improved</li>
+    <li>Added additional sound effects</li>
+</ul>
 
 <h2>Running the code</h2>
 
