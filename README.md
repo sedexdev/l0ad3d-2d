@@ -10,11 +10,11 @@ were created by me using GIMP (unless otherwise credited
 below)</p>
 
 <p>Author: Andrew Macmillan</p>
-<p>Version: 1.1</p>
+<p>Version: 1.1.3</p>
 
 <h2>Change Log</h2>
 
-<p>Version 1.1 includes the following updates:</p>
+<p>Version 1.1.3 includes the following updates:</p>
 
 <ul>
     <li>The 'm' key now brings up a minimap of the whole level which tracks the players movement</li>
