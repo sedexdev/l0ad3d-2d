@@ -2,7 +2,7 @@
 
 <p>Project name: L0ad3d-2D</p>
 <p>Description:</p> 
-<p>This is a conecptual version of the classic 1995
+<p>This is a conceptual version of the classic 1995
 PS1 game 'Loaded'. It features a small demo environment
 to emulate the original in a 2D plane using Lua and
 the LOVE2D game engine for development. All textures
