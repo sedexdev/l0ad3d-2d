@@ -60,6 +60,19 @@ chmod +x L0AD3D-2D.AppImage
 
 The game is very simple. There is a single level that you need to navigate to find keys to get into the boss room and _kill the boss_. You get points for the number of enemies killed along the way. After killing the boss the level starts again, and all enemies get slightly stronger. After eventually dying your score goes in the high scores table where you and your friends will compete to have the most points!
 
+## ✨ Features
+
+-   Endless wave survival mode gameplay
+-   2 characters to play as
+-   Powerful sound track
+-   Powerups
+    -   One shot boss kill
+    -   2x speed
+    -   Invincibility shield
+    -   Ammo / health pick ups
+-   High score board
+-   Level map
+
 ## 🕹️ Controls
 
 -   **Movement**: WASD or up, down, left, right keys
