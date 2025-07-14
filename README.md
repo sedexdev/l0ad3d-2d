@@ -33,7 +33,6 @@ lovec .
 ```bash
 # Linux
 cd l0ad3d-2d
-chmod +x L0AD3D-2D.AppImage
 love .
 ```
 
